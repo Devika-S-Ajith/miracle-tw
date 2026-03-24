@@ -1,0 +1,23 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - echo Installing app dependencies...
+      - export NODE_OPTIONS="--max-old-space-size=6144"
+      - rm -rf node_modules package-lock.json
+      - npm cache clean --force
+      - npm install
+  build:
+    commands:
+      - echo Building static site...
+      - export GENERATE_SOURCEMAP=false
+      - npm run build:$BUILDENV
+  post_build:
+    commands:
+      - echo Uploading build to S3
+      - aws s3 cp build s3://$S3URL/ --sse --recursive
+      - echo running invalidation
+      - aws cloudfront create-invalidation --distribution-id $DISTRIBUTIONID --paths '/*'

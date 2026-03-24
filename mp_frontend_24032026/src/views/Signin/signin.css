@@ -1,0 +1,13 @@
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 40px rgb(255, 255, 255) inset !important;
+    -webkit-border-style: 1px solid !important;
+    -webkit-border-left-color: coral !important;
+    -webkit-border-bottom-left-radius: 8px !important;
+    -webkit-border-bottom-right-radius: 8px !important;
+    -webkit-border-top-left-radius: 8px !important;
+    -webkit-border-top-right-radius: 8px !important;
+
+}

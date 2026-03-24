@@ -1,0 +1,433 @@
+import { Grid, Typography } from '@mui/material';
+import { Field } from 'formik';
+import TextFieldWithExternalLabel from './TextFieldWithExternalLabel';
+import DropdownWithExternalLabel from './DropdownWithExternalLabel';
+import NumberFormat from 'react-number-format';
+import MonthYearPicker from './MonthYearPicker';
+import { GenderList, roleInFamily } from '../Configs/MemberFormConfig';
+import { Search } from '@mui/icons-material';
+import SearchableTextField from './SearchableTextField';
+import { DateFormatFromRegion } from '../../../../constants';
+import { DatePicker, LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
+import dayjs from 'dayjs';
+import { size } from 'lodash';
+import { Checkbox, FormControlLabel } from '@mui/material';
+import { PhoneTextInput } from '../../../../components/PhoneTextInput/PhoneTextInput';
+import { is } from 'date-fns/locale';
+import CalendarIcon from '../../../../assets/icons/CalendarIcon';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import CustomFieldLabel from './CustomFieldLabel';
+import { useRef } from 'react';
+
+const DynamicForm = ({
+    t,
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleBlur,
+    setFieldValue,
+    situationsAndGoals,
+    locationList,
+    htLanguagesList,
+    caseWorkerList,
+    dropdownValues = {}, // NEW: Accept dropdown values as a prop
+    config = [], // Allow passing custom config
+    searchFunction = () => { },
+    RenderOptionList = () => { },
+    ChildSelectedInfo = () => { },
+    handleChildSelection = () => { },
+    index, // NEW: Index for FieldArray items
+    parentFieldName = '', // NEW: Parent field name (e.g., 'members')
+    handleDateChange = null,
+    initialTextValue = '',
+    phoneRef = null,
+    isDisabled = false,
+    key=null
+}) => {
+
+    const currentValueRef = useRef(''); // Ref to keep track of current value for onClose events
+
+    // Helper function to construct the full field name
+    const getFieldName = (name) => {
+        // If we have both index and parentFieldName, construct scoped name
+        if (index !== undefined && parentFieldName) {
+            return `${parentFieldName}.${index}.${name}`;
+        }
+        // Otherwise, return the name as-is
+        return name;
+    };
+
+    // Helper to safely get field value
+    const getFieldValue = (name) => {
+        // When used in FieldArray, values is already scoped to the item
+        if (index !== undefined && parentFieldName) {
+            return values?.[name];
+        }
+        // For regular forms, access directly
+        return values?.[name];
+    };
+
+    // Helper to safely get field error
+    const getFieldError = (name) => {
+        // errors is already scoped when passed from FieldArray
+        if (index !== undefined && parentFieldName) {
+            return errors?.[name];
+        }
+        return errors?.[name];
+    };
+
+    // Helper to safely get field touched state
+    const getFieldTouched = (name) => {
+        // touched is already scoped when passed from FieldArray
+        if (index !== undefined && parentFieldName) {
+            return touched?.[name];
+        }
+        return touched?.[name];
+    };
+
+    const renderField = (fieldConfig) => {
+        const { type, name, gridProps, condition, ...fieldProps } = fieldConfig;
+
+        // Check if the field should be rendered based on the condition
+        if (condition && typeof condition === 'function') {
+            const shouldRender = condition(values);
+            if (!shouldRender) {
+                return null; // Don't render the field
+            }
+        }
+
+        // Get the full field name (scoped for FieldArray)
+        const fullFieldName = getFieldName(name);
+
+        // Get the field value, error, and touched state
+        const fieldValue = getFieldValue(name);
+        currentValueRef.current = fieldValue; // Keep ref updated with current value
+        const fieldError = getFieldError(name);
+        const fieldTouched = getFieldTouched(name);
+
+        switch (type) {
+            case 'text':
+                return (
+                    <Grid item {...gridProps} key={fullFieldName}>
+                        <TextFieldWithExternalLabel
+                            label={t ? t(fieldProps.label) : fieldProps.label}
+                            tooltipText={t && fieldProps.tooltipText ? t(fieldProps.tooltipText) : fieldProps.tooltipText}
+                            showTooltip={fieldProps.showTooltip}
+                            name={fullFieldName} // Use full scoped name
+                            id={fullFieldName} // Use full scoped name
+                            fullWidth={fieldProps.fullWidth}
+                            error={Boolean(fieldTouched && fieldError)}
+                            helperText={fieldTouched && fieldError}
+                            placeholder={fieldProps.placeholder}
+                            value={fieldValue || ''} // Use helper function
+                            onChange={(e) => {handleChange(e); fieldProps?.onChange?.(e);}} // Call Formik's handleChange and any custom onChange
+                            onBlur={handleBlur}
+                            autoFocus={fieldProps.autoFocus}
+                            size={fieldProps.size}
+                            color={fieldProps.color}
+                            multiline={fieldProps.multiline}
+                            required={fieldProps.required}
+                            disabled={isDisabled}
+                        />
+                    </Grid>
+                );
+
+            case 'dropdown':
+                let options = [];
+                // Determine options source
+                if (fieldProps.optionsSource === 'goals' && fieldProps.getDynamicOptions) {
+                    options = fieldProps.getDynamicOptions(values, dropdownValues.familyTypeAndGoal || []);
+                } else if (fieldProps.optionsSource === 'familyTypeAndGoal') {
+                    options = dropdownValues.familyTypeAndGoal || [];
+                } else if (fieldProps.optionsSource === 'familySituation') {
+                    options = dropdownValues.familySituation || [];
+                } else if (fieldProps.optionsSource === 'locationList') {
+                    options = locationList;
+                } else if ((fieldProps.optionsSource === 'state' || fieldProps.optionsSource === 'district') && fieldProps.getDynamicOptions) {
+                    options = fieldProps.getDynamicOptions(values, locationList);
+                } else if (fieldProps.optionsSource === 'languages') {
+                    options = htLanguagesList;
+                } else if (fieldProps.optionsSource === 'caseWorker') {
+                    options = caseWorkerList;
+                } else if (fieldProps.optionsSource === 'gender') {
+                    options = GenderList;
+                } else if (fieldProps.optionsSource === 'MemberRoles') {
+                    options = dropdownValues.familyRelations || [];
+                } else if (fieldProps.options) {
+                    options = fieldProps.options || [];
+                }
+
+                return (
+                    <Grid item {...gridProps} key={fullFieldName}>
+                        <Field
+                            name={fullFieldName} // Use full scoped name
+                            component={DropdownWithExternalLabel}
+                            onChange={fieldProps?.onChange}
+                            onClose={(e,reason,value) => {
+                                handleBlur({ target: { name: fullFieldName, value:value} });
+                            }}
+                            key={key}
+                            options={fieldProps?.options || options}
+                            size={fieldProps.size}
+                            disabled={isDisabled || fieldProps.disabled}
+                            required={fieldProps.required}
+                            validateOnChange={fieldProps.validateOnChange}
+                            labelKey={fieldProps.labelKey || "value"}
+                            placeholder={fieldProps.placeholder}
+                            extraLabel={fieldProps.extraLabel}
+                            grouped={fieldProps.grouped || false}
+                            groupBy={fieldProps.groupBy}
+                            color={fieldProps.color}
+                            textFieldProps={{
+                                label: fieldProps.label,
+                                disabled: isDisabled || fieldProps.disabled,
+                                variant: "outlined",
+                                sx: {
+                                    '& .MuiOutlinedInput-root': {
+                                        backgroundColor: '#FFFFFF',
+                                    },
+                                    '& .MuiAutocomplete-input': {
+                                        backgroundColor: 'transparent',
+                                    },
+                                    '& .MuiFormHelperText-root': {
+                                        margin: 0,
+                                        marginTop: '2px',
+                                        marginLeft: '2px',
+                                    }
+                                }
+                            }}
+                        />
+                    </Grid>
+                );
+
+            case "SearchableTextField":
+                return (
+                    <Grid item {...gridProps} key={fullFieldName}>
+                        <SearchableTextField
+                            name={fullFieldName} // Use full scoped name
+                            placeholder={fieldProps.placeholder}
+                            initialTextValue={initialTextValue}
+                            searchFunction={searchFunction}
+                            onClose={(e, reason, value) => {
+                                handleBlur({ target: { name: fullFieldName ,value: value } });
+                            }}
+                            size={fieldProps.size}
+                            disabled={isDisabled}
+                            getOptionLabel={(option) => {
+                                if (typeof option === 'string') return option;
+                                return `${option.firstName}`;
+                            }}
+                            renderOption={RenderOptionList}
+                            onSelectionChange={(child) => handleChildSelection(child)}
+                            minSearchLength={2}
+                            debounceDelay={300}
+                            freeSolo={true}
+                            textFieldProps={{
+                                label: fieldProps.label,
+                                variant: "outlined",
+                                disabled: isDisabled,
+                                sx: {
+                                    '& .MuiOutlinedInput-root': {
+                                        backgroundColor: '#FFFFFF',
+                                    },
+                                    '& .MuiAutocomplete-input': {
+                                        backgroundColor: 'transparent',
+                                    },
+                                    '& .MuiFormHelperText-root': {
+                                        margin: 0,
+                                        marginTop: '2px',
+                                        marginLeft: '2px',
+                                    }
+                                }
+                            }}
+                        />
+                    </Grid>
+                );
+
+            case "MonthYearPicker":
+                return (
+                    <Grid item {...gridProps} key={fullFieldName}>
+                        <MonthYearPicker
+                            id={fullFieldName} // Use full scoped name
+                            label={t ? t(fieldProps.label) : fieldProps.label}
+                            value={fieldValue} // Use helper function
+                            onChange={(value) => setFieldValue(fullFieldName, value)} // Use full scoped name
+                            error={fieldTouched && Boolean(fieldError)}
+                            helperText={fieldTouched && fieldError}
+                            disabled={isDisabled}
+                             slots={{
+                                openPickerIcon: CalendarIcon,
+                            }}
+                        />
+                    </Grid>
+                );
+
+            case "DatePicker":
+                return (
+                    <Grid item {...gridProps} key={fullFieldName}>                       
+                        {fieldProps.label && (
+                            <CustomFieldLabel sx={{ mb: 1 }}>
+                                {`${t ? t(fieldProps.label) : fieldProps.label}${fieldProps?.required ? '*' : ''}`}
+                            </CustomFieldLabel>
+                        )}
+                        <DatePicker
+                            value={fieldValue ? dayjs(fieldValue) : undefined} // Use helper function
+                            format={DateFormatFromRegion(true)}
+                            disabled={isDisabled}
+                            onChange={(newValue) => {
+                                // If custom handleDateChange is provided, use it
+                                currentValueRef.current = newValue ? dayjs(newValue) : '';
+                                if (handleDateChange) {
+                                    handleDateChange(newValue);
+                                } else {
+                                    // Otherwise, just set the field value
+                                    setFieldValue(fullFieldName, newValue);
+                                    fieldProps?.onChange?.(newValue); // Call any custom onChange provided in fieldProps
+                                }
+                            }}
+                            onClose={() => {
+                                // Trigger blur event when date picker closes
+                                handleBlur({ target: { name: fullFieldName, value: currentValueRef.current } });
+                            }}
+                            maxDate={dayjs().endOf('day')}
+                            slots={{
+                                openPickerIcon: CalendarIcon,
+                            }}
+                            slotProps={{
+                                textField: {
+                                    fullWidth: fieldProps.fullWidth,
+                                    id: fullFieldName, // Use full scoped name
+                                    size: fieldProps.size || 'small',
+                                    sx: {
+                                        '& .MuiInputBase-root': {
+                                            backgroundColor: 'white',
+                                        },
+                                    },
+                                    placeholder: fieldProps.placeholder,
+                                    error: fieldTouched && Boolean(fieldError),
+                                    helperText: fieldTouched && fieldError,
+                                },
+                            }}
+                        />
+                    </Grid>
+                );
+
+            case 'ZIPCode':
+                return (
+                    <Grid item {...gridProps} key={fullFieldName}>
+                        <NumberFormat
+                            customInput={TextFieldWithExternalLabel}
+                            error={Boolean(fieldTouched && fieldError)}
+                            fullWidth
+                            helperText={fieldTouched && fieldError}
+                            placeholder={
+                                locationList
+                                    .find((obj) => obj.id == values.country)
+                                    ?.isoCode?.toUpperCase() === "IND"
+                                    ? "888888"
+                                    : "88888"
+                            }
+                            format={
+                                locationList
+                                    .find((obj) => obj.id == values.country)
+                                    ?.isoCode?.toUpperCase() === "IND"
+                                    ? "######"
+                                    : "#####"
+                            }
+                            label={t("common:common.ZIP/postal Code")}
+                            name={fullFieldName} // Use full scoped name
+                            id={fullFieldName} // Use full scoped name
+                            type="text"
+                            required ={fieldProps.required}
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                            value={fieldValue || ''} // Use helper function
+                            disabled={!values.country || isDisabled}
+                        />
+                    </Grid>
+                );
+
+            case 'CheckboxWithLabel':
+                return (
+                    <Grid item {...gridProps} key={fullFieldName}>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={Boolean(fieldValue)}
+                                    onChange={(e) => {setFieldValue(fullFieldName, e.target.checked); fieldProps?.onChange?.(e.target.checked);}}
+                                    name={fullFieldName}
+                                    onBlur={handleBlur}
+                                    sx={{
+                                        color: isDisabled ? 'grey' : '#1D334B', 
+                                        '&.Mui-checked': {
+                                            color: isDisabled ? 'grey' : '#1D334B', 
+                                        },
+                                    }}
+                                />
+                            }
+                            disabled={isDisabled}
+                            label={t ? t(fieldProps.label) : fieldProps.label}
+                            required={fieldProps.required}
+                        />
+                    </Grid>);
+
+            case 'PhoneNumber':
+                return (
+                    <Grid item {...gridProps} key={fullFieldName}>
+                        <PhoneTextInput
+                            name='phone'
+                            id="phone"
+                            phoneRef={phoneRef}
+                            onBlur={handleBlur}
+                            error={fieldTouched && Boolean(fieldError)}
+                            helperText={fieldTouched && fieldError}
+                            value={fieldValue}
+                            onChange={(phone) => setFieldValue(fullFieldName, phone)}
+                            defaultCountry={locationList?.find((loc) => loc.id == 1)?.iso2Code || 'us'}
+                            showAttachedLabel={false}
+                            disabled={isDisabled}
+                        />
+                    </Grid>
+                );
+                case "TimePicker":
+                return(
+                    <Grid item {...gridProps} key={fullFieldName}>                      
+                    {fieldProps.label && (
+                        <CustomFieldLabel sx={{ mb: 1 }}>
+                            {`${t ? t(fieldProps.label) : fieldProps.label}${fieldProps?.required ? '*' : ''}`}
+                        </CustomFieldLabel>
+                    )}
+                    <TimePicker
+                        value={fieldValue? dayjs(fieldValue) : null}
+                        onChange={(newValue) => setFieldValue(fullFieldName,newValue)}
+                        format="hh:mm A"
+                        minuteStep={5}
+                        disabled={isDisabled}
+                        slotProps={{
+                            textField: {
+                                fullWidth: true,
+                                size:"small",
+                                error: fieldTouched && Boolean(fieldError),
+                                helperText: fieldTouched && fieldError,
+                                placeholder:fieldProps.placeholder || "Select time",
+                            },
+                        }}
+                    />
+                    </Grid>
+                );
+            default:
+                return null;
+        }
+    };
+
+    return (
+        <>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+            {config.map(renderField)}
+        </LocalizationProvider>
+        </>
+    );
+};
+
+export default DynamicForm;

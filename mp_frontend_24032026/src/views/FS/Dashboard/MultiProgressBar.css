@@ -1,0 +1,39 @@
+.progress-bar2 {
+    width: 80%;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.progress-container2 {
+    display: flex;
+    flex-direction: row;
+    height: 50px;
+    background-color: #DBE2E7;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress2 {
+    height: 100%;
+    border-radius: 0px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.label-container2 {
+    display: flex;
+    flex-direction: row;
+    margin-top: 5px;
+    padding: 0 5px;
+}
+
+.progress-label2 {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.progress-label2 > * {
+    margin: 0;
+}
+

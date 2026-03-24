@@ -1,0 +1,4 @@
+.reset-padding p ,h1,h2 {
+    margin: 1px;
+    padding: 1px;
+}

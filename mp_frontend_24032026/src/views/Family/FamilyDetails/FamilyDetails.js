@@ -1,0 +1,250 @@
+import { useCallback, useState, useEffect, useContext } from "react";
+import {
+  Link as RouterLink,
+  useParams,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
+import {
+  Box,
+  Button,
+  Divider,
+  Grid,
+  Tab,
+  Tabs,
+  Typography,
+} from "@mui/material";
+import FamilyBasicDetails from "../Components/FamilyBasicDetails";
+import PencilAltIcon from "../../../assets/icons/PencilAlt";
+import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
+import APIS from "../../../common/hooks/UseApiCalls";
+import { useTranslation } from "react-i18next";
+import useAuthorization from "../../../components/UserComponents/useAuthorization";
+import Loader from "../../../components/UserComponents/Loader";
+import FamilyAssessments from "../Components/FamilyAssessments/FamilyAssessments";
+import FamilyProgressReport from "../Components/ProgressReport/FamilyProgressReport";
+import FamilyDocuments from "../Components/FamilyDocuments/FamilyDocuments";
+import RadarGraph from "../../Child/Components/RadarGraph/RadarGraph";
+import FamilyHistory from "../Components/FamilyHistory";
+import PageBreadcrumbs from "../../../components/PageBreadcrumbs/PageBreadcrumbs";
+import { BreadcrumbsLinkThriveScale } from "../../../constants";
+import FollowUps from "../../Assessments/Components/FollowUps";
+import FamilyMilestones from "../Components/FamilyMilestones/FamilyMilestones";
+import FamilyInterventions from "./FamilyInterventions";
+import ConsolidatedAssessmentProgressReport from "../../../components/ConsolidatedAssessmentProgressReport";
+
+const tabs = [
+  { label: "Details", value: "details", id: "tab_details" },
+  { label: "Assessments & Progress Reports", value: "assessmentsProgressReports", id: "tab_assessments_progress_reports" },
+  //{ label: "Milestones", value: "milestones" ,id:"tab_milestones" },
+  //{ label: "Interventions", value: "interventions", id: "tab_interventions" },
+  { label: "Follow - ups", value: "followUps" },
+  {
+    label: "Thrive scale score trend",
+    value: "thriveScale score trend",
+    id: "tab_thriveScale_score_trend",
+  },
+  { label: "History", value: "history", id: "tab_history" },
+  { label: "Documents", value: "documents", id: "tab_documents" },
+];
+
+const FamilyDetails = () => {
+  const { t } = useTranslation(["common"]);
+  const navigate = useNavigate();
+  const { familyList, signedinUserRoleHT, signedinOrgType } =
+    useContext(CommonDataContext);
+  const [loading, setLoading] = useState(false);
+  const [family, setFamily] = useState(null);
+  const [primaryCaregiver, setPrimaryCaregiver] = useState(null);
+  const [currentTab, setCurrentTab] = useState("details");
+  const { state: locationValues } = useLocation();
+  const [memberListLoading, setMemberListLoading] = useState(false);
+  const [memberList, setMemberList] = useState([]);
+
+  useEffect(() => {
+    if (locationValues) {
+      setCurrentTab(locationValues.tabvalue);
+    }
+  }, []);
+
+  let { id } = useParams();
+
+  const getFamilies = () => {
+    setLoading(true);
+    familyList &&
+      familyList.forEach((family) => {
+        if (family.id === id) {
+          setFamily(family);
+          let members = family.HT_familyMembers;
+          let primaryCareGiver = members?.find(
+            (member) => member.isPrimaryCareGiver === true
+          );
+          setPrimaryCaregiver(primaryCareGiver);
+        }
+      });
+    setLoading(false);
+  };
+
+
+  useEffect(() => {
+    document.title = "Family | Details | ThriveWell";
+   // getFamilies();
+    getFamilyDetails();
+    //getMembersUnderFamily();
+
+    return () => {};
+  }, []);
+
+  useAuthorization(
+    signedinUserRoleHT,
+    null,
+    signedinOrgType,
+    "ManageFamily",
+    true
+  );
+
+  const getFamilyDetails = useCallback(async () => {
+    setLoading(true);
+    const payload = {
+      id: id,
+      listType:"DETAILED"
+    };
+    try {
+      const data = await APIS.GetFamilyDetails(payload);
+      setFamily(data.data.data || {});
+      setMemberList(data?.data?.data?.members || []);
+    } catch (err) {
+      console.error(err);
+    }
+    setLoading(false);
+  }, []);
+
+  const handleTabsChange = (event, value) => {
+    setCurrentTab(value);
+  };
+
+  const getMembersUnderFamily = useCallback(async () => {
+    // setMemberListLoading(true);
+    // try {
+    //   const data = await APIS.familyMembers(id);
+    //   const members = data?.data?.familyDetails?.members || [];
+    //   if (members) {
+    //     setMemberList(members);
+    //   }
+    //   setMemberListLoading(false);
+    // } catch (err) {
+    //   setMemberListLoading(false);
+    //   console.error(err);
+    // }
+  });
+  const renderTabContent = () => {
+    console.log("Rendering tab content for:", currentTab);
+    switch (currentTab) {
+      case "details":
+        return (
+          <Grid container spacing={3}>
+            <Grid item lg={12} md={12} xl={12} xs={12}>
+              {family && (
+                <FamilyBasicDetails
+                  family={family}
+                />
+              )}
+            </Grid>
+          </Grid>
+        );
+      case "assessments":
+        return <FamilyAssessments id={family?.id} />;
+      case "thriveScale score trend":
+        return <RadarGraph familyId={family?.id} />;
+      case "progressReport":
+        return <FamilyProgressReport id={family?.id} />;
+      case "documents":
+        return <FamilyDocuments active={family?.isActive} />;
+      case "history":
+        return <FamilyHistory id={family?.id} />;
+      case "followUps":
+        return <FollowUps id={family?.id} type="FAMILY" />;
+      case "interventions":
+        return <FamilyInterventions memberList={memberList} familyId={family?.id} />;
+      case "milestones":
+        return <FamilyMilestones  familyMembers={memberList}  familyName={family.familyName} />;
+      case "assessmentsProgressReports":
+        return <ConsolidatedAssessmentProgressReport id={family?.id} pageType="FAMILY" />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <>
+      <Loader loading={loading} />
+      <Box
+        sx={{
+          backgroundColor: "background.default",
+          minHeight: "100%",
+          mt: 2,
+        }}
+      >
+        <Grid container width={1}>
+          <Grid item xs={12} sx={{ mr: 1 }}>
+            <Grid container justifyContent="space-between" spacing={3}>
+              <Grid item>
+                <PageBreadcrumbs
+                  data={[
+                    BreadcrumbsLinkThriveScale(t, navigate),
+                    {
+                      label: t("common:family.Families"),
+                      onClick: () => navigate("/dashboard/families"),
+                      href: "/dashboard/families",
+                    },
+                    {
+                      label: family && family.familyName,
+                    },
+                  ]}
+                />
+              </Grid>
+
+              <Grid item>
+                <Box sx={{ m: -1 }}>
+                  <Button
+                    color="primary"
+                    component={RouterLink}
+                    startIcon={<PencilAltIcon fontSize="small" />}
+                    sx={{ m: 1 }}
+                    to={`/dashboard/families/${family && family.id}/edit`}
+                    variant="contained"
+                  >
+                    {t("common:common.Edit")}
+                  </Button>
+                </Box>
+              </Grid>
+            </Grid>
+            <Box sx={{ mt: 3 }}>
+              <Tabs
+                indicatorColor="primary"
+                onChange={handleTabsChange}
+                scrollButtons="auto"
+                textColor="primary"
+                value={currentTab}
+                variant="scrollable"
+              >
+                {tabs.map((tab) => (
+                  <Tab
+                    key={tab.value}
+                    id={tab.id}
+                    label={t(`common:common.${tab.label}`, tab.label)}
+                    value={tab.value}
+                  />
+                ))}
+              </Tabs>
+            </Box>
+            <Divider />
+            <Box sx={{ mt: 3 }}>{renderTabContent()}</Box>
+          </Grid>
+        </Grid>
+      </Box>
+    </>
+  );
+};
+
+export default FamilyDetails;

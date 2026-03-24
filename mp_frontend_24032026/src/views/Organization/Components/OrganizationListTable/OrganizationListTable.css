@@ -1,0 +1,97 @@
+.rdl-move-all {
+    display: none;
+}
+
+.rdl-move {
+    background-color: #F37123;
+    border-radius: 4px;
+    border: 1px solid #F37123;
+    box-shadow: 0 0 10px 100px #F37123 inset; 
+    /* background: #F37123 */
+}
+
+
+.rdl-filter,
+.rdl-control {
+    height: 40vh;
+    transition: border-color 0.3s ease;
+    padding: 2vh 18px;
+}
+
+.rdl-control {
+    margin-bottom: 10px;
+    border-color: #C6C4BE;
+    border: 2px solid #C6C4BE;
+    box-shadow: 0px 2px 6px 0px rgba(119, 135, 145, 0.24);
+}
+
+.react-dual-listbox option {
+    border: 1px solid var(--Steel-Steel-Tint-1, #D6DBDE);
+    background: var(--Global-White, #FFF);
+    box-shadow: 0px 2px 6px 0px rgba(119, 135, 145, 0.24);
+    border-radius: 4px;
+    margin: 5px;
+    color: #000;
+    padding: 12px;
+    width: 180px;
+    box-sizing: border-box;
+    white-space: normal;
+    word-wrap: break-word;
+
+}
+
+.rdl-control {
+    flex: 1 0 auto;
+
+    &:focus:not(:disabled) {
+        border-color: #C6C4BE;
+        outline: 0;
+    }
+}
+
+
+
+
+.react-dual-listbox .rdl-available option::selection,
+.react-dual-listbox .rdl-selected option::selection{
+    border: 1px solid  #F37123;
+    /* box-shadow: 0px 2px 6px 0px rgba(119, 135, 145, 0.24); */
+    box-shadow: 0 0 10px 100px #F37123 inset; 
+    border-radius: 4px;
+    color: #fff;
+    margin: 5px;
+    padding: 12px;
+    width: 180px;
+    box-sizing: border-box;
+}
+.react-dual-listbox .rdl-available option:checked,
+.react-dual-listbox .rdl-selected option:checked{
+    border: 1px solid  #F37123;
+    /* box-shadow: 0px 2px 6px 0px rgba(119, 135, 145, 0.24); */
+    box-shadow: 0 0 10px 100px #F37123 inset; 
+    border-radius: 4px;
+    color: #fff;
+    margin: 5px;
+    padding: 12px;
+    width: 180px;
+    box-sizing: border-box;
+}
+
+.react-dual-listbox .rdl-available option:focus,
+.react-dual-listbox .rdl-selected option:focus,
+.react-dual-listbox .rdl-available option:hover:not(:checked),
+.react-dual-listbox .rdl-selected option:hover:not(:checked){
+    border: 1px solid  #F37123;
+    /* box-shadow: 0px 2px 6px 0px rgba(119, 135, 145, 0.24); */
+    box-shadow: 0 0 10px 100px #FEF1E9 inset; 
+    border-radius: 4px;
+    color: #000;
+    margin: 5px;
+    padding: 12px;
+    width: 180px;
+    box-sizing: border-box;
+}
+
+
+
+

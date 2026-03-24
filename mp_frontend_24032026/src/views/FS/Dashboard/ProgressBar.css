@@ -1,0 +1,32 @@
+.progress-bar {
+    width: 80%;
+    height: 50px;
+    background-color: #DBE2E7;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+  
+  .progress {
+    height: 100%;
+    background-color: #89E096;
+    border-radius: 4px;
+  }
+  .emptyProgress {
+    height: 100%;
+    background-color: #DBE2E7;
+    border-radius: 4px;
+  }
+
+  .progress-label-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+  }
+  
+  .progress-label-left {
+    margin-left: 0px;
+  }
+  
+  .progress-label-right {
+    margin-right: 0px;
+  }

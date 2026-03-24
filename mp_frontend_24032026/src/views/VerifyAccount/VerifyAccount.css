@@ -1,0 +1,72 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body,
+#root,
+.App {
+    height: 100%;
+    width: 100%;
+}
+
+.background {
+    background: url('/public/static/login_bg.svg') no-repeat center center fixed;
+    width: 100%;
+    max-width: 100% !important;
+    margin: 0;
+    display: flex;
+    min-height: 100vh;
+    padding: 0px 0px;
+    gap: 54px;
+    isolation: isolate;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-size: "cover";
+    background-position: "center";
+}
+
+.content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 80%;
+    max-width: 1200px;
+}
+
+.logo img {
+    width: 85%;
+    margin-left: -15%;
+    margin-top: 25px;
+}
+
+.sign-in-button {
+    background: #f37127;
+    padding: 8px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #ffffff;
+    font-weight: bold;
+    border: 2px solid #f37127;
+    transition: background 0.3s;
+}
+
+.sign-in-button:hover {
+    background: #f0f0f0;
+    color: #000;
+    border-radius: 8px;
+    border: 2px solid #f37127;
+}
+
+@media (max-width: 768px) {
+    .logo {
+        display: none;
+    }
+
+    .sign-in-button {
+        display: none;
+    }
+}

@@ -1,0 +1,41 @@
+.spider-chart {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    margin: 40px auto;
+  }
+  
+  .grid-polygon {
+    stroke: #CDCDCD;
+    fill: none;
+  }
+  
+  .line {
+    stroke: grey;
+    stroke-width: 2px;
+  }
+  
+  .axis-label-text {
+    fill: black;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+  }
+  
+  .axis-label-rect {
+    fill: white;
+    stroke: #ccc;
+    stroke-width: 1px;
+  }
+  
+  .radar-line {
+    fill-opacity: 0.3;
+  }
+
+  .bullet-dot {
+    fill: orange;
+    stroke: orange;
+    stroke-width: 1px;
+  }
+  
+  

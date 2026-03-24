@@ -1,0 +1,11 @@
+.active-message {
+  background-color: #fef1e9;
+  transition: background-color 0.3s ease; /* Adding transition for smooth effect */
+}
+.active-message .MuiDataGrid-cell:first-child {
+  border-left: 5px solid #f37123; /* Adjust the width and color of the border as needed */
+}
+
+.active-message:hover {
+    background-color: #fef1e9 !important; /* Darker background color on hover */
+  }

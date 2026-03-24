@@ -1,0 +1,124 @@
+import {
+  SUPER_ADMIN,
+  ADMIN,
+  ADMIN_CASEWORKER,
+  CASEWORKER,
+  VIEW_ONLY,
+  MIRACLE,
+  GOVT_CCI,
+  GOVT_ORG,
+  NGO_PARTNER,
+  PRIVATE_CCI,
+  ADMIN_CASEMANAGER,
+  CASEMANAGER,
+  PARENT_ORGANIZATION
+} from '../helpers/constant'
+
+
+export const authorizationConfig = {
+  AddChild: {
+    allowedRoles: [ADMIN, CASEWORKER, ADMIN_CASEWORKER],
+    allowedOrgTypes: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+  },
+  EditChild: {
+    allowedRoles: [ADMIN, CASEWORKER, ADMIN_CASEWORKER],
+    allowedOrgTypes: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+  },
+  ListChild: {
+    allowedRoles: [SUPER_ADMIN, ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY],
+    allowedOrgTypes: [MIRACLE, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+  },
+  ManageFamily: {
+    allowedRoles: [ ADMIN, CASEWORKER, ADMIN_CASEWORKER],
+    allowedOrgTypes: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+  },
+  ManageUser: {
+    allowedRoles: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER, CASEWORKER, VIEW_ONLY],
+    allowedRolesFS:[SUPER_ADMIN, ADMIN, ADMIN_CASEMANAGER, CASEMANAGER],
+    allowedOrgTypes: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI,PARENT_ORGANIZATION],
+  },
+  ListUser: {
+    allowedRoles: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER, CASEWORKER, VIEW_ONLY],
+    allowedRolesFS:[SUPER_ADMIN, ADMIN, ADMIN_CASEMANAGER, CASEMANAGER],
+    allowedOrgTypes: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI,PARENT_ORGANIZATION],
+  },
+  UserDetails:{
+   allowedRoles: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER, CASEWORKER, VIEW_ONLY],
+    allowedRolesFS:[SUPER_ADMIN, ADMIN, ADMIN_CASEMANAGER, CASEMANAGER],
+    allowedOrgTypes: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI,PARENT_ORGANIZATION],
+  },
+
+  ManageAccount: {
+    allowedRoles: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER],
+    allowedRolesFS:[SUPER_ADMIN, ADMIN, ADMIN_CASEMANAGER],
+    allowedOrgTypes: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI, PARENT_ORGANIZATION],
+  },
+   AddAccount: {
+    allowedRoles: [SUPER_ADMIN],
+    allowedRolesFS:[SUPER_ADMIN],
+    allowedOrgTypes: [MIRACLE],
+  },
+  ListAccount: {
+    allowedRoles: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER, CASEWORKER, VIEW_ONLY],
+    allowedRolesFS:[SUPER_ADMIN, ADMIN,CASEMANAGER,ADMIN_CASEMANAGER],
+    allowedOrgTypes: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+  },
+  Notification:{
+    allowedRoles: [ADMIN, ADMIN_CASEWORKER, CASEWORKER],
+    allowedRolesFS:[ADMIN,CASEMANAGER, ADMIN_CASEMANAGER],
+    allowedOrgTypes: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+  },
+  FormList: {
+    allowedRoles: [SUPER_ADMIN, ADMIN,ADMIN_CASEWORKER],
+    allowedOrgTypes: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+  },
+  ManageForm: {
+    allowedRoles: [SUPER_ADMIN, ADMIN,ADMIN_CASEWORKER],
+    allowedOrgTypes: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+  },
+  Assessment: {
+    allowedRoles: [ADMIN,ADMIN_CASEWORKER,CASEWORKER],
+    allowedOrgTypes: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+  },
+  HTDashboard:{
+    allowedRoles: [SUPER_ADMIN,ADMIN,ADMIN_CASEWORKER,CASEWORKER,VIEW_ONLY],
+    allowedOrgTypes: [MIRACLE,GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+  },
+  GOVTOverview: {
+    allowedRoles: [ADMIN, VIEW_ONLY],
+    allowedOrgTypes: [PARENT_ORGANIZATION],
+  },
+  GOVTDashboard: {
+    allowedRoles: [ADMIN, VIEW_ONLY],
+    allowedOrgTypes: [PARENT_ORGANIZATION],
+  },
+  GOVTDashboardInterventions: {
+    allowedRoles: [ADMIN,ADMIN_CASEWORKER,CASEWORKER,VIEW_ONLY],
+    allowedOrgTypes: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI, PARENT_ORGANIZATION],
+  },
+  GOVTDashboardMilestones: {
+    allowedRoles: [ADMIN,ADMIN_CASEWORKER,CASEWORKER,VIEW_ONLY],
+    allowedOrgTypes: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI, PARENT_ORGANIZATION],
+  },
+  FSDashboard:{
+    allowedRolesFS: [SUPER_ADMIN,ADMIN,ADMIN_CASEMANAGER,CASEMANAGER],
+  },
+  FSFamily:{
+    allowedRolesFS: [ADMIN,ADMIN_CASEMANAGER,CASEMANAGER],
+  },
+  FSChild:{
+    allowedRolesFS: [ADMIN,ADMIN_CASEMANAGER,CASEMANAGER],
+  },
+  Events:{
+    allowedRolesFS: [ADMIN,ADMIN_CASEMANAGER,CASEMANAGER],
+  },
+  Message:{
+    allowedRolesFS: [ADMIN,ADMIN_CASEMANAGER,CASEMANAGER],
+  },
+  SupportService:{
+    allowedRolesFS: [SUPER_ADMIN,ADMIN,ADMIN_CASEMANAGER],
+  },
+  Resource:{
+    allowedRolesFS: [SUPER_ADMIN],
+  }
+};

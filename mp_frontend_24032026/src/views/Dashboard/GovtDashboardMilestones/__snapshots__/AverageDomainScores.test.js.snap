@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AverageDomainScores Component Snapshot Testing matches snapshot for consistent UI 1`] = `
+<div
+  class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 css-1f1l009-MuiGrid-root"
+>
+  <div
+    class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-4 css-1t744vd-MuiGrid-root"
+  >
+    <div
+      class="MuiBox-root css-1piz1jl"
+    >
+      <div
+        class="active-red-flag-milestones"
+        data-testid="active-red-flag-milestones"
+      >
+        Active Red Flag Milestones
+      </div>
+    </div>
+  </div>
+  <div
+    class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-8 css-15t68g5-MuiGrid-root"
+  >
+    <div
+      class="MuiBox-root css-k0sogd"
+    >
+      <div
+        class="red-flag-milestones-by-domain"
+        data-testid="red-flag-milestones-by-domain"
+      >
+        Red Flag Milestones By Domain
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`AverageDomainScores Component Snapshot Testing matches snapshot of component structure 1`] = `
+<DocumentFragment>
+  <div
+    class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 css-1f1l009-MuiGrid-root"
+  >
+    <div
+      class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-4 css-1t744vd-MuiGrid-root"
+    >
+      <div
+        class="MuiBox-root css-1piz1jl"
+      >
+        <div
+          class="active-red-flag-milestones"
+          data-testid="active-red-flag-milestones"
+        >
+          Active Red Flag Milestones
+        </div>
+      </div>
+    </div>
+    <div
+      class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-8 css-15t68g5-MuiGrid-root"
+    >
+      <div
+        class="MuiBox-root css-k0sogd"
+      >
+        <div
+          class="red-flag-milestones-by-domain"
+          data-testid="red-flag-milestones-by-domain"
+        >
+          Red Flag Milestones By Domain
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
