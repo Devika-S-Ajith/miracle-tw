@@ -11,7 +11,6 @@ import {
 import LabelValue from "../../../../components/LabelValue/LabelValue";
 import { CommonDataContext } from "../../../../common/contexts/CommonDataContext";
 
-
 const ChildSummary = ({ child }) => {
   const { locationList } = useContext(CommonDataContext);
   return (
@@ -28,11 +27,24 @@ const ChildSummary = ({ child }) => {
         <Grid item xs={6}>
           <LabelValue
             label="Status"
-            valueComponent={
-              <Chip label={child?.status} sx={{ backgroundColor: "#71C5D4" }} />
+            value={
+              <Chip
+                label={child?.status}
+                size="small"
+                sx={{
+                  backgroundColor:
+                    child?.status === "Active"
+                      ? "#3DAA1D"
+                      : child?.status === "Case Closed"
+                        ? "#D6DBDE"
+                        : "#71C5D4",
+                  color: child?.status === "Active" ? "white" : "black",
+                  fontSize: "0.75rem",
+                  fontWeight: 600,
+                  borderRadius: "20px",
+                }}
+              />
             }
-            labelColor="#535F66"
-            fontWeight={700}
           />
         </Grid>
         <Grid item xs={6}>
@@ -117,7 +129,6 @@ const ChildSummary = ({ child }) => {
           <Divider sx={{ mt: 1, borderBottomWidth: 2, mb: 1 }} />
         </Grid>
 
-
         <Grid item xs={6}>
           <LabelValue
             label="Case worker"
@@ -139,7 +150,6 @@ const ChildSummary = ({ child }) => {
           <Divider sx={{ mt: 1, borderBottomWidth: 2, mb: 1 }} />
         </Grid>
       </Grid>
-
 
       <Stack
         justifyContent="center"

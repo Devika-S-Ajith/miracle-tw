@@ -629,6 +629,17 @@ export const formatAddressFromContactInfo = (contactInfo, locationList) => {
   }
 
 
+  // Add country name
+  if (contactInfo?.TWCountryId && locationList?.length) {
+    const country = locationList.find(
+      (item) => item.id == contactInfo.TWCountryId
+    );
+    if (country?.countryName) {
+      addressParts.push(country.countryName);
+    }
+  }
+
+
   // Add zip code
   if (contactInfo?.zipCode) {
     addressParts.push(contactInfo.zipCode);
