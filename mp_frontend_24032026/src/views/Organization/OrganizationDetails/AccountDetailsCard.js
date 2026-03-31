@@ -561,7 +561,8 @@ const handleDeactivateOrReactivate = async (account, ref) => {
                 </Grid>
               </Grid>
             ) : 
-            ([ADMIN, ADMIN_CASEWORKER, SUPER_ADMIN].includes(signedinUserRoleHT) || [ADMIN, ADMIN_CASEMANAGER, SUPER_ADMIN].includes(signedinUserRoleFS)) &&
+            ([ADMIN, ADMIN_CASEWORKER].includes(signedinUserRoleHT) ||
+              [ADMIN, ADMIN_CASEMANAGER].includes(signedinUserRoleFS)) &&
             <Grid item xs={12} md={6}>
               {/* Case Managers Section */}
               {account.caseManagerCount && (

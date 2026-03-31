@@ -82,7 +82,7 @@ const ConsolidatedOverviewPage = () => {
         VIEW_ONLY,
       ],
       Allowed_Acc_Type: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
-      component: () => <OrganizationalOverview isGeneralDashboard={true} />,
+      component: () => <OrganizationalOverview isGeneralDashboard={true} isSuperAdmin={isSuperAdmin} />,
     },
     {
       title: "ReportsPieChart1",

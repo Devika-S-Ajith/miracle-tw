@@ -7,11 +7,10 @@ import { useParams } from "react-router";
 import OrganizationOverviewCard from "../Components/StateGovDashboardComponents/OrganizationOverviewCard";
 import { SUPER_ADMIN } from "../../../helpers/constant";
 
-const OrganizationalOverview = ({ isGeneralDashboard = false }) => {
-  const { navbarFilterValues, linkedAccounts, signedinUserRoleHT } =
+const OrganizationalOverview = ({ isGeneralDashboard = false , isSuperAdmin = false }) => {
+  const { navbarFilterValues, linkedAccounts } =
     useContext(CommonDataContext);
   const { id } = useParams();
-  const isSuperAdmin = [SUPER_ADMIN].includes(signedinUserRoleHT);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const [apiError, setApiError] = useState(false);
@@ -157,7 +156,7 @@ const OrganizationalOverview = ({ isGeneralDashboard = false }) => {
   );
 
   return (
-    isSuperAdmin ? (
+    isSuperAdmin === true ? (
        <OrganizationOverviewCard
         data={data.filter((item) => item.allowInSuperAdminOverview)}
         title="Organizational Overview"
