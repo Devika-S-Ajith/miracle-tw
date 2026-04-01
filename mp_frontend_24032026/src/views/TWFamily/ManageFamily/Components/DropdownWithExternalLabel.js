@@ -17,7 +17,7 @@ const DropdownWithExternalLabel = ({
   translationNamespace = "common",
   onChange,
   onBlur,
-  onClose,
+  onClose=null,
   onClear,
   clearErrorOnChange = true,
   touchOnClear = true,
@@ -217,9 +217,11 @@ const DropdownWithExternalLabel = ({
         onChange={handleChange}
         size={size}
         onBlur={handleBlur}
-        onClose={(e,reason) => {
+        onClose={(e, reason) => {
           if (onClose) {
-            onClose(e,reason,currentValueRef.current);
+            setTimeout(() => {
+              onClose(e, reason, currentValueRef.current);
+            }, 0);
           }
         }}
         getOptionLabel={getOptionLabel}

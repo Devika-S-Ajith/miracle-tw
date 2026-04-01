@@ -225,13 +225,13 @@ const [consentChecked, setConsentChecked] = useState(
               .required(t("common:warnings.Organization Type is required"))
           : Yup.string().max(255),
 
-        isDCPU: Yup.string().when("organization_type", {
-          is: (val) => val === "2",
-          then: Yup.string().required(
-            t("common:warnings.This field is required")
-          ),
-          otherwise: Yup.string().max(255),
-        }),
+        // isDCPU: Yup.string().when("organization_type", {
+        //   is: (val) => val === "2",
+        //   then: Yup.string().required(
+        //     t("common:warnings.This field is required")
+        //   ),
+        //   otherwise: Yup.string().max(255),
+        // }),
 
         email: Yup.string()
           .email(t("common:warnings.Must be a valid email"))
@@ -299,7 +299,7 @@ const [consentChecked, setConsentChecked] = useState(
               MPDistrictId: values.district ? values.district : null,
               MPStateId: values.state,
               city: values.city,
-              isDCPUOrg: values.isDCPU === "true" ? true : false,
+              isDCPUOrg: "",
               dbRegion: INDIA_DB.includes(values.country) ? INDIA : USA,
               accessType: values.organization_type === "6"? "THRIVE_SCALE" :getAccessType(),
               consentRequired: consentChecked,
@@ -338,7 +338,7 @@ const [consentChecked, setConsentChecked] = useState(
               MPDistrictId: values.district ? values.district : null,
               MPStateId: values.state,
               city: values.city,
-              isDCPUOrg: values.isDCPU === "true" ? true : false,
+              isDCPUOrg: "",
               dbRegion: INDIA_DB.includes(values.country) ? INDIA : USA,
               accessType: getAccessType(),
               consentRequired: true,
@@ -396,9 +396,9 @@ const [consentChecked, setConsentChecked] = useState(
         dirty,
       }) => {
         // Check to reset isDCPU if organization_type is not "2"
-        if (values.organization_type !== "2" && values.isDCPU !== "") {
-          setFieldValue("isDCPU", "");
-        }
+        // if (values.organization_type !== "2" && values.isDCPU !== "") {
+        //   setFieldValue("isDCPU", "");
+        // }
 
         if (isSubmitting) {
           const el = document.querySelector(".Mui-error, [data-error]");
@@ -490,7 +490,11 @@ const [consentChecked, setConsentChecked] = useState(
                             required={true}
                             id="country"
                             label="country"
-                            options={locationList}
+                            options={locationList.filter((locItem) =>
+                              localStorage.getItem("userRegion") === "1"
+                                ? locItem.id === "1"  // If userRegion is "1", show only item with id "1"
+                                : locItem.id !== "1"  // Otherwise, show items with id "2" and "3" (exclude "1")
+                            )}
                             textFieldProps={{
                               fullWidth: true,
                               margin: "normal",
@@ -871,36 +875,6 @@ const [consentChecked, setConsentChecked] = useState(
                               }}
                             />
                           </Grid>
-                          {values.organization_type === "2" ? (
-                            <Grid item md={6} xs={12} sx={{ mt: -2 }}>
-                              <Field
-                                error={Boolean(touched.isDCPU && errors.isDCPU)}
-                                fullWidth
-                                helperText={touched.isDCPU && errors.isDCPU}
-                                name="isDCPU"
-                                disabled={
-                                  ![SUPER_ADMIN].includes(signedinUserRoleHT)
-                                }
-                                accessKey="value"
-                                component={AutoCompleteDropdown}
-                                required={true}
-                                id="is_dcpu"
-                                label="isDCPU"
-                                options={isDCPUList}
-                                textFieldProps={{
-                                  fullWidth: true,
-                                  margin: "normal",
-                                  variant: "outlined",
-                                  label: t("common:common.Is this a DCPU"),
-                                }}
-                                sx={{
-                                  "& fieldset": { borderRadius: "4px" },
-                                }}
-                              />
-                            </Grid>
-                          ) : (
-                            <></>
-                          )}
                           <Grid item md={12} xs={12} sx={{ mt: -2 }}>
                               <Typography
                                 color="primary"

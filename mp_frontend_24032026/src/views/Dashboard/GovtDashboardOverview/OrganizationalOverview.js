@@ -5,7 +5,6 @@ import { getNavbarFilterPayload } from "../../../constants";
 import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
 import { useParams } from "react-router";
 import OrganizationOverviewCard from "../Components/StateGovDashboardComponents/OrganizationOverviewCard";
-import { SUPER_ADMIN } from "../../../helpers/constant";
 
 const OrganizationalOverview = ({ isGeneralDashboard = false , isSuperAdmin = false }) => {
   const { navbarFilterValues, linkedAccounts } =
@@ -32,6 +31,9 @@ const OrganizationalOverview = ({ isGeneralDashboard = false , isSuperAdmin = fa
         }
         if (isGeneralDashboard) {
           payload.accountFilter = [localStorage.getItem("orgId")];
+        }
+        if (isSuperAdmin) {
+          payload.accountFilter = null; // Super Admin should see data across all orgs
         }
         const response =
           await APIS.GetGovtDashboardOrganizationOverview(payload);

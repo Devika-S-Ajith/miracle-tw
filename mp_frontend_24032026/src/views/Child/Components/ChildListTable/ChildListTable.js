@@ -956,9 +956,9 @@ const ChildListTable = (props) => {
                           <Chip
                             color="primary"
                             label={
-                              child?.status || (child && child.isActive
+                              child && child.isActive
                                 ? t("common:common.Active")
-                                : t("common:common.Inactive"))
+                                : t("common:common.Inactive")
                             }
                             size="small"
                             sx={{

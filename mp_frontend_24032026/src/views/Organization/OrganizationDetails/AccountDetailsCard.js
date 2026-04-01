@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useContext } from "react";
+import { useState, useRef,useContext } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import {
   Card,
@@ -7,18 +7,11 @@ import {
   Grid,
   IconButton,
   Typography,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
   CircularProgress,
   Chip,
 } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import DualListBox from "react-dual-listbox";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import AccountDetails from "../../../assets/icons/AccountDetails";
@@ -38,25 +31,17 @@ import {
   SUPER_ADMIN,
 } from "../../../helpers/constant";
 import { Box } from "@mui/system";
-import { get } from "lodash";
+
 
 const AccountDetailsCard = (props) => {
-  // Todo - API integration
   const { account, loading, getOrganisation } = props;
   const { t } = useTranslation(["common"]);
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
-  // const [orgToLink, setOrgToLink] = useState();
-  // const [linkAccountopen, setlinkAccountopen] = useState(false);
-  // const [accountListToLink, setAccountListToLink] = useState([]);
-  // const [selectedLinkAccount, setSelectedLinkAccount] = useState([]);
-  // const [loadingSaveLinkAccounts, setLoadingSaveLinkAccounts] = useState(false);
   const {
     locationList,
-    organizationList,
     signedinUserRoleHT,
     signedinUserRoleFS,
     typeList,
-    signedinOrgType,
   } = useContext(CommonDataContext);
   const ref = useRef();
   const loggedInUserOrgId = localStorage.getItem("orgId");
@@ -68,89 +53,6 @@ const AccountDetailsCard = (props) => {
   const handleMenuClose = () => {
     setMenuAnchorEl(null);
   };
-
-  // const parseOrgList = (orgList, linkedOrgList) => {
-  //   let finalOrglist = orgList.length
-  //     ? orgList.map((item) => ({
-  //         ...item,
-  //         value: item.id,
-  //         label: item.accountName,
-  //       }))
-  //     : [];
-  //   if (linkedOrgList.length) {
-  //     let parsedLinkedOrgList;
-  //     parsedLinkedOrgList = linkedOrgList.map((item) => ({
-  //       value: item.LinkedAccountId,
-  //       label:
-  //         organizationList &&
-  //         organizationList.length &&
-  //         organizationList.find((acc) => acc.id === item.LinkedAccountId)
-  //           ?.accountName,
-  //     }));
-  //     let finalLinkedOrgList = linkedOrgList.map(
-  //       (item) => `${item.LinkedAccountId}`
-  //     );
-  //     setAccountListToLink([...finalOrglist, ...parsedLinkedOrgList]);
-  //     setSelectedLinkAccount(finalLinkedOrgList);
-  //   } else {
-  //     setAccountListToLink(finalOrglist);
-  //   }
-  // };
-
-  // const getOrganizationListToLink = useCallback(async (accountID) => {
-  //   try {
-  //     const data = await APIS.OrganisationDetails(accountID);
-  //     parseOrgList(
-  //       data?.data?.data?.linkingAccounts,
-  //       data?.data?.data?.linkedAccounts
-  //     );
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // }, []);
-
-  // const handleOpenLinkAccountPopUp = (account) => {
-  //   setOrgToLink(account);
-  //   setlinkAccountopen(true);
-  //   getOrganizationListToLink(account.id);
-  // };
-
-  // const handleCloseLinkAccountPopUp = () => {
-  //   setOrgToLink([]);
-  //   setAccountListToLink([]);
-  //   setSelectedLinkAccount([]);
-  //   setlinkAccountopen(false);
-  // };
-
-  // const handleLinkAccountChange = (newSelected) => {
-  //   setSelectedLinkAccount(newSelected);
-  // };
-
-  // const handleSaveLinkAccount = async () => {
-  //   try {
-  //     setLoadingSaveLinkAccounts(true);
-  //     const payload = {
-  //       accountId: orgToLink?.id,
-  //       linkedAccountIds: selectedLinkAccount,
-  //     };
-  //     await APIS.LinkOrganization(payload).then((res) => {
-  //       setLoadingSaveLinkAccounts(false);
-  //       setlinkAccountopen(false);
-  //       if (res.status === 200) {
-  //         setRefresh();
-  //         toast.success(
-  //           t("common:warnings.Organization Links have been saved Successfully")
-  //         );
-  //       } else {
-  //         toast.error(t("common:common.Something went wrong"));
-  //         // setStatus({ success: false });
-  //       }
-  //     });
-  //   } catch (err) {
-  //     setLoadingSaveLinkAccounts(false);
-  //     toast.error(t("common:common.Something went wrong"));
-  //   }
-  // };
 
  const handleAccountStatusChange = async (payload) => {
   try {
@@ -346,24 +248,6 @@ const handleDeactivateOrReactivate = async (account, ref) => {
                 />
                 {t("common:common.Edit")}
               </MenuItem>
-              {/* <MenuItem
-              onClick={handleMenuClose}
-              onClick={() => {
-                handleOpenLinkAccountPopUp(account);
-                handleMenuClose();
-              }}
-              style={{ color: "#F37123" }}
-            >
-              <img
-                alt="add_user"
-                src="/static/icons/linkAccountIcon.svg"
-                width={20}
-                height={16}
-                style={{ alignSelf: "center", marginRight: "8px" }}
-              />
-
-              {t("common:common.Link Organization")}
-            </MenuItem> */}
               {[SUPER_ADMIN].includes(signedinUserRoleHT) && (
                 <MenuItem
                   // onClick={handleMenuClose}
@@ -603,91 +487,6 @@ const handleDeactivateOrReactivate = async (account, ref) => {
           }
         </Grid>
       </CardContent>
-
-      {/* <Dialog
-        open={linkAccountopen}
-        onClose={handleCloseLinkAccountPopUp}
-        maxWidth="sm"
-        fullWidth
-        maxHeight="100px"
-      >
-        {loadingSaveLinkAccounts && (
-          <CircularProgress
-            sx={{
-              zIndex: 1000,
-              position: "absolute",
-              top: "30%",
-              left: "47%",
-            }}
-            color="primary"
-          />
-        )}
-        <DialogTitle>
-          Link Organization
-          <Typography variant="body1">Short Description</Typography>
-        </DialogTitle>
-        <DialogContent>
-          {loading && (
-            // Render a loader inside the DualListBox while loading
-            <div
-              style={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-              }}
-            >
-              Loading...
-            </div>
-          )}
-          <DualListBox
-            options={accountListToLink}
-            selected={selectedLinkAccount}
-            showHeaderLabels={true}
-            lang={{
-              availableHeader: "All Accounts",
-              selectedHeader: "Linked to " + orgToLink?.accountName,
-            }}
-            onChange={handleLinkAccountChange}
-            icons={{
-              moveRight: (
-                <ArrowForwardIcon
-                  style={{ marginBottom: -3, color: "white" }}
-                />
-              ),
-              moveLeft: (
-                <ArrowBackIcon style={{ marginBottom: -3, color: "white" }} />
-              ),
-            }}
-          />
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginTop: "10px",
-              //padding: '10px',
-            }}
-          >
-            <Button
-              variant="outlined"
-              disabled={loadingSaveLinkAccounts}
-              onClick={handleCloseLinkAccountPopUp}
-              style={{ flex: 1, borderRadius: "4px", marginRight: "5px" }}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              onClick={handleSaveLinkAccount}
-              disabled={loadingSaveLinkAccounts}
-              color="primary"
-              style={{ flex: 1, borderRadius: "4px", marginLeft: "2px" }}
-            >
-              Save Changes
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog> */}
     </Card>
   );
 };

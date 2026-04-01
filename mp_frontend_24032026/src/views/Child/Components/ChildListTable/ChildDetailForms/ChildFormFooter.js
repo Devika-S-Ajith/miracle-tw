@@ -8,9 +8,12 @@ import CloseCaseForm from "./CloseCaseForm";
 
 const ChildFormFooter = ({
   childId,
-  onCaseClose,
+  childDetails,
+  close: closeEditForm,
+  onCaseChange,
   onSubmit,
   deleteChildClickHandler,
+  reOpenCaseHandler,
 }) => {
   const { t } = useTranslation(["common"]);
 
@@ -19,7 +22,8 @@ const ChildFormFooter = ({
       ({ close }) => (
         <CloseCaseForm
           close={close}
-          onCaseClose={onCaseClose}
+          closeEditForm={closeEditForm}
+          onCaseClose={onCaseChange}
           childId={childId}
         />
       ),
@@ -37,30 +41,50 @@ const ChildFormFooter = ({
   };
 
   return (
-    <Stack direction="row" justifyContent="space-between" spacing={2} mt={3}>
-      <Stack direction="row" spacing={2}>
-        <SecondaryButton
-          label={t("common:common.Delete", "Delete")}
-          sx={{ visibility: childId ? "visible" : "hidden" }}
-          onClick={deleteChildClickHandler}
-        />
-      <SecondaryButton
-        label={t("common:common.Close case", "Close case")}
-        sx={{ visibility: childId ? "visible" : "hidden" }}
-        onClick={closeCaseHandler}
-        />
+    <>
+      {childDetails?.status === "Case Closed" ? (
+        <Stack direction="row" justifyContent="end" spacing={2} mt={3}>
+          <SecondaryButton
+            label={t("common:common.Re-open case", "Re-open case")}
+            onClick={reOpenCaseHandler}
+          />
+          <PrimaryButton
+            label={t("common:common.Close", "Close")}
+            onClick={closeEditForm}
+          />
         </Stack>
-      <Stack direction="row" spacing={2}>
-        <SecondaryButton
-          label={t("common:common.Cancel", "Cancel")}
-          onClick={onCaseClose}
-        />
-        <PrimaryButton
-          label={t("common:common.Save", "Save")}
-          onClick={onSubmit}
-        />
-      </Stack>
-    </Stack>
+      ) : (
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          spacing={2}
+          mt={3}
+        >
+          <Stack direction="row" spacing={2}>
+            <SecondaryButton
+              label={t("common:common.Delete", "Delete")}
+              sx={{ visibility: childId ? "visible" : "hidden" }}
+              onClick={deleteChildClickHandler}
+            />
+            <SecondaryButton
+              label={t("common:common.Close case", "Close case")}
+              sx={{ visibility: childId ? "visible" : "hidden" }}
+              onClick={closeCaseHandler}
+            />
+          </Stack>
+          <Stack direction="row" spacing={2}>
+            <SecondaryButton
+              label={t("common:common.Cancel", "Cancel")}
+              onClick={closeEditForm}
+            />
+            <PrimaryButton
+              label={t("common:common.Save", "Save")}
+              onClick={onSubmit}
+            />
+          </Stack>
+        </Stack>
+      )}
+    </>
   );
 };
 

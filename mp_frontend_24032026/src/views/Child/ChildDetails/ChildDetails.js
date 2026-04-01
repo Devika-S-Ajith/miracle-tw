@@ -35,6 +35,8 @@ import ConsolidatedAssessmentProgressReport from "../../../components/Consolidat
 import ChildSummary from "../Components/ChildBasicDetails";
 import ChildBasicDetails from "../Components/ChildBasicDetails";
 import ChildLogs from "../Components/ChildLogs";
+import { ModalService } from "../../../components/Modal";
+import ManageChildForm from "../Components/ChildListTable/ChildDetailForms/ManageChildForm";
                                                                     
 const tabs = [
   { label: "Details", value: "details" },
@@ -239,11 +241,30 @@ const ChildDetails = () => {
                       currentTab === "Family") && (
                       <Button
                         color="primary"
-                        component={RouterLink}
                         startIcon={<PencilAltIcon fontSize="small" />}
                         sx={{ m: 1 }}
-                        to={`/dashboard/children/${id}/edit`}
                         variant="contained"
+                        onClick={() => {
+                          ModalService.open(
+                            ({ close }) => (
+                              <ManageChildForm close={close} id={id} />
+                            ),
+                            {
+                              modalTitle: (
+                                <Box>
+                                  Child{" "}
+                                  <span style={{ color: "#FF8C42" }}>
+                                    ACTIVE
+                                  </span>
+                                </Box>
+                              ),
+                              width: "30%",
+                              height: "95%",
+                              hideModalFooter: true,
+                              enableClose: true,
+                            },
+                          );
+                        }}
                       >
                         {t("common:common.Edit")}
                       </Button>

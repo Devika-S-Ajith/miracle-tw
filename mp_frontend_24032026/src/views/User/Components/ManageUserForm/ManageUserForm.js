@@ -933,9 +933,6 @@ const ManageUserForm = (props) => {
                             name="FSRole"
                             id="FSRole"
                             disabled={
-                              [COUNTRY_ID_INDIA, COUNTRY_ID_UGANDA].includes(
-                                values.country
-                              ) ||
                               ![SUPER_ADMIN, ADMIN, ADMIN_CASEMANAGER].includes(
                                 signedinUserRoleFS
                               ) ||

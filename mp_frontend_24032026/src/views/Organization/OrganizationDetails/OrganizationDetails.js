@@ -7,8 +7,6 @@ import {
   CardContent,
   Grid,
   Typography,
-  TextField,
-  Autocomplete,
   Paper,
 } from "@mui/material";
 import OrganizationUsers from "../Components/OrganizationUsers";
@@ -127,29 +125,6 @@ const OrganizationDetails = () => {
                 </Typography>
               </Grid>
             </Grid>
-
-            {/* <Box display="flex" gap={2} mt>
-              <Autocomplete
-                id="country"
-                options={locationList.filter(
-                  (locItem) =>
-                    localStorage.getItem("userRegion") === "1"
-                      ? locItem.id === "1" // If userRegion is "1", show only item with id "1"
-                      : locItem.id !== "1", // Otherwise, show items with id "2" and "3" (exclude "1")
-                )}
-                required
-                clearIcon={false}
-                getOptionLabel={(option) => option.countryName}
-                value={selectedCountry}
-                isOptionEqualToValue={(option, value) => option.id === value.id}
-                onChange={(event, newValue) => {
-                  setSelectedCountry(newValue);
-                }}
-                sx={{ width: 200, backgroundColor: "#fff" }}
-                renderInput={(params) => <TextField {...params} />}
-              />
-            </Box> */}
-
             <Grid container spacing={2} style={{ marginTop: "0px" }}>
               <Grid item xs={12}>
                 <Grid item xs={12}>
@@ -171,7 +146,7 @@ const OrganizationDetails = () => {
                     {signedinUserRoleHT === "superadmin" && (
                       <Grid item xs={6}>
                         <OrganizationalOverview
-                          isGeneralDashboard={true}
+                          isGeneralDashboard={false}
                           isSuperAdmin={false}
                         />
                       </Grid>

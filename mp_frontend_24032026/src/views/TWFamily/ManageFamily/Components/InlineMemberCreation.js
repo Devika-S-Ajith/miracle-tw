@@ -1,4 +1,4 @@
-import { useCallback, useState, useRef} from 'react';
+import { useCallback, useState, useRef, useEffect} from 'react';
 import { useTranslation } from 'react-i18next';
 import {
     Box,
@@ -8,7 +8,6 @@ import {
     Typography,
     RadioGroup,
     IconButton,
-    Tooltip,
     Menu,
     CircularProgress,
     Skeleton,
@@ -31,13 +30,12 @@ import TextFieldWithExternalLabel from './TextFieldWithExternalLabel';
 import PencilEditIcon from '../../../../assets/icons/PencilEditIcon';
 import ManageChildForm from '../../../Child/Components/ChildListTable/ChildDetailForms/ManageChildForm';
 import DeleteMember from '../../../../assets/icons/DeleteMember';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 
 
 const InlineMemberCreation = ({
     familyId,
     caseWorker,
-    familyName,
-    getNewlyAddedChild,
     setIsLoading,
     familyRelations,
     isFamilyActive = true 
@@ -55,6 +53,42 @@ const InlineMemberCreation = ({
     const [isAdding, setIsAdding] = useState(false);
     const [menuState, setMenuState] = useState({ anchorEl: null, member: null });
     const open = Boolean(menuState.anchorEl);
+
+
+    const getMemberDetailsRef = useRef(null);
+    getMemberDetailsRef.current = (member) => {
+    formik?.setValues(prev => {
+        const currentMembers = prev.members || [];
+
+        const memberIndex = currentMembers.findIndex(m =>
+            member._rowKey
+                ? m._rowKey === member._rowKey
+                : m.id === member.id && m.isChild === member.isChild
+        );
+
+        if (memberIndex === -1) return prev; // no change, Formik won't re-render
+
+        const existing = currentMembers[memberIndex];
+        const updatedMembers = [...currentMembers];
+        updatedMembers[memberIndex] = {
+            ...existing,
+            ...member,
+            profileInformation: {
+                ...existing.profileInformation,
+                ...member.profileInformation,
+            },
+        };
+
+        return { ...prev, members: updatedMembers };
+        
+    });
+};
+
+    const getMemberDetails = useCallback((member) => {
+        getMemberDetailsRef.current?.(member);
+    }, []);
+    // ──────────────────────────────────────────────────────────────────────────
+
     const handleClick = (event, member) => {
         setMenuState({ anchorEl: event.currentTarget, member });
     };
@@ -84,16 +118,22 @@ const InlineMemberCreation = ({
         {
             label: t("common:common.Remove member", "Remove member"),
             icon: DeleteMember,
-            isDisabled: (member) => member?.isPrimaryCaregiver ,
+            isDisabled: (member) => (member?.isPrimaryCaregiver || !member?.id) ? true : false,
             onClick: (obj) => handleDeleteMember(obj),
+        },
+        {
+            label: t("common:common.Clear", "Clear"),
+            icon: RemoveCircleIcon,
+            isDisabled: (member) => member?.id ? true : false,
+            onClick: (obj) => handleClearMember(obj),
         },
     ];
 
     const iconSx = {
         cursor: "pointer",
         fontSize: 23,
-        color: "action.active",
-        "&:hover": { color: "primary.main" },
+        color:"midhnightblue",
+        "&:hover": { color: "midhnightblue" },
     };
 
     const handleRadioChange = (e, member) => {
@@ -107,49 +147,37 @@ const InlineMemberCreation = ({
         setSelectedCareGiver(memberKey);
     };
 
-    const getMemberDetails = (member) => {
-        const memberIndex = memberList.findIndex(m =>
-            member._rowKey
-                ? m._rowKey === member._rowKey
-                : m.id === member.id && m.isChild === member.isChild
-        );
-        if (memberIndex !== -1) {
-            const existing = memberList[memberIndex];
-            formik?.setFieldValue(`members.${memberIndex}`, {
-                ...existing,
-                ...member,
-                profileInformation: {
-                    ...existing.profileInformation,
-                    ...member.profileInformation,
-                },
-            });
-        }
-    };
+    const mergedChildAndFamilyInfo = (childInfo, familyInfo) => {
+
+    }
 
     const handleEditMember = (member) => {
         const modalConfig = {
             width: '30%',
-            modalTitle: ["3", "9"].includes(member.TWFamilyRelationId)
-                ? t('common:child.Edit Child')
-                : t('common:family.Family member or caregiver', 'Family member or caregiver'),
-            modalExtraTitle: `${member.isActive ? ` ${t('common:common.Active')}` : ` ${t('common:common.Deactivated')} ${member?.deactivatedDate ?? ''}`}`,
             hideModalFooter: true,
             maxHeight: "90%",
-            enableClose: true,
+           
         };
+
+        const updatedConfig = !member.isChild
+            ? {
+                ...modalConfig,
+                modalTitle: t('common:family.Family member or caregiver', 'Family member or caregiver'),
+                modalExtraTitle: member.isActive
+                    ? ` ${t('common:common.Active')}`
+                    : ` ${t('common:common.Deactivated')} ${member?.deactivatedDate ?? ''}`,
+                enableClose: true,
+            }
+            : modalConfig;
 
         ModalService.open(({ close }) => (
             ["3", "9"].includes(member.TWFamilyRelationId) ? (
                 <ManageChildForm
-                    family={{
-                        familyId,
-                        caseWorker,
-                        familyName, 
-                    }}
+                    isFromFamily={true}
                     close={close}
-                    getChildDetails={getNewlyAddedChild}
+                    getMemberDetails={getMemberDetails}
                     id={member?.id}
-                    childInfo={member}
+                    childInfo={{ ...member, TWFamilyId: familyId, caseWorkerId: caseWorker }}
                 />
             ) : (
                 <AddFamilyMemberModal
@@ -162,7 +190,7 @@ const InlineMemberCreation = ({
                     dropdownValues={{ familyRelations: familyRelations.filter(relation => relation.groupValue !== "Child") }}
                 />
             )
-        ), modalConfig);
+        ), updatedConfig);
     };
 
     const handleAddMember = async (push) => {
@@ -177,9 +205,30 @@ const InlineMemberCreation = ({
         setIsAdding(false);
     };
 
+    const handleClearMember = (member) => {
+        const currentMembers = formik?.values?.members || [];
+        // Use _rowKey if present, otherwise fallback to id/isChild
+        const memberIndex = currentMembers.findIndex(m =>
+            member._rowKey
+                ? m._rowKey === member._rowKey
+                : m.id === member.id && m.isChild === member.isChild
+        );
+        if (memberIndex !== -1) {
+            // Use FieldArray's remove if available for better Formik integration
+            if (typeof formik?.remove === "function") {
+                formik.remove(memberIndex);
+            } else {
+                // Fallback: manually update the array
+                const updatedMembers = currentMembers.filter((_, idx) => idx !== memberIndex);
+                formik?.setFieldValue('members', updatedMembers);
+            }
+        }
+    };
+
+
     const checkForDuplicateChild = async (index, member, fieldValue = null, fieldName = null) => {
-        let { firstName, lastName, gender, dateOfBirth,id } = member;
-        if(id) return
+        let { firstName, lastName, gender, dateOfBirth, id } = member;
+        if (id) return;
         if (!firstName || !gender || !dateOfBirth) return;
         if (fieldValue !== null && fieldName) {
             switch (fieldName) {
@@ -215,20 +264,16 @@ const InlineMemberCreation = ({
             const response = await APIS.GetDuplicateChildList(payload);
             setIsLoading(false);
 
-            //setCheckedFields(prev => ({ ...prev, [memberKey]: true }));
-             const existingChild = response?.data?.data || [];
+            const existingChild = response?.data?.data || [];
 
             if (existingChild.length > 0) {
-                // Mock data for the selection list
-               
-                // 1. Define a local wrapper component to handle the stateful input
                 const DuplicateModalContent = ({ close }) => {
                     const [localLastName, setLocalLastName] = useState(formik?.values?.members?.[index]?.lastName || '');
 
                     const handleLastNameChange = (e) => {
                         const value = e.target.value;
-                        setLocalLastName(value); // Updates UI immediately
-                        formik?.setFieldValue(`members.${index}.lastName`, value); // Syncs with Formik
+                        setLocalLastName(value);
+                        formik?.setFieldValue(`members.${index}.lastName`, value);
                     };
 
                     return (
@@ -255,7 +300,7 @@ const InlineMemberCreation = ({
                                 variant="outlined"
                                 fullWidth
                                 required={false}
-                                value={localLastName} // Controlled by local state
+                                value={localLastName}
                                 onChange={handleLastNameChange}
                             />
 
@@ -289,7 +334,6 @@ const InlineMemberCreation = ({
                     );
                 };
 
-                // 2. Open the Modal using the wrapper
                 ModalService.open(({ close }) => <DuplicateModalContent close={close} />, {
                     modalTitle: t('common:child.Child may exist in the system', 'Child may exist in the system'),
                     width: '30%',
@@ -304,8 +348,8 @@ const InlineMemberCreation = ({
         }
     };
 
-    const searchChildren = useCallback(async (searchTerm = "",childId) => {
-        if(childId) return
+    const searchChildren = useCallback(async (searchTerm = "", childId) => {
+        if (childId) return;
         searchTerm = searchTerm.trim();
         if (searchTerm.length < 3) return [];
 
@@ -341,7 +385,6 @@ const InlineMemberCreation = ({
     const handleChildSelection = (child, currentIndex) => {
         if (!child || typeof child !== 'object') return;
         const { firstName = '', lastName = '', gender = '', dateOfBirth = null, id = '', isMajor = false } = child;
-        //formik?.setFieldValue(`members[${currentIndex}].gender`, gender);
         formik?.setValues(prev => {
             const members = [...prev.members];
             const { _rowKey, ...currentMember } = members[currentIndex];
@@ -364,36 +407,28 @@ const InlineMemberCreation = ({
         const member = memberList?.[index];
         if (['firstName', 'gender', 'dateOfBirth'].includes(fieldName)) {
             setTimeout(() => {
-                checkForDuplicateChild(index, member, fieldValue,fieldName);
+                checkForDuplicateChild(index, member, fieldValue, fieldName);
             }, 150);
         }
     };
 
     const handleDateChange = (index, newValue) => {
-        // Update formik value
         formik?.setFieldValue(`members.${index}.dateOfBirth`, newValue);
 
-        // Trigger duplicate check with the new value
         const member = memberList?.[index];
         const updatedMember = { ...member, dateOfBirth: newValue };
-        // Check if all required fields are filled
-        // setTimeout(() => {
-        //     if (updatedMember.FirstName && updatedMember.LastName && updatedMember.Gender && newValue) {
-        //         checkForDuplicateChild(index, updatedMember);
-        //     }
-        // }, 200);
     };
 
     const checkEmptyDataFields = (index) => {
         if (index < 0) return false;
         const member = memberList?.[index];
-        if (!member?.TWFamilyRelationId) return true; // If member doesn't exist, consider it as having empty fields
+        if (!member?.TWFamilyRelationId) return true;
         if (["3", "9"].includes(member?.TWFamilyRelationId)) {
             return !member?.firstName || !member?.gender || !member?.dateOfBirth;
         } else {
-            return !member?.firstName
+            return !member?.firstName;
         }
-    }
+    };
 
     const handleDeleteMember = (member) => {
         ModalService.open(({ close }) => (
@@ -409,21 +444,16 @@ const InlineMemberCreation = ({
                     <Button
                         variant="contained"
                         onClick={() => {
-
-                            const memberIndex = memberList.findIndex(m => m.id === member.id && m.isChild === member.isChild);
-
+                            // Read fresh from formik.values to avoid stale closure
+                            const currentMembers = formik?.values?.members || [];
+                            const memberIndex = currentMembers.findIndex(m =>
+                                member._rowKey
+                                    ? m._rowKey === member._rowKey
+                                    : m.id === member.id && m.isChild === member.isChild
+                            );
                             if (memberIndex !== -1) {
                                 formik?.setFieldValue(`members.${memberIndex}.isDeleted`, true);
                             }
-
-                            const hasActive = memberList.some(m => !m.isDeleted);
-                            if (!hasActive) {
-                                formik?.setFieldValue('members', [
-                                    ...memberList,
-                                    { TWFamilyRelationId: "", isActive: true, isMajor: false },
-                                ]);
-                            }
-
                             close();
                         }}
                     >
@@ -437,22 +467,24 @@ const InlineMemberCreation = ({
             hideModalFooter: true,
             enableClose: true,
         });
-    }
+    };
 
     const buildFamilyOptions = (isChild, memberId) => {
         if (!memberId) return familyRelations;
         return isChild ? familyRelations.filter(relation => relation.groupValue === "Child")
             : familyRelations.filter(relation => relation.groupValue !== "Child");
-    }
+    };
 
     return (
         <FieldArray name="members">
             {({ insert, remove, push }) => (
                 <>
-                    {memberList?.filter(member => !member.isDeleted)
-                        .map((obj, i) => (
-                            <Box
-                                key={i}
+                    {memberList
+                        ?.map((obj, trueIndex) => ({ obj, trueIndex }))
+                        .filter(({ obj }) => !obj.isDeleted)
+                        .map(({ obj, trueIndex: i }) => (
+                           
+                            <Box key={obj.id || obj._rowKey}
                                 sx={{
                                     display: "flex",
                                     flexDirection: "column",
@@ -460,6 +492,7 @@ const InlineMemberCreation = ({
                                     borderRadius: 1,
                                 }}
                             >
+                                 
                                 <RadioGroup value={selectedCareGiver}>
                                     <Box
                                         sx={{
@@ -473,16 +506,17 @@ const InlineMemberCreation = ({
                                             minHeight: { xs: 75, md: "unset" },
                                         }}
                                     >
+                                        
                                         <Grid container spacing={2} alignItems="center">
                                             <Grid item md={2} xs={12}>
                                                 <Field
                                                     name={`members.${i}.TWFamilyRelationId`}
                                                     component={DropdownWithExternalLabel}
-                                                    options={buildFamilyOptions(obj.isChild,obj?.id)}
+                                                    options={buildFamilyOptions(obj.isChild, obj?.id)}
                                                     customFunction={(newValue) => {
                                                         formik?.setFieldValue(
                                                             `members.${i}.isChild`,
-                                                            ["3", "9"].includes(newValue) ? true : false 
+                                                            ["3", "9"].includes(newValue) ? true : false
                                                         );
                                                     }}
                                                     required={true}
@@ -512,6 +546,7 @@ const InlineMemberCreation = ({
                                                         },
                                                     }}
                                                 />
+                                               
                                             </Grid>
                                             {obj.TWFamilyRelationId && (
                                                 ["3", "9"].includes(
@@ -532,7 +567,7 @@ const InlineMemberCreation = ({
                                                         handleDateChange={(newValue) => handleDateChange(i, newValue)}
                                                         setFieldValue={formik?.setFieldValue}
                                                         config={InlineChildCreationConfig}
-                                                        searchFunction={(inputvalue) => searchChildren(inputvalue,obj.id)}
+                                                        searchFunction={(inputvalue) => searchChildren(inputvalue, obj.id)}
                                                         RenderOptionList={ChildRenderOption}
                                                         handleChildSelection={(child) => handleChildSelection(child, i)}
                                                         index={i}
@@ -566,7 +601,6 @@ const InlineMemberCreation = ({
                                                             flexShrink: 0,
                                                         }}
                                                     >
-
                                                         <Radio
                                                             checked={selectedCareGiver === (obj.id || obj._rowKey)}
                                                             onChange={(e) => handleRadioChange(e, obj)}
@@ -609,8 +643,10 @@ const InlineMemberCreation = ({
                                 </RadioGroup>
                             </Box>
                         ))}
-                    {isAdding ? (<Skeleton variant="rectangular" animation="wave" height={50} width="100%" sx={{ mb: 1 }} />)
-                        : <Button
+                    {isAdding ? (
+                        <Skeleton variant="rectangular" animation="wave" height={50} width="100%" sx={{ mb: 1 }} />
+                    ) : (
+                        <Button
                             onClick={() => handleAddMember(push)}
                             disabled={isAdding || memberList?.length > 20 || checkEmptyDataFields(memberList?.length - 1)}
                             variant={memberList?.length < 1 ? "contained" : "text"}
@@ -620,11 +656,11 @@ const InlineMemberCreation = ({
                                 ? t("common:family.Add a new family member", "Add a new family member")
                                 : t("common:family.Add another family member", "Add another family member")}
                         </Button>
-                    }
+                    )}
                 </>
             )}
         </FieldArray>
     );
-}
+};
 
 export default InlineMemberCreation;

@@ -8,7 +8,7 @@ import React, {
 import { Formik, Form } from "formik"; // Corrected Formik imports
 import * as Yup from "yup"; // Added Yup import
 import { Trans, useTranslation } from "react-i18next";
-import { Box, Button, Grid, Typography } from "@mui/material";
+import { Box, Button, Grid, Stack, Typography } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
@@ -29,15 +29,17 @@ import {
 import { CommonDataContext } from "../../../../../common/contexts/CommonDataContext";
 import APIS from "../../../../../common/hooks/UseApiCalls";
 import useMounted from "../../../../../common/hooks/UseMounted";
-import { dateFormatter } from "../../../../../constants";
+import { dateFormatter, MonthDayYearFormatter } from "../../../../../constants";
 import dayjs from "dayjs";
 import { useDebouncedCallback } from "use-debounce";
 import { ModalService } from "../../../../../components/Modal";
 import DeleteChild from "./DeleteChild";
+import Heading from "../../../../../components/Heading";
+import CloseIcon from "@mui/icons-material/Close";
 
 const userRegion = localStorage.getItem("userRegion");
 
-const ManageChildForm = ({ close, id, openForEdit }) => {
+const ManageChildForm = ({ close, id, openForEdit ,onCaseChange,getMemberDetails = null,childInfo,isFromFamily = false }) => {
   const { t } = useTranslation(["common"]);
   const [isLoading, setIsLoading] = useState(false); // Defined missing state
   const mounted = useMounted();
@@ -59,7 +61,17 @@ const ManageChildForm = ({ close, id, openForEdit }) => {
     if (id) {
       getChildDetails();
     }
-  }, [id]);
+    console.log("Child Info in ManageChildForm: ", childInfo);
+    if(isFromFamily && childInfo && !id) {
+      setChildDetails(childInfo);
+    }
+
+  }, [id, isFromFamily, childInfo]);
+
+   const handleResponse = useCallback((payload) => {
+          getMemberDetails?.(payload);
+          close();
+      }, [getMemberDetails, close]);
 
   useEffect(() => {
     if (openForEdit) {
@@ -140,10 +152,10 @@ const ManageChildForm = ({ close, id, openForEdit }) => {
         });
         const familyData = res.data?.data?.contactInformation;
         if (familyData) {
-          setFieldValue("address1", familyData.addressLine1 || "");
-          setFieldValue("address2", familyData.addressLine2 || "");
+          setFieldValue("addressline1", familyData.addressLine1 || "");
+          setFieldValue("addressline2", familyData.addressLine2 || "");
           setFieldValue("city", familyData.city || "");
-          setFieldValue("state", familyData.TWStateId || "");
+          setFieldValue("TWStateId", familyData.TWStateId || "");
           setFieldValue("zipCode", familyData.zipCode || "");
         }
       } catch (error) {
@@ -152,10 +164,10 @@ const ManageChildForm = ({ close, id, openForEdit }) => {
       }
       // Clear address fields logic here
     } else {
-      setFieldValue("address1", null);
-      setFieldValue("address2", null);
+      setFieldValue("addressline1", null);
+      setFieldValue("addressline2", null);
       setFieldValue("city", null);
-      setFieldValue("state", null);
+      setFieldValue("TWStateId", null);
       setFieldValue("zipCode", null);
     }
   };
@@ -167,19 +179,19 @@ const ManageChildForm = ({ close, id, openForEdit }) => {
   }, []);
 
   const handleFamilyChange = async ({ data, setFieldValue }) => {
-    setFieldValue("caseWorker", data?.caseWorkerId);
+    setFieldValue("caseWorkerId", data?.caseWorkerId);
   };
 
   const uniqueCheckHandler = useDebouncedCallback(
     async ({ values, setFieldError, validateForm }) => {
       // Only check if all required fields are present
-      if (values?.firstName && values.gender && values.dob) {
+      if (values?.firstName && values.gender && values.dateOfBirth) {
         try {
           const res = await APIS.CheckUniqueChild({
             id: id || null,
             firstName: values.firstName,
             lastName: values.lastName,
-            birthDate: values.dob,
+            birthDate: values.dateOfBirth,
           });
           const isUnique = res.data?.data?.isUnique;
           if (!isUnique) {
@@ -248,56 +260,131 @@ const ManageChildForm = ({ close, id, openForEdit }) => {
     });
   };
 
+  const getChangedValues = (values, initialValues) => {
+    const changedValues = {};
+    let hasChange = false;
+
+    Object.keys(values).forEach((key) => {
+      const value = values[key];
+      const initialValue = initialValues[key];
+
+      if (
+        value !== null &&
+        typeof value === "object" &&
+        !Array.isArray(value)
+      ) {
+        // Deep compare for nested objects
+        const nestedChanged = getChangedValues(value, initialValue || {});
+        if (Object.keys(nestedChanged).length > 0) {
+          changedValues[key] = nestedChanged;
+          hasChange = true;
+        }
+      } else {
+        const newValue = value === "" ? null : value;
+        const oldValue = initialValue === "" ? null : initialValue;
+        if (newValue !== oldValue) {
+          changedValues[key] = newValue;
+          hasChange = true;
+        }
+      }
+    });
+
+    // Only return changedValues if there is any change
+    return hasChange ? changedValues : {};
+  };
+
+  const reOpenCaseHandler = async () => {
+    try {
+      const res = await APIS.ReOpenChidCase({ childId: id });
+      if (res?.status === 200) {
+        close(); // Close the current form/modal
+        if (onCaseChange) onCaseChange(); // Callback to parent to refresh data or update UI
+        ModalService.open(() => null, {
+          width: "30%",
+          modalDescription: (
+            <SubHeading
+              value={t(
+                "common:common.This child’s case has been re-opened",
+                "This child’s case has been re-opened",
+              )}
+            />
+          ),
+          hideActionButton: true,
+          cancelButtonText: t("common:common.ok", "Ok"),
+        });
+      }
+    } catch (error) {
+      console.error("Error re-opening case:", error);
+    } finally {
+    }
+  };
+
+  const onCloseCaseHandler = () => {
+    if (onCaseChange) onCaseChange(); // Callback to parent to refresh data or update UI
+  };
+
   return (
     <Formik
       enableReinitialize={true}
-      validateOnBlur={true}
       validateOnChange={true}
+      validateOnBlur={true}
       initialValues={{
         // Basic Details
         firstName: childDetails?.firstName || null,
         lastName: childDetails?.lastName || null,
         gender: childDetails?.gender || null,
-        dob: childDetails?.dateOfBirth
+        dateOfBirth: childDetails?.dateOfBirth
           ? dateFormatter(childDetails.dateOfBirth)
           : null,
-        family: childDetails?.TWFamilyId || null,
-        currentLivingCondition: childDetails?.TWChildPlacementStatusId || null,
-        caseWorker: childDetails?.caseWorkerId || null,
-        disability: childDetails?.disability || false,
+        TWFamilyId: childDetails?.TWFamilyId || null,
+        TWChildCurrentPlacementStatusId:
+          childDetails?.TWChildPlacementStatusId || null,
+        caseWorkerId: childDetails?.caseWorkerId || null,
+        childhasdisability: childDetails?.childhasdisability || false,
+        isSameAsFamilyAddress: childDetails?.isSameAsFamilyAddress || false,
 
         // Contact Details
-        sameAddress: childDetails?.isSameAsFamilyAddress || false,
-        address1: childDetails?.contactInformation?.addressLine1 || null,
-        address2: childDetails?.contactInformation?.addressLine2 || null,
-        city: childDetails?.contactInformation?.city || null,
-        state: childDetails?.contactInformation?.TWStateId || null, // From commented dropdown
-        zipCode: childDetails?.contactInformation?.zipCode || null,
-
+        contactInformation: {
+          TWCountryId:
+            childDetails?.contactInformation?.TWCountryId ||
+            localStorage.getItem("userRegion"),
+          TWStateId: childDetails?.contactInformation?.TWStateId || null, // From commented dropdown
+          TWDistrictId: childDetails?.contactInformation?.TWDistrictId || null,
+          addressline1: childDetails?.contactInformation?.addressLine1 || null,
+          addressline2: childDetails?.contactInformation?.addressLine2 || null,
+          city: childDetails?.contactInformation?.city || null,
+          zipCode: childDetails?.contactInformation?.zipCode || null,
+        },
         // Additional Details
-        phoneNumber: childDetails?.profileInformation?.phoneNumber || "", // From commented PhoneNumber
-        email: childDetails?.profileInformation?.email || null,
-        primaryLanguage: childDetails?.profileInformation?.TWLanguageId || null, // From commented dropdown
-        educationLevel:
-          childDetails?.profileInformation?.TWChildEducationLevelId || null, // From commented dropdown
-        ethnicity: childDetails?.profileInformation?.ethnicity || null,
-        allergies: childDetails?.profileInformation?.allergy || null,
-        notes: childDetails?.profileInformation?.notes || null,
-
+        profileInformation: {
+          phoneNumber: childDetails?.profileInformation?.phoneNumber || "", // From commented PhoneNumber
+          email: childDetails?.profileInformation?.email || null,
+          TWLanguageId: childDetails?.profileInformation?.TWLanguageId || null, // From commented dropdown
+          ethnicity: childDetails?.profileInformation?.ethnicity || null,
+          TWChildEducationLevelId:
+            childDetails?.profileInformation?.TWChildEducationLevelId || null, // From commented dropdown
+          highestEducationLevel:
+            childDetails?.profileInformation?.highestEducationLevel || null,
+          allergy: childDetails?.profileInformation?.allergy || null,
+          notes: childDetails?.profileInformation?.notes || null,
+        },
         // Case Management
-        dateEnteredAgency:
-          childDetails?.caseManagementInformation?.dateOfEntry || null,
-        dateOfCWSEntry:
-          childDetails?.caseManagementInformation?.dateOfCWSEntry || null, // From commented Date of CWS entry
-        caseManagementStep: childDetails?.TWChildPlacementStatusId || null, // From commented dropdown
-        levelOfCare: childDetails?.caseManagementInformation?.level || null,
-        medicaidNumber:
-          childDetails?.caseManagementInformation?.medicaidNumber || null,
-        placementId:
-          childDetails?.caseManagementInformation?.placementId || null,
-        previousPlacementsCount:
-          childDetails?.caseManagementInformation?.previousPlacementsCount ||
-          null, // From commented # of previous placements
+        caseManagementInformation: {
+          dateOfEntry:
+            childDetails?.caseManagementInformation?.dateOfEntry || null,
+          dateOfCWSEntry:
+            childDetails?.caseManagementInformation?.dateOfCWSEntry || null, // From commented Date of CWS entry
+          TWChildPlacementStatusId:
+            childDetails?.TWChildPlacementStatusId || null, // From commented dropdown
+          level: childDetails?.caseManagementInformation?.level || null,
+          medicaidNumber:
+            childDetails?.caseManagementInformation?.medicaidNumber || null,
+          placementId:
+            childDetails?.caseManagementInformation?.placementId || null,
+          previousPlacementsCount:
+            childDetails?.caseManagementInformation?.previousPlacementsCount ||
+            null, // From commented # of previous placements
+        },
       }}
       validationSchema={Yup.object().shape({
         // Basic Details
@@ -316,17 +403,17 @@ const ManageChildForm = ({ close, id, openForEdit }) => {
             t("common:warnings.Gender is required", "Gender is required"),
           )
           .nullable(),
-        dob: Yup.object()
+        dateOfBirth: Yup.string()
           .required(
             t(
               "common:warnings.Date of birth is required",
               "Date of birth is required",
             ),
           )
-          .typeError("Date of birth is required")
+          .typeError("Invalid date")
           .nullable(),
-        family: Yup.string().nullable(),
-        caseWorker: Yup.string()
+        TWFamilyId: Yup.string().nullable(),
+        caseWorkerId: Yup.string()
           .required(
             t(
               "common:warnings.Case worker is required",
@@ -334,203 +421,187 @@ const ManageChildForm = ({ close, id, openForEdit }) => {
             ),
           )
           .nullable(),
-        disability: Yup.boolean(),
+        childhasdisability: Yup.boolean(),
 
         // Contact Details
-        sameAddress: Yup.boolean(),
-        address1: Yup.string().max(255).nullable(),
-        address2: Yup.string().max(255).nullable(),
-        city: Yup.string().max(255).nullable(),
-        zipCode: Yup.string()
-          .max(20)
-          .nullable()
-          .test({
-            name: "zip-format-validation",
-            exclusive: true,
-            message: t(
-              "common:warnings.Invalid ZIP code format",
-              "Invalid ZIP code format",
-            ),
-            test: function (zip_code) {
-              const country = localStorage.getItem("userRegion");
-              const countryObj = locationList?.find((obj) => obj.id == country);
-              const isoCode = countryObj?.isoCode?.toUpperCase();
-              if (!zip_code) return true; // allow empty if nullable
-              if (isoCode === "IND") {
-                return /^\d{6}$/.test(zip_code);
-              } else {
-                return /^\d{5}$/.test(zip_code);
-              }
-            },
-          }),
-        state: Yup.string().max(255).nullable(),
+        isSameAsFamilyAddress: Yup.boolean(),
+        contactInformation: Yup.object().shape({
+          addressline1: Yup.string().max(255).nullable(),
+          addressline2: Yup.string().max(255).nullable(),
+          TWStateId: Yup.string().max(255).nullable(),
+          city: Yup.string().max(255).nullable(),
+          zipCode: Yup.string()
+            .max(20)
+            .nullable()
+            .test({
+              name: "zip-format-validation",
+              exclusive: true,
+              message: t(
+                "common:warnings.Invalid ZIP code format",
+                "Invalid ZIP code format",
+              ),
+              test: function (zip_code) {
+                const country = localStorage.getItem("userRegion");
+                const countryObj = locationList?.find(
+                  (obj) => obj.id == country,
+                );
+                const isoCode = countryObj?.isoCode?.toUpperCase();
+                if (!zip_code) return true; // allow empty if nullable
+                if (isoCode === "IND") {
+                  return /^\d{6}$/.test(zip_code);
+                } else {
+                  return /^\d{5}$/.test(zip_code);
+                }
+              },
+            }),
+        }),
 
         // Additional Details
-        email: Yup.string()
-          .email(
-            t("common:warnings.Invalid email format", "Invalid email format"),
-          )
-          .max(255)
-          .nullable(),
-        phoneNumber: Yup.string().max(20).nullable(),
-        primaryLanguage: Yup.string().nullable(),
-        educationLevel: Yup.string().nullable(),
-        allergies: Yup.string().max(500).nullable(),
-        notes: Yup.string().max(1000).nullable(),
+        profileInformation: Yup.object().shape({
+          email: Yup.string()
+
+            .email(
+              t("common:warnings.Invalid email format", "Invalid email format"),
+            )
+            .max(255)
+            .nullable(),
+          phoneNumber: Yup.string().max(20).nullable(),
+          TWLanguageId: Yup.string().nullable(),
+          ethnicity: Yup.string().nullable(),
+          TWChildEducationLevelId: Yup.string().nullable(),
+          allergy: Yup.string().max(500).nullable(),
+          notes: Yup.string().max(1000).nullable(),
+        }),
 
         // Case Management
-        dateEnteredAgency: Yup.date()
-          .nullable()
-          .when("dob", (dob, schema) => {
-            return schema.test({
-              name: "is-date-after-dob",
-              exclusive: true,
-              message:
-                "Date child entered agency cannot be before child's date of birth",
-              test: function (dateEnteredAgency) {
-                // If either dob or dateEnteredAgency is null, return true
-                if (!dob || !dayjs(dob).isValid() || !dateEnteredAgency) {
-                  return true;
-                }
+        caseManagementInformation: Yup.object().shape({
+          dateOfEntry: Yup.date()
+            .nullable()
+            .when("dateOfBirth", (dateOfBirth, schema) => {
+              return schema.test({
+                name: "is-date-after-dateOfBirth",
+                exclusive: true,
+                message:
+                  "Date child entered agency cannot be before child's date of birth",
+                test: function (dateOfEntry) {
+                  // If either dateOfBirth or dateOfEntry is null, return true
+                  if (
+                    !dateOfBirth ||
+                    !dayjs(dateOfBirth).isValid() ||
+                    !dateOfEntry
+                  ) {
+                    return true;
+                  }
 
-                // Compare the dates
-                return dateEnteredAgency >= dob;
-              },
-            });
-          })
-          .nullable(),
-        dateOfCWSEntry: Yup.string()
-          .test({
-            name: "not-in-future",
-            message: "Date cannot be in the future",
-            test: function (dateOfCWSEntry) {
-              if (!dateOfCWSEntry) return true;
-
-              const [entryMonth, entryYear] = dateOfCWSEntry
-                .split("/")
-                .map(Number);
-              const now = dayjs();
-
-              const currentMonth = now.month() + 1; // 0-based
-              const currentYear = now.year();
-
-              return (
-                entryYear < currentYear ||
-                (entryYear === currentYear && entryMonth <= currentMonth)
-              );
-            },
-          })
-
-          .when("dateEnteredAgency", (dateEnteredAgency, schema) => {
-            return schema.test({
-              name: "is-date-before-foster-care-start",
-              exclusive: true,
-              message:
-                "Child Welfare Entry date cannot be after the child entered agency date",
+                  // Compare the dates
+                  return dateOfEntry >= dateOfBirth;
+                },
+              });
+            })
+            .nullable(),
+          dateOfCWSEntry: Yup.string()
+            .test({
+              name: "not-in-future",
+              message: "Date cannot be in the future",
               test: function (dateOfCWSEntry) {
-                // if (isEditing && childData?.hadPrevCM) return true;
+                if (!dateOfCWSEntry) return true;
 
-                if (!dateEnteredAgency || !dateOfCWSEntry) return true;
-
-                const dateEnteredAgencyMonth =
-                  dayjs(dateEnteredAgency).month() + 1;
-                const dateEnteredAgencyYear = dayjs(dateEnteredAgency).year();
                 const [entryMonth, entryYear] = dateOfCWSEntry
                   .split("/")
                   .map(Number);
+                const now = dayjs();
+
+                const currentMonth = now.month() + 1; // 0-based
+                const currentYear = now.year();
 
                 return (
-                  entryYear < dateEnteredAgencyYear ||
-                  (entryYear === dateEnteredAgencyYear &&
-                    entryMonth <= dateEnteredAgencyMonth)
+                  entryYear < currentYear ||
+                  (entryYear === currentYear && entryMonth <= currentMonth)
                 );
               },
-            });
-          })
-          .when("dob", (dob, schema) => {
-            return schema.test({
-              name: "is-date-after-dob",
-              exclusive: true,
-              message:
-                "Child Welfare Entry date cannot be before the child's date of birth",
-              test: function (dateOfCWSEntry) {
-                // if (isEditing && childData?.hadPrevCM) return true;
-                if (!dob || !dateOfCWSEntry) return true;
+            })
 
-                const dobMonth = dayjs(dob).month() + 1;
-                const dobYear = dayjs(dob).year();
-                const [entryMonth, entryYear] = dateOfCWSEntry
-                  .split("/")
-                  .map(Number);
+            .when("dateOfEntry", (dateOfEntry, schema) => {
+              return schema.test({
+                name: "is-date-before-foster-care-start",
+                exclusive: true,
+                message:
+                  "Child Welfare Entry date cannot be after the child entered agency date",
+                test: function (dateOfCWSEntry) {
+                  // if (isEditing && childData?.hadPrevCM) return true;
 
-                return (
-                  entryYear > dobYear ||
-                  (entryYear === dobYear && entryMonth >= dobMonth)
-                );
-              },
-            });
-          })
-          .nullable(),
-        levelOfCare: Yup.string().max(255).nullable(),
-        medicaidNumber: Yup.string().max(100).nullable(),
-        placementId: Yup.string().max(100).nullable(),
-        caseManagementStep: Yup.string().nullable(),
-        previousPlacementsCount: Yup.number()
-          .typeError(t("common:warnings.Must be a number"))
-          .min(0)
-          .nullable(),
+                  if (!dateOfEntry || !dateOfCWSEntry) return true;
+
+                  const dateEnteredAgencyMonth = dayjs(dateOfEntry).month() + 1;
+                  const dateEnteredAgencyYear = dayjs(dateOfEntry).year();
+                  const [entryMonth, entryYear] = dateOfCWSEntry
+                    .split("/")
+                    .map(Number);
+
+                  return (
+                    entryYear < dateEnteredAgencyYear ||
+                    (entryYear === dateEnteredAgencyYear &&
+                      entryMonth <= dateEnteredAgencyMonth)
+                  );
+                },
+              });
+            })
+            .when("dateOfBirth", (dateOfBirth, schema) => {
+              return schema.test({
+                name: "is-date-after-dateOfBirth",
+                exclusive: true,
+                message:
+                  "Child Welfare Entry date cannot be before the child's date of birth",
+                test: function (dateOfCWSEntry) {
+                  // if (isEditing && childData?.hadPrevCM) return true;
+                  if (!dateOfBirth || !dateOfCWSEntry) return true;
+
+                  const dobMonth = dayjs(dateOfBirth).month() + 1;
+                  const dobYear = dayjs(dateOfBirth).year();
+                  const [entryMonth, entryYear] = dateOfCWSEntry
+                    .split("/")
+                    .map(Number);
+
+                  return (
+                    entryYear > dobYear ||
+                    (entryYear === dobYear && entryMonth >= dobMonth)
+                  );
+                },
+              });
+            })
+            .nullable(),
+          level: Yup.string().max(255).nullable(),
+          medicaidNumber: Yup.string().max(100).nullable(),
+          placementId: Yup.string().max(100).nullable(),
+          TWChildPlacementStatusId: Yup.string().nullable(),
+          previousPlacementsCount: Yup.number()
+            .typeError(t("common:warnings.Must be a number"))
+            .min(0)
+            .nullable(),
+        }),
       })}
       onSubmit={async (values, { setSubmitting }) => {
         setIsLoading(true);
         try {
-          // Map form values to API payload
-          const payload = {
-            firstName: values.firstName,
-            lastName: values.lastName || null,
-            gender: values.gender,
-            dateOfBirth: values.dob,
-            TWFamilyId: values.family || null,
-            TWChildCurrentPlacementStatusId: values.currentLivingCondition || null,
-            caseWorkerId: values.caseWorker,
-            childHasDisability: values.disability || false,
-            isSameAsFamilyAddress: values.sameAddress || false,
-            contactInformation: {
-              TWCountryId: userRegion,
-              TWStateId: values.state || null,
-              TWDistrictId: null,
-              addressLine1: values.address1?.trim().length > 0 ? values.address1 : null,
-              addressLine2: values.address2?.trim().length > 0 ? values.address2 : null,
-              city: values.city?.trim().length > 0 ? values.city : null,
-              zipCode: values.zipCode?.trim().length > 0 ? values.zipCode : null
-            },
-            profileInformation: {
-              phoneNumber:
-                values.phoneNumber?.length > 0 ? values.phoneNumber : null,
-              email: values.email,
-              TWLanguageId: values.primaryLanguage || null,
-              ethnicity: values.ethnicity, // Not present in form, set as needed
-              highestEducationLevel: values.educationLevel,
-              TWChildEducationLevelId: values.educationLevel || null, // Not present in form, set as needed
-              allergy: values.allergies,
-              notes: values.notes,
-            },
-            caseManagementInformation: {
-              dateOfEntry: values.dateEnteredAgency,
-              dateOfCWSEntry: values.dateOfCWSEntry, // Not present in form, set as needed
-              TWChildPlacementStatusId:
-                values.caseManagementStep || null,
-              level: values.levelOfCare || null,
-              medicaidNumber: values.medicaidNumber,
-              placementId: values.placementId,
-              previousPlacementsCount: values.previousPlacementsCount,
-            },
-          };
           if (id) {
-            payload.id = id;
-            const res = await APIS.UpdateChild(payload);
-            console.log("Update API response: ", res);
+            let changedValues = getChangedValues(
+              values,
+              initialValuesRef.current,
+            );
+            changedValues.id = id;
+            const res = await APIS.UpdateChild(changedValues);
+            if (isFromFamily) {
+              handleResponse(changedValues)
+            }       
           } else {
-            const res = await APIS.CreateChild(payload);
+            const res = await APIS.CreateChild(values);
+            if (isFromFamily) {
+              const newPayload = {
+                ...values,
+                _rowKey: childInfo?._rowKey,
+              }
+              handleResponse(newPayload)
+            }                  
           }
           close();
         } catch (error) {
@@ -560,6 +631,8 @@ const ManageChildForm = ({ close, id, openForEdit }) => {
         valuesRef.current = values;
         isFormDirtyRef.current = dirty;
 
+        console.log("Formik Errors: ", errors, values);
+
         // Auto-scroll to error
         if (isSubmitting && Object.keys(errors)?.length > 0) {
           const el = document.querySelector(".Mui-error, [data-error]");
@@ -567,6 +640,21 @@ const ManageChildForm = ({ close, id, openForEdit }) => {
         }
         return (
           <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              mb={2}
+            >
+              <Stack direction="row" justifyContent="flex-start" spacing={1}>
+                <Heading heading="Child" />
+                <Heading
+                  heading={`${childDetails?.status}${childDetails?.status === "Case Closed" ? ` ${MonthDayYearFormatter(childDetails?.lastCaseClosedDate, "short")}` : ""}`}
+                  color="#F37123"
+                />
+              </Stack>
+              <CloseIcon style={{ color: "#000" }} onClick={close} />
+            </Stack>
             <Form id="add-child-form">
               <Box mx={-2}>
                 <Box sx={{ maxHeight: "70vh", overflowY: "auto", px: 2 }}>
@@ -613,7 +701,7 @@ const ManageChildForm = ({ close, id, openForEdit }) => {
                           })}
                           isDisabled={isSubmitting}
                         />
-                        {!values?.sameAddress && (
+                        {!values?.isSameAsFamilyAddress && (
                           <DynamicForm
                             values={values}
                             errors={errors}
@@ -685,10 +773,13 @@ const ManageChildForm = ({ close, id, openForEdit }) => {
 
               <ChildFormFooter
                 childId={id}
-                onCaseClose={close}
+                childDetails={childDetails}
+                close={close}
+                onCaseChange={onCloseCaseHandler}
                 isSubmitting={isSubmitting}
                 onSubmit={handleSubmit}
                 deleteChildClickHandler={deleteChildClickHandler}
+                reOpenCaseHandler={reOpenCaseHandler}
               />
             </Form>
           </LocalizationProvider>
