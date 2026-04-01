@@ -52,21 +52,21 @@ export const ChildBasicDetails = ({
   },
   {
     type: "DatePicker",
-    name: "dob",
+    name: "dateOfBirth",
     label: "Date of birth",
     placeholder: "Date of birth",
     validateOnChange: true,
-    size: "small",
+    size: "medium",
     color: "#FFFFFF",
     required: true,
     fullWidth: true,
     variant: "outlined",
     gridProps: { xs: 12, md: 12 },
-    onChange: ()=>uniqueCheckHandler({values, setFieldError, validateForm})
+    // onChange: ()=>uniqueCheckHandler({values, setFieldError, validateForm})
   },
   {
     type: "dropdown",
-    name: "family",
+    name: "TWFamilyId",
     label: "Family child is living with",
     translateLabels: true,
     required: false,
@@ -79,23 +79,23 @@ export const ChildBasicDetails = ({
   },
   {
     type: "dropdown",
-    name: "currentLivingCondition",
+    name: "TWChildCurrentPlacementStatusId",
     label: "Current living condition",
     translateLabels: true,
     required: false,
     validateOnChange: true,
     options: childDropdownLists?.currentPlacementStatus || [],
-    // value: values?.currentLivingCondition,
+    // value: values?.TWChildCurrentPlacementStatusId,
     gridProps: { md: 12, xs: 12 },
   },
   {
     type: "dropdown",
-    name: "caseWorker",
+    name: "caseWorkerId",
     label: "Case worker for this child",
     translateLabels: true,
     required: true,
     validateOnChange: true,
-    disabled: values?.family && values?.caseWorker?.length ? true : false, // Disable if family selected
+    disabled: values?.TWFamilyId && values?.caseWorkerId?.length ? true : false, // Disable if family selected
     options:
       users.map((user) => ({
         value: `${user.firstName} ${user.lastName}`,
@@ -105,7 +105,7 @@ export const ChildBasicDetails = ({
   },
   {
     type: "CheckboxWithLabel",
-    name: "disability",
+    name: "childhasdisability",
     label: "This child has a legally recognized disability",
     gridProps: { xs: 12 },
   },
@@ -118,7 +118,7 @@ export const ChildAddressConditionalFields = ({
 }) => [
   {
     type: "CheckboxWithLabel",
-    name: "sameAddress",
+    name: "isSameAsFamilyAddress",
     label: "Child's address is the same as family's address",
     gridProps: { xs: 12 },
     onChange: (checked) =>
@@ -134,7 +134,7 @@ export const ChildContactDetails = ({
 }) => [
   {
     type: "text",
-    name: "address1",
+    name: "contactInformation.addressline1",
     label: "Address 1",
     required: false,
     showTooltip: false,
@@ -144,7 +144,7 @@ export const ChildContactDetails = ({
   },
   {
     type: "text",
-    name: "address2",
+    name: "contactInformation.addressline2",
     label: "Address 2",
     required: false,
     showTooltip: false,
@@ -155,7 +155,7 @@ export const ChildContactDetails = ({
   },
   {
     type: "text",
-    name: "city",
+    name: "contactInformation.city",
     label: "City",
     required: false,
     showTooltip: false,
@@ -165,7 +165,7 @@ export const ChildContactDetails = ({
   },
   {
     type: "dropdown",
-    name: "state",
+    name: "contactInformation.TWStateId",
     label: "State",
     translateLabels: true,
     required: false,
@@ -177,7 +177,7 @@ export const ChildContactDetails = ({
   },
   {
     type: "text",
-    name: "zipCode",
+    name: "contactInformation.zipCode",
     label: "Mailing code / Postal Index Number / ZIP code",
     required: false,
     showTooltip: false,
@@ -194,7 +194,7 @@ export const ChildAdditionalDetails = ({
   return [
     {
       type: "PhoneNumber",
-      name: "phoneNumber",
+      name: "profileInformation.phoneNumber",
       label: "common:common.Phone Number",
       fullWidth: true,
       variant: "outlined",
@@ -202,7 +202,7 @@ export const ChildAdditionalDetails = ({
     },
     {
       type: "text",
-      name: "email",
+      name: "profileInformation.email",
       label: "Email",
       required: false,
       showTooltip: false,
@@ -212,7 +212,7 @@ export const ChildAdditionalDetails = ({
     },
     {
       type: "dropdown",
-      name: "primaryLanguage",
+      name: "profileInformation.TWLanguageId",
       label: "Primary language",
       translateLabels: true,
       required: false,
@@ -226,7 +226,7 @@ export const ChildAdditionalDetails = ({
     },
     {
       type: "dropdown",
-      name: "ethnicity",
+      name: "profileInformation.ethnicity",
       label: "Ethnicity (only for US-based orgs)",
       translateLabels: true,
       required: false,
@@ -236,7 +236,7 @@ export const ChildAdditionalDetails = ({
     },
     {
       type: "dropdown",
-      name: "educationLevel",
+      name: "profileInformation.TWChildEducationLevelId",
       label: "Education level",
       translateLabels: true,
       required: false,
@@ -246,7 +246,7 @@ export const ChildAdditionalDetails = ({
     },
     {
       type: "text",
-      name: "allergies",
+      name: "profileInformation.allergy",
       label: "Allergies",
       required: false,
       showTooltip: false,
@@ -256,7 +256,7 @@ export const ChildAdditionalDetails = ({
     },
     {
       type: "text",
-      name: "notes",
+      name: "profileInformation.notes",
       label: "Notes",
       required: false,
       showTooltip: false,
@@ -271,7 +271,7 @@ export const ChildAdditionalDetails = ({
 export const CaseManagementDetails = (childDropdownLists) => [
   {
     type: "DatePicker",
-    name: "dateEnteredAgency",
+    name: "caseManagementInformation.dateOfEntry",
     label: "Date child entered agency",
     placeholder: "Date child entered agency",
     // size: "small",
@@ -283,7 +283,7 @@ export const CaseManagementDetails = (childDropdownLists) => [
   },
   {
     type: "MonthYearPicker",
-    name: "dateOfCWSEntry",
+    name: "caseManagementInformation.dateOfCWSEntry",
     label: "Date child entered welfare system",
     placeholder: "Date child entered welfare system",
     // size: "small",
@@ -295,7 +295,7 @@ export const CaseManagementDetails = (childDropdownLists) => [
   },
   {
     type: "dropdown",
-    name: "caseManagementStep",
+    name: "caseManagementInformation.TWChildPlacementStatusId",
     label: "Case management step",
     translateLabels: true,
     required: false,
@@ -305,7 +305,7 @@ export const CaseManagementDetails = (childDropdownLists) => [
   },
   {
     type: "dropdown",
-    name: "levelOfCare",
+    name: "caseManagementInformation.level",
     label: "Level of care (US logs only)",
     translateLabels: true,
     required: false,
@@ -315,7 +315,7 @@ export const CaseManagementDetails = (childDropdownLists) => [
   },
   {
     type: "text",
-    name: "medicaidNumber",
+    name: "caseManagementInformation.medicaidNumber",
     label: "Medicaid number (US logs only)",
     required: false,
     showTooltip: false,
@@ -326,7 +326,7 @@ export const CaseManagementDetails = (childDropdownLists) => [
   },
   {
     type: "text",
-    name: "placementId",
+    name: "caseManagementInformation.placementId",
     label: "Placement ID (US logs only)",
     required: false,
     showTooltip: false,
@@ -336,17 +336,16 @@ export const CaseManagementDetails = (childDropdownLists) => [
     gridProps: { xs: 12 },
     // gridProps: { md: 6.5, xs: 6.5 }
   },
-  {
-    type: "dropdown",
-    name: "caseManagementStep",
+   {
+    type: "text",
+    name: "caseManagementInformation.previousPlacementsCount",
     label: "# of previous placements (US logs only)",
-    translateLabels: true,
-    required: false,
-    validateOnChange: true,
-    labelKey: "firstName",
-    extraLabel: "lastName",
-    optionsSource: "caseWorker",
+    showTooltip: false,
+    fullWidth: true,
+    variant: "outlined",
+    multiline: true,
     gridProps: { xs: 12 },
+    // gridProps: { md: 6.5, xs: 6.5 }
   },
 ];
 

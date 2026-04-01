@@ -10,7 +10,7 @@ import SearchableTextField from './SearchableTextField';
 import { DateFormatFromRegion } from '../../../../constants';
 import { DatePicker, LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import { size } from 'lodash';
+import { get, size } from 'lodash';
 import { Checkbox, FormControlLabel } from '@mui/material';
 import { PhoneTextInput } from '../../../../components/PhoneTextInput/PhoneTextInput';
 import { is } from 'date-fns/locale';
@@ -58,33 +58,11 @@ const DynamicForm = ({
         return name;
     };
 
-    // Helper to safely get field value
-    const getFieldValue = (name) => {
-        // When used in FieldArray, values is already scoped to the item
-        if (index !== undefined && parentFieldName) {
-            return values?.[name];
-        }
-        // For regular forms, access directly
-        return values?.[name];
-    };
 
-    // Helper to safely get field error
-    const getFieldError = (name) => {
-        // errors is already scoped when passed from FieldArray
-        if (index !== undefined && parentFieldName) {
-            return errors?.[name];
-        }
-        return errors?.[name];
-    };
-
-    // Helper to safely get field touched state
-    const getFieldTouched = (name) => {
-        // touched is already scoped when passed from FieldArray
-        if (index !== undefined && parentFieldName) {
-            return touched?.[name];
-        }
-        return touched?.[name];
-    };
+// Replace your helper functions with:
+const getFieldValue = (name) => get(values, name, '');
+const getFieldError = (name) => get(errors, name, '');
+const getFieldTouched = (name) => get(touched, name, false);
 
     const renderField = (fieldConfig) => {
         const { type, name, gridProps, condition, ...fieldProps } = fieldConfig;
@@ -114,8 +92,8 @@ const DynamicForm = ({
                             label={t ? t(fieldProps.label) : fieldProps.label}
                             tooltipText={t && fieldProps.tooltipText ? t(fieldProps.tooltipText) : fieldProps.tooltipText}
                             showTooltip={fieldProps.showTooltip}
-                            name={fullFieldName} // Use full scoped name
-                            id={fullFieldName} // Use full scoped name
+                            name={`${fullFieldName}`} // Use full scoped name
+                            id={`${fullFieldName}`} // Use full scoped name
                             fullWidth={fieldProps.fullWidth}
                             error={Boolean(fieldTouched && fieldError)}
                             helperText={fieldTouched && fieldError}
@@ -162,6 +140,7 @@ const DynamicForm = ({
                     <Grid item {...gridProps} key={fullFieldName}>
                         <Field
                             name={fullFieldName} // Use full scoped name
+                            id={`${fullFieldName}`}
                             component={DropdownWithExternalLabel}
                             onChange={fieldProps?.onChange}
                             onClose={(e,reason,value) => {
@@ -206,6 +185,7 @@ const DynamicForm = ({
                     <Grid item {...gridProps} key={fullFieldName}>
                         <SearchableTextField
                             name={fullFieldName} // Use full scoped name
+                            id={`${fullFieldName}`}
                             placeholder={fieldProps.placeholder}
                             initialTextValue={initialTextValue}
                             searchFunction={searchFunction}
@@ -274,6 +254,7 @@ const DynamicForm = ({
                         <DatePicker
                             value={fieldValue ? dayjs(fieldValue) : undefined} // Use helper function
                             format={DateFormatFromRegion(true)}
+                            id={`${fullFieldName}`}
                             disabled={isDisabled}
                             onChange={(newValue) => {
                                 // If custom handleDateChange is provided, use it
@@ -357,6 +338,7 @@ const DynamicForm = ({
                                     checked={Boolean(fieldValue)}
                                     onChange={(e) => {setFieldValue(fullFieldName, e.target.checked); fieldProps?.onChange?.(e.target.checked);}}
                                     name={fullFieldName}
+                                    id={`${fullFieldName}`}
                                     onBlur={handleBlur}
                                     sx={{
                                         color: isDisabled ? 'grey' : '#1D334B', 
@@ -402,6 +384,7 @@ const DynamicForm = ({
                         value={fieldValue? dayjs(fieldValue) : null}
                         onChange={(newValue) => setFieldValue(fullFieldName,newValue)}
                         format="hh:mm A"
+                        id={`${fullFieldName}`}
                         minuteStep={5}
                         disabled={isDisabled}
                         slotProps={{

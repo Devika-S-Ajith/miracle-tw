@@ -7,8 +7,6 @@ import {
   CardContent,
   Grid,
   Typography,
-  TextField,
-  Autocomplete,
   Paper,
 } from "@mui/material";
 import OrganizationUsers from "../Components/OrganizationUsers";
@@ -21,6 +19,7 @@ import AccountDetailsCard from "./AccountDetailsCard";
 import FosterShareDetailsCard from "./FosterShareDetailsCard";
 import ThriveScaleDetailsCard from "./ThriveScaleDetailsCard";
 import { UNASSIGNED } from "../../../helpers/constant";
+import OrganizationalOverview from "../../Dashboard/GovtDashboardOverview/OrganizationalOverview";
 
 const OrganizationDetails = () => {
   const { t } = useTranslation(["common"]);
@@ -37,7 +36,9 @@ const OrganizationDetails = () => {
   useEffect(() => {
     if (locationList.length) {
       setSelectedCountry(
-        locationList.find((obj) => obj.id == localStorage.getItem("userRegion"))
+        locationList.find(
+          (obj) => obj.id == localStorage.getItem("userRegion"),
+        ),
       );
     }
   }, [locationList]);
@@ -61,7 +62,7 @@ const OrganizationDetails = () => {
 
   useEffect(() => {
     getOrganisation();
-    return () => { };
+    return () => {};
   }, []);
 
   const handleRefresh = () => {
@@ -85,12 +86,12 @@ const OrganizationDetails = () => {
           backgroundColor: "background.default",
           minHeight: "100%",
           mt: 2,
-          mr: 2
+          mr: 2,
         }}
       >
         <Grid container width={1}>
           <Grid item xs={12} sm={12}>
-            <Grid container justifyContent="space-between" spacing={3}>
+            <Grid container justifyContent="space-between" spacing={3} >
               <Grid item sx={{ display: "flex", flexDirection: "row" }}>
                 <Typography color="textPrimary" variant="h5">
                   {t("common:common.Admin")}
@@ -124,48 +125,44 @@ const OrganizationDetails = () => {
                 </Typography>
               </Grid>
             </Grid>
-
-            <Box display="flex" gap={2} mt>
-              <Autocomplete
-                id="country"
-                options={locationList.filter((locItem) =>
-                  localStorage.getItem("userRegion") === "1"
-                    ? locItem.id === "1"  // If userRegion is "1", show only item with id "1"
-                    : locItem.id !== "1"  // Otherwise, show items with id "2" and "3" (exclude "1")
-                )}
-                required
-                clearIcon={false}
-                getOptionLabel={(option) => option.countryName}
-                value={selectedCountry}
-                isOptionEqualToValue={(option, value) => option.id === value.id}
-                onChange={(event, newValue) => {
-                  setSelectedCountry(newValue);
-                }}
-                sx={{ width: 200, backgroundColor: "#fff" }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                  />
-                )}
-              />
-            </Box>
-
             <Grid container spacing={2} style={{ marginTop: "0px" }}>
               <Grid item xs={12}>
-                <AccountDetailsCard
-                  account={account}
-                  loading={loading}
-                  setRefresh={handleRefresh}
-                  getOrganisation={getOrganisation}
-                />
+                <Grid item xs={12}>
+                  <Grid container spacing={2}>
+                    {/* AccountDetailsCard: full width for non-super-admins */}
+                    <Grid
+                      item
+                      xs={signedinUserRoleHT === "superadmin" ? 6 : 12}
+                    >
+                      <AccountDetailsCard
+                        account={account}
+                        loading={loading}
+                        setRefresh={handleRefresh}
+                        getOrganisation={getOrganisation}
+                      />
+                    </Grid>
+
+                    {/* OrganizationalOverview: only for super admin */}
+                    {signedinUserRoleHT === "superadmin" && (
+                      <Grid item xs={6}>
+                        <OrganizationalOverview
+                          isGeneralDashboard={false}
+                          isSuperAdmin={false}
+                        />
+                      </Grid>
+                    )}
+                  </Grid>
+                </Grid>
               </Grid>
+
               <Grid item xs={12}>
                 <Grid container spacing={2}>
-                  {signedinUserRoleFS !== UNASSIGNED && (
+                  {signedinUserRoleFS !== UNASSIGNED &&
+                    signedinUserRoleHT !== "superadmin" && (
                     <Grid item xs={5}>
                       <Paper style={{ height: "100%" }}>
                         {account?.accessType === "BOTH" ||
-                          account?.accessType === "FOSTER_SHARE" ? (
+                        account?.accessType === "FOSTER_SHARE" ? (
                           <FosterShareDetailsCard
                             accountId={id}
                             selectedCountry={selectedCountry}
@@ -181,26 +178,32 @@ const OrganizationDetails = () => {
                       </Paper>
                     </Grid>
                   )}
-                  {signedinUserRoleHT !== UNASSIGNED && ![6].includes(Number(signedinOrgType))  && (
-                    <Grid item xs={7}>
-                      <Paper style={{ height: "100%" }}>
-                        {account?.accessType === "BOTH" ||
+                  {signedinUserRoleHT !== UNASSIGNED &&
+                    signedinUserRoleHT !== "superadmin" &&
+                    ![6].includes(Number(signedinOrgType)) && (
+                      <Grid item xs={7}>
+                        <Paper style={{ height: "100%" }}>
+                          {account?.accessType === "BOTH" ||
                           account?.accessType === "THRIVE_SCALE" ? (
-                          <ThriveScaleDetailsCard
-                            accountId={id}
-                            selectedCountry={selectedCountry}
-                          />
-                        ) : (
-                          <Card sx={{ borderRadius: "8px", px: 2, height: 1 }}>
-                            <CardHeader
-                              title={t("common:common.Thrive Scale")}
+                            <ThriveScaleDetailsCard
+                              accountId={id}
+                              selectedCountry={selectedCountry}
                             />
-                            <CardContent sx={{ pt: 0 }}>No access</CardContent>
-                          </Card>
-                        )}
-                      </Paper>
-                    </Grid>
-                  )}
+                          ) : (
+                            <Card
+                              sx={{ borderRadius: "8px", px: 2, height: 1 }}
+                            >
+                              <CardHeader
+                                title={t("common:common.Thrive Scale")}
+                              />
+                              <CardContent sx={{ pt: 0 }}>
+                                No access
+                              </CardContent>
+                            </Card>
+                          )}
+                        </Paper>
+                      </Grid>
+                    )}
                 </Grid>
               </Grid>
               <Grid item xs={12}>

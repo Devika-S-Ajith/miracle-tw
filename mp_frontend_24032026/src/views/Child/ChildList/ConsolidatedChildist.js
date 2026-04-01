@@ -42,18 +42,17 @@ const ConsolidatedChildList = (props) => {
   const { signedinOrgId } = useContext(CommonDataContext);
   const [users, setUsers] = useState([]);
 
-    //   actions
-    const [menuState, setMenuState] = useState({ anchorEl: null, row: null });
-    const open = Boolean(menuState?.anchorEl);
-  
-    const handleClick = (event, row) => {
-      setMenuState({ anchorEl: event.currentTarget, row });
-    };
-  
-    const handleClose = () => {
-      setMenuState({ anchorEl: null, row: null });
-    };
-  
+  //   actions
+  const [menuState, setMenuState] = useState({ anchorEl: null, row: null });
+  const open = Boolean(menuState?.anchorEl);
+
+  const handleClick = (event, row) => {
+    setMenuState({ anchorEl: event.currentTarget, row });
+  };
+
+  const handleClose = () => {
+    setMenuState({ anchorEl: null, row: null });
+  };
 
   const getStatusBackgroundColor = (status) => {
     switch (status) {
@@ -152,19 +151,18 @@ const ConsolidatedChildList = (props) => {
                     setMenuState(null);
                     ModalService.open(
                       ({ close }) => (
-                        <ManageChildForm close={close} id={menuState?.row?.id} />
+                        <ManageChildForm
+                          close={close}
+                          id={menuState?.row?.id}
+                          onCaseChange={getTableData} // Refresh data after re-opening case
+                        />
                       ),
                       {
-                        modalTitle: (
-                          <Box>
-                            Child{" "}
-                            <span style={{ color: "#FF8C42" }}>ACTIVE</span>
-                          </Box>
-                        ),
                         width: "30%",
-                        height: "90%",
+                        height: "95%",
+                        
                         hideModalFooter: true,
-                        enableClose: true,
+                        enableClose: false,
                       },
                     );
                   }}
@@ -325,7 +323,7 @@ const ConsolidatedChildList = (props) => {
                   </Box>
                 ),
                 width: "30%",
-                height: "90%",
+                height: "95%",
                 hideModalFooter: true,
                 enableClose: true,
               },

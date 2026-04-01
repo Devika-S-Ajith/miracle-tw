@@ -573,9 +573,7 @@ export const getCurrentLanguageIdFromCode = (languageCode) => {
 export const formatAddressFromContactInfo = (contactInfo, locationList) => {
   if (!contactInfo) return "-";
 
-
   const addressParts = [];
-
 
   // Add address lines
   if (contactInfo?.addressLine1) {
@@ -585,12 +583,10 @@ export const formatAddressFromContactInfo = (contactInfo, locationList) => {
     addressParts.push(contactInfo.addressLine2);
   }
 
-
   // Add city
   if (contactInfo?.city) {
     addressParts.push(contactInfo.city);
   }
-
 
   // Add state/province name by looking it up
   if (contactInfo?.TWStateId && locationList?.length) {
@@ -606,7 +602,6 @@ export const formatAddressFromContactInfo = (contactInfo, locationList) => {
       }
     }
   }
-
 
   // Add district
   if (contactInfo?.TWDistrictId && locationList?.length) {
@@ -628,24 +623,10 @@ export const formatAddressFromContactInfo = (contactInfo, locationList) => {
     }
   }
 
-
-  // Add country name
-  if (contactInfo?.TWCountryId && locationList?.length) {
-    const country = locationList.find(
-      (item) => item.id == contactInfo.TWCountryId
-    );
-    if (country?.countryName) {
-      addressParts.push(country.countryName);
-    }
-  }
-
-
   // Add zip code
   if (contactInfo?.zipCode) {
     addressParts.push(contactInfo.zipCode);
   }
-
-
   return addressParts.length > 0 ? addressParts.join(", ") : "-";
 };
 
@@ -662,8 +643,3 @@ export const getLanguageNameFromId = (languageId) => {
   }
   return languageName;
 };
-
-
-
-
-

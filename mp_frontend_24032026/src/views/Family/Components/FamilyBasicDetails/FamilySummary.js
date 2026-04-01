@@ -1,19 +1,15 @@
 import { Stack } from "@mui/system";
 import CommonCard from "../../../../components/CommonCard";
 import { Chip, Divider, Grid, Typography } from "@mui/material";
-import TrendingFlatIcon from "@mui/icons-material/TrendingFlat";
+import TrendingFlatIcon from '@mui/icons-material/TrendingFlat';
 import { dateFormatter } from "../../../../constants";
-import {
-  formatAddressFromContactInfo,
-  getDistrictList,
-  getSelectedCountryDetails,
-  getStateList,
-} from "../../../../helpers/helperFunction";
+import { getDistrictList, getSelectedCountryDetails, getStateList } from "../../../../helpers/helperFunction";
 import { useContext } from "react";
 import { CommonDataContext } from "../../../../common/contexts/CommonDataContext";
 import LabelValue from "../../../../components/LabelValue/LabelValue";
 
 const FamilySummary = ({ t, family }) => {
+
   const {
     id,
     familyName,
@@ -26,36 +22,19 @@ const FamilySummary = ({ t, family }) => {
     assessmentDate,
     firstAssessmentThriveScaleScore = null,
     firstAssessmentDateOfAssessment = null,
-    percentageChangeFromFirst = null,
+    percentageChangeFromFirst = null
   } = family || {};
 
-  const {
-    addressLine1,
-    addressLine2,
-    city,
-    TWDistrictId,
-    TWStateId,
-    TWCountryId,
-  } = contactInformation || {};
-  const { TWLanguageId, DateStartedasFP } = additionalInformation || {};
+  const { addressLine1, addressLine2, city, TWDistrictId, TWStateId, TWCountryId } = contactInformation || {};
+  const { TWLanguageId , DateStartedasFP } = additionalInformation || {};
 
-  const { locationList, htLanguagesList, familyDropdownLists } =
-    useContext(CommonDataContext);
+  const { locationList, htLanguagesList, familyDropdownLists } = useContext(CommonDataContext);
   const { familyRelations } = familyDropdownLists || {};
-  const hasAssessment =
-    thriveScaleScore !== null && thriveScaleScore !== undefined;
-  const hasMultipleAssessment =
-    percentageChangeFromFirst !== null &&
-    percentageChangeFromFirst !== undefined;
-
-  const statusLabel =
-    family?.status ||
-    (isActive
-      ? t("common:common.Active", "Active")
-      : t("common:common.Case closed", "Case closed"));
+  const hasAssessment = thriveScaleScore !== null && thriveScaleScore !== undefined;
+  const hasMultipleAssessment = percentageChangeFromFirst !== null && percentageChangeFromFirst !== undefined;
 
   return (
-    <CommonCard
+ <CommonCard
       title={t(`common:infoCard.${"Family summary"}`, "Family summary")}
       apiError={false}
       onReload={() => {}}
@@ -73,19 +52,17 @@ const FamilySummary = ({ t, family }) => {
         <Grid item xs={6}>
           <LabelValue
             label="Status"
-            value={
+            valueComponent={
               <Chip
-                label={statusLabel}
+                label={
+                  isActive
+                    ? t("common:common.Active", "Active")
+                    : t("common:common.Case closed", "Case closed")
+                }
                 size="small"
                 sx={{
-                  backgroundColor:
-                    statusLabel === "Active"
-                      ? "#3DAA1D"
-                      : statusLabel === "Case closed" ||
-                          statusLabel === "Case Closed"
-                        ? "#D6DBDE"
-                        : "#b8e6e1",
-                  color: statusLabel === "Active" ? "white" : "black",
+                  backgroundColor: "#b8e6e1",
+                  color: "black",
                   fontSize: "0.75rem",
                   fontWeight: 600,
                   borderRadius: "20px",
@@ -99,14 +76,28 @@ const FamilySummary = ({ t, family }) => {
         <Grid item xs={6}>
           <LabelValue
             label="Address"
-            value={
-              family?.contactInformation
-                ? formatAddressFromContactInfo(
-                    family?.contactInformation,
-                    locationList,
-                  )
-                : "-"
-            }
+            value={(() => {
+              const parts = [
+                addressLine1,
+                addressLine2,
+                city,
+                TWDistrictId
+                  ? getDistrictList(locationList, TWCountryId, TWStateId)?.find(
+                    (item) => item.id == TWDistrictId
+                  )?.districtName
+                  : null,
+                TWStateId
+                  ? getStateList(locationList, TWCountryId)?.find(
+                    (item) => item.id == TWStateId
+                  )?.stateName
+                  : null,
+                TWCountryId
+                  ? getSelectedCountryDetails(locationList, TWCountryId)?.countryName
+                  : null,
+              ];
+
+              return parts.filter(Boolean).join(", ");
+            })()}
             labelColor="#535F66"
             fontWeight={700}
           />
@@ -114,7 +105,7 @@ const FamilySummary = ({ t, family }) => {
         <Grid item xs={6}>
           <LabelValue
             label="Phone number"
-            value={phoneNumber?.trim().length ? phoneNumber : "-"}
+            value={phoneNumber}
             labelColor="#535F66"
             fontWeight={700}
           />
@@ -136,7 +127,8 @@ const FamilySummary = ({ t, family }) => {
         <Grid item xs={6}>
           <LabelValue
             label="First fostered"
-            value={DateStartedasFP || "-"}
+            // check living situation
+            value={dateFormatter(DateStartedasFP, "short") || "-"}
             labelColor="#535F66"
             fontWeight={700}
           />
@@ -145,10 +137,11 @@ const FamilySummary = ({ t, family }) => {
           <Divider sx={{ mt: 1, borderBottomWidth: 2, mb: 1 }} />
         </Grid>
 
+
         <Grid item xs={6}>
           <LabelValue
             label="Case worker"
-            value={caseworker?.trim().length ? caseworker : "-"}
+            value={caseworker || "-"}
             labelColor="#535F66"
             fontWeight={700}
           />
@@ -165,8 +158,13 @@ const FamilySummary = ({ t, family }) => {
           <Divider sx={{ mt: 1, borderBottomWidth: 2, mb: 1 }} />
         </Grid>
       </Grid>
+   
     </CommonCard>
+
+
+
   );
 };
 
 export default FamilySummary;
+
