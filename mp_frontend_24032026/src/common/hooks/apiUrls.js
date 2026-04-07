@@ -46,6 +46,40 @@ const API_URLS = {
     getEventList: `${BASE}/events`,
   }
 
+<<<<<<< Updated upstream
+=======
+  consentForm: createEndpoints("/tw-consent", {
+    familyChildConsent: "/familyChildConsent",
+    generateConsentPDF: "/generateConsentPdf",
+  }),
+
+  family: createEndpoints("/tw-families", {
+    getFamilyDetails: "/family-details",
+    createFamily: "/create",
+    updateFamily: "/update",
+    getFamilyList: "/list",
+    getFamilyDropdownList: "/dropdowns",
+    updateFamilyMember: "/update-family-member",
+    closeCase: "/close-case",
+    reOpenCase: "/reopen-case",
+    familyAudit: "/auditlog",
+  }),
+
+  child: createEndpoints("/tw-child", {
+    getChildList: "/children",
+    getChildDropdownLists: "/dropdownlists",
+    createChild: "/child",
+    getChildDetails: "/child",
+    uniqueChildList: "/uniqueChildList",
+    closeChildCase: "/closeCase",
+    checkUniqueChild: "/isUniqueChild",
+    reOpenChildCase: "/reopenCase",
+  }),
+
+  events: createEndpoints("/events", {
+    getEventList: "",
+  }),
+>>>>>>> Stashed changes
 };
 
 export default API_URLS;

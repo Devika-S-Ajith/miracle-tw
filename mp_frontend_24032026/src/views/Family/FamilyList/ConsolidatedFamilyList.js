@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import ReusableTrendTable from "../../Dashboard/GovtDashboardOverview/Components/ReusableTrendTable";
 import { useTranslation } from "react-i18next";
 import APIS from "../../../common/hooks/UseApiCalls";
@@ -22,6 +22,9 @@ import { AssessmentProgressReportIcon } from "../../../assets/icons/SideBarIcons
 import BodyText from "../../../components/BodyText/BodyText";
 import SecondaryButton from "../../../components/SecondaryButton/SecondaryButton";
 import CloseIcon from "@mui/icons-material/Close";
+import { GenerateFileName } from "../../../helpers/helperFunction";
+import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 
 const ConsolidatedFamilyList = (props) => {
   const { t } = useTranslation(["common"]);
@@ -31,7 +34,33 @@ const ConsolidatedFamilyList = (props) => {
   const [apiError, setApiError] = useState(null);
   const [filterValues, setFilterValues] = useState({});
   const [appliedFiltersChipArray, setAppliedFiltersChipArray] = useState([]);
-
+  const [query, setQuery] = useState("");
+  const { htLanguagesList, signedInOrgName, userIdData } =
+    useContext(CommonDataContext);
+  const statusOptions = [
+    {
+      label: t("common:common.All"),
+      id: "All",
+    },
+    {
+      label: t("common:common.Active"),
+      id: "Active",
+    },
+    {
+      label: t("common:common.Inactive"),
+      id: "Inactive",
+    },
+  ];
+  const langOptions = [
+    { id: 0, language: t("common:common.All") },
+    ...htLanguagesList,
+  ];
+  const [langFilter, setLangFilter] = useState(
+    langOptions && langOptions[0].id,
+  );
+  const [statusFilter, setStatusFilter] = useState(
+    statusOptions && statusOptions[0].value,
+  );
   //   actions
   const [menuState, setMenuState] = useState({ anchorEl: null, row: null });
   const open = Boolean(menuState.anchorEl);
@@ -171,14 +200,17 @@ const ConsolidatedFamilyList = (props) => {
               <Tooltip
                 title={
                   menuState.row?.numberOfChildrenActive > 0
-                    ? t("common:family.Cannot delete family with active children", "Cannot delete family with active children")
+                    ? t(
+                        "common:family.Cannot delete family with active children",
+                        "Cannot delete family with active children",
+                      )
                     : t("common:family.Delete Family")
                 }
               >
                 <span>
                   <IconButton
                     disabled={menuState.row?.numberOfChildrenActive > 0}
-                   // onClick={() => handleDelete(menuState.row?.id)}
+                    // onClick={() => handleDelete(menuState.row?.id)}
                     id="delete-family"
                   >
                     <TrashIcon fontSize="small" />
@@ -193,12 +225,9 @@ const ConsolidatedFamilyList = (props) => {
               >
                 <IconButton
                   onClick={() => {
-                    navigate(
-                      `/dashboard/families/${menuState.row?.id}/view`,
-                      {
-                        state: { tabvalue: "assessmentsProgressReports" },
-                      }
-                    );
+                    navigate(`/dashboard/families/${menuState.row?.id}/view`, {
+                      state: { tabvalue: "assessmentsProgressReports" },
+                    });
                   }}
                 >
                   <AssessmentProgressReportIcon fontSize="small" />
@@ -210,6 +239,31 @@ const ConsolidatedFamilyList = (props) => {
       ),
     },
   ];
+
+  const [isExporting, setIsExporting] = useState(false);
+  const exportFamilies = async () => {
+    setIsExporting(true);
+    try {
+      const res = await APIS.exportFamilies(langFilter, statusFilter, query);
+      const linkSource = `data:application/xlsx;base64,${res.data}`;
+      const downloadLink = document.createElement("a");
+      const fileName = GenerateFileName({
+        signedInOrgName,
+        userIdData,
+        module: `Families`,
+      });
+      downloadLink.href = linkSource;
+      downloadLink.download = fileName;
+      downloadLink.target = "_blank";
+      downloadLink.style.display = "none";
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      setIsExporting(false);
+    } catch (error) {
+      setIsExporting(false);
+    }
+  };
 
   const handleAddFamily = () => {
     navigate("/dashboard/families/add", { state: { mode: "add" } });
@@ -236,8 +290,7 @@ const ConsolidatedFamilyList = (props) => {
       listType: "LARGE",
     };
     try {
-      const response =
-        await APIS.GetFamilyList(payload);
+      const response = await APIS.GetFamilyList(payload);
       setTableData({
         data: response?.data?.data || [],
         pageCount: response?.data?.pageCount || 1,
@@ -272,7 +325,12 @@ const ConsolidatedFamilyList = (props) => {
             />
           }
           label={t("common:common.Export")}
-          onClick={() => { }}
+          onClick={exportFamilies}
+          loading={isExporting}
+          loadingPosition="start"
+          // color="primary"
+          // variant="contained"
+          id="export-families-btn"
         />
         <SecondaryButton
           startIcon={
@@ -458,7 +516,6 @@ const ConsolidatedFamilyList = (props) => {
     const clearedFilters = {};
     setFilterValues(clearedFilters);
   };
-
   return (
     <>
       <Box

@@ -48,8 +48,8 @@ const exportAssessmentURL = AppConfig.baseURL + "/ht-assessment/exportList";
 const LanguageListURL = AppConfig.baseURL + "/languages";
 const getFamilyMilestoneListURL = AppConfig.baseURL + "/ht-family/getMilestoneList";
 
-const RelationListURL = AppConfig.baseURL + "/ht-family/relation";
-const FamilyInterventionSummaryURL = AppConfig.baseURL + "/ht-family/getInterventionSummary";
+const RelationListURL = AppConfig.baseURL + "/tw-family/relation";
+const FamilyInterventionSummaryURL = AppConfig.baseURL + "/tw-families/getInterventionSummary";
 const familySituationAndGoalsURL =
   AppConfig.baseURL + "/ht-family/situation-and-goals";
 const familyMembersURL = AppConfig.baseURL + "/ht-family/members";
@@ -301,8 +301,8 @@ const FollowUpExportURL = `/ht-followup/exportInterimFollowups`;
 const IncrisisAndVulnerableMilestonesFamilyURL = `${GOVT_DASHBOARD_BASE}/inCrisis-vulnerable-milestone-family`;
 const CurrentLivingConditionURL = `${GOVT_DASHBOARD_BASE}/current-living-condition`;
 const FamilyAssessmentScoreImprovementURL = `${GOVT_DASHBOARD_BASE}/family-assessment-score-improvements`;
-const ConsolidatedAssessmentProgressReportURL = `/ht-assessment/listConsolidatedAssessmentData`;
-const MostRecentAssesmentSummaryURL = `/ht-family/most-recent-assessment`;
+const ConsolidatedAssessmentProgressReportURL = `/tw-assessment/listConsolidatedAssessmentData`;
+const MostRecentAssesmentSummaryURL = `/tw-families/most-recent-assessment`;
 const TodoListURL = AppConfig.baseURL + "/todo-List/list";
 const ChildMilestoneListURL = AppConfig.baseURL + "/ht-child/getMilestoneList";
 const InterventionForMilestoneListURL = AppConfig.baseURL + "/ht-family/getInterventionForMilestone";
@@ -1191,7 +1191,7 @@ const APIS = {
     return axios.all([prerequest]).then((res) => {
       const ChildConsentCompletedURL =
         API_URLS.consentForm.familyChildConsent +
-        `?HTFamilyId=` +
+        `?TWFamilyId=` +
         payload.HTFamilyId;
       return axios
         .get(ChildConsentCompletedURL)
@@ -3553,7 +3553,7 @@ const APIS = {
   GetConsolidatedAssessmentProgressReport: (payload) => APIS.makePostRequest(ConsolidatedAssessmentProgressReportURL, payload),
   GetMostRecentAssesmentSummary(familyId) {
     let CompletedMostRecentAssesmentSummaryURL =
-      MostRecentAssesmentSummaryURL + `?HTFamilyId=${familyId}`;
+      MostRecentAssesmentSummaryURL + `?TWFamilyId=${familyId}`;
     return this.makeGetRequest(CompletedMostRecentAssesmentSummaryURL);
   },
   GetTodoList: (payload) => APIS.makePostRequest(TodoListURL, payload),
@@ -3563,7 +3563,7 @@ const APIS = {
   GetFamilyMilestoneList: (payload) => APIS.makePostRequest(getFamilyMilestoneListURL, payload),
   GetInterventionForMilestoneList: (payload) => APIS.makePostRequest(getInterventionForMilestoneListURL, payload),
   GetFamilyHistoryList: (payload) => APIS.makePostRequest(FamilyHistoryListURL, payload),
-  GetFamilyInterventionSummary: (payload) => APIS.makeGetRequest(FamilyInterventionSummaryURL + `?HTFamilyId=${payload}`),
+  GetFamilyInterventionSummary: (payload) => APIS.makeGetRequest(FamilyInterventionSummaryURL + `?TWFamilyId=${payload}`),
   GetChildInterventionList: (payload) => APIS.makePostRequest(ChildInterventionListURL, payload),
 
   //Entity model API's
