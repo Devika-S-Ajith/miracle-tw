@@ -42,7 +42,7 @@ const EditFamilyStatusURL = AppConfig.baseURL + "/ht-family";
 const EditFamilyMemberURL = AppConfig.baseURL + "/ht-family/member";
 const EditFamilyURL = AppConfig.baseURL + "/ht-family";
 const GetFamilyDetails = AppConfig.baseURL + "/ht-family?family_id=";
-const exportFamiliesURL = AppConfig.baseURL + "/ht-family/export";
+const exportFamiliesURL = AppConfig.baseURL + "/tw-families/export";
 const exportChildrenURL = AppConfig.baseURL + "/ht-child/export";
 const exportAssessmentURL = AppConfig.baseURL + "/ht-assessment/exportList";
 const LanguageListURL = AppConfig.baseURL + "/languages";
