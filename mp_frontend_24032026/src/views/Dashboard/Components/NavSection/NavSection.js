@@ -139,7 +139,7 @@ const NavSection = (props) => {
   return (
     ((title == FosterShare && signedinUserRoleFS !== UNASSIGNED) ||
       (title == ThriveScale && signedinUserRoleHT !== UNASSIGNED) ||
-      title == Admin) && (
+      title == Admin) ? (
       <List
         subheader={
           <ListSubheader
@@ -196,7 +196,15 @@ const NavSection = (props) => {
           })}
         </Collapse>
       </List>
-    )
+    ) : <>{renderNavItems({
+            items,
+            title,
+            pathname,
+            open,
+            setOpen,
+            t,
+            isOpenDrawer,
+          })}</>
   );
 };
 

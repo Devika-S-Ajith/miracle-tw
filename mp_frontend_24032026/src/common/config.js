@@ -15,7 +15,6 @@ const regionEnvMap = {
 export function getAmplifyConfig() {
   const userDBRegion = localStorage.getItem('userDBRegion');
   const selectedEnv = regionEnvMap[userDBRegion];
-  console.log("Selected Env: ", selectedEnv);
   return {
     ...selectedEnv,
     oauth: {

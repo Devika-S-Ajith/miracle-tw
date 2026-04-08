@@ -351,36 +351,26 @@ const OrganizationUsers = ({ selectedCountry }) => {
                     </TableCell>
                     <TableCell sx={{ pb: 0, pl: 2 }}>
                       <Typography variant="subtitle1" fontWeight="bold">
-                        {t("common:common.FosterShare")}
+                        {t("common:common.FosterShare role","FosterShare role")}
                       </Typography>
                     </TableCell>
-                    <TableCell sx={{ pb: 0, pl: 2 }}>
-                      <Typography
-                        variant="body2"
-                        color="textSecondary"
-                        sx={{
-                          mb: -1,
-                          textTransform: "uppercase",
-                          fontSize: "12px",
-                        }}
-                      >
-                        {t("common:common.FosterShare")}
-                      </Typography>
-                      <Typography
-                        variant="subtitle1"
-                        fontWeight="bold"
-                        sx={{ pb: 1.25, pt: 0.5 }}
-                      >
-                        {t("common:common.Foster families")}
-                      </Typography>
-                    </TableCell>
+                    
                     <TableCell sx={{ pb: 0, pl: 2 }}>
                       <Typography variant="subtitle1" fontWeight="bold">
-                        {t("common:common.Thrive Scale")}
+                        {t("common:common.Thrive Scale role","Thrive Scale role")}
                       </Typography>
                     </TableCell>
                     <TableCell sx={{ pb: 0, pl: 2 }}>
                       <Typography
+                        variant="subtitle1"
+                        fontWeight="bold"
+                        sx={{ pb: 1.25, pt: 0.5 }}
+                      >
+                        {t("common:common.# active families","# active families")}
+                      </Typography>
+                    </TableCell>
+                    <TableCell sx={{ pb: 0, pl: 2 }}>
+                      {/* <Typography
                         variant="body2"
                         color="textSecondary"
                         sx={{
@@ -390,13 +380,13 @@ const OrganizationUsers = ({ selectedCountry }) => {
                         }}
                       >
                         {t("common:common.Thrive Scale")}
-                      </Typography>
+                      </Typography> */}
                       <Typography
                         variant="subtitle1"
                         fontWeight="bold"
                         sx={{ pb: 1.25, pt: 0.5 }}
                       >
-                        {t("common:common.Children")}
+                        {t("common:common.# active children","# active children")}
                       </Typography>
                     </TableCell>
                     <TableCell sx={{ pb: 0, pl: 2 }}>
@@ -457,10 +447,7 @@ const OrganizationUsers = ({ selectedCountry }) => {
                             )
                           }`}
                         </TableCell>
-                        <TableCell>
-                          {/* Todo */}
-                          {accountUser.FSFamilyCount}
-                        </TableCell>
+                       
                         <TableCell>
                           {`${
                             roleListHT &&
@@ -474,6 +461,10 @@ const OrganizationUsers = ({ selectedCountry }) => {
                               }`
                             )
                           }`}
+                        </TableCell>
+                        <TableCell>
+                          {/* Todo */}
+                          {accountUser.FSFamilyCount}
                         </TableCell>
                         <TableCell>{accountUser.TSChildCount}</TableCell>
                         <TableCell>

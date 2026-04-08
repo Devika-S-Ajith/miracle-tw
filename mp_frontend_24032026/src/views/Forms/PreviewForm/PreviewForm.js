@@ -693,7 +693,7 @@ const PreviewForm = (props) => {
                                 {/* <FormLabel style={{ color: item.HT_question.isRedFlag ? 'red' : '' }}>{item.HT_question.isRedFlag ? `*${t('common:assessment.Red Flag')}: ` : ''}{item.HT_question.questionText}</FormLabel> */}
                                 <FormLabel style={{ color: "black" }}>
                                   {" "}
-                                  {t("common:question.Question")}:{" "}
+                                  {t("common:question.Factor", "Factor")}:{" "}
                                   {
                                     <Typography
                                       sx={{ display: "inline" }}

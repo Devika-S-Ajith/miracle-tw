@@ -21,6 +21,7 @@ import {
 } from "../../assets/icons/SideBarIcons";
 import BodyText from "../BodyText/BodyText";
 import CloseIcon from "@mui/icons-material/Close";
+import SecondaryButton from "../SecondaryButton/SecondaryButton";
 
 const AssessmentStatusOptions = [
   { label: "All", value: "All", key: "Assessment status" },
@@ -526,6 +527,30 @@ const ConsolidatedAssessmentProgressReport = ({ pageType, id }) => {
     };
     setFilterValues(clearedFilters);
   };
+
+  const tableExtraButtons = (
+    <Stack
+      direction="row"
+      spacing={1}
+      justifyContent="flex-end"
+      width={1}
+      mr={2}
+    >
+      <SecondaryButton
+        startIcon={
+          <img
+            src="/static/icons/aiIcon.svg"
+            style={{ width: 20, height: 20 }}
+          />
+        }
+        label="New ThriveAI assessment"
+        onClick={() => {
+          window.open('https://aiprojects.thrivewellapp.com/', '_blank');
+        }}
+      />
+    </Stack>
+  );
+
   return (
     <>
       <ReusableTrendTable
@@ -562,6 +587,7 @@ const ConsolidatedAssessmentProgressReport = ({ pageType, id }) => {
           "common:infoCard.Search by child name, family name, case worker",
           "Search by child name, family name, case worker",
         )}
+        // tableExtraButtons={tableExtraButtons}
       />
     </>
   );

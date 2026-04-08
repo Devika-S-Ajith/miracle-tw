@@ -146,6 +146,7 @@ const ViewAssessment = forwardRef((props, ref) => {
   const [expanded, setExpanded] = useState(false);
   const [assessmentFormRevisionNumber, setassessmentFormRevisionNumber] =
     useState(null);
+  const [domainSkippingReasons, setDomainSkippingReasons] = useState(null);
   const [followUpData, setFollowUpData] = useState(null);
   const [isFirstRender, setIsFirstRender] = useState(true);
   const containerRef = useRef(null);
@@ -223,6 +224,7 @@ const ViewAssessment = forwardRef((props, ref) => {
 
   useEffect(() => {
     getFormList();
+    getDomainSkipReasonsList();
     return () => {
       setLoading(false);
     };
@@ -303,6 +305,24 @@ const ViewAssessment = forwardRef((props, ref) => {
           await getAssessmentDetails(assessmentId.id, updatedFormRevision);
           await getFollowUpData(assessmentId.id);
         }
+      }
+      setLoading(false);
+      setQuestionsLoading(false);
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+      setQuestionsLoading(false);
+    }
+  }, []);
+
+  const getDomainSkipReasonsList = useCallback(async () => {
+    setLoading(true);
+    setQuestionsLoading(true);
+    try {
+      const data = await APIS.getDomainSkipReasons();
+      if (data?.data?.data) {
+        let skippingReasonsList = data?.data?.data;
+        setDomainSkippingReasons(skippingReasonsList);
       }
       setLoading(false);
       setQuestionsLoading(false);
@@ -525,9 +545,20 @@ const ViewAssessment = forwardRef((props, ref) => {
     );
   };
 
+  const getDomainSkippedReason = (domainId) => {
+    if (!assessment?.itemsSkipped?.length) return "";
+    const item = assessment.itemsSkipped.find(i => i?.HTQuestionDomainId === domainId);
+    if (!item) return "";
+    if (item.notes) return item.notes;
+    if (item.domainSkippReasonId && Array.isArray(domainSkippingReasons)) {
+      const reasonObj = domainSkippingReasons.find(r => r.id === item.domainSkippReasonId);
+      return reasonObj?.reason || "";
+    }
+    return "";
+  };
+
   return (
-    <>
-      <Formik
+    <Formik
         innerRef={formRef}
         initialValues={{
           form: "",
@@ -606,7 +637,7 @@ const ViewAssessment = forwardRef((props, ref) => {
                   >
                     <AssessmentStepIndicator
                       formPage={formPage}
-                      domains={filteredDomains}
+                      domains={domains}
                       score={score}
                       handleClickPage={handleClickPage}
                     />
@@ -674,11 +705,17 @@ const ViewAssessment = forwardRef((props, ref) => {
                   ) : (
                     <></>
                   )}
-                  {filteredDomains &&
-                    filteredDomains.length > 0 &&
-                    filteredDomains.map((domain, index) => {
+                  {domains &&
+                    domains.length > 0 &&
+                    domains.map((domain, index) => {
+                      // Determine if this domain should be disabled (greyed out)
+                      const hasActiveQuestion = formQuestions?.some(
+                        (item) =>
+                          domain.id === item.HT_question?.HTQuestionDomainId &&
+                          item.HT_question?.HT_responses?.find((c) => !c.isInterResp)?.HTChoiceId
+                      );
                       return (
-                        <Grid item md={12} xs={12} m={2}>
+                        <Grid item md={12} xs={12} m={2} key={domain.id}>
                           <Box
                             className="box"
                             id={`Box${score ? index + 3 : index + 2}ref`}
@@ -710,13 +747,34 @@ const ViewAssessment = forwardRef((props, ref) => {
                                 style={{
                                   alignSelf: "center",
                                   marginRight: "16px",
+                                  filter: hasActiveQuestion ? undefined : 'grayscale(100%)',
+                                  opacity: hasActiveQuestion ? 1 : 0.5,
                                 }}
                               />
                               <Typography
                                 variant="h6"
-                                sx={{ textAlign: "center", my: 1 }}
+                                sx={{
+                                  textAlign: "center",
+                                  my: 1,
+                                  color: hasActiveQuestion ? 'inherit' : 'text.disabled',
+                                }}
                               >
-                                {domain.domainName}
+                                {domain.domainName} 
+                                {assessment?.domainsSkipped?.includes(domain.id) ? (
+                                  (() => {
+                                    const reason = getDomainSkippedReason(domain.id) || "";
+                                    const maxLen = 30;
+                                    if (reason.length > maxLen) {
+                                      return (
+                                        <Tooltip title={reason} placement="top">
+                                          <span>{` : ${t("common:assessment.excluded", "excluded")} (${reason.slice(0, maxLen)}…)`}</span>
+                                        </Tooltip>
+                                      );
+                                    } else {
+                                      return ` : ${t("common:assessment.excluded", "excluded")} (${reason})`;
+                                    }
+                                  })()
+                                ) : ""}
                               </Typography>
                             </div>
 
@@ -734,19 +792,29 @@ const ViewAssessment = forwardRef((props, ref) => {
                                         <div style={{ paddingRight: "20%" }}>
                                           <Tooltip
                                             title={
-                                              item.TW_question &&
-                                              item.TW_question.questionHelpText
+                                              item?.TW_question
+                                                ?.questionHelpText
                                             }
                                             placement="bottom"
                                           >
-                                            <Typography>
-                                              {item.TW_question.questionText}{" "}
+                                            <Typography
+                                              sx={{
+                                                color:
+                                                  item.TW_question?.TW_responses
+                                                    ?.length &&
+                                                  item.TW_question.TW_responses.find(
+                                                    (c) => !c.isInterResp,
+                                                  ).TWChoiceId
+                                                    ? "inherit"
+                                                    : "text.disabled",
+                                              }}
+                                            >
+                                              {item.TW_question.questionText}
                                             </Typography>
                                           </Tooltip>
                                         </div>
                                         <Box display="flex" gap={5}>
-                                          <Box
-                                          >
+                                          <Box>
                                             <div>
                                               {item.TW_question.isRedFlag && (
                                                 <Chip
@@ -851,8 +919,15 @@ const ViewAssessment = forwardRef((props, ref) => {
                                                   pr: 2,
                                                 }}
                                               >
-                                                <Typography style={{ whiteSpace: 'pre-line' }}>
-                                                  {item.TW_question?.TW_responses?.[0]?.notes}
+                                                <Typography
+                                                  style={{
+                                                    whiteSpace: "pre-line",
+                                                  }}
+                                                >
+                                                  {
+                                                    item.TW_question
+                                                      ?.TW_responses?.[0]?.notes
+                                                  }
                                                 </Typography>
                                               </Box>
                                             </Box>
@@ -876,7 +951,7 @@ const ViewAssessment = forwardRef((props, ref) => {
                       sx={{
                         borderRadius: 1,
                         border:
-                          formPage == filteredDomains.length + (score ? 3 : 2)
+                          formPage == 8
                             ? "1px solid var(--Midnight-Midnight, #1D334B)"
                             : "1px solid #ccc",
                         padding: 2,
@@ -891,16 +966,16 @@ const ViewAssessment = forwardRef((props, ref) => {
                         {checkHaveRedflagIntervention() ? t("common:assessment.Intervention Sub1") : t("common:assessment.No immediate intervention needed")}
                       </Typography>
                       <Grid item md={12} xs={12} sx={{ mt: 2 }}>
-                        {filteredDomains &&
-                          filteredDomains.length > 0 &&
-                          filteredDomains.map((domain, index) => {
+                        {domains &&
+                          domains.length > 0 &&
+                          domains.map((domain, index) => {
                             return checkDomainHaveRedflagIntervention(
                               domain.id
                             ) || checkIntervention(domain.id) ? (
                               <Accordion
                                 key={domain.id}
                                 panel={index}
-                                expanded={expanded === index}
+                                expanded={expanded == index}
                                 onChange={handleChangePanel(index)}
                                 sx={{ mb: 2, borderRadius: "4px" }}
                               >
@@ -1007,9 +1082,7 @@ const ViewAssessment = forwardRef((props, ref) => {
                                                     flexDirection: "column",
                                                   }}
                                                 >
-                                                  {item.TW_question &&
-                                                    item.TW_question
-                                                      .TW_choices &&
+                                                  {item?.TW_question?.TW_choices &&
                                                     item.TW_question.TW_choices
                                                       .length > 0 &&
                                                     item.TW_question.TW_choices.sort(
@@ -1164,7 +1237,7 @@ const ViewAssessment = forwardRef((props, ref) => {
                       sx={{
                         borderRadius: 1,
                         border:
-                          formPage == filteredDomains.length + (score ? 4 : 3)
+                          formPage == 9
                             ? "1px solid var(--Midnight-Midnight, #1D334B)"
                             : "1px solid #ccc",
                         padding: 2,
@@ -1172,7 +1245,7 @@ const ViewAssessment = forwardRef((props, ref) => {
                     >
                       <AssessmentFollowup
                         followUpData={followUpData}
-                        domains={filteredDomains}
+                        domains={domains}
                         recommendationQuestionOptions={
                           recommendationQuestionOptions
                         }
@@ -1192,7 +1265,7 @@ const ViewAssessment = forwardRef((props, ref) => {
                       sx={{
                         borderRadius: 1,
                         border:
-                          formPage == filteredDomains.length + (score ? 5 : 4)
+                          formPage == 10
                             ? "1px solid var(--Midnight-Midnight, #1D334B)"
                             : "1px solid #ccc",
                         padding: 2,
@@ -1231,7 +1304,6 @@ const ViewAssessment = forwardRef((props, ref) => {
           </Form>
         )}
       </Formik>
-    </>
   );
 });
 

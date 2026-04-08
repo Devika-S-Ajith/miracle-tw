@@ -10,25 +10,23 @@ import { ModalService } from "../../../../../components/Modal";
 import SubHeading from "../../../../../components/SubHeading/SubHeading";
 import { Box } from "@mui/system";
 import RadioGroupList from "../../../../TWFamily/ManageFamily/Components/RadioGroupList";
-import FamilyAccessDays from "./Familyaccessdays";
 import BodyText from "../../../../../components/BodyText/BodyText";
 import { CommonDataContext } from "../../../../../common/contexts/CommonDataContext";
 import APIS from "../../../../../common/hooks/UseApiCalls";
 
-const CloseCaseForm = ({ close, onCaseClose, childId }) => {
+const CloseCaseForm = ({ close, setHideChildModal, handleChildModalOpen, onCaseClose, childId }) => {
   const { t } = useTranslation(["common"]);
   const { childDropdownLists } = useContext(CommonDataContext);
 
   const { deactivationDeletionReason } = childDropdownLists || {};
-  const [days, setDays] = useState(0);
 
   const associationOptions = [
     {
-      id: 1572,
+      id: false,
       label: "Do not associate the child with this family",
     },
     {
-      id: 4829,
+      id: true,
       label: "Leave child associated with this family",
     },
   ];
@@ -41,31 +39,41 @@ const CloseCaseForm = ({ close, onCaseClose, childId }) => {
     try {
       const payload = {
         childId: childId,
-        // caseCloseReason: values.association,
         caseCloseReason: values.deactivationReason,
-        previousFamilyCutoffDaysCount: days,
+        // previousFamilyCutoffDaysCount: days,
         caseCloseDate: values.dateCaseClosed,
+        keepFamilyAssociation: values.association, // Assuming true is the option to keep association
       };
       const res = await APIS.CloseChildCase(payload);
-      onCaseClose();
-      close();
-      ModalService.open(() => null, {
-        width: "30%",
-        modalDescription: (
-          <SubHeading
-            value={t(
-              "common:common.Child’s case has been closed",
-              "Child’s case has been closed",
-            )}
-          />
-        ),
-        hideActionButton: true,
-        cancelButtonText: t("common:common.ok", "Ok"),
-      });
+      if (res?.status === 200) {
+        // handleChildModalOpen();
+        close();
+        onCaseClose();
+        ModalService.open(() => null, {
+          width: "30%",
+          modalDescription: (
+            <SubHeading
+              value={t(
+                "common:common.Child’s case has been closed",
+                "Child’s case has been closed",
+              )}
+            />
+          ),
+          hideActionButton: true,
+          cancelButtonText: t("common:common.ok", "Ok"),
+        });
+      }
     } catch (error) {
       console.error("Error closing case:", error);
     }
   };
+
+  const cancelHandler = () => {
+      console.log("handleChildModalOpen", handleChildModalOpen);
+    close();
+    // handleChildModalOpen();
+    setHideChildModal(false);
+  }
   return (
     <>
       <Box mx={-2}>
@@ -95,9 +103,9 @@ const CloseCaseForm = ({ close, onCaseClose, childId }) => {
                 renderPrimary={(option) => <BodyText value={option.label} />}
               />
             </Box>
-            <Box sx={{ p: 2, borderRadius: 1, mb: 1 }}>
+            {/* <Box sx={{ p: 2, borderRadius: 1, mb: 1 }}>
               <FamilyAccessDays value={days} onChange={setDays} />
-            </Box>
+            </Box> */}
             <Box sx={{ p: 2, borderRadius: 1, mb: 2 }}>
               <BodyText
                 value={t(
@@ -124,7 +132,7 @@ const CloseCaseForm = ({ close, onCaseClose, childId }) => {
           <SecondaryButton
             label={t("common:common.No, Cancel", "No, Cancel")}
             fullWidth
-            onClick={close}
+            onClick={cancelHandler}
           />
         </Grid>
         <Grid item xs={12} md={6}>

@@ -168,7 +168,7 @@ const EventsList = () => {
         <Typography
           color="textPrimary"
           variant="h5"
-          onClick={() => navigate("/fostershare/dashboard")}
+          onClick={() => navigate("/dashboard")}
           sx={{ cursor: "pointer" }}
         >
           FosterShare

@@ -64,8 +64,7 @@ const DashboardNavbar = (props) => {
     return () => clearInterval(intervalId);
   }, [allSystemMessages]);
 
-  const getLogoLink = (role, orgType) => {
-  if (role === "unassigned") return "/fostershare/dashboard";
+  const getLogoLink = (orgType) => {
   if (orgType == 6) return "/governmentDashboardOverview";
   return "/dashboard";
 };
@@ -84,7 +83,7 @@ const DashboardNavbar = (props) => {
             pb: 1,
           }}
         >
-          <RouterLink to={getLogoLink(signedinUserRoleHT, signedinOrgType)}>
+          <RouterLink to={getLogoLink(signedinOrgType)}>
             <MiracleLogo
               sx={{
                 height: 40,

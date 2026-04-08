@@ -25,8 +25,8 @@ import APIS from "../../../../common/hooks/UseApiCalls";
 import dayjs from "dayjs";
 import {
   formatDate,
-  getDayStartISOString,
-  getDayEndISOString,
+  toUTCStartofDay,
+  toUTCEndOfDay,
   monthYearShort,
   utcToDateFormatMonthDayYear,
 } from "../../../../helpers/helperFunction";
@@ -279,8 +279,8 @@ const ChildCombinedLogsList = ({ payloadId, showForChild = false, module }) => {
         TWAccountId: localStorage.getItem("orgId"),
         rowCount: 1000,
         pageNumber: 1,
-        startDate: fromDate ? getDayStartISOString(fromDate) : "",
-        endDate: toDate ? getDayEndISOString(toDate) : "",
+        startDate: fromDate ? toUTCStartofDay(fromDate) : "",
+        endDate: toDate ? toUTCEndOfDay(toDate) : "",
         orderByField: [["date", "DESC"]],
       };
       if (module === "children") {
@@ -390,9 +390,9 @@ const ChildCombinedLogsList = ({ payloadId, showForChild = false, module }) => {
       setLoading(true);
       const payload = {
         startDate: fromDate
-          ? dayjs(fromDate).startOf("day").toISOString()
+          ? toUTCStartofDay(fromDate)
           : undefined,
-        endDate: toDate ? dayjs(toDate).endOf("day").toISOString() : undefined,
+        endDate: toDate ? toUTCEndOfDay(toDate) : undefined,
         pageNumber: String(pageNumber),
         rowCount: rowCount,
         globalSearchQuery: globalSearchQuery,

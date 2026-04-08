@@ -32,30 +32,30 @@ const ReactivateAccountURL = AppConfig.baseURL + "/reactivate-account";
 const GetLinkedOrganisationsURL = AppConfig.baseURL + "/account/filter";
 const LinkOrganizationURL = AppConfig.baseURL + "/link-account";
 const OrgTypeDetailsPartialURL = AppConfig.baseURL + "/account-types";
-const TransferChildOrgList = OrganisationListURL + "/ht-transferChildList";
+const TransferChildOrgList = OrganisationListURL + "/tw-transferChildList";
 const TypeListURL = AppConfig.baseURL + "/account-types";
 
-const AddFamilyURL = AppConfig.baseURL + "/ht-family";
-const AddFamilyMemberURL = AppConfig.baseURL + "/ht-family/member";
-const FamilyListURL = AppConfig.baseURL + "/ht-family/list";
-const EditFamilyStatusURL = AppConfig.baseURL + "/ht-family";
-const EditFamilyMemberURL = AppConfig.baseURL + "/ht-family/member";
-const EditFamilyURL = AppConfig.baseURL + "/ht-family";
-const GetFamilyDetails = AppConfig.baseURL + "/ht-family?family_id=";
-const exportFamiliesURL = AppConfig.baseURL + "/ht-family/export";
-const exportChildrenURL = AppConfig.baseURL + "/ht-child/export";
-const exportAssessmentURL = AppConfig.baseURL + "/ht-assessment/exportList";
+const AddFamilyURL = AppConfig.baseURL + "/tw-family";
+const AddFamilyMemberURL = AppConfig.baseURL + "/tw-family/member";
+const FamilyListURL = AppConfig.baseURL + "/tw-family/list";
+const EditFamilyStatusURL = AppConfig.baseURL + "/tw-family";
+const EditFamilyMemberURL = AppConfig.baseURL + "/tw-family/member";
+const EditFamilyURL = AppConfig.baseURL + "/tw-family";
+const GetFamilyDetails = AppConfig.baseURL + "/tw-family?family_id=";
+const exportFamiliesURL = AppConfig.baseURL + "/tw-families/export";;
+const exportChildrenURL = AppConfig.baseURL + "/tw-child/export";
+const exportAssessmentURL = AppConfig.baseURL + "/tw-assessment/exportList";
 const LanguageListURL = AppConfig.baseURL + "/languages";
-const getFamilyMilestoneListURL = AppConfig.baseURL + "/ht-family/getMilestoneList";
+const getFamilyMilestoneListURL = AppConfig.baseURL + "/tw-family/getMilestoneList";
 
-const RelationListURL = AppConfig.baseURL + "/ht-family/relation";
-const FamilyInterventionSummaryURL = AppConfig.baseURL + "/ht-family/getInterventionSummary";
+const RelationListURL = AppConfig.baseURL + "/tw-family/relation";
+const FamilyInterventionSummaryURL = AppConfig.baseURL + "/tw-family/getInterventionSummary";
 const familySituationAndGoalsURL =
-  AppConfig.baseURL + "/ht-family/situation-and-goals";
-const familyMembersURL = AppConfig.baseURL + "/ht-family/members";
-const MemberTypeListURL = AppConfig.baseURL + "/ht-family/membertype";
-const FamilyInterventionListURL = AppConfig.baseURL + "/ht-family/familyIntervention";
-const FamilyHistoryListURL = AppConfig.baseURL + "/ht-family/listFamilyHistory";
+  AppConfig.baseURL + "/tw-family/situation-and-goals";
+const familyMembersURL = AppConfig.baseURL + "/tw-family/members";
+const MemberTypeListURL = AppConfig.baseURL + "/tw-family/membertype";
+const FamilyInterventionListURL = AppConfig.baseURL + "/tw-family/familyIntervention";
+const FamilyHistoryListURL = AppConfig.baseURL + "/tw-family/listFamilyHistory";
 const UserListURL = AppConfig.baseURL + "/users";
 const UserRoleList = AppConfig.baseURL + "/user-roles";
 const UserDetailsPartialURL = AppConfig.baseURL + "/user?id=";
@@ -76,13 +76,13 @@ const ValidateUserDeactivationTSURL =
   AppConfig.baseURL + "/validate-ht-user-deactivation";
 const ValidateUserDeactivationFSURL =
   AppConfig.baseURL + "/fs-user-deactivation-check";
-const ChildListURL = AppConfig.baseURL + "/ht-child/list";
-const ChildDetailsPartialURL = AppConfig.baseURL + "/ht-child?child_id=";
-const AddChildURL = AppConfig.baseURL + "/ht-child";
-const ChildDocURL = AppConfig.baseURL + "/ht-child/file";
-const FamilyDocURL = AppConfig.baseURL + "/ht-family/file";
-const ChildDocumentListURL = AppConfig.baseURL + "/ht-child/get-files";
-const FamilyDocumentListURL = AppConfig.baseURL + "/ht-family/get-files";
+const ChildListURL = AppConfig.baseURL + "/tw-child/list";
+const ChildDetailsPartialURL = AppConfig.baseURL + "/tw-child?child_id=";
+const AddChildURL = AppConfig.baseURL + "/tw-child";
+const ChildDocURL = AppConfig.baseURL + "/tw-child/file";
+const FamilyDocURL = AppConfig.baseURL + "/tw-family/file";
+const ChildDocumentListURL = AppConfig.baseURL + "/tw-child/get-files";
+const FamilyDocumentListURL = AppConfig.baseURL + "/tw-families/get-files";
 const ChildPlacementStatusURL = AddChildURL + "/placementStatus";
 const ChildStatusURL = AddChildURL + "/childStatus";
 const ChildCurrentPlacementURL = AddChildURL + "/currentPlacementStatus";
@@ -92,52 +92,52 @@ const ChildAuditURL = AddChildURL + "/auditlog";
 const FamilyAuditURL = AddFamilyURL + "/auditlog";
 const fileUploadURL = AppConfig.baseURL + "/create-url-for-upload";
 
-const CaseListURL = AppConfig.baseURL + "/ht-case/list";
-const AddCaseURL = AppConfig.baseURL + "/ht-case";
-const CaseDetailsPartialURL = AppConfig.baseURL + "/ht-case?case_id=";
+const CaseListURL = AppConfig.baseURL + "/tw-case/list";
+const AddCaseURL = AppConfig.baseURL + "/tw-case";
+const CaseDetailsPartialURL = AppConfig.baseURL + "/tw-case?case_id=";
 const CloseCaseURL = AppConfig.baseURL + "/case/close";
-const ConsentURL = AppConfig.baseURL + "/ht-consent-new/listChildFamilyConsent";
-const FormListURL = AppConfig.baseURL + "/ht-form";
-const DomainListURL = AppConfig.baseURL + "/ht-question/domain";
+const ConsentURL = AppConfig.baseURL + "/tw-consent-new/listChildFamilyConsent";
+const FormListURL = AppConfig.baseURL + "/tw-form";
+const DomainListURL = AppConfig.baseURL + "/tw-question/domain";
 const AddFormQuetionsURL = AppConfig.baseURL + "/form/questions";
 const MappedQuetionsURL = AppConfig.baseURL + "/form/mappedQuestions";
-const PreviewFormQuestionsURL = AppConfig.baseURL + "/ht-form/preview?formId=";
+const PreviewFormQuestionsURL = AppConfig.baseURL + "/tw-form/preview?formId=";
 const NewPreviewFormQuestionsURL =
-  AppConfig.baseURL + "/ht-form/getFormDetails";
-const PublishForm = AppConfig.baseURL + "/ht-form/publish";
-const UpdateFormURL = AppConfig.baseURL + "/ht-form/updateForm";
-const UpdateFormStatus = AppConfig.baseURL + "/ht-form/updateFormStatus";
-const SaveNewFormURL = AppConfig.baseURL + "/ht-form/saveNewForm";
+  AppConfig.baseURL + "/tw-form/getFormDetails";
+const PublishForm = AppConfig.baseURL + "/tw-form/publish";
+const UpdateFormURL = AppConfig.baseURL + "/tw-form/updateForm";
+const UpdateFormStatus = AppConfig.baseURL + "/tw-form/updateFormStatus";
+const SaveNewFormURL = AppConfig.baseURL + "/tw-form/saveNewForm";
 
-const getFormDetailsUrl = AppConfig.baseURL + "/ht-form/getFormDetails";
+const getFormDetailsUrl = AppConfig.baseURL + "/tw-form/getFormDetails";
 
-const VisitTypeListURL = AppConfig.baseURL + "/ht-assessment/visittypes";
+const VisitTypeListURL = AppConfig.baseURL + "/tw-assessment/visittypes";
 const ReIntegrationTypeListURL =
-  AppConfig.baseURL + "/ht-assessment/reintegrationtypes";
-const AssessmentListURL = AppConfig.baseURL + "/ht-assessment/list";
+  AppConfig.baseURL + "/tw-assessment/reintegrationtypes";
+const AssessmentListURL = AppConfig.baseURL + "/tw-assessment/list";
 const SaveResponseURL = AppConfig.baseURL + "/assessment/save/response";
 
-const QuestionDomainListURL = AppConfig.baseURL + "/ht-question/domain";
+const QuestionDomainListURL = AppConfig.baseURL + "/tw-question/domain";
 const QuestionTypeListURL = AppConfig.baseURL + "/tw-question/type";
-const QuestionListURL = AppConfig.baseURL + "/ht-question/list";
-const GetQuestionDetails = AppConfig.baseURL + "/ht-question?question_id=";
+const QuestionListURL = AppConfig.baseURL + "/tw-question/list";
+const GetQuestionDetails = AppConfig.baseURL + "/tw-question?question_id=";
 const GetQuestionDetailsForEdit =
-  AppConfig.baseURL + "/ht-question/for/edit?question_id=";
+  AppConfig.baseURL + "/tw-question/for/edit?question_id=";
 
-const AnswerTypeListURL = AppConfig.baseURL + "/ht-question/answerType";
+const AnswerTypeListURL = AppConfig.baseURL + "/tw-question/answerType";
 const CheckIsQuestionUniqueURL =
-  AppConfig.baseURL + "/ht-question/check/unique";
-const CreateQuestionURL = AppConfig.baseURL + "/ht-question";
-const EditQuestionURL = AppConfig.baseURL + "/ht-question";
-const EditQuestionStatusURL = AppConfig.baseURL + "/ht-question";
-const DeleteQuestionURL = AppConfig.baseURL + "/ht-question";
+  AppConfig.baseURL + "/tw-question/check/unique";
+const CreateQuestionURL = AppConfig.baseURL + "/tw-question";
+const EditQuestionURL = AppConfig.baseURL + "/tw-question";
+const EditQuestionStatusURL = AppConfig.baseURL + "/tw-question";
+const DeleteQuestionURL = AppConfig.baseURL + "/tw-question";
 
 const ListFormQuestionsURL =
-  AppConfig.baseURL + "/ht-assessment/getassessmentform?formId=";
+  AppConfig.baseURL + "/tw-assessment/getassessmentform?formId=";
 const GetAssessmentDetailsURL =
-  AppConfig.baseURL + "/ht-assessment/getassessmentdetails?assessmentId=";
-const CalculateScoreURL = AppConfig.baseURL + "/ht-score/calculate";
-const ScoreURL = AppConfig.baseURL + "/ht-score";
+  AppConfig.baseURL + "/tw-assessment/getassessmentdetails?assessmentId=";
+const CalculateScoreURL = AppConfig.baseURL + "/tw-score/calculate";
+const ScoreURL = AppConfig.baseURL + "/tw-score";
 
 const UploadURL = AppConfig.baseURL + "/fileUploads/";
 const UploadedFilesURL = AppConfig.baseURL + "/fileUploads";
@@ -146,43 +146,45 @@ const UploadCSVURL = AppConfig.baseURL + "/fileUploads/importFile/";
 const CsvHeaderValue = AppConfig.baseURL + "/importFile/mapdata?documentId=";
 const ActualImport = AppConfig.baseURL + "/importFile";
 
-const ListEventsURL = AppConfig.baseURL + "/ht-events/list";
-const CreateEventsURL = AppConfig.baseURL + "/ht-events/create";
-const DeleteEventsURL = AppConfig.baseURL + "/ht-events";
-const EditEventsURL = AppConfig.baseURL + "/ht-events";
+const ListEventsURL = AppConfig.baseURL + "/tw-events/list";
+const CreateEventsURL = AppConfig.baseURL + "/tw-events/create";
+const DeleteEventsURL = AppConfig.baseURL + "/tw-events";
+const EditEventsURL = AppConfig.baseURL + "/tw-events";
 
-const ChildServedReportURL = AppConfig.baseURL + "/report/ht-childrenserved";
+const ChildServedReportURL = AppConfig.baseURL + "/tw-report/childrenserved";
 const ChildRedFlagReportURL =
-  AppConfig.baseURL + "/report/children/ht-redflags";
+  AppConfig.baseURL + "/tw-report/children-redflags";
 const DurationFollowupReportURL =
-  AppConfig.baseURL + "/report/ht-durationFollowup";
-const ChildOverdueReportURL = AppConfig.baseURL + "/report/ht-childoverdue";
+  AppConfig.baseURL + "/tw-report/durationFollowup";
+const ChildOverdueReportURL = AppConfig.baseURL + "/tw-report/childoverdue";
 const NewlyAddedChildrenReportURL =
-  AppConfig.baseURL + "/report/ht-newlyadmitted";
-const CaseManagementReportURL = AppConfig.baseURL + "/report/tw-casemanagement";
-const CaseworkerServedURL = AppConfig.baseURL + "/report/caseworkerserved";
-const FamiliesServedURL = AppConfig.baseURL + "/report/familyserved";
-const DashboardOverallURL = AppConfig.baseURL + "/report/ht-dashboardOverall";
+  AppConfig.baseURL + "/tw-report/newlyadmitted";
+const CaseManagementReportURL = AppConfig.baseURL + "/tw-report/casemanagement";
+const CaseworkerServedURL = AppConfig.baseURL + "/tw-report/caseworkerserved";
+const FamiliesServedURL = AppConfig.baseURL + "/tw-report/familyserved";
+const DashboardOverallURL = AppConfig.baseURL + "/tw-report/dashboardOverall";
 const FSDashboardOverallURL = AppConfig.baseURL + "/fs-reports";
-
 const ExportURL = AppConfig.baseURL + "/exportFile";
-const AverageThriveURL = AppConfig.baseURL + "/report/ht-averageThrivescale";
-const FollowupURL = AppConfig.baseURL + "/report/durationFollowup";
-const OverdueURL = AppConfig.baseURL + "/report/childoverdue";
-const NewlyAdmittedURL = AppConfig.baseURL + "/report/ht-newlyadmitted";
-const DisruptionCasesURL = AppConfig.baseURL + "/report/ht-disruptionCase";
-const CaseManagementURL = AppConfig.baseURL + "/report/tw-casemanagement";
-const ChildrenInCCIURL = AppConfig.baseURL + "/report/current/ht-cciresident";
-const CurrentPlacementURL = AppConfig.baseURL + "/report/current/ht-placement";
-const DurationInCCIURL = AppConfig.baseURL + "/report/cci/ht-duration";
+
+const AverageThriveURL = AppConfig.baseURL + "/tw-report/averageThrivescale";
+const FollowupURL = AppConfig.baseURL + "/tw-report/durationFollowup";
+const OverdueURL = AppConfig.baseURL + "/tw-report/childoverdue";
+const NewlyAdmittedURL = AppConfig.baseURL + "/tw-report/newlyadmitted";
+const DisruptionCasesURL = AppConfig.baseURL + "/tw-report/disruptionCase";
+const CaseManagementURL = AppConfig.baseURL + "/tw-report/casemanagement";
+const ChildrenInCCIURL = AppConfig.baseURL + "/tw-report/current-cciresident";
+const CurrentPlacementURL = AppConfig.baseURL + "/tw-report/current-placement";
+const DurationInCCIURL = AppConfig.baseURL + "/tw-report/cci-duration";
 const ReintegratedChildrenURL =
-  AppConfig.baseURL + "/report/reintegrated/ht-children";
-const NewlyAddedURL = AppConfig.baseURL + "/report/ht-newlyadded";
+  AppConfig.baseURL + "/tw-report/reintegrated-children";
+const NewlyAddedURL = AppConfig.baseURL + "/tw-report/newlyadded";
 const InterventionDetailsURL =
-  AppConfig.baseURL + "/report/ht-interventiondetails";
-const MapReportURL = AppConfig.baseURL + "/report/ht-map";
+  AppConfig.baseURL + "/tw-report/interventiondetails";
+const MapReportURL = AppConfig.baseURL + "/tw-report/map";
 const AverageChangeURL =
-  AppConfig.baseURL + "/report/ht-avgPercentChangeTScore";
+  AppConfig.baseURL + "/tw-report/avgPercentChangeTScore";
+
+
 const EditProfileURL = AppConfig.baseURL + "/user/profile";
 const ResendInvitationURL = AppConfig.baseURL + "/user/resendInvite";
 
@@ -190,15 +192,15 @@ const NotificationListURL = AppConfig.baseURL + "/notification/list";
 const UpdateNotificationURL = AppConfig.baseURL + "/notification/update";
 const saveUserLanguageURL = AppConfig.baseURL + "/user/updateFields";
 const ProgressReportListURL =
-  AppConfig.baseURL + "/ht-followup/getFollowUpChildList";
+  AppConfig.baseURL + "/tw-followup/getFollowUpChildList";
 const viewFollowUpProgressURL =
-  AppConfig.baseURL + "/ht-followup/viewFollowUpProgress";
+  AppConfig.baseURL + "/tw-followup/viewFollowUpProgress";
 const getFollowupDomainDetailsURL =
-  AppConfig.baseURL + "/ht-followup/getFollowupDomainDetails";
+  AppConfig.baseURL + "/tw-followup/getFollowupDomainDetails";
 const generarateProgressReportListURL =
-  AppConfig.baseURL + "/ht-followup/generateFollowUpProgressListExcel";
+  AppConfig.baseURL + "/tw-followup/generateFollowUpProgressListExcel";
 const generateFollowUpProgressPdfURL =
-  AppConfig.baseURL + "/ht-followup/generateFollowUpProgressPdf";
+  AppConfig.baseURL + "/tw-followup/generateFollowUpProgressPdf";
 
 // fs child api URLs
 const fsChildURL = AppConfig.baseURL + "/child";
@@ -228,7 +230,7 @@ const getCaseManagerChildPerAccountURL =
   AppConfig.baseURL + "/fs-reports/getCaseManager-Child-PerAccount";
 
 const getChildPerCaseWorker =
-  AppConfig.baseURL + "/report/ht-childrenPerCaseworker";
+  AppConfig.baseURL + "/tw-report/childrenPerCaseworker";
 
 // fs family api URLs
 const fsEventsURL = AppConfig.baseURL + "/events";
@@ -266,12 +268,12 @@ const checkIfAppDepricatedURL =
   AppConfig.baseURL + `/deprication/checkIfAppDepricated?app=THRIVEWELL`;
 const getRegionURL = AppConfig.baseURL + "/get-region";
 
-const UpdateCaseWorkerURL = AppConfig.baseURL + "/ht-family/updateCaseworker";
+const UpdateCaseWorkerURL = AppConfig.baseURL + "/tw-family/updateCaseworker";
 const CheckChildIsFamilyCaregiverURL =
-  AppConfig.baseURL + "/ht-family/checkifChildisFamilyCaregiver";
-  const CheckDeactivationAllowedURL = AppConfig.baseURL + "/ht-child/isDeactivationAllowed"; 
-  const deactivateReactivateReasonURL =  AppConfig.baseURL + "/ht-family/deactivation-deletion-reason";
-  const CheckDuplicateChildURL =  AppConfig.baseURL +  "/ht-child/isUniqueChild";
+  AppConfig.baseURL + "/tw-family/checkifChildisFamilyCaregiver";
+  const CheckDeactivationAllowedURL = AppConfig.baseURL + "/tw-child/isDeactivationAllowed"; 
+  const deactivateReactivateReasonURL =  AppConfig.baseURL + "/tw-family/deactivation-deletion-reason";
+  const CheckDuplicateChildURL =  AppConfig.baseURL +  "/tw-child/isUniqueChild";
 
 // govt dashboard api URLs
 const GOVT_DASHBOARD_BASE = AppConfig.baseURL + "/tw-govt-dashboard";
@@ -296,19 +298,19 @@ const AllFamiliesSixMonthsURL = `${GOVT_DASHBOARD_BASE}/all-families-last-six-mo
 const InterventionSummaryURL = `${GOVT_DASHBOARD_BASE}/intervention-summary`;
 const AllChildrenSixMonthsURL = `${GOVT_DASHBOARD_BASE}/all-child-last-six-months`;
 const IncrisisAndVulnerableMilestonesChildrenURL = `${GOVT_DASHBOARD_BASE}/inCrisis-vulnerable-milestone-child`;
-const FollowUpListURL = `/ht-followup/getInterimFollowups`;
-const FollowUpExportURL = `/ht-followup/exportInterimFollowups`;
+const FollowUpListURL = `/tw-followup/getInterimFollowups`;
+const FollowUpExportURL = `/tw-followup/exportInterimFollowups`;
 const IncrisisAndVulnerableMilestonesFamilyURL = `${GOVT_DASHBOARD_BASE}/inCrisis-vulnerable-milestone-family`;
 const CurrentLivingConditionURL = `${GOVT_DASHBOARD_BASE}/current-living-condition`;
 const FamilyAssessmentScoreImprovementURL = `${GOVT_DASHBOARD_BASE}/family-assessment-score-improvements`;
-const ConsolidatedAssessmentProgressReportURL = `/ht-assessment/listConsolidatedAssessmentData`;
-const MostRecentAssesmentSummaryURL = `/ht-family/most-recent-assessment`;
+const ConsolidatedAssessmentProgressReportURL = `/tw-assessment/listConsolidatedAssessmentData`;
+const MostRecentAssesmentSummaryURL = `/tw-family/most-recent-assessment`;
 const TodoListURL = AppConfig.baseURL + "/todo-List/list";
-const ChildMilestoneListURL = AppConfig.baseURL + "/ht-child/getMilestoneList";
-const InterventionForMilestoneListURL = AppConfig.baseURL + "/ht-family/getInterventionForMilestone";
-const ChildInterventionListURL = AppConfig.baseURL + "/ht-child/getInterventionList";
-const InterventionForMilestoneListChildURL = AppConfig.baseURL + "/ht-child/milestone-interventions";
-const getInterventionForMilestoneListURL = AppConfig.baseURL + "/ht-family/getInterventionForMilestone";
+const ChildMilestoneListURL = AppConfig.baseURL + "/tw-child/getMilestoneList";
+const InterventionForMilestoneListURL = AppConfig.baseURL + "/tw-family/getInterventionForMilestone";
+const ChildInterventionListURL = AppConfig.baseURL + "/tw-child/getInterventionList";
+const InterventionForMilestoneListChildURL = AppConfig.baseURL + "/tw-child/milestone-interventions";
+const getInterventionForMilestoneListURL = AppConfig.baseURL + "/tw-family/getInterventionForMilestone";
 const FamilyDropdownListsURL = AppConfig.baseURL + "/tw-families/dropdowns";
 const ChildDropdownListsURL = AppConfig.baseURL + "/tw-children/dropdowns";
 
@@ -1191,8 +1193,8 @@ const APIS = {
     return axios.all([prerequest]).then((res) => {
       const ChildConsentCompletedURL =
         API_URLS.consentForm.familyChildConsent +
-        `?HTFamilyId=` +
-        payload.HTFamilyId;
+        `?TWFamilyId=` +
+        payload.TWFamilyId;
       return axios
         .get(ChildConsentCompletedURL)
         .then((response) => {
@@ -2398,6 +2400,29 @@ const APIS = {
 
   CaseManagementReport: (payload) =>
     APIS.makePostRequest(CaseManagementReportURL, payload),
+  generaratelegacyDataExport: (payload) =>
+    APIS.makePostRequest(API_URLS.reports.exportLegacyAssessmentScore, payload),
+
+  getActiveForms: (params) => APIS.makeGetRequest(`${API_URLS.forms.activeForms}?MPCountryId=${params.id}`),
+
+  GetFormList: (params) => APIS.makeGetRequest(`${API_URLS.forms.formList}?page=${params.page}&pageSize=${params.limit}&MPCountryId=${params.MPCountryId}`),
+
+  getDomainSkipReasons: () => {
+    const currentLanguage = localStorage.getItem("language");
+    const currentLanguageList = JSON.parse(
+      localStorage.getItem("languageList")
+    );
+    let langId;
+    if (!currentLanguage || !currentLanguageList?.length) {
+      langId = "1";
+    } else {
+      langId =
+        currentLanguageList?.length &&
+        currentLanguageList.find((item) => item.languageCode == currentLanguage)
+          ?.id;
+    }
+    return APIS.makeGetRequest(`${API_URLS.assessment.skipDomain}?languageId=${langId}`);
+  },
 
   ExportFile(payload) {
     const currentLanguage = localStorage.getItem("language");
@@ -2480,7 +2505,7 @@ const APIS = {
   },
 
   FamilyAuditLog(payload) {
-    return this.makePostRequest(FamilyAuditURL, payload);
+      return APIS.makeGetRequest(`${API_URLS.family.familyAudit}?TWFamilyId=${payload?.TWFamilyId}&rowCount=${payload?.rowCount}&pageNumber=${payload?.pageNumber}`);
   },
 
   NewlyAdmittedChildrenReport(payload) {
@@ -3491,7 +3516,7 @@ const APIS = {
   },
 
   familyMembers(familyId) {
-    let CompletedfamilyMembersURL = familyMembersURL + `?family_id=${familyId}`;
+    let CompletedfamilyMembersURL = familyMembersURL + `?TWFamilyId=${familyId}`;
     return this.makeGetRequest(CompletedfamilyMembersURL);
   },
 
@@ -3503,7 +3528,7 @@ const APIS = {
   
   checkDeactivationAllowed(childId, familyId, type) {
     let CompletedcheckDeactivationAllowedURL =
-      CheckDeactivationAllowedURL + `?child_id=${childId}&HTFamilyId=${familyId}&type=${type}`;
+      CheckDeactivationAllowedURL + `?child_id=${childId}&TWFamilyId=${familyId}&type=${type}`;
     return this.makeGetRequest(CompletedcheckDeactivationAllowedURL);
   },
 
@@ -3553,7 +3578,7 @@ const APIS = {
   GetConsolidatedAssessmentProgressReport: (payload) => APIS.makePostRequest(ConsolidatedAssessmentProgressReportURL, payload),
   GetMostRecentAssesmentSummary(familyId) {
     let CompletedMostRecentAssesmentSummaryURL =
-      MostRecentAssesmentSummaryURL + `?HTFamilyId=${familyId}`;
+      MostRecentAssesmentSummaryURL + `?TWFamilyId=${familyId}`;
     return this.makeGetRequest(CompletedMostRecentAssesmentSummaryURL);
   },
   GetTodoList: (payload) => APIS.makePostRequest(TodoListURL, payload),
@@ -3563,7 +3588,7 @@ const APIS = {
   GetFamilyMilestoneList: (payload) => APIS.makePostRequest(getFamilyMilestoneListURL, payload),
   GetInterventionForMilestoneList: (payload) => APIS.makePostRequest(getInterventionForMilestoneListURL, payload),
   GetFamilyHistoryList: (payload) => APIS.makePostRequest(FamilyHistoryListURL, payload),
-  GetFamilyInterventionSummary: (payload) => APIS.makeGetRequest(FamilyInterventionSummaryURL + `?HTFamilyId=${payload}`),
+  GetFamilyInterventionSummary: (payload) => APIS.makeGetRequest(FamilyInterventionSummaryURL + `?TWFamilyId=${payload}`),
   GetChildInterventionList: (payload) => APIS.makePostRequest(ChildInterventionListURL, payload),
 
   //Entity model API's
@@ -3576,6 +3601,7 @@ const APIS = {
   UpdateFamilyMember: (payload) => APIS.makePutRequest(API_URLS.family.updateFamilyMember, payload),
   GetFamilyDropdownLists: (payload) => APIS.makePostRequest(API_URLS.family.getFamilyDropdownList, payload),
   CloseCase:(payload) => APIS.makePutRequest(API_URLS.family.closeCase, payload),
+  ReOpenCase:(payload) => APIS.makePutRequest(API_URLS.family.reOpenCase, payload),
 
   //------Child-------
   GetChildDropdownLists: (payload) => APIS.makePostRequest(API_URLS.child.getChildDropdownLists, payload),
@@ -3586,7 +3612,7 @@ const APIS = {
   GetDuplicateChildList: (payload) => APIS.makePostRequest(API_URLS.child.uniqueChildList, payload),
   CloseChildCase: (payload) => APIS.makePatchRequest(API_URLS.child.closeChildCase, payload),
   CheckUniqueChild: (payload) => APIS.makePostRequest(API_URLS.child.checkUniqueChild, payload),
-
+  ReOpenChidCase: (payload) => APIS.makePatchRequest(API_URLS.child.reOpenChildCase, payload),
   // events
   GetEventList: (payload) => APIS.makePostRequest(API_URLS.events.getEventList, payload),
 };

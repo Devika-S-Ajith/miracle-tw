@@ -32,9 +32,11 @@ import FollowUps from "../../Assessments/Components/FollowUps";
 import FamilyMilestones from "../Components/FamilyMilestones/FamilyMilestones";
 import FamilyInterventions from "./FamilyInterventions";
 import ConsolidatedAssessmentProgressReport from "../../../components/ConsolidatedAssessmentProgressReport";
+import ChildLogs from "../../Child/Components/ChildLogs";
 
 const tabs = [
   { label: "Details", value: "details", id: "tab_details" },
+  {label: "Logs", value: "ConsolidatedLog", id: "tab_logs"},
   { label: "Assessments & Progress Reports", value: "assessmentsProgressReports", id: "tab_assessments_progress_reports" },
   //{ label: "Milestones", value: "milestones" ,id:"tab_milestones" },
   //{ label: "Interventions", value: "interventions", id: "tab_interventions" },
@@ -51,7 +53,7 @@ const tabs = [
 const FamilyDetails = () => {
   const { t } = useTranslation(["common"]);
   const navigate = useNavigate();
-  const { familyList, signedinUserRoleHT, signedinOrgType } =
+  const { familyList, signedinUserRoleHT, signedinOrgType ,signedinUserRoleFS} =
     useContext(CommonDataContext);
   const [loading, setLoading] = useState(false);
   const [family, setFamily] = useState(null);
@@ -69,35 +71,16 @@ const FamilyDetails = () => {
 
   let { id } = useParams();
 
-  const getFamilies = () => {
-    setLoading(true);
-    familyList &&
-      familyList.forEach((family) => {
-        if (family.id === id) {
-          setFamily(family);
-          let members = family.HT_familyMembers;
-          let primaryCareGiver = members?.find(
-            (member) => member.isPrimaryCareGiver === true
-          );
-          setPrimaryCaregiver(primaryCareGiver);
-        }
-      });
-    setLoading(false);
-  };
-
-
+ 
   useEffect(() => {
     document.title = "Family | Details | ThriveWell";
-   // getFamilies();
     getFamilyDetails();
-    //getMembersUnderFamily();
-
     return () => {};
   }, []);
 
   useAuthorization(
     signedinUserRoleHT,
-    null,
+    signedinUserRoleFS,
     signedinOrgType,
     "ManageFamily",
     true
@@ -123,22 +106,8 @@ const FamilyDetails = () => {
     setCurrentTab(value);
   };
 
-  const getMembersUnderFamily = useCallback(async () => {
-    // setMemberListLoading(true);
-    // try {
-    //   const data = await APIS.familyMembers(id);
-    //   const members = data?.data?.familyDetails?.members || [];
-    //   if (members) {
-    //     setMemberList(members);
-    //   }
-    //   setMemberListLoading(false);
-    // } catch (err) {
-    //   setMemberListLoading(false);
-    //   console.error(err);
-    // }
-  });
+
   const renderTabContent = () => {
-    console.log("Rendering tab content for:", currentTab);
     switch (currentTab) {
       case "details":
         return (
@@ -170,6 +139,8 @@ const FamilyDetails = () => {
         return <FamilyMilestones  familyMembers={memberList}  familyName={family.familyName} />;
       case "assessmentsProgressReports":
         return <ConsolidatedAssessmentProgressReport id={family?.id} pageType="FAMILY" />;
+      case "ConsolidatedLog":
+        return <ChildLogs module="family" showForChild={true} />;
       default:
         return null;
     }

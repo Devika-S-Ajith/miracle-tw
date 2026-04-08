@@ -136,7 +136,7 @@ const ConsolidatedEventsList = () => {
               {
                 modalTitle: <Box>Event</Box>,
                 width: "30%",
-                maxHeight: "90%",
+                height: "95%",
                 hideModalFooter: true,
                 enableClose: true,
               },

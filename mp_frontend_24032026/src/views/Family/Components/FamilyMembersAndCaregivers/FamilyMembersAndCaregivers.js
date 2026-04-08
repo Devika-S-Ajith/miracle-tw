@@ -57,7 +57,7 @@ const FamilyMembersTable = ({ members }) => {
         minWidth: 100,
         render: (row) => (
           <ChipComponent
-            label={familyDropdownLists?.familyRelations?.find(item => item.id === row.TWFamilyRelationId)?.label || row.TWFamilyRelationId}
+            label={familyDropdownLists?.familyRelations?.find(item => item.id === row.TWFamilyRelationId)?.value || row.TWFamilyRelationId}
             sx={{
               backgroundColor: getRoleBackgroundColor(row.roleType),
               color: getRoleTextColor(row.roleType),
@@ -97,7 +97,7 @@ const FamilyMembersTable = ({ members }) => {
         render: (row) => (
           <Box>
             <Typography variant="body2" color="textPrimary">
-              {row.profileInformation?.phoneNumber || 'N/A'}
+              {row.profileInformation?.phoneNumber || '-'}
             </Typography>
             {row.profileInformation?.email && (
               <Typography variant="body2" color="textPrimary" sx={{ wordBreak: 'break-all' }}>
@@ -116,7 +116,7 @@ const FamilyMembersTable = ({ members }) => {
         render: (row) => (
           <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
             <Typography variant="body2" color="textPrimary">
-              {row.profileInformation?.notes || 'N/A'}
+              {row.profileInformation?.notes || '-'}
             </Typography>
            
             <Stack direction="row" spacing={1}>

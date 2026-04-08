@@ -175,6 +175,34 @@ export function utcToLocalTimeWithoutSeconds(utcDateTime) {
   return localDateTime.format("h:mm A");
 }
 
+export const toUTCStartofDay = (dateValue) => {
+  if (!dateValue) return null;
+
+  const date = new Date(dateValue);
+
+  // Build UTC midnight from local date parts
+  return new Date(Date.UTC(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate()
+  )).toISOString();
+};
+
+// Returns the UTC end-of-day timestamp (23:59:59.999Z) for the given date
+export const toUTCEndOfDay = (dateValue) => {
+  if (!dateValue) return null;
+
+  const date = new Date(dateValue);
+
+  // Build UTC end of day from local date parts
+  return new Date(Date.UTC(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+    23, 59, 59, 999
+  )).toISOString();
+};
+
 export const getDate = (dateToFormat = null) => {
   let yourDate;
   if (dateToFormat === null) {
@@ -385,6 +413,35 @@ export function calculateAgeReverseOrder(timestamp) {
   return `${ageInYears} year${ageInYears === 1 ? "" : "s"} old`;
 }
 
+const getConsentName = (assessment) => {
+  if (!assessment) return "";
+
+  const { HTFamilyMemberId, HTChildId, memberFirstName, memberLastName, childFirstName, childLastName } = assessment;
+
+  // Determine which name fields to use based on which ID is present
+  const isMember = HTFamilyMemberId != null;
+  const isChild = HTChildId != null;
+
+  // Edge case: both null or both non-null — fallback priority: member > child > ""
+  const firstName = isMember
+    ? memberFirstName
+    : isChild
+    ? childFirstName
+    : memberFirstName ?? childFirstName ?? "";
+
+  const lastName = isMember
+    ? memberLastName
+    : isChild
+    ? childLastName
+    : memberLastName ?? childLastName ?? "";
+
+  const first = firstName?.trim() || "";
+  const last = lastName?.trim() || "";
+
+  if (!first && !last) return "";
+  return last ? `${first} ${last}`.trim() : first;
+};
+
 export const generateConsentPdfHandler = async (id, assessment) => {
   try {
     const payLoad = {
@@ -405,7 +462,7 @@ export const generateConsentPdfHandler = async (id, assessment) => {
 
     const newTab = window.open();
     if (newTab) {
-      newTab.document.title = `Consent_${assessment?.memberFirstName}${assessment?.memberLastName ? ` ${assessment.memberLastName}` : ""}`;
+      newTab.document.title = `Consent_${getConsentName(assessment)}`;
       newTab.document.body.style.margin = "0";
       const embed = newTab.document.createElement("embed");
       embed.src = blobUrl;
@@ -573,9 +630,7 @@ export const getCurrentLanguageIdFromCode = (languageCode) => {
 export const formatAddressFromContactInfo = (contactInfo, locationList) => {
   if (!contactInfo) return "-";
 
-
   const addressParts = [];
-
 
   // Add address lines
   if (contactInfo?.addressLine1) {
@@ -585,12 +640,10 @@ export const formatAddressFromContactInfo = (contactInfo, locationList) => {
     addressParts.push(contactInfo.addressLine2);
   }
 
-
   // Add city
   if (contactInfo?.city) {
     addressParts.push(contactInfo.city);
   }
-
 
   // Add state/province name by looking it up
   if (contactInfo?.TWStateId && locationList?.length) {
@@ -606,7 +659,6 @@ export const formatAddressFromContactInfo = (contactInfo, locationList) => {
       }
     }
   }
-
 
   // Add district
   if (contactInfo?.TWDistrictId && locationList?.length) {
@@ -628,8 +680,12 @@ export const formatAddressFromContactInfo = (contactInfo, locationList) => {
     }
   }
 
+  // Add zip code
+  if (contactInfo?.zipCode) {
+    addressParts.push(contactInfo.zipCode);
+  }
 
-  // Add country name
+   // Add country name
   if (contactInfo?.TWCountryId && locationList?.length) {
     const country = locationList.find(
       (item) => item.id == contactInfo.TWCountryId
@@ -638,13 +694,6 @@ export const formatAddressFromContactInfo = (contactInfo, locationList) => {
       addressParts.push(country.countryName);
     }
   }
-
-
-  // Add zip code
-  if (contactInfo?.zipCode) {
-    addressParts.push(contactInfo.zipCode);
-  }
-
 
   return addressParts.length > 0 ? addressParts.join(", ") : "-";
 };
@@ -662,8 +711,3 @@ export const getLanguageNameFromId = (languageId) => {
   }
   return languageName;
 };
-
-
-
-
-

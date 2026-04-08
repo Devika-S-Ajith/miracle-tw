@@ -79,7 +79,8 @@ const ManageUserForm = (props) => {
     signedinUserRoleFS,
     organizationList,
     signedinOrgType,
-    setIsProfileDetailsChanged,
+    setFirstName,
+    setLastName,
   } = useContext(CommonDataContext);
   const { t } = useTranslation(["common"]);
   const [user, setUser] = useState([]);
@@ -343,7 +344,7 @@ const ManageUserForm = (props) => {
         address1: user?.addressLine1 || "",
         country: accIdFromAccountCreation
           ? initialCountry
-          : user?.HTCountryId || "",
+          : user?.TWCountryId || "",
         email: user?.email || "",
         //organization_name: user.related_org || '',
         //name: user?.name,
@@ -360,7 +361,7 @@ const ManageUserForm = (props) => {
         // FSRole: null,
 
         address2: user?.addressLine2 || "",
-        district: user?.HTDistrictId || "",
+        district: user?.TWDistrictId || "",
         zipCode: user?.zipCode
           ? user?.zipCode?.length > 6
             ? user?.zipCode.slice(0, 5) + "-" + user?.zipCode.slice(5)
@@ -371,7 +372,7 @@ const ManageUserForm = (props) => {
               (individualCountry) => individualCountry.id == initialCountry
             )?.countryCode
           : user?.phoneNumber || "+1",
-        state: user?.HTStateId || "",
+        state: user?.TWStateId || "",
         submit: null,
         city: user?.city || "",
       }}
@@ -512,7 +513,12 @@ const ManageUserForm = (props) => {
                   setSubmitting(false);
                   toast.success(t("common:user.User Updated Successfully"));
                   if (localStorage.getItem("username") === user.id) {
-                    setIsProfileDetailsChanged(true);
+                    if (payload.firstName !== user.firstName) {
+                      setFirstName(payload.firstName);
+                    }
+                    if (payload.lastName !== user.lastName) {
+                      setLastName(payload.lastName);
+                    }
                   }
                   navigate("/dashboard/team/");
                 } else {
@@ -933,9 +939,6 @@ const ManageUserForm = (props) => {
                             name="FSRole"
                             id="FSRole"
                             disabled={
-                              [COUNTRY_ID_INDIA, COUNTRY_ID_UGANDA].includes(
-                                values.country
-                              ) ||
                               ![SUPER_ADMIN, ADMIN, ADMIN_CASEMANAGER].includes(
                                 signedinUserRoleFS
                               ) ||

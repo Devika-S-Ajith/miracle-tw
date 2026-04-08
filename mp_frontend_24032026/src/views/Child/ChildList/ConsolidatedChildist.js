@@ -9,6 +9,7 @@ import {
   Grid,
   IconButton,
   Menu,
+  Modal,
   Stack,
   TextField,
   Tooltip,
@@ -41,19 +42,24 @@ const ConsolidatedChildList = (props) => {
   const [appliedFiltersChipArray, setAppliedFiltersChipArray] = useState([]);
   const { signedinOrgId } = useContext(CommonDataContext);
   const [users, setUsers] = useState([]);
+  //   actions
+  const [menuState, setMenuState] = useState({ anchorEl: null, row: null });
+  const [activeChildId, setActiveChildId] = useState(null);
+  const open = Boolean(menuState?.anchorEl);
+  const [childModalOpen, setChildModalOpen] = useState(false);
+  const [hideChildModal, setHideChildModal] = useState(false);
+  const handleChildModalOpen = () => {
+    setChildModalOpen(!childModalOpen);
+  };
+    console.log("handleChildModalOpen", hideChildModal);
+  
+  const handleClick = (event, row) => {
+    setMenuState({ anchorEl: event.currentTarget, row });
+  };
 
-    //   actions
-    const [menuState, setMenuState] = useState({ anchorEl: null, row: null });
-    const open = Boolean(menuState?.anchorEl);
-  
-    const handleClick = (event, row) => {
-      setMenuState({ anchorEl: event.currentTarget, row });
-    };
-  
-    const handleClose = () => {
-      setMenuState({ anchorEl: null, row: null });
-    };
-  
+  const handleClose = () => {
+    setMenuState({ anchorEl: null, row: null });
+  };
 
   const getStatusBackgroundColor = (status) => {
     switch (status) {
@@ -149,24 +155,25 @@ const ConsolidatedChildList = (props) => {
               <Tooltip title={t("common:common.Edit child", "Edit child")}>
                 <IconButton
                   onClick={() => {
+                    setChildModalOpen(true);
+                    setActiveChildId(menuState?.row?.id);
                     setMenuState(null);
-                    ModalService.open(
-                      ({ close }) => (
-                        <ManageChildForm close={close} id={menuState?.row?.id} />
-                      ),
-                      {
-                        modalTitle: (
-                          <Box>
-                            Child{" "}
-                            <span style={{ color: "#FF8C42" }}>ACTIVE</span>
-                          </Box>
-                        ),
-                        width: "30%",
-                        height: "90%",
-                        hideModalFooter: true,
-                        enableClose: true,
-                      },
-                    );
+
+                    // ModalService.open(
+                    //   ({ close }) => (
+                    //     <ManageChildForm
+                    //       close={close}
+                    //       id={menuState?.row?.id}
+                    //       refreshTable={getTableData} // Refresh data after re-opening case
+                    //     />
+                    //   ),
+                    //   {
+                    //     width: "30%",
+                    //     height: "95%",
+                    //     hideModalFooter: true,
+                    //     enableClose: false,
+                    //   },
+                    // );
                   }}
                   id="edit-family"
                 >
@@ -317,17 +324,14 @@ const ConsolidatedChildList = (props) => {
           label={t("common:child.Add new child")}
           onClick={() =>
             ModalService.open(
-              ({ close }) => <ManageChildForm close={close} />,
+              ({ close }) => (
+                <ManageChildForm close={close} refreshTable={getTableData} />
+              ),
               {
-                modalTitle: (
-                  <Box>
-                    Child <span style={{ color: "#FF8C42" }}>ACTIVE</span>
-                  </Box>
-                ),
                 width: "30%",
-                height: "90%",
+                height: "95%",
+                enableClose: false,
                 hideModalFooter: true,
-                enableClose: true,
               },
             )
           }
@@ -456,6 +460,29 @@ const ConsolidatedChildList = (props) => {
   };
   return (
     <>
+      <Modal open={childModalOpen} onClose={handleChildModalOpen} sx={{visibility: hideChildModal ? "hidden" : "visible"}}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 700,
+            bgcolor: "background.paper",
+            // border: "2px solid #000",
+            p:2,
+            boxShadow: 24,
+          }}
+        >
+          <ManageChildForm
+            handleChildModalOpen={handleChildModalOpen}
+            id={activeChildId}
+            refreshTable={getTableData} // Refresh data after re-opening case
+            setHideChildModal={setHideChildModal}
+          />
+        </Box>
+      </Modal>
+      ;
       <Box
         sx={{
           backgroundColor: "background.default",

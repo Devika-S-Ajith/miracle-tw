@@ -16,7 +16,6 @@ import { getLocationNames } from "../../../helpers/helperFunction";
 const OrganizationList = () => {
   const { t } = useTranslation(["common"]);
   const {
-    clearListingPageDetails,
     locationList,
     signedinUserRoleHT,
     getUserTokens,
@@ -128,7 +127,6 @@ const OrganizationList = () => {
     document.title = "Organizations | ThriveWell";
     getUserTokens();
     setLoading(true);
-    clearListingPageDetails("orgPageData");
     if (localStorage.getItem("orgPageData") === null) {
       getOrganizations();
     } else {

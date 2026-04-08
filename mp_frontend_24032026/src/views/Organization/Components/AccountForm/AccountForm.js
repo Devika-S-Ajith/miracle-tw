@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -16,6 +16,7 @@ import {
   TextField,
   Typography,
   Checkbox,
+  CircularProgress,
 } from "@mui/material";
 import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
 import { useTranslation } from "react-i18next";
@@ -44,6 +45,8 @@ import CustomSwitch from "../../../../components/UserComponents/CustomSwitch";
 
 
 const AccountForm = (props) => {
+  const [activeForms, setActiveForms] = useState([]);
+  const [loadingActiveForms, setLoadingActiveForms] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation(["common"]);
   const { organization, ...other } = props;
@@ -97,6 +100,33 @@ const [consentChecked, setConsentChecked] = useState(
     },
   ];
 
+  const fetchActiveForms = async (country) => {
+    setLoadingActiveForms(true);
+    try {
+      const countryDetails = getSelectedCountryDetails(locationList, country);
+      const countryId = locationList.find(
+        (loc) =>
+          loc.countryName ===
+          (countryDetails.countryName === "India" ? "India" : "US"),
+      )?.id;
+      const params = { id: countryId };
+      const res = await APIS.getActiveForms(params);
+      if (res && res.data?.data) {
+        setActiveForms(res.data?.data);
+      }
+    } catch (error) {
+      // Optionally handle error
+    } finally {
+      setLoadingActiveForms(false);
+    }
+  };
+  
+  useEffect(() => {
+    if(organization?.MPCountryId) {
+      fetchActiveForms(organization?.MPCountryId);
+    }
+  }, [organization?.MPCountryId]);
+  
   const changeThriveScaleAccess = () => {
     setIsThriveScaleChecked(!isThriveScaleChecked);
     if (isThriveScaleChecked && !isFosterShareChecked) {
@@ -165,6 +195,7 @@ const [consentChecked, setConsentChecked] = useState(
         caseMangerCount:organization?.caseManagerCount || "",
         childrenServedCount:organization?.childCount || "",
         familyServedCount:organization?.familyCount || "",
+        defaultLanguage: organization ? organization["MP_forms.MP_formAccountMapping.MPFormId"] : ""
       }}
       validationSchema={Yup.object().shape({
         address1: Yup.string()
@@ -176,6 +207,10 @@ const [consentChecked, setConsentChecked] = useState(
         country: Yup.string()
           .max(255)
           .required(t("common:warnings.Country is required")),
+
+        defaultLanguage: Yup.string()
+          .max(255)
+          .required(t("common:warnings.Default assessment language is required")),
 
         website: Yup.string().matches(
           webRegExp,
@@ -225,13 +260,13 @@ const [consentChecked, setConsentChecked] = useState(
               .required(t("common:warnings.Organization Type is required"))
           : Yup.string().max(255),
 
-        isDCPU: Yup.string().when("organization_type", {
-          is: (val) => val === "2",
-          then: Yup.string().required(
-            t("common:warnings.This field is required")
-          ),
-          otherwise: Yup.string().max(255),
-        }),
+        // isDCPU: Yup.string().when("organization_type", {
+        //   is: (val) => val === "2",
+        //   then: Yup.string().required(
+        //     t("common:warnings.This field is required")
+        //   ),
+        //   otherwise: Yup.string().max(255),
+        // }),
 
         email: Yup.string()
           .email(t("common:warnings.Must be a valid email"))
@@ -299,7 +334,7 @@ const [consentChecked, setConsentChecked] = useState(
               MPDistrictId: values.district ? values.district : null,
               MPStateId: values.state,
               city: values.city,
-              isDCPUOrg: values.isDCPU === "true" ? true : false,
+              isDCPUOrg: "",
               dbRegion: INDIA_DB.includes(values.country) ? INDIA : USA,
               accessType: values.organization_type === "6"? "THRIVE_SCALE" :getAccessType(),
               consentRequired: consentChecked,
@@ -309,6 +344,7 @@ const [consentChecked, setConsentChecked] = useState(
               caseManagerCount:values.caseMangerCount || null,
               childCount: values.childrenServedCount || null,
               familyCount: values.familyServedCount || null,
+              MPFormId: values.defaultLanguage || null
             };
             await APIS.EditOrganization(payload).then((res) => {
               if (res && res.data && res.status === 200) {
@@ -338,13 +374,14 @@ const [consentChecked, setConsentChecked] = useState(
               MPDistrictId: values.district ? values.district : null,
               MPStateId: values.state,
               city: values.city,
-              isDCPUOrg: values.isDCPU === "true" ? true : false,
+              isDCPUOrg: "",
               dbRegion: INDIA_DB.includes(values.country) ? INDIA : USA,
               accessType: getAccessType(),
               consentRequired: true,
               primaryContact: null,
               permissions:values.organization_type === "6" ? values.parentOrgPermission : "SELF_ORGANIZATION_LEVEL",
               linkedAccountIds:values.selectedItems.length > 0 ? values.selectedItems : [],
+              MPFormId: values.defaultLanguage || null
             };
             await APIS.AddOrganization(payload).then((res) => {
               if (res && res.data && res.status === 200) {
@@ -396,9 +433,9 @@ const [consentChecked, setConsentChecked] = useState(
         dirty,
       }) => {
         // Check to reset isDCPU if organization_type is not "2"
-        if (values.organization_type !== "2" && values.isDCPU !== "") {
-          setFieldValue("isDCPU", "");
-        }
+        // if (values.organization_type !== "2" && values.isDCPU !== "") {
+        //   setFieldValue("isDCPU", "");
+        // }
 
         if (isSubmitting) {
           const el = document.querySelector(".Mui-error, [data-error]");
@@ -486,11 +523,20 @@ const [consentChecked, setConsentChecked] = useState(
                             component={AutoCompleteDropdown}
                             onOrgTypeChange={(value) => {
                               setFieldValue("selectedItems", []);
+                              if (value) {
+                                fetchActiveForms(value);
+                              } else {
+                                setFieldValue("defaultLanguage", "", true);
+                              }
                             }}
                             required={true}
                             id="country"
                             label="country"
-                            options={locationList}
+                            options={locationList.filter((locItem) =>
+                              localStorage.getItem("userRegion") === "1"
+                                ? locItem.id === "1"  // If userRegion is "1", show only item with id "1"
+                                : locItem.id !== "1"  // Otherwise, show items with id "2" and "3" (exclude "1")
+                            )}
                             textFieldProps={{
                               fullWidth: true,
                               margin: "normal",
@@ -767,6 +813,59 @@ const [consentChecked, setConsentChecked] = useState(
                       }
                       <Grid container item spacing={2} md={12} xs={12}>
                         <CardHeader
+                          title="Defaults"
+                          sx={{ pb: "0px" }}
+                        />
+                      </Grid>
+                      <Grid item md={6} xs={12} sx={{ mt: -2 }}>
+                        {loadingActiveForms ? (
+                          <Box sx={{ display: 'flex', alignItems: 'center', minHeight: 56 }}>
+                            <CircularProgress size={24} />
+                            <Typography sx={{ ml: 2 }}>Loading forms...</Typography>
+                          </Box>
+                        ) : (
+                          <Field
+                            key={values.country || 'no-country'}
+                            error={Boolean(touched.defaultLanguage && errors.defaultLanguage)}
+                            fullWidth
+                            helperText={touched.defaultLanguage && errors.defaultLanguage}
+                            name="defaultLanguage"
+                            accessKey="name"
+                            component={AutoCompleteDropdown}
+                            required={true}
+                            id="defaultLanguage"
+                            label="defaultLanguage"
+                            options={activeForms}
+                            value={values.country ? values.defaultLanguage : null}
+                            textFieldProps={{
+                              fullWidth: true,
+                              margin: "normal",
+                              variant: "outlined",
+                              label: "Default assessment language",
+                            }}
+                            disabled={!values.country}
+                            sx={{
+                              "& fieldset": { borderRadius: "4px" },
+                            }}
+                          />
+                        )}
+                        <Typography
+                          sx={{
+                            color: "#778791",
+                            fontSize: "14px",
+                            fontFamily: "Mulish",
+                            fontWeight: 500,
+                            lineHeight: "17.5px",
+                            wordWrap: "break-word",
+                            // mt: 1
+                          }}
+                        >
+                          All assessments will appear in this language
+                        </Typography>
+                      </Grid>
+
+                      <Grid container item spacing={2} md={12} xs={12}>
+                        <CardHeader
                           title={t("common:common.Access")}
                           sx={{ pb: "0px" }}
                         />
@@ -871,36 +970,6 @@ const [consentChecked, setConsentChecked] = useState(
                               }}
                             />
                           </Grid>
-                          {values.organization_type === "2" ? (
-                            <Grid item md={6} xs={12} sx={{ mt: -2 }}>
-                              <Field
-                                error={Boolean(touched.isDCPU && errors.isDCPU)}
-                                fullWidth
-                                helperText={touched.isDCPU && errors.isDCPU}
-                                name="isDCPU"
-                                disabled={
-                                  ![SUPER_ADMIN].includes(signedinUserRoleHT)
-                                }
-                                accessKey="value"
-                                component={AutoCompleteDropdown}
-                                required={true}
-                                id="is_dcpu"
-                                label="isDCPU"
-                                options={isDCPUList}
-                                textFieldProps={{
-                                  fullWidth: true,
-                                  margin: "normal",
-                                  variant: "outlined",
-                                  label: t("common:common.Is this a DCPU"),
-                                }}
-                                sx={{
-                                  "& fieldset": { borderRadius: "4px" },
-                                }}
-                              />
-                            </Grid>
-                          ) : (
-                            <></>
-                          )}
                           <Grid item md={12} xs={12} sx={{ mt: -2 }}>
                               <Typography
                                 color="primary"

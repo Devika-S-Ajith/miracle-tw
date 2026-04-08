@@ -69,40 +69,56 @@ const MostReccentAssessmentSummary
             <Typography variant="h6" component="h3" fontWeight="bold" my={0}>
                 Domains
             </Typography>
-            <Stack direction="row" justifyContent="space-between" sx={{ px: 1 }}>
-                {data?.domainScores?.map((domain) => (
                 <Stack
-                    key={domain.id}
-                    alignItems="center"
                     direction="row"
-                    spacing={1}
-                    sx={{ py: 1 }}
-                >
-                    <Box
+                    justifyContent="space-around"
                     sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        width: "100%",
-                        height: "100%",
+                        px: 1,
+                        flexWrap: 'wrap',
+                        gap: 1
                     }}
-                    >
-                    {getDomainIcon(domain.id)}
-                    </Box>
-                    <Stack alignItems="left">
-                    <Typography variant="body2" fontWeight="medium">
-                        {domain.score}%
-                    </Typography>
-                    {domain?.percentageChange !== null && <Stack direction="row" alignItems="left" >
-                        <Typography variant="caption" color="text.secondary">
-                        {Math.round(domain.percentageChange * 100) / 100}%
-                        </Typography>
-                        {getScoreChangeIcon(domain.percentageChange)}
-                    </Stack>}
-                    </Stack>
+                >
+                    {data?.domainScores?.map((domain) => (
+                        <Stack
+                            key={domain.id}
+                            alignItems="center"
+                            direction="row"
+                            spacing={1}
+                            sx={{
+                                py: 1,
+                                minWidth: { xs: '45%', sm: 'auto' },
+                                flex: { xs: '0 0 45%', sm: '1 1 auto' }
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    width: { xs: 24, sm: 32 },
+                                    height: { xs: 24, sm: 32 },
+                                    flexShrink: 0
+                                }}
+                            >
+                                {getDomainIcon(domain.id)}
+                            </Box>
+                            <Stack alignItems="left">
+                                <Typography variant="body2" fontWeight="medium">
+                                    {domain.score}%
+                                </Typography>
+                                {domain?.percentageChange !== null && (
+                                    <Stack direction="row" alignItems="center">
+                                        <Typography variant="caption" color="text.secondary">
+                                            {Math.round(domain.percentageChange * 100) / 100}%
+                                        </Typography>
+                                        {getScoreChangeIcon(domain.percentageChange)}
+                                    </Stack>
+                                )}
+                            </Stack>
+                        </Stack>
+                    ))}
                 </Stack>
-                ))}
-            </Stack>
+
 
             <Typography variant="h6" component="h3" fontWeight="bold" my={1}>
                 Milestones
@@ -148,33 +164,37 @@ const MostReccentAssessmentSummary
                 </Card>
                 ))}
             </Stack>
-            <Button
-                variant="outlined"
-                fullWidth
-                onClick={() => window.open(`/dashboard/assessments/${data?.assessmentId}/view`, '_blank', 'noopener,noreferrer')}
-                startIcon={<Visibility />}
-                sx={{
-                marginTop: 2,
-                paddingX: 2,
-                paddingY: 1.25,
-                backgroundColor: "white",
-                borderColor: "#1D334B;",
-                color: "#1D334B;",
-                textTransform: "none",
-                fontWeight: "normal",
-                "&:hover": {
-                    backgroundColor: "rgba(0, 0, 0, 0.04)",
-                    borderColor: "#1D334B;",
-                },
-                }}
-            >
-                View assessment
-            </Button>
+                <Button
+                    variant="outlined"
+                    fullWidth
+                    component="a"
+                    href={`/dashboard/assessments/${data?.assessmentId}/view`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    startIcon={<Visibility />}
+                    sx={{
+                        marginTop: 2,
+                        paddingX: 2,
+                        paddingY: 1.25,
+                        backgroundColor: "white",
+                        borderColor: "#1D334B",
+                        color: "#1D334B",
+                        textTransform: "none",
+                        fontWeight: "normal",
+                        "&:hover": {
+                            backgroundColor: "rgba(0, 0, 0, 0.04)",
+                            borderColor: "#1D334B",
+                        },
+                    }}
+                >
+                    View assessment
+                </Button>
             </CommonCard>
         );
     };
 
 export default MostReccentAssessmentSummary;
+
 
 
 

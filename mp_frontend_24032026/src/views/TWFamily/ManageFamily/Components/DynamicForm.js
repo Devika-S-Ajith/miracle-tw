@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@mui/material';
+import { FormGroup, Grid, Typography } from '@mui/material';
 import { Field } from 'formik';
 import TextFieldWithExternalLabel from './TextFieldWithExternalLabel';
 import DropdownWithExternalLabel from './DropdownWithExternalLabel';
@@ -10,14 +10,17 @@ import SearchableTextField from './SearchableTextField';
 import { DateFormatFromRegion } from '../../../../constants';
 import { DatePicker, LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import { size } from 'lodash';
+import { get, size } from 'lodash';
 import { Checkbox, FormControlLabel } from '@mui/material';
 import { PhoneTextInput } from '../../../../components/PhoneTextInput/PhoneTextInput';
-import { is } from 'date-fns/locale';
+import { id, is } from 'date-fns/locale';
 import CalendarIcon from '../../../../assets/icons/CalendarIcon';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import CustomFieldLabel from './CustomFieldLabel';
 import { useRef } from 'react';
+import FileUploadField from '../../../Dashboard/Components/FileUploadField';
+import RadioGroupList from './RadioGroupList';
+import BodyText from '../../../../components/BodyText/BodyText';
 
 const DynamicForm = ({
     t,
@@ -58,33 +61,11 @@ const DynamicForm = ({
         return name;
     };
 
-    // Helper to safely get field value
-    const getFieldValue = (name) => {
-        // When used in FieldArray, values is already scoped to the item
-        if (index !== undefined && parentFieldName) {
-            return values?.[name];
-        }
-        // For regular forms, access directly
-        return values?.[name];
-    };
 
-    // Helper to safely get field error
-    const getFieldError = (name) => {
-        // errors is already scoped when passed from FieldArray
-        if (index !== undefined && parentFieldName) {
-            return errors?.[name];
-        }
-        return errors?.[name];
-    };
-
-    // Helper to safely get field touched state
-    const getFieldTouched = (name) => {
-        // touched is already scoped when passed from FieldArray
-        if (index !== undefined && parentFieldName) {
-            return touched?.[name];
-        }
-        return touched?.[name];
-    };
+// Replace your helper functions with:
+const getFieldValue = (name) => get(values, name, '');
+const getFieldError = (name) => get(errors, name, '');
+const getFieldTouched = (name) => get(touched, name, false);
 
     const renderField = (fieldConfig) => {
         const { type, name, gridProps, condition, ...fieldProps } = fieldConfig;
@@ -114,8 +95,8 @@ const DynamicForm = ({
                             label={t ? t(fieldProps.label) : fieldProps.label}
                             tooltipText={t && fieldProps.tooltipText ? t(fieldProps.tooltipText) : fieldProps.tooltipText}
                             showTooltip={fieldProps.showTooltip}
-                            name={fullFieldName} // Use full scoped name
-                            id={fullFieldName} // Use full scoped name
+                            name={`${fullFieldName}`} // Use full scoped name
+                            id={`${fullFieldName}`} // Use full scoped name
                             fullWidth={fieldProps.fullWidth}
                             error={Boolean(fieldTouched && fieldError)}
                             helperText={fieldTouched && fieldError}
@@ -162,6 +143,7 @@ const DynamicForm = ({
                     <Grid item {...gridProps} key={fullFieldName}>
                         <Field
                             name={fullFieldName} // Use full scoped name
+                            id={`${fullFieldName}`}
                             component={DropdownWithExternalLabel}
                             onChange={fieldProps?.onChange}
                             onClose={(e,reason,value) => {
@@ -206,6 +188,7 @@ const DynamicForm = ({
                     <Grid item {...gridProps} key={fullFieldName}>
                         <SearchableTextField
                             name={fullFieldName} // Use full scoped name
+                            id={`${fullFieldName}`}
                             placeholder={fieldProps.placeholder}
                             initialTextValue={initialTextValue}
                             searchFunction={searchFunction}
@@ -274,22 +257,23 @@ const DynamicForm = ({
                         <DatePicker
                             value={fieldValue ? dayjs(fieldValue) : undefined} // Use helper function
                             format={DateFormatFromRegion(true)}
+                            id={`${fullFieldName}`}
                             disabled={isDisabled}
                             onChange={(newValue) => {
                                 // If custom handleDateChange is provided, use it
-                                currentValueRef.current = newValue ? dayjs(newValue) : '';
+                                currentValueRef.current = newValue ? newValue : '';
                                 if (handleDateChange) {
-                                    handleDateChange(newValue);
+                                    handleDateChange(new Date(newValue).toISOString(), fullFieldName);
                                 } else {
                                     // Otherwise, just set the field value
-                                    setFieldValue(fullFieldName, newValue);
+                                    setFieldValue(fullFieldName, new Date(newValue).toISOString());
                                     fieldProps?.onChange?.(newValue); // Call any custom onChange provided in fieldProps
                                 }
                             }}
-                            onClose={() => {
-                                // Trigger blur event when date picker closes
-                                handleBlur({ target: { name: fullFieldName, value: currentValueRef.current } });
-                            }}
+                            // onClose={() => {
+                            //     // Trigger blur event when date picker closes
+                            //     handleBlur({ target: { name: fullFieldName, value: currentValueRef.current } });
+                            // }}
                             maxDate={dayjs().endOf('day')}
                             slots={{
                                 openPickerIcon: CalendarIcon,
@@ -357,6 +341,7 @@ const DynamicForm = ({
                                     checked={Boolean(fieldValue)}
                                     onChange={(e) => {setFieldValue(fullFieldName, e.target.checked); fieldProps?.onChange?.(e.target.checked);}}
                                     name={fullFieldName}
+                                    id={`${fullFieldName}`}
                                     onBlur={handleBlur}
                                     sx={{
                                         color: isDisabled ? 'grey' : '#1D334B', 
@@ -372,6 +357,41 @@ const DynamicForm = ({
                         />
                     </Grid>);
 
+            case 'MultipleCheckBoxWithLabel':
+                return (
+                  <Grid item {...gridProps} key={fullFieldName}>
+                    {fieldProps.label && (
+                        <CustomFieldLabel sx={{ mb: 1 }}>
+                            {`${t ? t(fieldProps.label) : fieldProps.label}${fieldProps?.required ? '*' : ''}`}
+                        </CustomFieldLabel>
+                    )}
+                    <FormGroup>
+                      {fieldConfig?.options.map((item) => (
+                        <FormControlLabel
+                          key={item.id}
+                          control={
+                            <Checkbox
+                              checked={fieldValue.includes(item.id)}
+                              onChange={() =>
+                              {
+                                setFieldValue(
+                                  fullFieldName,
+                                  fieldValue.includes(item.id)
+                                    ? fieldValue.filter(
+                                        (id) => id !== item.id,
+                                      )
+                                    : [...fieldValue, item.id],
+                                )
+                              }
+                              }
+                            />
+                          }
+                          label={item.value}
+                        />
+                      ))}
+                    </FormGroup>
+                  </Grid>
+                );
             case 'PhoneNumber':
                 return (
                     <Grid item {...gridProps} key={fullFieldName}>
@@ -402,12 +422,13 @@ const DynamicForm = ({
                         value={fieldValue? dayjs(fieldValue) : null}
                         onChange={(newValue) => setFieldValue(fullFieldName,newValue)}
                         format="hh:mm A"
+                        id={`${fullFieldName}`}
                         minuteStep={5}
                         disabled={isDisabled}
                         slotProps={{
                             textField: {
                                 fullWidth: true,
-                                size:"small",
+                                size:"medium",
                                 error: fieldTouched && Boolean(fieldError),
                                 helperText: fieldTouched && fieldError,
                                 placeholder:fieldProps.placeholder || "Select time",
@@ -416,6 +437,46 @@ const DynamicForm = ({
                     />
                     </Grid>
                 );
+                case 'FileUpload':
+                    return (
+                        <Grid item {...gridProps} key={fullFieldName}>
+                            {fieldProps.label && (
+                                <CustomFieldLabel sx={{ mb: 1 }}>
+                                    {`${t ? t(fieldProps.label) : fieldProps.label}${fieldProps?.required ? '*' : ''}`}
+                                </CustomFieldLabel>
+                            )}
+                            <FileUploadField
+                                values={values}
+                                setFieldValue={setFieldValue}
+                            />
+                        </Grid>
+                    );
+                case "radioGroup":
+                    return (
+                      <Grid item {...gridProps} key={fullFieldName}>
+                        {fieldProps.label && (
+                          <CustomFieldLabel>
+                            {`${t ? t(fieldProps.label) : fieldProps.label}${fieldProps?.required ? "*" : ""}`}
+                          </CustomFieldLabel>
+                        )}
+                        <RadioGroupList
+                          name={fullFieldName}
+                          options={fieldProps.options || []}
+                          value={fieldValue}
+                          onChange={(e) =>
+                            setFieldValue(fullFieldName, e.target.value)
+                          }
+                          renderPrimary={(option) => (
+                            <BodyText value={option.label} />
+                          )}
+                        />
+                        {fieldTouched && fieldError && (
+                          <Typography color="error" variant="caption" sx={{ mt: 0.5 }}>
+                            {fieldError}
+                          </Typography>
+                        )}
+                      </Grid>
+                    );
             default:
                 return null;
         }

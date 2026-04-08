@@ -46,7 +46,7 @@ const FormListTable = (props) => {
   const [query, setQuery] = useState("");
   const [formList, setFormList] = useState([]);
   const [filteredForms, setFilteredForms] = useState([]);
-  const { signedinUserRoleHT } = useContext(CommonDataContext);
+  const { signedinUserRoleHT, locationList } = useContext(CommonDataContext);
   const [defaultForm, setDefaultForm] = useState(null);
   const [pageCount, setPageCount] = useState(1);
   const { setCurrentQuestionData, setCurrentlySelectedDomain } = useContext(CommonDataContext);
@@ -90,10 +90,26 @@ const FormListTable = (props) => {
       "page": page
     }
     try {
-      const data = await APIS.GetFormDetails(payload)
-      const forms = data?.data?.formData || []
+      let forms = [];
+      if(signedinUserRoleHT === "superadmin"){
+        if(localStorage.userDBRegion === "us-east-1"){
+          payload.MPCountryId = locationList?.find(loc => loc.countryName === "US")?.id;
+        } else {
+          payload.MPCountryId = locationList?.find(loc => loc.countryName === "India")?.id;
+        }
+         payload = {
+          ...payload,
+          limit: 99
+        }
+        
+        const data = await APIS.GetFormList(payload)
+        forms = data?.data?.data || []
+      } else {
+        const data = await APIS.GetFormDetails(payload)
+        forms = data?.data?.formData || []
+      }
       setFormList(forms)
-      setDefaultForm(forms[0])
+      setDefaultForm(forms.find(form => form.globalDefault === true))
       setLoading(false)
     } catch (err) {
       console.error(err);
@@ -143,38 +159,40 @@ const FormListTable = (props) => {
               {t('common:form.formList')}
             </Typography>
           </Grid>
-          <Grid item>
-            <CardActions>
-              <TextField
-                onChange={handleQueryChange}
-                InputProps={{
-                  sx: {
-                    borderRadius: '5px', m: 1, background: '#ffffff',
-                    position: 'relative',
-                    fontSize: 13,
-                    padding: '1px 1px',
-                    disableUnderline: true,
-                    "&::placeholder": {
-                      textAlign: "center"
-                    },
-                  }
-                }}
-                placeholder={t('common:form.Search Form')}
-                value={query}
-                variant="outlined"
-                size="small"
-              />
-              <Button
-                color="primary"
-                style={{ borderRadius: 4 }}
-                onClick={handleAddForm}
-                variant="contained"
-                disabled={loading || signedinUserRoleHT === 'caseworker'}
-              >
-                {t('common:question.Add New Assessment Form')}
-              </Button>
-            </CardActions>
-          </Grid>
+          {signedinUserRoleHT != "superadmin" && (
+            <Grid item>
+              <CardActions>
+                <TextField
+                  onChange={handleQueryChange}
+                  InputProps={{
+                    sx: {
+                      borderRadius: '5px', m: 1, background: '#ffffff',
+                      position: 'relative',
+                      fontSize: 13,
+                      padding: '1px 1px',
+                      disableUnderline: true,
+                      "&::placeholder": {
+                        textAlign: "center"
+                      },
+                    }
+                  }}
+                  placeholder={t('common:form.Search Form')}
+                  value={query}
+                  variant="outlined"
+                  size="small"
+                />
+                <Button
+                  color="primary"
+                  style={{ borderRadius: 4 }}
+                  onClick={handleAddForm}
+                  variant="contained"
+                  disabled={loading || signedinUserRoleHT === 'caseworker'}
+                >
+                  {t('common:question.Add New Assessment Form')}
+                </Button>
+              </CardActions>
+            </Grid>
+          )}
         </Grid>
       </Box>
       <Divider variant="middle" color='#000000' />
@@ -198,12 +216,21 @@ const FormListTable = (props) => {
                   <TableCell sx={{ color: 'white' }}>
                     {t('common:form.Last Modified')}
                   </TableCell>
-                  <TableCell sx={{ color: 'white' }}>
-                    {t('common:form.Assessment Attached')}
-                  </TableCell>
-                  <TableCell sx={{ color: 'white' }}>
-                    {t('common:common.Status')}
-                  </TableCell>
+                  {signedinUserRoleHT != "superadmin" && (
+                    <>
+                      <TableCell sx={{ color: 'white' }}>
+                        {t('common:form.Assessment Attached')}
+                      </TableCell>
+                      <TableCell sx={{ color: 'white' }}>
+                        {t('common:common.Status')}
+                      </TableCell>
+                    </>
+                  )}
+                  {signedinUserRoleHT == "superadmin" && (
+                    <TableCell sx={{ color: 'white' }}>
+                      {t('common:form.Orgs assigned to', 'Orgs assigned to')}
+                    </TableCell>
+                  )}
                   <TableCell
                     align="center"
                     sx={{ color: 'white' }}
@@ -230,15 +257,24 @@ const FormListTable = (props) => {
                       <TableCell>
                         {utcToLocal(form.updatedAt)}
                       </TableCell>
-                      <TableCell>
-                        {form.assessmentStat ? t('common:assessment.Yes') : t('common:assessment.No')}
-                      </TableCell>
-                      <TableCell>
-                        {form && form.makeActive
-                          ? <Box><CircleIcon sx={{ color: 'green', fontSize: '65%', mr: 1 }} /> {t('common:common.Active')}</Box>
-                          : <Box><CircleIcon sx={{ fontSize: '65%', mr: 1 }} />{t('common:common.Inactive')}</Box>
-                        }
-                      </TableCell>
+                      {signedinUserRoleHT != "superadmin" && (
+                        <>
+                          <TableCell>
+                            {form.assessmentStat ? t('common:assessment.Yes') : t('common:assessment.No')}
+                          </TableCell>
+                          <TableCell>
+                            {form && form.makeActive
+                              ? <Box><CircleIcon sx={{ color: 'green', fontSize: '65%', mr: 1 }} /> {t('common:common.Active')}</Box>
+                              : <Box><CircleIcon sx={{ fontSize: '65%', mr: 1 }} />{t('common:common.Inactive')}</Box>
+                            }
+                          </TableCell>
+                        </>
+                      )}
+                      {signedinUserRoleHT == "superadmin" && (
+                        <TableCell>
+                          {form?.organizationCount}
+                        </TableCell>
+                      )}
                       <TableCell
                         align="center"
                         spacing={1}
@@ -253,7 +289,7 @@ const FormListTable = (props) => {
                                 size='small'
                                 onClick={() => onViewClick(form)}
                               >
-                                {form.assessmentStat || form.globalDefault || signedinUserRoleHT === 'caseworker'
+                                {form.assessmentStat || form.globalDefault || signedinUserRoleHT === 'caseworker' || signedinUserRoleHT === "superadmin"
                                   ? t('common:question.View')
                                   : t('common:question.Edit')
                                 }

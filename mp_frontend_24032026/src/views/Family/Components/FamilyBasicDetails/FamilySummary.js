@@ -1,17 +1,12 @@
-import { Stack } from "@mui/system";
 import CommonCard from "../../../../components/CommonCard";
-import { Chip, Divider, Grid, Typography } from "@mui/material";
-import TrendingFlatIcon from "@mui/icons-material/TrendingFlat";
-import { dateFormatter } from "../../../../constants";
+import { Chip, Divider, Grid } from "@mui/material";
 import {
   formatAddressFromContactInfo,
-  getDistrictList,
-  getSelectedCountryDetails,
-  getStateList,
 } from "../../../../helpers/helperFunction";
 import { useContext } from "react";
 import { CommonDataContext } from "../../../../common/contexts/CommonDataContext";
 import LabelValue from "../../../../components/LabelValue/LabelValue";
+
 
 const FamilySummary = ({ t, family }) => {
   const {
@@ -23,11 +18,9 @@ const FamilySummary = ({ t, family }) => {
     caseworker,
     isActive,
     thriveScaleScore,
-    assessmentDate,
-    firstAssessmentThriveScaleScore = null,
-    firstAssessmentDateOfAssessment = null,
     percentageChangeFromFirst = null,
   } = family || {};
+
 
   const {
     addressLine1,
@@ -39,6 +32,7 @@ const FamilySummary = ({ t, family }) => {
   } = contactInformation || {};
   const { TWLanguageId, DateStartedasFP } = additionalInformation || {};
 
+
   const { locationList, htLanguagesList, familyDropdownLists } =
     useContext(CommonDataContext);
   const { familyRelations } = familyDropdownLists || {};
@@ -48,11 +42,13 @@ const FamilySummary = ({ t, family }) => {
     percentageChangeFromFirst !== null &&
     percentageChangeFromFirst !== undefined;
 
+
   const statusLabel =
     family?.status ||
     (isActive
       ? t("common:common.Active", "Active")
       : t("common:common.Case closed", "Case closed"));
+
 
   return (
     <CommonCard
@@ -145,6 +141,7 @@ const FamilySummary = ({ t, family }) => {
           <Divider sx={{ mt: 1, borderBottomWidth: 2, mb: 1 }} />
         </Grid>
 
+
         <Grid item xs={6}>
           <LabelValue
             label="Case worker"
@@ -168,5 +165,6 @@ const FamilySummary = ({ t, family }) => {
     </CommonCard>
   );
 };
+
 
 export default FamilySummary;

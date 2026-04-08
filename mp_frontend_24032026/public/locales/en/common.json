@@ -810,15 +810,15 @@
     "Thriving": "Thriving",
     "Red Flag": "Red Flag",
     "Red Flag Milestones": "Red Flag Milestones",
-    "Red Flag Milestones Sub1": "The following milestones are ones for which either 'In-crisis' or 'Vulnerable' were marked and need to be addressed.",
-    "Red Flag Milestones Sub2": "Red flag milestones are those that, if in-crisis, will prevent reintegration at this time. Each milestone is followed by its corresponding intervention that can be recommended to the family to prepare them for reintegration.",
+    "Red Flag Milestones Sub1": "The following factors are ones for which either 'In-crisis' or 'Vulnerable' were marked and need to be addressed.",
+    "Red Flag Milestones Sub2": "Red flag factors are those that, if in-crisis, will prevent reintegration at this time. Each factor is followed by its corresponding intervention that can be recommended to the family to prepare them for reintegration.",
     "Red Flag Milestones Sub3": "Please select which interventions will be planned and include details of plan for each in the box provided.",
-    "Red Flag Milestones Incrisis": "The following milestones have been marked in-crisis and reintegration should not take place at this time.",
-    "Red Flag Milestones Vulnerable": "The following milestone have been marked as 'vulnerable'. Reintegration can take place but these must be resolved as soon as possible.",
+    "Red Flag Milestones Incrisis": "The following factors have been marked in-crisis and reintegration should not take place at this time.",
+    "Red Flag Milestones Vulnerable": "The following factors have been marked as 'vulnerable'. Reintegration can take place but these must be resolved as soon as possible.",
     "There are no Red Flags for this child": "There are no Red Flags for this child.",
     "Areas Needing Immediate Intervention": "Areas Needing Immediate Intervention",
     "Statements marked as In-Crisis or Vulnerable will show up here": "Statements marked as In-Crisis or Vulnerable will show up here.",
-    "Intervention Sub1": "The following milestones are ones for which either 'In-crisis' or 'Vulnerable' were marked and need to be addressed.",
+    "Intervention Sub1": "The following factors are ones for which either 'In-crisis' or 'Vulnerable' were marked and need to be addressed.",
     "Intervention Sub2": "Please select which interventions will be planned and include details of plan for each in the box provided.",
     "Explain Other Intervention": "Explain Other Intervention*",
     "Intervention Details": "Intervention Details",
@@ -833,7 +833,7 @@
     "Fortnightly (Bi-weekly)": "Fortnightly (Bi-weekly)",
     "Every two weeks": "Every two weeks",
     "Monthly": "Monthly",
-    "Every 2 Months (Bi-monthly)": "Every 2 Months (Bi-monthly)",
+    "Every 2 Months (Bi-monthly)": "Every 2 Months",
     "Every two months": "Every two months",
     "Quarterly": "Quarterly",
     "No follow-ups needed during the next 90 days": "No follow-ups needed during the next 90 days",
@@ -889,7 +889,8 @@
     "HouseholdId":"Household ID",
     "HouseholdDetails":"Household Details",
     "All family assessments": "All family assessments",
-    "All child assessments": "All child assessments"
+    "All child assessments": "All child assessments",
+    "scheduled": "Scheduled"
   },
   "question": {
     "Add Question": "Add Question",
@@ -1246,7 +1247,8 @@
     "Children served count max value is 9999":"Children served count max value is 9999",
     "Children served count is required":"Children served count is required",
     "Families served count max value is 9999":"Families served count max value is 9999",
-    "Families served count is required":"Families served count is required"
+    "Families served count is required":"Families served count is required",
+    "Default assessment language is required": "Default assessment language is required"
   },
   "message": {
     "Title": "Title",

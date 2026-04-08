@@ -108,7 +108,6 @@ const AddMemberModal = ({ onClose, getMemberDetails, id, member,isDisabled = fal
                     "occupation": values.occupation,
                     "phoneNumber":  values.phone.length > 5 ? values.phone : null,
                     "email": values.email,
-                    //"isPrimaryCareGiver": member && member.isPrimaryCareGiver || false,
                     "HTFamilyId": id || null,
                     "HTFamilyRelationId": values.relation,
                     "otherRelation": values.other_relation,  // not mandatory

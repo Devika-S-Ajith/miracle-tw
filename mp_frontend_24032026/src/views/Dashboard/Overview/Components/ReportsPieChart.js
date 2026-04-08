@@ -67,12 +67,13 @@ const ReportsPieChart = (props) => {
           <CircularProgress color="primary" sx={{ mt: 1 }} />
         )}
       </CardContent>
-      <CardActions
-        sx={{
-          px: 2,
-          py: 1.5,
-          backgroundColor: "background.default",
-        }}
+      {canViewReport && chartSeries.length > 0 && (
+        <CardActions
+          sx={{
+            px: 2,
+            py: 1.5,
+            backgroundColor: "background.default",
+          }}
       >
         <Button
           color="primary"
@@ -89,7 +90,7 @@ const ReportsPieChart = (props) => {
         >
              {t("common:common.View Report")}
         </Button>
-      </CardActions>
+      </CardActions>)}
     </Card>
   );
 };

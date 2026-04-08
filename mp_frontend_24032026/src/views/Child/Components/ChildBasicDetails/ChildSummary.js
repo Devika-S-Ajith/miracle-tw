@@ -11,12 +11,13 @@ import {
 import LabelValue from "../../../../components/LabelValue/LabelValue";
 import { CommonDataContext } from "../../../../common/contexts/CommonDataContext";
 
+
 const ChildSummary = ({ child }) => {
   const { locationList } = useContext(CommonDataContext);
   return (
     <CommonCard title="Child Summary">
       <Grid container direction="row" spacing={1}>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <LabelValue
             label="Full name"
             value={`${child?.firstName} ${child?.lastName}`}
@@ -24,7 +25,7 @@ const ChildSummary = ({ child }) => {
             fontWeight={700}
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <LabelValue
             label="Status"
             value={
@@ -47,7 +48,7 @@ const ChildSummary = ({ child }) => {
             }
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <LabelValue
             label="Date of Birth / Age"
             value={
@@ -58,7 +59,7 @@ const ChildSummary = ({ child }) => {
             fontWeight={700}
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <LabelValue
             label="Gender"
             value={` ${convertUnderscoreToText(child?.gender)}`}
@@ -66,7 +67,7 @@ const ChildSummary = ({ child }) => {
             fontWeight={700}
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <LabelValue
             label="Address"
             value={
@@ -81,7 +82,7 @@ const ChildSummary = ({ child }) => {
             fontWeight={700}
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <LabelValue
             label="Phone number"
             value={child?.profileInformation?.phoneNumber || "-"}
@@ -89,7 +90,7 @@ const ChildSummary = ({ child }) => {
             fontWeight={700}
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <LabelValue
             label="Family associated with"
             value={child?.familyName}
@@ -97,7 +98,7 @@ const ChildSummary = ({ child }) => {
             fontWeight={700}
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <LabelValue
             label="Living situation"
             // check living situation
@@ -106,7 +107,7 @@ const ChildSummary = ({ child }) => {
             fontWeight={700}
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <LabelValue
             label="Primary language"
             value={
@@ -117,7 +118,7 @@ const ChildSummary = ({ child }) => {
             fontWeight={700}
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <LabelValue
             label="Allergies"
             value={`${child?.profileInformation?.allergy || "-"}`}
@@ -129,7 +130,8 @@ const ChildSummary = ({ child }) => {
           <Divider sx={{ mt: 1, borderBottomWidth: 2, mb: 1 }} />
         </Grid>
 
-        <Grid item xs={6}>
+
+        <Grid item xs={12} md={6}>
           <LabelValue
             label="Case worker"
             value={`${child?.caseWorkerFirstName} ${child?.caseWorkerLastName ? child.caseWorkerLastName : ""}`}
@@ -137,11 +139,11 @@ const ChildSummary = ({ child }) => {
             fontWeight={700}
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           <LabelValue
             label="Case number"
             // check whether case no is placement id
-            value={child?.caseNumber || "-"}
+            value={`CHLD-${child?.id}`}
             labelColor="#535F66"
             fontWeight={700}
           />
@@ -150,6 +152,7 @@ const ChildSummary = ({ child }) => {
           <Divider sx={{ mt: 1, borderBottomWidth: 2, mb: 1 }} />
         </Grid>
       </Grid>
+
 
       <Stack
         justifyContent="center"

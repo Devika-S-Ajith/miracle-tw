@@ -13,6 +13,7 @@ import {
     Typography,
     Skeleton,
 } from "@mui/material";
+import { v4 as uuidv4 } from "uuid";
 import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
 import APIS from "../../../common/hooks/UseApiCalls";
 import Loader from "../../../components/UserComponents/Loader";
@@ -28,16 +29,17 @@ import AccordionSection from "./Components/AccordionSection";
 import dayjs from "dayjs";
 import { isEqual } from "lodash";
 import CloseCaseModal from "./Components/CaseClose";
+import { MonthDayYearFormatter } from "../../../constants";
 
 
 const ManageFamilyForm = (props) => {
 
     const location = useLocation();
     const mode = location.state?.mode;
-    const { childId, family, careGiver } = props;
+    const { family, careGiver } = props;
     const { t } = useTranslation(["common"]);
     const navigate = useNavigate();
-    const { locationList, getFamilyList, relationList, htLanguagesList, situationsAndGoals, signedinUserRoleHT, getTsFamilyListData, familyDropdownLists } =
+    const { locationList, getFamilyList, relationList, htLanguagesList, situationsAndGoals, signedinUserRoleHT, getTsFamilyListData, familyDropdownLists,childDropdownLists } =
         useContext(CommonDataContext);
     const [isLoading, setIsLoading] = useState(false);
     const [caseWorkerList, setCaseWorkerList] = useState([]);
@@ -59,7 +61,10 @@ const ManageFamilyForm = (props) => {
         isMajor: false,
         isChild: false,
         isPrimaryCaregiver: true,
-        _rowKey: crypto.randomUUID(),
+        firstName:null,
+        lastName:null,
+        dateOfBirth:null,
+        _rowKey: uuidv4(),
     }).current;
 
     // Set up beforeunload handler for browser refresh
@@ -198,6 +203,94 @@ const ManageFamilyForm = (props) => {
         return diff;
     };
 
+    const handleNavigateFamilyForm = (values, initialValues) => {
+        let changedValues = getChangedValues(values, initialValues);
+        if (Object.keys(changedValues).length === 0) {
+            navigate(-1);
+            return;
+        } else {
+            ModalService.open(({ close }) => (
+                <Box
+                    sx={{
+                        mt: 1,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 2.5,
+                        minWidth: 320,
+                        maxWidth: 600,
+                    }}
+                >
+                    <Box sx={{ textAlign: 'left' }}>
+                        <Typography
+                            variant="body1"
+                            sx={{
+                                mb: 1,
+                                color: 'text.primary'
+                            }}
+                        >
+                            {t('common:common.You have unsaved changes,which will be lost if you leave the page?', 'You have unsaved changes, which will be lost if you leave the page')}
+                        </Typography>
+
+                        <Typography
+                            variant="body1"
+                            sx={{
+                                color: 'text.primary',
+                                lineHeight: 1.5
+                            }}
+                        >
+                            {t('common:common.Are you sure you want to leave this page?', "Are you sure you want to leave this page?")}
+                        </Typography>
+                    </Box>
+
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            gap: 2,
+                            mt: 1
+                        }}
+                    >
+                        <Button
+                            variant="outlined"
+                            onClick={close}
+                            sx={{
+                                flex: 1,
+                                py: 1.5,
+                                fontWeight: 500,
+                                textTransform: 'none',
+                                borderColor: '#000',
+                                color: '#000',
+                            }}
+                        >
+                            {t('common:common.No,stay', "No, stay")}
+                        </Button>
+
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => {
+                                navigate(-1);
+                                close();
+                            }}
+                            sx={{
+                                flex: 1,
+                                py: 1.5,
+                                fontWeight: 500,
+                                textTransform: 'none'
+                            }}
+                        >
+                            {t('common:common.Yes,leave page', "Yes, leave page")}
+                        </Button>
+                    </Box>
+                </Box>
+            ), {
+                modalTitle: t('common:common.Are you sure you want to leave this page?', "Are you sure you want to leave this page?"),
+                width: '30%',
+                hideModalFooter: true,
+                enableClose: true,
+            });
+        }
+    }
+
 
     const handleCloseCase = async (familyClosureDate, deactivationReason) => {
         setIsLoading(true);
@@ -209,8 +302,21 @@ const ManageFamilyForm = (props) => {
         })
             .then((res) => {
                 if (res && res.data && res.status === 200) {
-                    toast.success(t("common:family.Case closed successfully"));
-                    navigate("/dashboard/families");
+                    ModalService.open(({ close }) => (
+                        <Box>
+                            <Button fullWidth variant="contained" onClick={() => {
+                                close();
+                                navigate(`/dashboard/families/${family.id}/view`);
+                            }}>
+                                {t('common:common.Ok', "Ok")}
+                            </Button>
+                        </Box>
+                    ), {
+                        modalTitle: t('common:family.This family’s case has been closed', "This family’s case has been closed"),
+                        width: '30%',
+                        hideModalFooter: true,
+                        enableClose: false,
+                    });
                 }
             })
             .catch(() => {
@@ -220,6 +326,35 @@ const ManageFamilyForm = (props) => {
                 setIsLoading(false);
             });
     }
+
+    const handleReopenFamily = async () => {
+        setIsLoading(true);
+        await APIS.ReOpenCase({
+            TWFamilyId: family.id,       
+        }).then((res) => {
+            if (res && res.data && res.status === 200) {
+                ModalService.open(({ close }) => (
+                    <Box>
+                        <Button fullWidth variant="contained" onClick={() => {
+                            close();
+                            navigate(`/dashboard/families/${family.id}/view`);
+                        }}>
+                            {t('common:common.Ok', "Ok")}
+                        </Button>
+                    </Box>
+                ), {
+                    modalTitle: t('common:family.This family’s case has been re-opened', "This family’s case has been re-opened"),
+                    width: '30%',
+                    hideModalFooter: true,
+                    enableClose: false,
+                });
+        }
+        }).catch(() => {
+            toast.error(t("common:common.Something went wrong"));
+        }).finally(() => {
+            setIsLoading(false);
+        });
+    }
     
 
     return (
@@ -228,19 +363,19 @@ const ManageFamilyForm = (props) => {
             validateOnChange={true}
             validateOnBlur={true}
             initialValues={{
-                familyName: family?.familyName || "",
+                familyName: family?.familyName || null,
                 TWAccountId: localStorage.getItem("orgId"),
-                address1: family?.contactInformation?.addressLine1 || "",
-                address2: family?.contactInformation?.addressLine2 || "",
+                address1: family?.contactInformation?.addressLine1 || null,
+                address2: family?.contactInformation?.addressLine2 || null,
                 country: family?.contactInformation?.TWCountryId || localStorage.getItem("userRegion"),
-                state: family?.contactInformation?.TWStateId || "",
-                district: family?.contactInformation?.TWDistrictId || "",
+                state: family?.contactInformation?.TWStateId || null,
+                district: family?.contactInformation?.TWDistrictId || null,
                 language: family?.additionalInformation?.TWLanguageId || null,
-                family_situation: family?.additionalInformation?.TWFamilySituationId || "",
-                family_type: family?.additionalInformation?.TWFamilyTypeId || "",
-                goal: family?.additionalInformation?.TWFamilyGoalId || "",
-                caseWorker: [CASEWORKER].includes(signedinUserRoleHT) ? localStorage.getItem("username") : family?.caseworkerId || "",
-                city: family?.contactInformation?.city || "",
+                family_situation: family?.additionalInformation?.TWFamilySituationId || null,
+                family_type: family?.additionalInformation?.TWFamilyTypeId || null,
+                goal: family?.additionalInformation?.TWFamilyGoalId || null,
+                caseWorker: [CASEWORKER].includes(signedinUserRoleHT) ? localStorage.getItem("username") : family?.caseworkerId || null,
+                city: family?.contactInformation?.city || null,
                 zip_code: family?.contactInformation?.zipCode
                     ? family?.contactInformation?.zipCode?.length > 6
                         ? family?.contactInformation?.zipCode.slice(0, 5) + "-" + family?.contactInformation?.zipCode.slice(5)
@@ -248,7 +383,7 @@ const ManageFamilyForm = (props) => {
                     : "",
                 statusChangeReason: "",
                 OtherReason: "",
-                licenceNumber: family?.additionalInformation?.licenceNumber || "",
+                licenceNumber: family?.additionalInformation?.licenceNumber || null,
                 DateStartedasFP: family?.additionalInformation?.DateStartedasFP || null,
                 numberOfChildren: family?.numberOfChildren || null,
                 familyClosureDate: family?.familyClosureDate || null,
@@ -262,15 +397,21 @@ const ManageFamilyForm = (props) => {
             validationSchema={Yup.object().shape({
                 familyName: Yup.string()
                     .max(255)
+                    .nullable()
                     .required(t("common:warnings.Family Name is required", "Family Name is required")),
                 address1: Yup.string()
+                    .nullable()
                     .max(255),
                 //.required(t("common:warnings.Address Line 1 is required", "Address Line 1 is required")),
-                address2: Yup.string().max(255),
+                address2: Yup.string()
+                    .nullable()
+                    .max(255),
                 country: Yup.string()
+                    .nullable()
                     .max(255),
                 // .required(t("common:warnings.Country is required", "Country is required")),
                 city: Yup.string()
+                    .nullable()
                     .max(255),
                 //.required(t("common:warnings.City is required", "City is required")),
                 zip_code: Yup.string()
@@ -292,23 +433,30 @@ const ManageFamilyForm = (props) => {
                 language: Yup.string()
                     .max(255).nullable(),
                 goal: Yup.string()
+                    .nullable()
                     .max(255),
                 //.required(t("common:warnings.Goal is required", "Goal is required")),
                 family_situation: Yup.string()
+                    .nullable()
                     .max(255),
                 //  .required(t("common:warnings.Family situation is required", "Family situation is required")),
                 family_type: Yup.string()
+                    .nullable()
                     .max(255),
                 //.required(t("common:warnings.Family type is required", "Family type is required")),
                 caseWorker: Yup.string()
                     .max(255)
+                    .nullable()
                     .required(t("common:warnings.Case Worker is required", "Case Worker is required")),
                 state: Yup.string()
+                    .nullable()
                     .max(255),
                 //.required(t("common:warnings.State is required", "State is required")),
                 district: Yup.string()
+                    .nullable()
                     .max(255),
                 licenceNumber: Yup.string()
+                    .nullable()
                     .max(25),
                 DateStartedasFP: Yup.string()
                     .nullable()
@@ -342,6 +490,7 @@ const ManageFamilyForm = (props) => {
                         isMajor: Yup.boolean(),
                         isChild: Yup.boolean(),
                         isPrimaryCaregiver: Yup.boolean(),
+                        isActive:Yup.boolean()
                     })
                 )
 
@@ -400,6 +549,7 @@ const ManageFamilyForm = (props) => {
                         });
                     } else {
                         const changedValues = getChangedValues(values, initialValuesRef.current);
+                        console.log("changedValues", changedValues);
                         if (Object.keys(changedValues).length === 0) {
                             setIsLoading(false);
                             return;
@@ -429,25 +579,26 @@ const ManageFamilyForm = (props) => {
                                 .filter(m => m.id && m.isChild && !m.isDeleted)
                                 .map(stripMemberMeta);
 
+                        const hasKey = (key) => key in changedValues;
+
                         const contactInfo = {
-                            ...(changedValues.address1 && { addressLine1: changedValues.address1.trim() }),
-                            ...(changedValues.address2 && { addressLine2: changedValues.address2.trim() }),
-                            ...(changedValues.zip_code && { zipCode: changedValues.zip_code.trim() }),
-                            ...(changedValues.city && { city: changedValues.city.trim() }),
-                            ...(changedValues.country && { TWCountryId: changedValues.country }),
-                            ...(changedValues.state && { TWStateId: changedValues.state }),
-                            ...(changedValues.district && { TWDistrictId: changedValues.district }),
+                            ...(hasKey('address1') && { addressLine1: changedValues.address1?.trim() || null }),
+                            ...(hasKey('address2') && { addressLine2: changedValues.address2?.trim() || null }),
+                            ...(hasKey('zip_code') && { zipCode: changedValues.zip_code?.trim() || null }),
+                            ...(hasKey('city') && { city: changedValues.city?.trim() || null }),
+                            ...(hasKey('country') && { TWCountryId: changedValues.country || null }),
+                            ...(hasKey('state') && { TWStateId: changedValues.state || null }),
+                            ...(hasKey('district') && { TWDistrictId: changedValues.district || null }),
                         };
 
                         const additionalInfo = {
-                            ...(changedValues.language && { TWLanguageId: changedValues.language }),
-                            ...(changedValues.family_situation && { TWFamilySituationId: changedValues.family_situation }),
-                            ...(changedValues.family_type && { TWFamilyTypeId: changedValues.family_type }),
-                            ...(changedValues.goal && { TWFamilyGoalId: changedValues.goal }),
-                            ...(changedValues.licenceNumber && { licenceNumber: changedValues.licenceNumber.trim() }),
-                            ...(changedValues.DateStartedasFP && { DateStartedasFP: changedValues.DateStartedasFP }),
+                            ...(hasKey('language') && { TWLanguageId: changedValues.language || null }),
+                            ...(hasKey('family_situation') && { TWFamilySituationId: changedValues.family_situation || null }),
+                            ...(hasKey('family_type') && { TWFamilyTypeId: changedValues.family_type || null }),
+                            ...(hasKey('goal') && { TWFamilyGoalId: changedValues.goal || null }),
+                            ...(hasKey('licenceNumber') && { licenceNumber: changedValues.licenceNumber?.trim() || null }),
+                            ...(hasKey('DateStartedasFP') && { DateStartedasFP: changedValues.DateStartedasFP || null }),
                         };
-
                         const payload = {
                             id: family?.id,
                             TWUserId: values?.caseWorker,
@@ -456,17 +607,17 @@ const ManageFamilyForm = (props) => {
                             ...(Object.keys(additionalInfo).length && { additionalInformation: additionalInfo }),
                             existingMembers: members
                                 .filter(m => m.id && !m.isChild && !m.isDeleted)
-                                .map(({ isChild,TWFamilyId,profileInformation, ...rest }) => rest),
+                                .map(({ isChild,TWFamilyId,isActive,profileInformation, ...rest }) => rest),
                             newFamilyMembers: members
                                 .filter(m => !m.id && !!m.TWFamilyRelationId && !m.isDeleted)
                                 .map(({ _rowKey, ...rest }) => ({ ...rest })),
                             existingChildren,
                             removedMembers: members
                                 .filter(m => m.id && m.isDeleted && !m.isChild)
-                                .map(m => m.id),
+                                .map(m => ({ id: m.id, reason: m.reason, closureDate: m.deactivationDate })),
                             removedChildren: members
                                 .filter(m => m.id && m.isDeleted && m.isChild)
-                                .map(m => m.id),
+                                .map(m => ({ id: m.id, reason: m.reason, closureDate: m.deactivationDate })),
                         };
                         await APIS.UpdateFamily(payload).then(async (res) => {
                             if (res && res.data && res.status === 200) {
@@ -543,7 +694,7 @@ const ManageFamilyForm = (props) => {
                                                                 whiteSpace: 'nowrap'
                                                             }}
                                                         >
-                                                            {!family?.isActive && family?.id ? t("common:family.Deactivated", "Deactivated") : t("common:family.Active", "Active")}
+                                                            {!family?.isActive && family?.id ? `${t("common:family.Deactivated", "Deactivated")} ${MonthDayYearFormatter(family?.deactivationDate,"short")}` : t("common:family.Active", "Active")}
                                                         </Typography>
                                                     </Box>
                                                 </FormSectionHeading>
@@ -594,6 +745,8 @@ const ManageFamilyForm = (props) => {
                                                                     //isFamilyActive={family?.id ? checked : true}
                                                                     setIsLoading={setIsLoading}
                                                                     familyRelations={familyDropdownLists.familyRelations || []}
+                                                                    memberDeleteReasons={familyDropdownLists.familyDeleteReason || []}
+                                                                    familyChangeReasons={childDropdownLists.familyChangeReasons || []} 
                                                                     isFamilyActive={family?.isActive }
                                                                 />
                                                             </>
@@ -658,6 +811,7 @@ const ManageFamilyForm = (props) => {
                                         <Button
                                             variant="outlined"
                                             disabled={isSubmitting}
+                                            sx={{ visibility: family?.id && family?.isActive ? "visible" : "hidden" }}
                                             id="close-case-button"
                                             onClick={() => {
                                                 ModalService.open(
@@ -682,116 +836,59 @@ const ManageFamilyForm = (props) => {
                                         >
                                             {t("common:common.Close case", "Close case")}
                                         </Button>
-                                        <Box sx={{ display: "flex", gap: 1.5 }}>
-                                            <CancelButton
-                                                isSubmitting={isSubmitting}
-                                                id="cancel"
-                                                onClick={() => {
-                                                    if (isFormDirty(initialValues, values)) {
-                                                        ModalService.open(({ close }) => (
-                                                            <Box
-                                                                sx={{
-                                                                    mt: 1,
-                                                                    display: 'flex',
-                                                                    flexDirection: 'column',
-                                                                    gap: 2.5,
-                                                                    minWidth: 320,
-                                                                    maxWidth: 600,
-                                                                }}
-                                                            >
-                                                                <Box sx={{ textAlign: 'left' }}>
-                                                                    <Typography
-                                                                        variant="body1"
-                                                                        sx={{
-                                                                            mb: 1,
-                                                                            color: 'text.primary'
-                                                                        }}
-                                                                    >
-                                                                        {t('common:common.You have unsaved changes,which will be lost if you leave the page?', 'You have unsaved changes, which will be lost if you leave the page')}
-                                                                    </Typography>
-
-                                                                    <Typography
-                                                                        variant="body1"
-                                                                        sx={{
-                                                                            color: 'text.primary',
-                                                                            lineHeight: 1.5
-                                                                        }}
-                                                                    >
-                                                                        {t('common:common.Are you sure you want to leave this page?', "Are you sure you want to leave this page?")}
-                                                                    </Typography>
-                                                                </Box>
-
-                                                                <Box
-                                                                    sx={{
-                                                                        display: 'flex',
-                                                                        gap: 2,
-                                                                        mt: 1
-                                                                    }}
-                                                                >
-                                                                    <Button
-                                                                        variant="outlined"
-                                                                        onClick={close}
-                                                                        sx={{
-                                                                            flex: 1,
-                                                                            py: 1.5,
-                                                                            fontWeight: 500,
-                                                                            textTransform: 'none',
-                                                                            borderColor: '#000',
-                                                                            color: '#000',
-                                                                        }}
-                                                                    >
-                                                                        {t('common:common.No,stay', "No, stay")}
-                                                                    </Button>
-
-                                                                    <Button
-                                                                        variant="contained"
-                                                                        color="primary"
-                                                                        onClick={() => {
-                                                                            navigate(-1);
-                                                                            close();
-                                                                        }}
-                                                                        sx={{
-                                                                            flex: 1,
-                                                                            py: 1.5,
-                                                                            fontWeight: 500,
-                                                                            textTransform: 'none'
-                                                                        }}
-                                                                    >
-                                                                        {t('common:common.Yes,leave page', "Yes, leave page")}
-                                                                    </Button>
-                                                                </Box>
-                                                            </Box>
-                                                        ), {
-                                                            modalTitle: t('common:common.Are you sure you want to leave this page?', "Are you sure you want to leave this page?"),
-                                                            width: '30%',
-                                                            hideModalFooter: true,
-                                                            enableClose: true,
-                                                        });
-                                                    } else {
-                                                        navigate(-1);
+                                        {family?.id && !family?.isActive ? (
+                                            <Box sx={{ display: "flex", gap: 1.5 }}>
+                                                <Button
+                                                    color="primary"
+                                                    disabled={isSubmitting}
+                                                    type="submit"
+                                                    variant="outlined"
+                                                    onClick={async () => {
+                                                      handleReopenFamily();
+                                                    }}
+                                                >
+                                                    {t("common:family.Re Open Case", "Re Open Case")}
+                                                </Button> 
+                                                <Button
+                                                    variant="contained"
+                                                    id="close"
+                                                    onClick={() => {
+                                                      navigate(-1)
+                                                    }}
+                                                >
+                                                    {t("common:family.Close", "Close")}
+                                                </Button>
+                                            </Box>
+                                        ) : (
+                                            <Box sx={{ display: "flex", gap: 1.5 }}>
+                                                <CancelButton
+                                                    isSubmitting={isSubmitting}
+                                                    id="cancel"
+                                                    onClick={() => {
+                                                        handleNavigateFamilyForm(values, initialValuesRef.current);
                                                     }
-                                                }}
-                                            />
-                                            <Button
-                                                color="primary"
-                                                disabled={isSubmitting}
-                                                type="submit"
-                                                variant="contained"
-                                                onClick={async () => {
-                                                    await setTouched(
-                                                        Object.keys(values).reduce((acc, key) => ({ ...acc, [key]: true }), {})
-                                                    );
-                                                    const formErrors = await validateForm();
-                                                    if (Object.keys(formErrors).length === 0) {
-                                                        handleSubmit();
                                                     }
-                                                }}
-                                                //startIcon={<SaveIcon size="small" />}
-                                                id="submit"
-                                            >
-                                                {mode === 'add' ? t("common:family.Save Family") : t("common:family.Update Family")}
-                                            </Button>
-                                        </Box>
+                                                />
+                                                <Button
+                                                    color="primary"
+                                                    disabled={isSubmitting}
+                                                    type="submit"
+                                                    variant="contained"
+                                                    onClick={async () => {
+                                                        await setTouched(
+                                                            Object.keys(values).reduce((acc, key) => ({ ...acc, [key]: true }), {})
+                                                        );
+                                                        const formErrors = await validateForm();
+                                                        if (Object.keys(formErrors).length === 0) {
+                                                            handleSubmit();
+                                                        }
+                                                    }}
+                                                    id="submit"
+                                                >
+                                                    {mode === 'add' ? t("common:family.Save Family") : t("common:family.Update Family")}
+                                                </Button>
+                                            </Box>
+                                        )}                                       
                                     </Box>
                                 </Box>
                             </Card>

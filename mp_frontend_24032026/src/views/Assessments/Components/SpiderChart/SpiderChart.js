@@ -91,7 +91,7 @@ const SpiderChart = ({ data, levels = 5, maxValue = 100 }) => {
           });
 
         // Handle line breaks for long text
-        const valueLabel = d.value !== null && d.value !== undefined ? `${d.value}%` : '-';
+        const valueLabel = d.value !== null && d.value !== undefined ? `${d.value}%` : 'Excluded';
         const words = `${d.axis}: ${valueLabel}`.split(' ');
         let line = [];
         let tspan = text.append('tspan').attr('x', x).attr('y', y);

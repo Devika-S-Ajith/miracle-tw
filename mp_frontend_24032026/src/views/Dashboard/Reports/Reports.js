@@ -86,6 +86,12 @@ const ReportCollectionList = [
     id: 22,
     isExportOnly: true,
   },
+  {
+    Name: "Legacy assessement score",
+    ReportTitle: "reportLegacyAssessementScore",
+    id: 24,
+    isExportOnly: true,
+  },
 ];
 
 const Reports = (props) => {
@@ -133,7 +139,7 @@ const Reports = (props) => {
     if (signedinOrgType !== null && signedinUserRoleHT !== null) {
       if (userListlevel1.includes(signedinUserRoleHT)) {
         let value = ReportCollectionList.filter((item) =>
-          [6, 4, 16, 12, 20].includes(item.id)
+          [6, 4, 16, 12, 20,24].includes(item.id)
         );
         tempValue = _.unionBy(value, tempValue, "id");
       }
@@ -212,7 +218,36 @@ const Reports = (props) => {
     }
 });
 
-  const handleReportExport = (async () => {
+const handleExportLegacyScore = (async () => {
+    try {
+        let payload = {
+            "TWUserId":signedinUserRoleHT === "caseworker" ? localStorage.getItem("username") : null,
+            "TWAccountId": localStorage.getItem("orgId")  
+        };
+        setLoading(true);
+        const data = await APIS.generaratelegacyDataExport(payload);
+        if (data?.data) {
+            setLoading(false);
+            ConvertToXLSX(data?.data, 'Legacy assessement score');
+        } else if (data.data.Message === "Unauthorized") {
+            toast.error(t('common:common.Unauthorized'));
+        }
+    } catch (err) {
+        console.error(err);
+    } finally {
+        setLoading(false);
+    }
+});
+
+  const handleReportExport = (async (reportTitle) => {
+    if(reportTitle == "reportLegacyAssessementScore"){
+       handleExportLegacyScore()
+    }else{
+      openCountrySelectionModal();
+    }
+  });
+
+  const openCountrySelectionModal = (async () => {
     ModalService.open(
       ({ close }) => (
         <Grid container spacing={2} alignItems="center">
@@ -256,7 +291,7 @@ const Reports = (props) => {
         enableClose: true,
       }
     );
-  });
+  }); 
 
   return (
     <div>
@@ -312,7 +347,7 @@ const Reports = (props) => {
                             >
                               <TableCell>
                                 {" "}
-                                {t(`common:reports.${report.Name}`)}
+                                {t(`common:reports.${report.Name}`, report.Name)}
                               </TableCell>
 
                               <TableCell align="right">
@@ -320,7 +355,7 @@ const Reports = (props) => {
                                   <Button
                                     variant="outlined"
                                     onClick={() => {
-                                      handleReportExport();
+                                      handleReportExport(report.ReportTitle);
                                     }}
                                   >
                                     {t('common:common.Export')}

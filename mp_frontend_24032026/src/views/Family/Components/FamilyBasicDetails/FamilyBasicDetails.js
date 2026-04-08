@@ -59,24 +59,24 @@ const FamilyBasicDetails = ({ family }) => {
       <Box sx={{ height: "fit-content" }}>
         <FamilySummary t={t} family={family} />
       </Box>
-      <Box height="fit-content">
+      {/* <Box height="fit-content">
         <ChildOverviewList t={t} />
-      </Box>
+      </Box> */}
       <Box height="fit-content">
         <ToDoWidget t={t} HTFamilyId={family?.id} />
       </Box>
-      <Box height="fit-content">
+      {/* <Box height="fit-content">
         <ConcerningBehaviorList />
-      </Box>
+      </Box> */}
       <Box height="fit-content">
         <FamilyInterventionsTiles familyId={family?.id} />
       </Box> 
-      <Box height="fit-content">
+      {/* <Box height="fit-content">
         <FamilyInterventionsTiles familyId={family?.id} />
-      </Box>
-      <Box height="fit-content">
+      </Box> */}
+      {/* <Box height="fit-content">
         <FamilyInterventionsTiles familyId={family?.id} />
-      </Box>
+      </Box> */}
       <Box height="fit-content">
         <MostReccentAssessmentSummary
           reloadFunc={getMostRecentAssesmentSummary}

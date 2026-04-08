@@ -367,7 +367,7 @@ const FormBuilder = (props) => {
       const data = await APIS.GetFormDetails(payload);
       setFormDetails(data?.data?.formData[0]);
       if (!isCreateForm) {
-        setFormName(data?.data?.formData[0].formName);
+        setFormName(data?.data?.formData[0]?.formName);
       }
       var domainData = data?.data?.formData[0]?.domainData;
       const newlyAddedQuestion = JSON.parse(
@@ -905,7 +905,8 @@ const FormBuilder = (props) => {
                           onClick={onEditFormName}
                         ></EditIcon>
                       ) : (
-                        !formDetails?.assessmentStat && (
+                        !formDetails?.assessmentStat && !formDetails?.globalDefault && (
+                          signedinUserRoleHT !== "superadmin" && 
                           <EditIcon
                             sx={{
                               m: 1,
@@ -936,7 +937,8 @@ const FormBuilder = (props) => {
                           </Button>
                           <Button
                             disabled={
-                              isCreateForm ? true : formDetails.assessmentStat
+                              (isCreateForm ? true : formDetails.assessmentStat)
+                              || (signedinUserRoleHT === "superadmin" || formDetails?.globalDefault)
                             }
                             sx={{ borderRadius: "4px" }}
                             onClick={handleConfirmDelete}
@@ -947,11 +949,13 @@ const FormBuilder = (props) => {
                           <Button
                             onClick={saveForm}
                             disabled={
-                              signedinUserRoleHT === "superadmin"
+                              isCreateForm
                                 ? false
-                                : isCreateForm
-                                  ? false
-                                  : formDetails.assessmentStat
+                                : signedinUserRoleHT ===
+                                      "superadmin" ||
+                                    formDetails?.globalDefault
+                                  ? true
+                                  : false
                             }
                             sx={{ borderRadius: "4px" }}
                             variant="outlined"
@@ -1054,7 +1058,7 @@ const FormBuilder = (props) => {
                                   ? "(" +
                                   `${domain?.questions?.length}` +
                                   " " +
-                                  t("common:question.Questions") +
+                                  t("common:question.Factors", "Factors") +
                                   ")"
                                   : ""}
                               </Typography>{" "}
@@ -1090,7 +1094,7 @@ const FormBuilder = (props) => {
                                     variant="h6"
                                     display="inline"
                                   >
-                                    {t("common:question.Questions")}{" "}
+                                    {t("common:question.Factors", "Factors")}{" "}
                                     <Typography
                                       color="textPrimary"
                                       variant="body2"
@@ -1112,16 +1116,19 @@ const FormBuilder = (props) => {
                                         onClick={handleAddForm}
                                         variant="contained"
                                         disabled={
-                                          signedinUserRoleHT === "superadmin"
+                                          isCreateForm
                                             ? false
-                                            : isCreateForm
-                                              ? false
-                                              : formDetails.globalDefault
-                                                ? true
-                                                : formDetails.assessmentStat
+                                            : signedinUserRoleHT ===
+                                                  "superadmin" ||
+                                                formDetails?.globalDefault
+                                              ? true
+                                              : false
                                         }
                                       >
-                                        {t("common:question.Add Question")}
+                                        {t(
+                                          "common:question.Add Factors",
+                                          "Add Factors",
+                                        )}
                                       </Button>
                                     )}
                                   </Grid>
@@ -1259,6 +1266,7 @@ const FormBuilder = (props) => {
                                                                       <EditIcon
                                                                         sx={{
                                                                           m: 1,
+                                                                          cursor: "pointer",
                                                                         }}
                                                                         onClick={() =>
                                                                           handleEditQuestion(
@@ -1331,18 +1339,25 @@ const FormBuilder = (props) => {
                                                                           1
                                                                         }
                                                                       >
-                                                                        <EditIcon
+                                                                        <IconButton 
                                                                           sx={{
-                                                                            m: 1,
-                                                                            cursor:
-                                                                              "pointer",
+                                                                            color: "#0C1825",
                                                                           }}
-                                                                          onClick={() =>
-                                                                            handleEditQuestion(
-                                                                              questionId
-                                                                            )
-                                                                          }
-                                                                        />
+                                                                          disabled={(signedinUserRoleHT === "superadmin" || formDetails?.globalDefault) ? true : false}
+                                                                        >
+                                                                          <EditIcon
+                                                                            sx={{
+                                                                              m: 1,
+                                                                              cursor:
+                                                                                "pointer",
+                                                                            }}
+                                                                            onClick={() =>
+                                                                              handleEditQuestion(
+                                                                                questionId
+                                                                              )
+                                                                            }
+                                                                          />
+                                                                        </IconButton>
                                                                         <Divider
                                                                           color="#778791"
                                                                           orientation="Horizontal"
@@ -1354,8 +1369,7 @@ const FormBuilder = (props) => {
                                                                               "#0C1825",
                                                                           }}
                                                                           disabled={
-                                                                            questions?.length ==
-                                                                            1
+                                                                            questions?.length == 1 || (signedinUserRoleHT === "superadmin" || formDetails?.globalDefault)
                                                                           }
                                                                         >
                                                                           <DeleteIcon
@@ -1373,6 +1387,7 @@ const FormBuilder = (props) => {
                                                                       orientation="vertical"
                                                                       flexItem
                                                                     />
+                                                                    {(signedinUserRoleHT !== "superadmin" && !formDetails?.globalDefault) && (
                                                                     <Grid
                                                                       {...provided.dragHandleProps}
                                                                       item
@@ -1382,7 +1397,7 @@ const FormBuilder = (props) => {
                                                                       }}
                                                                     >
                                                                       <DragIndicatorIcon />
-                                                                    </Grid>
+                                                                    </Grid>)}
                                                                   </>
                                                                 ))
                                                               )}
@@ -1578,7 +1593,7 @@ const FormBuilder = (props) => {
                 alignItems: "center",
               }}
             >
-              {t("common:question.Deleting")} {formDetails.formName}
+              {t("common:question.Deleting")} {formDetails?.formName}
             </DialogTitle>
             <Typography sx={{ textAlign: "center" }}>
               {t("common:question.Form Delete")}
@@ -1614,7 +1629,7 @@ const FormBuilder = (props) => {
                 >
                   {t("common:question.Yes Delete")}
                 </LoadingButton>
-              ) : formDetails.assessmentStat ? (
+              ) : formDetails?.assessmentStat ? (
                 <LoadingButton
                   loading={loading}
                   variant="contained"
@@ -1696,7 +1711,7 @@ const FormBuilder = (props) => {
               <Typography sx={{ textAlign: "center", maxWidth: "75%" }}>
                 {isCreateForm
                   ? t("common:question.Form Publish")
-                  : formDetails.isPublished
+                  : formDetails?.isPublished
                     ? t("common:question.Want To Unpublish This Form") +
                     t("common:question.Form Unpublish")
                     : t("common:question.Form Publish")}
@@ -1713,7 +1728,7 @@ const FormBuilder = (props) => {
                 <Typography sx={{ textAlign: "center", maxWidth: "52%" }}>
                   {isCreateForm
                     ? t("common:question.Want To Publish This Form")
-                    : formDetails.isPublished
+                    : formDetails?.isPublished
                       ? t("common:question.Want To Unpublish This Form")
                       : t("common:question.Want To Publish This Form")}
                 </Typography>
@@ -1802,7 +1817,7 @@ const FormBuilder = (props) => {
                   >
                     {t("common:question.Save Publish")}
                   </LoadingButton>
-                ) : formDetails.isPublished ? (
+                ) : formDetails?.isPublished ? (
                   <>
                     <LoadingButton
                       loading={loading}

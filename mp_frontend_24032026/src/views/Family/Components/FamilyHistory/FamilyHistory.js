@@ -63,7 +63,7 @@ const FamilyHistory = (props) => {
   const getAuditLog = useCallback(async (pageValue = 1) => {
     try {
       setLoading(true);
-      getAuditListpayload.HTFamilyId = id;
+      getAuditListpayload.TWFamilyId = id;
       getAuditListpayload.pageNumber = pageValue;
       const data = await APIS.FamilyAuditLog(getAuditListpayload);
       setAuditList(data?.data?.data || []);

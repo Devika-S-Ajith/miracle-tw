@@ -266,7 +266,7 @@ const FamilyDocuments = (props) => {
         orderByField: [["id", "DESC"]],
         globalSearchQuery: "",
         HTOrganizationId: "",
-        HTFamilyId: `${id}`,
+        TWFamilyId: `${id}`,
       };
       try {
         let finalPayload = {

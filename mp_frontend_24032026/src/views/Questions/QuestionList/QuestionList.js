@@ -31,7 +31,6 @@ const QuestionsList = () => {
   const mounted = useMounted();
   const { settings } = useSettings();
   const {
-    clearListingPageDetails,
     signedinOrgType,
     signedinUserRoleHT,
     htLanguagesList,
@@ -86,7 +85,6 @@ const QuestionsList = () => {
     } else {
       navigate("/Unauthorized");
     }
-    clearListingPageDetails("questionPageData");
     if (localStorage.getItem("questionPageData") === null) {
       getQuestions();
     } else {
