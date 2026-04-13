@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import PageBreadcrumbs from "../../../components/PageBreadcrumbs/PageBreadcrumbs";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import PencilAltIcon from "../../../assets/icons/PencilAlt";
 import TrashIcon from "../../../assets/icons/Trash";
 import { AssessmentProgressReportIcon } from "../../../assets/icons/SideBarIcons";
@@ -26,6 +26,7 @@ import { ModalService } from "../../../components/Modal";
 import ManageChildForm from "../Components/ChildListTable/ChildDetailForms/ManageChildForm";
 import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
 import CloseIcon from "@mui/icons-material/Close";
+import { GenerateFileName } from "../../../helpers/helperFunction";
 
 const statusOptions = [
   { label: "Active", value: "Active", key: "Status" },
@@ -40,8 +41,9 @@ const ConsolidatedChildList = (props) => {
   const [apiError, setApiError] = useState(null);
   const [filterValues, setFilterValues] = useState({});
   const [appliedFiltersChipArray, setAppliedFiltersChipArray] = useState([]);
-  const { signedinOrgId } = useContext(CommonDataContext);
+  const { signedinOrgId, signedInOrgName, userIdData } = useContext(CommonDataContext);
   const [users, setUsers] = useState([]);
+
   //   actions
   const [menuState, setMenuState] = useState({ anchorEl: null, row: null });
   const [activeChildId, setActiveChildId] = useState(null);
@@ -262,7 +264,33 @@ const ConsolidatedChildList = (props) => {
       setLoading(false);
     }
   };
-
+  const [isExporting, setIsExporting] = useState(false);
+  const exportChildren = async ({ query, statusFilter } = {}) => {
+    setIsExporting(true);
+    try {
+      const res = await APIS.exportChildren({
+        childStatusFilter: statusFilter, // "inActive","all"
+        globalSearchQuery: query || "",
+      });
+      const linkSource = `data:application/xlsx;base64,${res.data}`;
+      const downloadLink = document.createElement("a");
+      const fileName = GenerateFileName({
+        signedInOrgName,
+        userIdData,
+        module: `Children`,
+      });
+      downloadLink.href = linkSource;
+      downloadLink.download = fileName;
+      downloadLink.target = "_blank";
+      downloadLink.style.display = "none";
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      setIsExporting(false);
+    } catch (error) {
+      setIsExporting(false);
+    }
+  };
   const getUserList = useCallback(async () => {
     try {
       const payload = {
@@ -295,50 +323,62 @@ const ConsolidatedChildList = (props) => {
     getUserList();
   }, []);
 
-  const tableExtraButtons = (
-    <>
-      <Stack
-        direction="row"
-        spacing={1}
-        justifyContent="flex-end"
-        width={1}
-        mr={2}
-      >
-        <SecondaryButton
-          startIcon={
-            <img
-              src="/static/icons/ExportIcon.svg"
-              style={{ width: 20, height: 20 }}
-            />
-          }
-          label={t("common:common.Export")}
-          onClick={() => {}}
-        />
-        <SecondaryButton
-          startIcon={
-            <img
-              src="/static/icons/AddIcon.svg"
-              style={{ width: 20, height: 20 }}
-            />
-          }
-          label={t("common:child.Add new child")}
-          onClick={() =>
-            ModalService.open(
-              ({ close }) => (
-                <ManageChildForm close={close} refreshTable={getTableData} />
-              ),
-              {
-                width: "30%",
-                height: "95%",
-                enableClose: false,
-                hideModalFooter: true,
-              },
-            )
-          }
-        />
-      </Stack>
-    </>
-  );
+  const tableExtraButtons = ({ query, appliedFiltersChipArray }) => {
+    const selectedStatuses =
+      (appliedFiltersChipArray?.status || []).map((s) => s.value) || [];
+    const derivedStatusFilter =
+      selectedStatuses.length === 1 ? selectedStatuses[0] : "all";
+
+    return (
+      <>
+        <Stack
+          direction="row"
+          spacing={1}
+          justifyContent="flex-end"
+          width={1}
+          mr={2}
+        >
+          <SecondaryButton
+            startIcon={
+              <img
+                src="/static/icons/ExportIcon.svg"
+                alt=""
+                style={{ width: 20, height: 20 }}
+              />
+            }
+            label={t("common:common.Export")}
+            onClick={() =>
+              exportChildren({ query, statusFilter: derivedStatusFilter })
+            }
+            loading={isExporting}
+          />
+          <SecondaryButton
+            startIcon={
+              <img
+                src="/static/icons/AddIcon.svg"
+                alt=""
+                style={{ width: 20, height: 20 }}
+              />
+            }
+            label={t("common:child.Add new child")}
+            onClick={() =>
+              ModalService.open(
+                ({ close }) => (
+                  <ManageChildForm close={close} refreshTable={getTableData} />
+                ),
+                {
+                  width: "30%",
+                  height: "95%",
+                  enableClose: false,
+                  hideModalFooter: true,
+                },
+              )
+            }
+          />
+        </Stack>
+      </>
+    );
+  };
 
   const filterComponent = (
     <>

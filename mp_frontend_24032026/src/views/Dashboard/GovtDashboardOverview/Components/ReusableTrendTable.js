@@ -410,7 +410,8 @@ const ReusableTrendTable = ({
   handleChipDelete,
   clearFilter,
   tableExtraButtons,
-  cancelFilter
+  cancelFilter,
+  onSearchChange,
 }) => {
   // Table state
   const [state, dispatch] = useReducer(tableStateReducer, {
@@ -517,10 +518,7 @@ const ReusableTrendTable = ({
         value.trim().length >= SEARCH_MIN_LENGTH ||
         forceSearch;
       if (shouldSearch) {
-        const filters = buildFilters({
-          search: value,
-          page: 1,
-        });
+        const filters = buildFilters({ search: value, page: 1 });
         triggerReload(filters);
       }
     },
@@ -643,6 +641,18 @@ const ReusableTrendTable = ({
     [tableSx]
   );
 
+  const resolvedTableExtraButtons = useMemo(() => {
+    if (!tableExtraButtons) return null;
+    if (typeof tableExtraButtons === "function") {
+      return tableExtraButtons({
+        query: state.searchQuery,
+        appliedFiltersChipArray,
+        currentTableFilters: buildFilters(),
+      });
+    }
+    return tableExtraButtons;
+  }, [tableExtraButtons, state.searchQuery, appliedFiltersChipArray, buildFilters]);
+
   return (
     <Card elevation={0} sx={cardStyles}>
       <Box display="flex" px gap={2} alignItems="center">
@@ -747,7 +757,7 @@ const ReusableTrendTable = ({
             </Popover>
           </>
         )}
-        {tableExtraButtons && tableExtraButtons}        
+        {resolvedTableExtraButtons}        
       </Stack>
 
       <Stack direction="row" gap={1} flexWrap="wrap" mx={2} mt={2}>
@@ -756,7 +766,10 @@ const ReusableTrendTable = ({
               <Chip
                 key={`${key}-${item.value}`}
                 // label={`${item.key}: ${item.label}`}
-                label={`${t(`common:infoCard.${item.key}`)}: ${t(`common:infoCard.${item.label}`), item.label}`}
+                label={`${t(`common:infoCard.${item.key}`)}: ${t(
+                  `common:infoCard.${item.label}`,
+                  item.label
+                )}`}
                 sx={{ mb: 1, backgroundColor: "#34475D", color: "#fff" }}
                 deleteIcon={<CloseIcon style={{ color: "#fff", fontSize: "16px" }} />}
                 onDelete={() => handleChipDelete(key, item.value, { search: state.searchQuery, rowCount: state.rowCount })}

@@ -15,7 +15,6 @@ import {
   Typography,
   IconButton
 } from "@mui/material";
-import ChildContactDetails from "../Components/ChildContactDetails";
 import ChildHistory from "../Components/ChildHistory";
 import Documents from "../Components/Documents";
 import ProgressReport from "../Components/ProgressReport";
@@ -32,7 +31,6 @@ import ChildMilestones from "../Components/ChildMilestones/ChildMilestones";
 import FollowUps from "../../Assessments/Components/FollowUps";
 import ChildInterventions from "./ChildInterventions";
 import ConsolidatedAssessmentProgressReport from "../../../components/ConsolidatedAssessmentProgressReport";
-import ChildSummary from "../Components/ChildBasicDetails";
 import ChildBasicDetails from "../Components/ChildBasicDetails";
 import ChildLogs from "../Components/ChildLogs";
 import { ModalService } from "../../../components/Modal";
@@ -64,19 +62,19 @@ const ChildDetails = () => {
   const { allowedRoles, allowedOrgTypes } = authorizationConfig["AddChild"];
   const[memberList, setMemberList] = useState([]);
   const[childDetailsLoading, setChildDetailsLoading] = useState(false);
-  const [isActiveFamily,setIsActiveFamily] = useState(false);
 
   const getMembersUnderFamily = async (familyId) => {
     try {
-      if (familyId) {
-        const data = await APIS.familyMembers(familyId);
-        const members = data?.data?.familyDetails?.members || [];
-        const familyStatus = data?.data?.familyDetails?.isActive;
-        setIsActiveFamily(familyStatus);
-        if (members) {
-          setMemberList(members);
-        }
+      if (!familyId) {
+        setMemberList([]);
+        setChildDetailsLoading(false);
+        return;
       }
+
+      const payload = { id: familyId, listType: "DETAILED" };
+      const data = await APIS.GetFamilyDetails(payload);
+      const members = data?.data?.data?.members || [];
+      setMemberList(members);
       setChildDetailsLoading(false);
     } catch (err) {
       setChildDetailsLoading(false);
@@ -91,7 +89,8 @@ const ChildDetails = () => {
       const res = await APIS.GetChildDetails(id);
       
       setChildren(res.data.data);
-      getMembersUnderFamily(res.data.data?.HTFamilyId)
+      const familyId = res.data.data?.HTFamilyId ?? res.data.data?.TWFamilyId;
+      getMembersUnderFamily(familyId);
     } catch (err) {
       setChildDetailsLoading(false)
       console.error(err);
@@ -102,7 +101,7 @@ const ChildDetails = () => {
     document.title = "Child | Details | ThriveWell";
     getChildren();
     return () => {};
-  }, [id]);
+  }, [getChildren]);
 
   const handleTabsChange = (event, value) => {
     setCurrentTab(value);
@@ -114,7 +113,7 @@ const ChildDetails = () => {
     switch (currentTab) {
       case "details":
         return (
-          <ChildBasicDetails child={children} />
+          <ChildBasicDetails child={children} members={memberList} />
           // <ChildContactDetails
           //   name={`${children.firstName} ${children.lastName ?? ""}`}
           //   country={children.HTCountryId}
@@ -264,12 +263,12 @@ const ChildDetails = () => {
                   ) : (
                     <></>
                   )}
-                  {currentTab == "Family" && children.HTFamilyId ? (
+                  {currentTab === "Family" && (children.HTFamilyId ?? children.TWFamilyId) ? (
                     <Button
                       color="primary"
                       component={RouterLink}
                       sx={{ m: 1 }}
-                      to={`/dashboard/families/${children.HTFamilyId}/view`}
+                      to={`/dashboard/families/${children.HTFamilyId ?? children.TWFamilyId}/view`}
                       variant="contained"
                     >
                       {t("common:common.View Family Page")}
