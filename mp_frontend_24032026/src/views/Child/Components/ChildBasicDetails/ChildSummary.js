@@ -29,23 +29,10 @@ const ChildSummary = ({ child }) => {
           <LabelValue
             label="Status"
             value={
-              <Chip
-                label={child?.status}
-                size="small"
-                sx={{
-                  backgroundColor:
-                    child?.status === "Active"
-                      ? "#3DAA1D"
-                      : child?.status === "Case Closed"
-                        ? "#D6DBDE"
-                        : "#71C5D4",
-                  color: child?.status === "Active" ? "white" : "black",
-                  fontSize: "0.75rem",
-                  fontWeight: 600,
-                  borderRadius: "20px",
-                }}
-              />
+              <Chip label={child?.status} sx={{ backgroundColor: "#71C5D4" }} />
             }
+            labelColor="#535F66"
+            fontWeight={700}
           />
         </Grid>
         <Grid item xs={12} md={6}>

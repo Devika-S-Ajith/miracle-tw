@@ -751,6 +751,8 @@ const ManageChildForm = ({
         valuesRef.current = values;
         isFormDirtyRef.current = dirty;
 
+        console.log("Formik Errors: ", errors, values);
+
         // Auto-scroll to error
         if (isSubmitting && Object.keys(errors)?.length > 0) {
           const el = document.querySelector(".Mui-error, [data-error]");
