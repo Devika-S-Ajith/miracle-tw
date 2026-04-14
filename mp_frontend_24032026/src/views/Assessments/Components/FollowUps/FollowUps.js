@@ -89,7 +89,10 @@ const FollowUps = ({ id, type }) => {
                 fontSize: "0.875rem",
                 color: "#172b4d",
               }}
-              value={t(`common:assessment.${row?.frequency}`, row?.frequency)}
+              value={`${t(`common:assessment.scheduled`, "Scheduled")} ${t(
+                `common:assessment.${row?.frequency}`,
+                row?.frequency
+              )}`}
             />
             <BodyText
               sx={{
@@ -224,10 +227,13 @@ const FollowUps = ({ id, type }) => {
                                 fontSize: "0.875rem",
                                 color: "#172b4d",
                               }}
-                              value={t(
+                              value={`${t(
+                                `common:assessment.scheduled`,
+                                "Scheduled"
+                              )} ${t(
                                 `common:assessment.${row?.frequency}`,
                                 row?.frequency
-                              )}
+                              )}`}
                             />
                             <BodyText
                               sx={{

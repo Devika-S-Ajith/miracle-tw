@@ -248,19 +248,6 @@ const TableHeaderMemo = memo(({ columns, sortState, onSort, t, boldHeaders, tabl
                                 </Box>
                             )}
                             
-                            {/* Vertical divider with proper padding */}
-                            {/* {idx !== columns.length - 1 && (
-                                <Divider
-                                    orientation="vertical"
-                                    flexItem
-                                    sx={{
-                                        backgroundColor: '#D6DBDE',
-                                        alignSelf: 'stretch',
-                                        mx: 1,
-                                        my: 1
-                                    }}
-                                />
-                            )} */}
                         </Box>
                     </TableCell>
                 ))}
@@ -642,7 +629,18 @@ const ReusableTrendTable = ({
     }),
     [tableSx]
   );
-
+const resolvedTableExtraButtons = useMemo(() => {
+    if (!tableExtraButtons) return null;
+    if (typeof tableExtraButtons === "function") {
+      return tableExtraButtons({
+        query: state.searchQuery,
+        appliedFiltersChipArray,
+        currentTableFilters: buildFilters(),
+      });
+    }
+    return tableExtraButtons;
+  }, [tableExtraButtons, state.searchQuery, appliedFiltersChipArray, buildFilters]);
+  
   return (
     <Card elevation={0} sx={cardStyles}>
       <Box display="flex" px gap={2} alignItems="center">
@@ -747,7 +745,7 @@ const ReusableTrendTable = ({
             </Popover>
           </>
         )}
-        {tableExtraButtons && tableExtraButtons}        
+        {resolvedTableExtraButtons}        
       </Stack>
 
       <Stack direction="row" gap={1} flexWrap="wrap" mx={2} mt={2}>

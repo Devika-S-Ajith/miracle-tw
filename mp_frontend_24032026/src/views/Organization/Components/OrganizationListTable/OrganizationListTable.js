@@ -963,8 +963,10 @@ const handleUserStatusChangeByAccount = async (payload, changeStatusTo) => {
     changeStatusTo
   };
   if (changeStatusTo === "DEACTIVATE") {
-    updatedPayload.deactivationInfo.TWAccountId = payload.id;
-    delete updatedPayload.deactivationInfo.MPAccountId;
+    if (updatedPayload.deactivationInfo){
+      updatedPayload.deactivationInfo.TWAccountId = payload.id;
+      delete updatedPayload.deactivationInfo.MPAccountId;
+    }
   }
 
   try {
@@ -1038,7 +1040,11 @@ const handleDeactivateOrReactivate = async (account, ref) => {
         MPAccountId: accountId,
         reason: reason,
         type: "ACCOUNT_DEACTIVATION",
-      } : undefined;
+      } : {
+        MPAccountId: accountId,
+        reason: "",
+        type: "ACCOUNT_DEACTIVATION",
+      };
 
       const payload = {
         id: accountId, // Include both for compatibility
@@ -1046,7 +1052,7 @@ const handleDeactivateOrReactivate = async (account, ref) => {
       };
 
       // Step 1: Deactivate users (will convert MPAccountId to TWAccountId internally)
-      const userDeactivated = await handleUserDeactivationByAccount(payload);
+      const userDeactivated = await handleUserDeactivationByAccount(payload);      
       
       if (userDeactivated) {
         // Step 2: Deactivate organization (uses MPAccountId)

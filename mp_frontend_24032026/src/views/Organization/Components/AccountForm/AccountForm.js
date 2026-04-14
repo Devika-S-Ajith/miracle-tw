@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -16,6 +16,7 @@ import {
   TextField,
   Typography,
   Checkbox,
+  CircularProgress,
 } from "@mui/material";
 import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
 import { useTranslation } from "react-i18next";
@@ -44,6 +45,8 @@ import CustomSwitch from "../../../../components/UserComponents/CustomSwitch";
 
 
 const AccountForm = (props) => {
+  const [activeForms, setActiveForms] = useState([]);
+  const [loadingActiveForms, setLoadingActiveForms] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation(["common"]);
   const { organization, ...other } = props;
@@ -97,6 +100,33 @@ const [consentChecked, setConsentChecked] = useState(
     },
   ];
 
+  const fetchActiveForms = async (country) => {
+    setLoadingActiveForms(true);
+    try {
+      const countryDetails = getSelectedCountryDetails(locationList, country);
+      const countryId = locationList.find(
+        (loc) =>
+          loc.countryName ===
+          (countryDetails.countryName === "India" ? "India" : "US"),
+      )?.id;
+      const params = { id: countryId };
+      const res = await APIS.getActiveForms(params);
+      if (res && res.data?.data) {
+        setActiveForms(res.data?.data);
+      }
+    } catch (error) {
+      // Optionally handle error
+    } finally {
+      setLoadingActiveForms(false);
+    }
+  };
+  
+  useEffect(() => {
+    if(organization?.MPCountryId) {
+      fetchActiveForms(organization?.MPCountryId);
+    }
+  }, [organization?.MPCountryId]);
+  
   const changeThriveScaleAccess = () => {
     setIsThriveScaleChecked(!isThriveScaleChecked);
     if (isThriveScaleChecked && !isFosterShareChecked) {
@@ -165,6 +195,7 @@ const [consentChecked, setConsentChecked] = useState(
         caseMangerCount:organization?.caseManagerCount || "",
         childrenServedCount:organization?.childCount || "",
         familyServedCount:organization?.familyCount || "",
+        defaultLanguage: organization ? organization["MP_forms.MP_formAccountMapping.MPFormId"] : ""
       }}
       validationSchema={Yup.object().shape({
         address1: Yup.string()
@@ -176,6 +207,15 @@ const [consentChecked, setConsentChecked] = useState(
         country: Yup.string()
           .max(255)
           .required(t("common:warnings.Country is required")),
+
+        defaultLanguage: Yup.string()
+          .nullable()
+          .max(255)
+          .when("organization_type", {
+            is: (val) => val && val !== "6",
+            then: (schema) => schema.required(t("common:warnings.Default assessment language is required")),
+            otherwise: (schema) => schema,
+          }),
 
         website: Yup.string().matches(
           webRegExp,
@@ -309,6 +349,7 @@ const [consentChecked, setConsentChecked] = useState(
               caseManagerCount:values.caseMangerCount || null,
               childCount: values.childrenServedCount || null,
               familyCount: values.familyServedCount || null,
+              MPFormId: values.organization_type !== "6" ? values.defaultLanguage || null : null
             };
             await APIS.EditOrganization(payload).then((res) => {
               if (res && res.data && res.status === 200) {
@@ -345,6 +386,7 @@ const [consentChecked, setConsentChecked] = useState(
               primaryContact: null,
               permissions:values.organization_type === "6" ? values.parentOrgPermission : "SELF_ORGANIZATION_LEVEL",
               linkedAccountIds:values.selectedItems.length > 0 ? values.selectedItems : [],
+              MPFormId: values.organization_type !== "6" ? values.defaultLanguage || null : null
             };
             await APIS.AddOrganization(payload).then((res) => {
               if (res && res.data && res.status === 200) {
@@ -486,6 +528,11 @@ const [consentChecked, setConsentChecked] = useState(
                             component={AutoCompleteDropdown}
                             onOrgTypeChange={(value) => {
                               setFieldValue("selectedItems", []);
+                              if (value) {
+                                fetchActiveForms(value);
+                              } else {
+                                setFieldValue("defaultLanguage", "", true);
+                              }
                             }}
                             required={true}
                             id="country"
@@ -769,6 +816,7 @@ const [consentChecked, setConsentChecked] = useState(
                           </Grid>
                         </>)
                       }
+
                       <Grid container item spacing={2} md={12} xs={12}>
                         <CardHeader
                           title={t("common:common.Access")}
@@ -1104,6 +1152,63 @@ const [consentChecked, setConsentChecked] = useState(
                         </Grid>
                       )}
                       <Grid />
+                      
+                      {values.country && values.organization_type && values.organization_type != "6" &&
+                      <>
+                        <Grid container item spacing={2} md={12} xs={12}>
+                          <CardHeader
+                            title="Defaults"
+                            sx={{ pb: "0px" }}
+                          />
+                        </Grid>
+
+                        <Grid item md={6} xs={12} sx={{ mt: -2 }}>
+                          {loadingActiveForms ? (
+                            <Box sx={{ display: 'flex', alignItems: 'center', minHeight: 56 }}>
+                              <CircularProgress size={24} />
+                              <Typography sx={{ ml: 2 }}>Loading forms...</Typography>
+                            </Box>
+                          ) : (
+                            <Field
+                              key={values.defaultLanguage || 'no-defaultLanguage'}
+                              error={Boolean(touched.defaultLanguage && errors.defaultLanguage)}
+                              fullWidth
+                              helperText={touched.defaultLanguage && errors.defaultLanguage}
+                              name="defaultLanguage"
+                              accessKey="name"
+                              component={AutoCompleteDropdown}
+                              required={(values.organization_type && values.organization_type != "6") ? true : false}
+                              id="defaultLanguage"
+                              label="defaultLanguage"
+                              options={activeForms}
+                              value={values.country ? values.defaultLanguage : null}
+                              textFieldProps={{
+                                fullWidth: true,
+                                margin: "normal",
+                                variant: "outlined",
+                                label: "Default assessment language",
+                              }}
+                              disabled={!values.country || !values.organization_type || values.organization_type === "6"}
+                              sx={{
+                                "& fieldset": { borderRadius: "4px" },
+                              }}
+                            />
+                          )}
+                          <Typography
+                            sx={{
+                              color: "#778791",
+                              fontSize: "14px",
+                              fontFamily: "Mulish",
+                              fontWeight: 500,
+                              lineHeight: "17.5px",
+                              wordWrap: "break-word",
+                              // mt: 1
+                            }}
+                          >
+                            All assessments will appear in this language
+                          </Typography>
+                        </Grid>
+                      </>}
                     </Grid>
                     <Box
                       sx={{

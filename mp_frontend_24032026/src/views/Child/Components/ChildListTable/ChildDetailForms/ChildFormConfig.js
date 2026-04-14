@@ -105,7 +105,7 @@ export const ChildBasicDetails = ({
   },
   {
     type: "CheckboxWithLabel",
-    name: "childhasdisability",
+    name: "childHasDisability",
     label: "This child has a legally recognized disability",
     gridProps: { xs: 12 },
   },
@@ -134,7 +134,7 @@ export const ChildContactDetails = ({
 }) => [
   {
     type: "text",
-    name: "contactInformation.addressline1",
+    name: "contactInformation.addressLine1",
     label: "Address 1",
     required: false,
     showTooltip: false,
@@ -144,7 +144,7 @@ export const ChildContactDetails = ({
   },
   {
     type: "text",
-    name: "contactInformation.addressline2",
+    name: "contactInformation.addressLine2",
     label: "Address 2",
     required: false,
     showTooltip: false,
@@ -176,7 +176,7 @@ export const ChildContactDetails = ({
     gridProps: { xs: 12 },
   },
   {
-    type: "text",
+    type: "ZIPCode",
     name: "contactInformation.zipCode",
     label: "Mailing code / Postal Index Number / ZIP code",
     required: false,
@@ -188,6 +188,7 @@ export const ChildContactDetails = ({
 ];
 
 export const ChildAdditionalDetails = ({
+  phoneRef,
   childDropdownLists,
   allLanguagesList,
 }) => {
@@ -199,6 +200,7 @@ export const ChildAdditionalDetails = ({
       fullWidth: true,
       variant: "outlined",
       gridProps: { md: 12, xs: 12 },
+      phoneRef: phoneRef
     },
     {
       type: "text",
@@ -364,3 +366,40 @@ export const CaseCloseDetails = [
     // gridProps: { md: 6.5, xs: 6.5 }
   },
 ];
+
+export const FamilyChangeDetails = ({familyChangeValues, familyChangeReasons}) => [
+  {
+    type: "DatePicker",
+    name: "familyChangeDetails.childDischargedDate",
+    label: "Date case was closed",
+    required: false,
+    showTooltip: false,
+    fullWidth: true,
+    size: "medium",
+    variant: "outlined",
+    multiline: true,
+    gridProps: { xs: 12 },
+    // gridProps: { md: 6.5, xs: 6.5 }
+  },
+  {
+    type: "MultipleCheckBoxWithLabel",
+    name: "familyChangeDetails.childDischargeReason",
+    label: "Why is this child being assigned to a different family?",
+    options:familyChangeReasons || [],
+    translateLabels: true,
+    required: true,
+    gridProps: { xs: 12 },
+  },
+  ...(familyChangeValues?.familyChangeDetails?.childDischargeReason?.some((item) => item === "OTHER")
+    ? [{
+        type: "text",
+        name: "familyChangeDetails.otherReason",
+        label: "Please specify other reason",
+        required: true,
+        fullWidth: true,
+        showTooltip: false,
+        variant: "outlined",
+        gridProps: { xs: 12 },
+      }]
+    : []),
+]

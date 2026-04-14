@@ -164,11 +164,6 @@ const AddAssessment = Loadable(
   lazy(() => import("./views/Assessments/AddAssessment"))
 );
 
-const CaseList = Loadable(lazy(() => import("./views/Case/CaseList")));
-const AddCase = Loadable(lazy(() => import("./views/Case/AddCase")));
-const EditCase = Loadable(lazy(() => import("./views/Case/EditCase")));
-const CaseDetails = Loadable(lazy(() => import("./views/Case/CaseDetails")));
-
 const AddQuestion = Loadable(
   lazy(() => import("./views/Questions/AddQuestion"))
 );
@@ -188,9 +183,6 @@ const QuestionDetails = Loadable(
 const FormList = Loadable(lazy(() => import("./views/Forms/FormList")));
 const ManageForm = Loadable(lazy(() => import("./views/Forms/ManageForm")));
 const PreviewForm = Loadable(lazy(() => import("./views/Forms/PreviewForm")));
-const MyProfile = Loadable(
-  lazy(() => import("./views/Profile/ProfileSettings"))
-);
 const ChangePassword = Loadable(
   lazy(() => import("./views/ChangePassword/ChangePassword"))
 );
@@ -217,8 +209,11 @@ const FamilyDetailsFS = Loadable(
 const ChildDetailsFS = Loadable(
   lazy(() => import("./views/FS/Child/ChildDetails"))
 );
-const SupportServicesFS = Loadable(
-  lazy(() => import("./views/FS/SupportServices/SupportServicesList"))
+const SupportServices = Loadable(
+  lazy(() => import("./views/SupportServices/SupportServicesList"))
+);
+const SupportServiceDetails = Loadable(
+  lazy(() => import("./views/SupportServices/SupportServiceDetails/SupportServiceDetailsContainer.js"))
 );
 const MedLogDetailsFS = Loadable(
   lazy(() => import("./views/FS/Components/MedLogDetails"))
@@ -267,7 +262,7 @@ const ConsolidatedEventsList = Loadable(
 const routes = [
   {
     path: "/",
-    element: <LandingPage />,
+    element: <Signin />,
   },
   {
     path: "/",
@@ -388,6 +383,19 @@ const routes = [
         element: <UserList />,
       },
       {
+        path: "/support-services",
+        children: [
+          {
+            index: true,
+            element: <SupportServices />,
+          },
+          {
+            path: "/:id",
+            element: <SupportServiceDetails />,
+          }
+        ]
+      },
+      {
         path: "/organizations",
         element: <OrganizationList />,
       },
@@ -397,7 +405,6 @@ const routes = [
         children: [
           {
             index: true,
-
             element: <MessagesList />,
           },
           {
@@ -463,7 +470,7 @@ const routes = [
       },
       {
         path: "/support-services",
-        element: <SupportServicesFS />,
+        element: <SupportServices />,
       },
       {
         path: "/support-services/:id",
@@ -503,14 +510,7 @@ const routes = [
         path: "account",
         element: <Account />,
       },
-      {
-        path: "profile",
-        element: <MyProfile />,
-      },
-      // {
-      //   path: 'finance',
-      //   element: <Overview />
-      // },
+      
       {
         path: "changePassword",
         element: <ChangePassword />,
@@ -667,7 +667,6 @@ const routes = [
         path: "/events",
         element: <ConsolidatedEventsList />,
       },
-
       {
         path: "organizations",
         children: [
@@ -823,98 +822,6 @@ const routes = [
           },
         ],
       },
-
-      {
-        path: "cases",
-        children: [
-          {
-            path: "/",
-            element: <CaseList />,
-          },
-          {
-            path: "/add",
-            element: <AddCase />,
-          },
-          // {
-          //   path: '/import',
-          //   element: <ImportLayout/>
-          // },
-          {
-            path: "/:id/view",
-            element: <CaseDetails />,
-          },
-          {
-            path: "/:id/edit",
-            element: <EditCase />,
-          },
-        ],
-      },
-      // {
-      //   path: "fostershare",
-      //   children: [
-      //     {
-      //       path: "/families",
-      //       element: <FamilyListFS />,
-      //     },
-      //     {
-      //       path: "/families/family-details",
-      //       element: <FamilyDetailForm />,
-      //     },
-      //     {
-      //       path: "/families/family-details/:id",
-      //       element: <FamilyDetailForm />,
-      //     },
-      //     {
-      //       path: "/families/:id",
-      //       element: <FamilyDetailsFS />,
-      //     },
-      //     {
-      //       path: "/children",
-      //       element: <ChildListFS />,
-      //     },
-      //     {
-      //       path: "/children/:id",
-      //       element: <ChildDetailsFS />,
-      //       // loader:
-      //     },
-      //     {
-      //       path: "/messages",
-      //       element: <MessagesFS />,
-      //     },
-      //     {
-      //       path: "/events",
-      //       element: <EventsFS />,
-      //     },
-      //     {
-      //       path: "/events/:id",
-      //       element: <EventDetailsFS />,
-      //     },
-      //     {
-      //       path: "/support-services",
-      //       element: <SupportServicesFS />,
-      //     },
-      //     {
-      //       path: "/support-services/:id",
-      //       element: <SupportServiceDetailsContainer />,
-      //     },
-      //     {
-      //       path: "/medlogs/:id",
-      //       element: <MedLogDetailsFS />,
-      //     },
-      //     {
-      //       path: "/resources",
-      //       element: <ResourcesList />,
-      //     },
-      //     {
-      //       path: "/resources/:id",
-      //       element: <ResourceDetails />,
-      //     },
-      //     {
-      //       path: "/notifications",
-      //       element: <NotificationsList />,
-      //     },
-      //   ],
-      // },
     ],
   },
    {

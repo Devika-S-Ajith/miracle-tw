@@ -149,6 +149,7 @@ const ResourcesList = () => {
               modalTitle: "Resource information",
               hideModalFooter: true,
               width: "35%",
+              height: "95%",
             }
           );
         }}

@@ -76,22 +76,27 @@ const MessageDetailForm = ({ close, onSuccess }) => {
   ];
 
   const getFamilyListData = async () => {
-    setIsLoading(true);
+    try {
+      setIsLoading(true);
 
-    const data = await APIS.getFsFamilyListForDropdown({
-      rowCount: 10000,
-      pageNumber: 1,
-      orderByField: [["primaryParentName", "ASC"]],
-    });
-    let tempList = data.data.data || [];
+      const data = await APIS.GetFamilyList({
+        rowCount: 10000,
+        listType: "MEDIUM",
+        pageNumber: 1,
+      });
+      let tempList = data?.data?.data || [];
 
-    setFamilyList([
+      setFamilyList([
       { id: -1, label: "Select All" },
       { id: -2, label: "Deselect All" },
       ...tempList,
-    ]);
-
-    setIsLoading(false);
+      ]);
+    } catch (error) {
+      console.error("Failed to fetch family list:", error);
+      toast.error("Failed to fetch family list");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -362,7 +367,7 @@ const MessageDetailForm = ({ close, onSuccess }) => {
             clea
             disableCloseOnSelect
             getOptionLabel={(option) =>
-              option.parentFirstName + ", " + option.parentLastName
+              option.familyName
             }
             value={values?.family}
             isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -387,7 +392,7 @@ const MessageDetailForm = ({ close, onSuccess }) => {
                     <Chip
                       color="primary"
                       key={obj.id}
-                      label={`${obj.parentFirstName} ${obj.parentLastName}`}
+                      label={obj.familyName}
                       size="medium"
                       sx={{
                         backgroundColor: "#1D334B",
@@ -420,7 +425,7 @@ const MessageDetailForm = ({ close, onSuccess }) => {
                     style={{ marginRight: 8 }}
                     checked={selected}
                   />
-                  {`${option.parentFirstName} ${option.parentLastName}`}
+                  {`${option.familyName}`}
                 </li>
               );
             }}

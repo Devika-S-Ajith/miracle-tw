@@ -253,7 +253,7 @@ function AverageThriveScaleScoreFamily() {
       }
       setPayloadData(finalPayload);
       setLoading(true);
-      finalPayload.assesmentType = "FAMILY"
+      finalPayload.assessmentType = "FAMILY"
       await APIS.AverageThrivescaleReport(finalPayload).then((resp) => {
         if (
           resp &&

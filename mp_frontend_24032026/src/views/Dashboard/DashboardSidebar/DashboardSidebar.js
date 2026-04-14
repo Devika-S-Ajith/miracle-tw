@@ -84,8 +84,6 @@ const DashboardSidebar = (props) => {
   const [filteredSections, setFilteredSections] = useState([]);
   const sections = [
     {
-      title: "Thrive Scale",
-      titleShortName: "TS",
       items: [
         {
           title: "Overview",
@@ -99,6 +97,13 @@ const DashboardSidebar = (props) => {
             ADMIN_CASEWORKER,
             VIEW_ONLY,
           ],
+           FS_Allowed_Roles: [
+            SUPER_ADMIN,
+            ADMIN,
+            CASEMANAGER,
+            ADMIN_CASEMANAGER,
+            VIEW_ONLY,
+          ],
           Allowed_Acc_Type: [
             MIRACLE,
             GOVT_CCI,
@@ -107,7 +112,6 @@ const DashboardSidebar = (props) => {
             PRIVATE_CCI,
           ],
         },
-        // need to add roles and account types
         {
           title: "Overview",
           path: "/governmentDashboardOverview",
@@ -121,7 +125,6 @@ const DashboardSidebar = (props) => {
             PARENT_ORGANIZATION
           ],
         },
-        // need to add roles and account types
         {
           title: "Organizations",
           path: "/governmentDashboardOrganizations",
@@ -135,7 +138,6 @@ const DashboardSidebar = (props) => {
             PARENT_ORGANIZATION
           ],
         },
-        // need to add roles and account types
         {
           title: "Milestones",
           path: "/governmentDashboardMilestones",
@@ -149,7 +151,6 @@ const DashboardSidebar = (props) => {
             PARENT_ORGANIZATION
           ],
         },
-        // need to add roles and account types
         {
           title: "Milestones",
           path: "/governmentDashboardMilestones",
@@ -171,32 +172,43 @@ const DashboardSidebar = (props) => {
             PARENT_ORGANIZATION
           ],
         },
-        // {
-        //   title: "Families",
-        //   path: "/governmentDashboardFamily",
-        //   icon: <FamilyIcon fontSize="small" />,
-        //   orangeIcon: <FamilyIconActive fontSize="small" />,
-        //   HT_Allowed_Roles: [
-        //     ADMIN,
-        //     VIEW_ONLY,
-        //   ],
-        //   Allowed_Acc_Type: [
-        //     PARENT_ORGANIZATION
-        //   ],
-        // },
-        // {
-        //   title: "Children",
-        //   path: "/governmentDashboardChildren",
-        //   icon: <ChildIcon fontSize="small" />,
-        //   orangeIcon: <ChildIconActive fontSize="small" />,
-        //   HT_Allowed_Roles: [
-        //     ADMIN,
-        //     VIEW_ONLY,
-        //   ],
-        //   Allowed_Acc_Type: [
-        //     PARENT_ORGANIZATION
-        //   ],
-        // },
+        {
+          title: "Families",
+          path: "/dashboard/families",
+          icon: <FamilyIcon fontSize="small" />,
+          orangeIcon: <FamilyIconActive fontSize="small" />,
+          FS_Allowed_Roles: [
+            ADMIN,
+            CASEMANAGER,
+            ADMIN_CASEMANAGER,
+            VIEW_ONLY,
+          ],
+          HT_Allowed_Roles: [ADMIN, CASEWORKER, ADMIN_CASEWORKER,VIEW_ONLY],
+          Allowed_Acc_Type: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+        },
+        {
+          title: "Children",
+          path: "/dashboard/children",
+          icon: <ChildIcon fontSize="small" />,
+          orangeIcon: <ChildIconActive fontSize="small" />,
+          FS_Allowed_Roles: [
+            ADMIN,
+            CASEMANAGER,
+            ADMIN_CASEMANAGER,
+            VIEW_ONLY,
+          ],
+          HT_Allowed_Roles: [ADMIN, CASEWORKER, ADMIN_CASEWORKER],
+          Allowed_Acc_Type: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+        },
+        {
+          title: "Assessments & Progress Reports",
+          path: "/dashboard/assessments",
+          icon: <AssessmentIcon fontSize="small" />,
+          orangeIcon: <AssessmentIconActive fontSize="small" />,
+          HT_Allowed_Roles: [SUPER_ADMIN, ADMIN, CASEWORKER, ADMIN_CASEWORKER],
+          Allowed_Acc_Type: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+          style: {alignItems: "start"}
+        },
         {
           title: "Reports",
           path: "/dashboard/reports",
@@ -218,31 +230,6 @@ const DashboardSidebar = (props) => {
           ],
         },
         {
-          title: "Calendar",
-          path: "/dashboard/calendar",
-          icon: <CalendarIcon fontSize="small" />,
-          orangeIcon: <CalendarIconActive fontSize="small" />,
-          HT_Allowed_Roles: [ADMIN, CASEWORKER, ADMIN_CASEWORKER],
-          Allowed_Acc_Type: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
-        },
-        {
-          title: "Families",
-          path: "/dashboard/families",
-          icon: <FamilyIcon fontSize="small" />,
-          orangeIcon: <FamilyIconActive fontSize="small" />,
-          HT_Allowed_Roles: [ADMIN, CASEWORKER, ADMIN_CASEWORKER],
-          Allowed_Acc_Type: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
-        },
-        {
-          title: "Children",
-          path: "/dashboard/children",
-          icon: <ChildIcon fontSize="small" />,
-          orangeIcon: <ChildIconActive fontSize="small" />,
-          HT_Allowed_Roles: [ADMIN, CASEWORKER, ADMIN_CASEWORKER],
-          Allowed_Acc_Type: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
-        },
-
-        {
           title: "Forms",
           path: "/dashboard/forms",
           icon: <FormsIcon fontSize="small" />,
@@ -258,62 +245,16 @@ const DashboardSidebar = (props) => {
           ],
         },
         {
-          title: "Assessments & Progress Reports",
-          path: "/dashboard/assessments",
-          icon: <AssessmentIcon fontSize="small" />,
-          orangeIcon: <AssessmentIconActive fontSize="small" />,
-          HT_Allowed_Roles: [SUPER_ADMIN, ADMIN, CASEWORKER, ADMIN_CASEWORKER],
-          Allowed_Acc_Type: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
-          style: {alignItems: "start"}
-        },
-        {
-          title: "Interventions",
-          path: "/governmentDashboardInterventions",
-          icon: <InterventionsIcon fontSize="small" />,
-          orangeIcon: <InterventionsIconActive fontSize="small" />,
-         // HT_Allowed_Roles: [SUPER_ADMIN, ADMIN, CASEWORKER, ADMIN_CASEWORKER],
-          Allowed_Acc_Type: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
-        },
-      ],
-    },
-    {
-      title: "FosterShare",
-      titleShortName: "FS",
-      //isDefault:true,
-      items: [
-        {
-          title: "Dashboard",
-          path: "/fostershare/dashboard",
-          icon: <HomeIcon fontSize="small" />,
-          orangeIcon: <HomeIconActive fontSize="small" />,
+          title: "Events",
+          path: "/dashboard/events",
+          icon: <CalendarIcon fontSize="small" />,
+          orangeIcon: <CalendarIconActive fontSize="small" />,
           FS_Allowed_Roles: [
-            SUPER_ADMIN,
             ADMIN,
             CASEMANAGER,
             ADMIN_CASEMANAGER,
-            UNASSIGNED,
           ],
-        },
-        {
-          title: "Families",
-          path: "/fostershare/families",
-          icon: <FamilyIcon fontSize="small" />,
-          orangeIcon: <FamilyIconActive fontSize="small" />,
-          FS_Allowed_Roles: [ADMIN, CASEMANAGER, ADMIN_CASEMANAGER],
-        },
-        {
-          title: "Children",
-          path: "/fostershare/children",
-          icon: <ChildIcon fontSize="small" />,
-          orangeIcon: <ChildIconActive fontSize="small" />,
-          FS_Allowed_Roles: [ADMIN, CASEMANAGER, ADMIN_CASEMANAGER],
-        },
-        {
-          title: "Events",
-          path: "/fostershare/events",
-          icon: <CalendarIcon fontSize="small" />,
-          orangeIcon: <CalendarIconActive fontSize="small" />,
-          FS_Allowed_Roles: [ADMIN, CASEMANAGER, ADMIN_CASEMANAGER],
+          style: {alignItems: "start"}
         },
         {
           title: "Messages",
@@ -323,21 +264,22 @@ const DashboardSidebar = (props) => {
           FS_Allowed_Roles: [ADMIN, CASEMANAGER, ADMIN_CASEMANAGER],
         },
         {
+          title: "Support Services",
+          path: "/admin/support-services",
+          icon: <SupportServicesIcon fontSize="small" />,
+          orangeIcon: <SupportServicesIconActive fontSize="small" />,
+          FS_Allowed_Roles: [SUPER_ADMIN, ADMIN, ADMIN_CASEMANAGER],
+        },
+        {
           title: "Resources",
           path: "/fostershare/resources",
           icon: <ResourcesIcon fontSize="small" />,
           orangeIcon: <ResourcesIconActive fontSize="small" />,
           FS_Allowed_Roles: [SUPER_ADMIN],
         },
-        {
-          title: "Support Services",
-          path: "/fostershare/support-services",
-          icon: <SupportServicesIcon fontSize="small" />,
-          orangeIcon: <SupportServicesIconActive fontSize="small" />,
-          FS_Allowed_Roles: [SUPER_ADMIN, ADMIN, ADMIN_CASEMANAGER],
-        },
       ],
     },
+  
     {
       title: "Admin",
       titleShortName: <SettingsIcon sx={{ ml: -0.5 }} fontSize="small" />,
@@ -415,18 +357,20 @@ const DashboardSidebar = (props) => {
             PARENT_ORGANIZATION
           ],
         },
+ 
       ],
     },
   ];
   const filterSectionsByRoles = (sections) => {
-    return sections.map((section) => {
+    
+    return sections.map((section, i) => {
       const filteredItems = section.items.filter((item) => {
         const htAllowedRoles = item.HT_Allowed_Roles || [];
         const fsAllowedRoles = item.FS_Allowed_Roles || [];
         const allowedAccTypes = item.Allowed_Acc_Type || [];
         return (
           (allowedAccTypes.includes(signedinOrgType) &&
-            htAllowedRoles.includes(signedinUserRoleHT)) ||
+          htAllowedRoles.includes(signedinUserRoleHT)) ||
           fsAllowedRoles.includes(signedinUserRoleFS)
         );
       });
@@ -469,16 +413,6 @@ const DashboardSidebar = (props) => {
       navigate("/signin");
     }
     const filteredSections = filterSectionsByRoles(sections);
-    if (signedinUserRoleHT && signedinUserRoleFS) {
-      if (signedinUserRoleHT && signedinUserRoleHT !== "unassigned") {
-        filteredSections[0].isDefault = true;
-        delete filteredSections[1].isDefault;
-      } else {
-        filteredSections[1].isDefault = true;
-        delete filteredSections[0].isDefault;
-      }
-    }
-
     setFilteredSections(filteredSections);
   }, [signedinUserRoleHT, signedinUserRoleFS, signedinOrgType]);
 
@@ -565,13 +499,6 @@ const DashboardSidebar = (props) => {
   };
 
   const [currentSection, setCurrentsection] = useState();
-
-  useEffect(() => {
-    if (filteredSections.length) {
-      filteredSections.find((obj) => obj.isDefault);
-      setCurrentsection(filteredSections.find((obj) => obj.isDefault));
-    }
-  }, [filteredSections]);
 
   const drawerOpenHandler = (section) => {
     setCurrentsection(filteredSections.find((obj) => obj.title === section));

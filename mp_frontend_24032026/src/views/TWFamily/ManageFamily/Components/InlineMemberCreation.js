@@ -16,6 +16,7 @@ import {
 import { Stack } from '@mui/system';
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Field, FieldArray, useFormikContext } from 'formik';
+import { v4 as uuidv4 } from 'uuid';
 import { ModalService } from '../../../../components/Modal';
 import CustomMockApi from './CustoMockApi';
 import APIS from '../../../../common/hooks/UseApiCalls';
@@ -31,6 +32,12 @@ import PencilEditIcon from '../../../../assets/icons/PencilEditIcon';
 import ManageChildForm from '../../../Child/Components/ChildListTable/ChildDetailForms/ManageChildForm';
 import DeleteMember from '../../../../assets/icons/DeleteMember';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
+import { DateFormatFromRegion } from '../../../../constants';
+import SmallText from '../../../../components/SmallText/SmallText';
+import CalendarIcon from '../../../../assets/icons/CalendarIcon';
 
 
 const InlineMemberCreation = ({
@@ -38,7 +45,9 @@ const InlineMemberCreation = ({
     caseWorker,
     setIsLoading,
     familyRelations,
-    isFamilyActive = true 
+    isFamilyActive = true,
+    memberDeleteReasons = [], 
+    familyChangeReasons = [],
 }) => {
     const { t } = useTranslation(['common']);
     const formik = useFormikContext();
@@ -200,7 +209,7 @@ const InlineMemberCreation = ({
             TWFamilyRelationId: "",
             isActive: true,
             isMajor: false,
-            _rowKey: crypto.randomUUID(),
+            _rowKey: uuidv4(),
         });
         setIsAdding(false);
     };
@@ -444,16 +453,7 @@ const InlineMemberCreation = ({
                     <Button
                         variant="contained"
                         onClick={() => {
-                            // Read fresh from formik.values to avoid stale closure
-                            const currentMembers = formik?.values?.members || [];
-                            const memberIndex = currentMembers.findIndex(m =>
-                                member._rowKey
-                                    ? m._rowKey === member._rowKey
-                                    : m.id === member.id && m.isChild === member.isChild
-                            );
-                            if (memberIndex !== -1) {
-                                formik?.setFieldValue(`members.${memberIndex}.isDeleted`, true);
-                            }
+                            handleDeleteConfirmation(member);
                             close();
                         }}
                     >
@@ -468,6 +468,97 @@ const InlineMemberCreation = ({
             enableClose: true,
         });
     };
+
+      // Local state for modal fields
+   const localDateRef = useRef(null);
+const localReasonRef = useRef("");
+
+     const handleDeleteConfirmation = useCallback((member) => {
+    // Find the member index in the Formik array
+    const currentMembers = formik?.values?.members || [];
+    const memberIndex = currentMembers.findIndex(m =>
+        member._rowKey
+            ? m._rowKey === member._rowKey
+            : m.id === member.id && m.isChild === member.isChild
+    );
+
+    localDateRef.current = null;
+    localReasonRef.current = "";
+    let removeReasonOptions = (member?.isChild ? familyChangeReasons : memberDeleteReasons) || [];
+    
+    ModalService.open(({ close }) => (
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <Box sx={{ p: 3 }}>
+                <Typography variant="body1" sx={{ mb: 2 }}>
+                    {t(
+                        `common:child.Closing a family's case also closes the cases for all family members and children in the family.`,
+                        `Closing a family's case also closes the cases for all family members and children in the family.`
+                    )}
+                </Typography>
+                <Box sx={{ mb: 2 }}>
+                    <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold' }}>
+                        {t('common:family.Date of deactivation', 'Date of deactivation')}
+                    </Typography>
+                    <DatePicker
+                        value={localDateRef.current ? dayjs(localDateRef.current) : null}
+                        format={DateFormatFromRegion(true)}
+                        onChange={(newValue) => {
+                            localDateRef.current = newValue ? newValue.toISOString() : null;
+                        }}
+                        maxDate={dayjs().endOf('day')}
+                        slots={{ openPickerIcon: CalendarIcon }}
+                        slotProps={{
+                            textField: {
+                                fullWidth: true,
+                                required: true,
+                                variant: "outlined",
+                                placeholder: "",
+                            },
+                        }}
+                    />
+                </Box>
+                <Box sx={{ p: 2, borderRadius: 1, mb: 3 }}>
+                    <SmallText value={t('common:family. Why is this person being deleted?', 'Why is this person being deleted?')} />
+                    <RadioGroupList
+                        name="deleteReason"
+                        options={removeReasonOptions}
+                        value={localReasonRef.current}
+                        onChange={(e) => {
+                            localReasonRef.current = e.target.value;
+                        }}
+                        renderPrimary={(option) => <SmallText value={option.value} />}
+                    />
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+                    <Button variant="outlined" fullWidth onClick={close}>
+                        {t('common:common.No,Cancel', 'No, Cancel')}
+                    </Button>
+                    <Button
+                        variant="contained"
+                        fullWidth
+                        type="button"
+                        onClick={() => {
+                            if (memberIndex !== -1) {
+                                formik?.setFieldValue(`members.${memberIndex}.isDeleted`, true);
+                               formik?.setFieldValue(`members.${memberIndex}.deactivationDate`, localDateRef.current);
+                              formik?.setFieldValue(`members.${memberIndex}.reason`, removeReasonOptions.find(option => option.id === localReasonRef.current)?.value || '');
+                            }
+                            close();
+                        }}
+                    >
+                        {t('common:common.Yes, Delete', 'Yes, Delete')}
+                    </Button>
+                </Box>
+            </Box>
+        </LocalizationProvider>
+    ), {
+        modalTitle: t('common:family.Delete this family member?', 'Delete this family member?'),
+        width: '30%',
+        hideModalFooter: true,
+        enableClose: true,
+    });
+}, [formik, memberDeleteReasons, familyChangeReasons, t]);
+
 
     const buildFamilyOptions = (isChild, memberId) => {
         if (!memberId) return familyRelations;
@@ -611,7 +702,7 @@ const InlineMemberCreation = ({
                                                                 padding: 0.5,
                                                             }}
                                                         />
-                                                        <Typography sx={{ whiteSpace: 'nowrap' }}>
+                                                        <Typography sx={{ whiteSpace: 'wrap' }}>
                                                             {t('common:family.Primary contact', 'Primary contact')}
                                                         </Typography>
                                                         <IconButton

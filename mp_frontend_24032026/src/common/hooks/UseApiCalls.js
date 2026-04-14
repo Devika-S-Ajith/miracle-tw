@@ -42,20 +42,20 @@ const EditFamilyStatusURL = AppConfig.baseURL + "/tw-family";
 const EditFamilyMemberURL = AppConfig.baseURL + "/tw-family/member";
 const EditFamilyURL = AppConfig.baseURL + "/tw-family";
 const GetFamilyDetails = AppConfig.baseURL + "/tw-family?family_id=";
-const exportFamiliesURL = AppConfig.baseURL + "/tw-family/export";
+const exportFamiliesURL = AppConfig.baseURL + "/tw-families/export";;
 const exportChildrenURL = AppConfig.baseURL + "/tw-child/export";
 const exportAssessmentURL = AppConfig.baseURL + "/tw-assessment/exportList";
 const LanguageListURL = AppConfig.baseURL + "/languages";
-const getFamilyMilestoneListURL = AppConfig.baseURL + "/tw-family/getMilestoneList";
+const getFamilyMilestoneListURL = AppConfig.baseURL + "/tw-families/getMilestoneList";
 
 const RelationListURL = AppConfig.baseURL + "/tw-family/relation";
-const FamilyInterventionSummaryURL = AppConfig.baseURL + "/tw-family/getInterventionSummary";
+const FamilyInterventionSummaryURL = AppConfig.baseURL + "/tw-families/getInterventionSummary";
 const familySituationAndGoalsURL =
   AppConfig.baseURL + "/tw-family/situation-and-goals";
 const familyMembersURL = AppConfig.baseURL + "/tw-family/members";
 const MemberTypeListURL = AppConfig.baseURL + "/tw-family/membertype";
-const FamilyInterventionListURL = AppConfig.baseURL + "/tw-family/familyIntervention";
-const FamilyHistoryListURL = AppConfig.baseURL + "/tw-family/listFamilyHistory";
+const FamilyInterventionListURL = AppConfig.baseURL + "/tw-families/familyIntervention";
+const FamilyHistoryListURL = AppConfig.baseURL + "/tw-families/listFamilyHistory";
 const UserListURL = AppConfig.baseURL + "/users";
 const UserRoleList = AppConfig.baseURL + "/user-roles";
 const UserDetailsPartialURL = AppConfig.baseURL + "/user?id=";
@@ -80,7 +80,7 @@ const ChildListURL = AppConfig.baseURL + "/tw-child/list";
 const ChildDetailsPartialURL = AppConfig.baseURL + "/tw-child?child_id=";
 const AddChildURL = AppConfig.baseURL + "/tw-child";
 const ChildDocURL = AppConfig.baseURL + "/tw-child/file";
-const FamilyDocURL = AppConfig.baseURL + "/tw-family/file";
+const FamilyDocURL = AppConfig.baseURL + "/tw-families/file";
 const ChildDocumentListURL = AppConfig.baseURL + "/tw-child/get-files";
 const FamilyDocumentListURL = AppConfig.baseURL + "/tw-families/get-files";
 const ChildPlacementStatusURL = AddChildURL + "/placementStatus";
@@ -304,13 +304,13 @@ const IncrisisAndVulnerableMilestonesFamilyURL = `${GOVT_DASHBOARD_BASE}/inCrisi
 const CurrentLivingConditionURL = `${GOVT_DASHBOARD_BASE}/current-living-condition`;
 const FamilyAssessmentScoreImprovementURL = `${GOVT_DASHBOARD_BASE}/family-assessment-score-improvements`;
 const ConsolidatedAssessmentProgressReportURL = `/tw-assessment/listConsolidatedAssessmentData`;
-const MostRecentAssesmentSummaryURL = `/tw-family/most-recent-assessment`;
+const MostRecentAssesmentSummaryURL = `/tw-families/most-recent-assessment`;
 const TodoListURL = AppConfig.baseURL + "/todo-List/list";
 const ChildMilestoneListURL = AppConfig.baseURL + "/tw-child/getMilestoneList";
-const InterventionForMilestoneListURL = AppConfig.baseURL + "/tw-family/getInterventionForMilestone";
-const ChildInterventionListURL = AppConfig.baseURL + "/tw-child/getInterventionList";
-const InterventionForMilestoneListChildURL = AppConfig.baseURL + "/tw-child/milestone-interventions";
-const getInterventionForMilestoneListURL = AppConfig.baseURL + "/tw-family/getInterventionForMilestone";
+const InterventionForMilestoneListURL = AppConfig.baseURL + "/tw-families/getInterventionForMilestone";
+const ChildInterventionListURL = AppConfig.baseURL + "/tw-children/getInterventionList";
+const InterventionForMilestoneListChildURL = AppConfig.baseURL + "/tw-children/milestone-interventions";
+const getInterventionForMilestoneListURL = AppConfig.baseURL + "/tw-families/getInterventionForMilestone";
 const FamilyDropdownListsURL = AppConfig.baseURL + "/tw-families/dropdowns";
 const ChildDropdownListsURL = AppConfig.baseURL + "/tw-children/dropdowns";
 
@@ -1193,8 +1193,8 @@ const APIS = {
     return axios.all([prerequest]).then((res) => {
       const ChildConsentCompletedURL =
         API_URLS.consentForm.familyChildConsent +
-        `?HTFamilyId=` +
-        payload.HTFamilyId;
+        `?TWFamilyId=` +
+        payload.TWFamilyId;
       return axios
         .get(ChildConsentCompletedURL)
         .then((response) => {
@@ -2400,6 +2400,30 @@ const APIS = {
 
   CaseManagementReport: (payload) =>
     APIS.makePostRequest(CaseManagementReportURL, payload),
+  generaratelegacyDataExport: (payload) =>
+    APIS.makePostRequest(API_URLS.reports.exportLegacyAssessmentScore, payload),
+
+  getActiveForms: (params) => APIS.makeGetRequest(`${API_URLS.forms.activeForms}?MPCountryId=${params.id}`),
+
+  GetFormList: (params) => APIS.makeGetRequest(`${API_URLS.forms.formList}?page=${params.page}&pageSize=${params.limit}&MPCountryId=${params.MPCountryId}`),
+
+  getDomainSkipReasons: () => {
+    const currentLanguage = localStorage.getItem("language");
+    const currentLanguageList = JSON.parse(
+      localStorage.getItem("languageList")
+    );
+
+    let langId;
+    if (!currentLanguage || !currentLanguageList?.length) {
+      langId = "1";
+    } else {
+      langId =
+        currentLanguageList?.length &&
+        currentLanguageList.find((item) => item.languageCode == currentLanguage)
+          ?.id;
+    }
+    return APIS.makeGetRequest(`${API_URLS.assessment.skipDomain}?languageId=${langId}`);
+  },
 
   ExportFile(payload) {
     const currentLanguage = localStorage.getItem("language");
@@ -2482,8 +2506,7 @@ const APIS = {
   },
 
   FamilyAuditLog(payload) {
-    console.log(payload)
-      return APIS.makeGetRequest(`${API_URLS.family.familyAudit}?TWFamilyId=${payload?.HTFamilyId}&rowCount=${payload?.rowCount}&pageNumber=${payload?.pageNumber}`);
+      return APIS.makeGetRequest(`${API_URLS.family.familyAudit}?TWFamilyId=${payload?.TWFamilyId}&rowCount=${payload?.rowCount}&pageNumber=${payload?.pageNumber}`);
   },
 
   NewlyAdmittedChildrenReport(payload) {
@@ -3494,7 +3517,7 @@ const APIS = {
   },
 
   familyMembers(familyId) {
-    let CompletedfamilyMembersURL = familyMembersURL + `?family_id=${familyId}`;
+    let CompletedfamilyMembersURL = familyMembersURL + `?TWFamilyId=${familyId}`;
     return this.makeGetRequest(CompletedfamilyMembersURL);
   },
 
@@ -3506,7 +3529,7 @@ const APIS = {
   
   checkDeactivationAllowed(childId, familyId, type) {
     let CompletedcheckDeactivationAllowedURL =
-      CheckDeactivationAllowedURL + `?child_id=${childId}&HTFamilyId=${familyId}&type=${type}`;
+      CheckDeactivationAllowedURL + `?child_id=${childId}&TWFamilyId=${familyId}&type=${type}`;
     return this.makeGetRequest(CompletedcheckDeactivationAllowedURL);
   },
 
@@ -3516,7 +3539,7 @@ const APIS = {
   },
 
   CheckDuplicateChild: (payload) => APIS.makePostRequest(CheckDuplicateChildURL, payload),
-  exportFamilies: (language="1", status="all", globalSearchQuery="") => APIS.makeGetRequest(`${exportFamiliesURL}?status=${status}&language=${language}&globalSearchQuery=${globalSearchQuery}`),
+  exportFamilies: (status="all", globalSearchQuery="") => APIS.makeGetRequest(`${exportFamiliesURL}?status=${status}&globalSearchQuery=${globalSearchQuery}`),
   exportChildren: (payload)=> APIS.makePostRequest(`${exportChildrenURL}`, payload),
   exportAssessments: (payload)=> APIS.makePostRequest(`${exportAssessmentURL}`, payload),
   DeleteFamilyDocument(payload) {
@@ -3556,7 +3579,7 @@ const APIS = {
   GetConsolidatedAssessmentProgressReport: (payload) => APIS.makePostRequest(ConsolidatedAssessmentProgressReportURL, payload),
   GetMostRecentAssesmentSummary(familyId) {
     let CompletedMostRecentAssesmentSummaryURL =
-      MostRecentAssesmentSummaryURL + `?HTFamilyId=${familyId}`;
+      MostRecentAssesmentSummaryURL + `?TWFamilyId=${familyId}`;
     return this.makeGetRequest(CompletedMostRecentAssesmentSummaryURL);
   },
   GetTodoList: (payload) => APIS.makePostRequest(TodoListURL, payload),
@@ -3566,7 +3589,7 @@ const APIS = {
   GetFamilyMilestoneList: (payload) => APIS.makePostRequest(getFamilyMilestoneListURL, payload),
   GetInterventionForMilestoneList: (payload) => APIS.makePostRequest(getInterventionForMilestoneListURL, payload),
   GetFamilyHistoryList: (payload) => APIS.makePostRequest(FamilyHistoryListURL, payload),
-  GetFamilyInterventionSummary: (payload) => APIS.makeGetRequest(FamilyInterventionSummaryURL + `?HTFamilyId=${payload}`),
+  GetFamilyInterventionSummary: (payload) => APIS.makeGetRequest(FamilyInterventionSummaryURL + `?TWFamilyId=${payload}`),
   GetChildInterventionList: (payload) => APIS.makePostRequest(ChildInterventionListURL, payload),
 
   //Entity model API's

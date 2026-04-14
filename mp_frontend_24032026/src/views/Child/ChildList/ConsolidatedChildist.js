@@ -9,6 +9,7 @@ import {
   Grid,
   IconButton,
   Menu,
+  Modal,
   Stack,
   TextField,
   Tooltip,
@@ -25,6 +26,7 @@ import { ModalService } from "../../../components/Modal";
 import ManageChildForm from "../Components/ChildListTable/ChildDetailForms/ManageChildForm";
 import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
 import CloseIcon from "@mui/icons-material/Close";
+import { GenerateFileName } from "../../../helpers/helperFunction";
 
 const statusOptions = [
   { label: "Active", value: "Active", key: "Status" },
@@ -39,13 +41,18 @@ const ConsolidatedChildList = (props) => {
   const [apiError, setApiError] = useState(null);
   const [filterValues, setFilterValues] = useState({});
   const [appliedFiltersChipArray, setAppliedFiltersChipArray] = useState([]);
-  const { signedinOrgId } = useContext(CommonDataContext);
+  const { signedinOrgId, signedInOrgName, userIdData } =
+    useContext(CommonDataContext);
   const [users, setUsers] = useState([]);
-
   //   actions
   const [menuState, setMenuState] = useState({ anchorEl: null, row: null });
+  const [activeChildId, setActiveChildId] = useState(null);
   const open = Boolean(menuState?.anchorEl);
-
+  const [childModalOpen, setChildModalOpen] = useState(false);
+  const [hideChildModal, setHideChildModal] = useState(false);
+  const handleChildModalOpen = () => {
+    setChildModalOpen(!childModalOpen);
+  };
   const handleClick = (event, row) => {
     setMenuState({ anchorEl: event.currentTarget, row });
   };
@@ -148,46 +155,35 @@ const ConsolidatedChildList = (props) => {
               <Tooltip title={t("common:common.Edit child", "Edit child")}>
                 <IconButton
                   onClick={() => {
+                    setChildModalOpen(true);
+                    setActiveChildId(menuState?.row?.id);
                     setMenuState(null);
-                    ModalService.open(
-                      ({ close }) => (
-                        <ManageChildForm
-                          close={close}
-                          id={menuState?.row?.id}
-                          onCaseChange={getTableData} // Refresh data after re-opening case
-                        />
-                      ),
-                      {
-                        width: "30%",
-                        height: "95%",
-                        
-                        hideModalFooter: true,
-                        enableClose: false,
-                      },
-                    );
                   }}
                   id="edit-family"
                 >
                   <PencilAltIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
-              <Tooltip
-              // title={
-              //   family?.numberOfChildrenActive > 0
-              //     ? (t("common:family.Cannot delete family with active children", "Cannot delete family with active children"))
-              //     : t("common:family.Delete Family")
-              // }
+              {/* <Tooltip
+                title={
+                  family?.numberOfChildrenActive > 0
+                    ? t(
+                        "common:family.Cannot delete family with active children",
+                        "Cannot delete family with active children",
+                      )
+                    : t("common:family.Delete Family")
+                }
               >
                 <span>
                   <IconButton
-                    // disabled={family?.numberOfChildrenActive > 0}
-                    // onClick={() => handleDelete(family.id)}
+                    disabled={family?.numberOfChildrenActive > 0}
+                    onClick={() => handleDelete(family.id)}
                     id="delete-family"
                   >
                     <TrashIcon fontSize="small" />
                   </IconButton>
                 </span>
-              </Tooltip>
+              </Tooltip> */}
 
               <Tooltip
                 title={t(
@@ -286,26 +282,37 @@ const ConsolidatedChildList = (props) => {
     getUserList();
   }, []);
 
-  const tableExtraButtons = (
-    <>
-      <Stack
-        direction="row"
-        spacing={1}
-        justifyContent="flex-end"
-        width={1}
-        mr={2}
-      >
-        <SecondaryButton
-          startIcon={
-            <img
-              src="/static/icons/ExportIcon.svg"
-              style={{ width: 20, height: 20 }}
-            />
-          }
-          label={t("common:common.Export")}
-          onClick={() => {}}
-        />
-        <SecondaryButton
+    const tableExtraButtons = ({ query, appliedFiltersChipArray }) => {
+    const selectedStatuses =
+      (appliedFiltersChipArray?.status || []).map((s) => s.value) || [];
+    const derivedStatusFilter =
+      selectedStatuses.length === 1 ? selectedStatuses[0] : "all";
+
+
+    return (
+      <>
+        <Stack
+          direction="row"
+          spacing={1}
+          justifyContent="flex-end"
+          width={1}
+          mr={2}
+        >
+          <SecondaryButton
+            startIcon={
+              <img
+                src="/static/icons/ExportIcon.svg"
+                alt=""
+                style={{ width: 20, height: 20 }}
+              />
+            }
+            label={t("common:common.Export")}
+            onClick={() =>
+              exportChildren({ query, statusFilter: derivedStatusFilter })
+            }
+            loading={isExporting}
+          />
+          <SecondaryButton
           startIcon={
             <img
               src="/static/icons/AddIcon.svg"
@@ -315,24 +322,27 @@ const ConsolidatedChildList = (props) => {
           label={t("common:child.Add new child")}
           onClick={() =>
             ModalService.open(
-              ({ close }) => <ManageChildForm close={close} />,
+              ({ close }) => (
+                <ManageChildForm
+                  handleChildModalOpen={close}
+                  setHideChildModal={setHideChildModal}
+                  refreshTable={getTableData}
+                />
+              ),
               {
-                modalTitle: (
-                  <Box>
-                    Child <span style={{ color: "#FF8C42" }}>ACTIVE</span>
-                  </Box>
-                ),
-                width: "30%",
+                width: { xs: "90%", sm: 500, md: 600, lg: 700 },
                 height: "95%",
+                enableClose: false,
                 hideModalFooter: true,
-                enableClose: true,
               },
             )
           }
         />
-      </Stack>
-    </>
-  );
+        </Stack>
+      </>
+    );
+  };
+
 
   const filterComponent = (
     <>
@@ -452,8 +462,63 @@ const ConsolidatedChildList = (props) => {
     const clearedFilters = {};
     setFilterValues(clearedFilters);
   };
+
+   const [isExporting, setIsExporting] = useState(false);
+  const exportChildren = async ({ query, statusFilter } = {}) => {
+    setIsExporting(true);
+    try {
+      const res = await APIS.exportChildren({
+        childStatusFilter: statusFilter, // "inActive","all"
+        globalSearchQuery: query || "",
+      });
+      const linkSource = `data:application/xlsx;base64,${res.data}`;
+      const downloadLink = document.createElement("a");
+      const fileName = GenerateFileName({
+        signedInOrgName,
+        userIdData,
+        module: `Children`,
+      });
+      downloadLink.href = linkSource;
+      downloadLink.download = fileName;
+      downloadLink.target = "_blank";
+      downloadLink.style.display = "none";
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      setIsExporting(false);
+    } catch (error) {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <>
+      <Modal
+        open={childModalOpen}
+        onClose={handleChildModalOpen}
+        sx={{ visibility: hideChildModal ? "hidden" : "visible" }}
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: { xs: "90%", sm: 500, md: 600, lg: 700 },
+            bgcolor: "background.paper",
+            // border: "2px solid #000",
+            p: 3,
+            boxShadow: 24,
+          }}
+        >
+          <ManageChildForm
+            handleChildModalOpen={handleChildModalOpen}
+            id={activeChildId}
+            refreshTable={getTableData} // Refresh data after re-opening case
+            setHideChildModal={setHideChildModal}
+          />
+        </Box>
+      </Modal>
       <Box
         sx={{
           backgroundColor: "background.default",

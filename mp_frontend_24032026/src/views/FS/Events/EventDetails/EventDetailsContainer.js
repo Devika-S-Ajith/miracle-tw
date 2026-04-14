@@ -55,7 +55,7 @@ const EventDetailsContainer = () => {
             fontWeight={700}
             fontSize="1.5rem"
             sx={{ cursor: "pointer" }}
-            onClick={() => navigate("/fostershare/dashboard")}
+            onClick={() => navigate("/dashboard")}
           >
             FosterShare
           </Typography>

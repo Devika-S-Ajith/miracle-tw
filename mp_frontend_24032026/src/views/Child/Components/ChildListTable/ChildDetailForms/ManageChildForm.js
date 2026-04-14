@@ -36,10 +36,26 @@ import { ModalService } from "../../../../../components/Modal";
 import DeleteChild from "./DeleteChild";
 import Heading from "../../../../../components/Heading";
 import CloseIcon from "@mui/icons-material/Close";
+import FamilyChangeModal from "./FamilyChangeModal";
+import toast from "react-hot-toast";
+import Loader from "../../../../../components/UserComponents/Loader";
+import { PhoneNumberUtil } from "google-libphonenumber";
+import { validatePhoneNumber } from "../../../../../helpers/helperFunction";
 
 const userRegion = localStorage.getItem("userRegion");
+const phoneUtil = PhoneNumberUtil.getInstance();
 
-const ManageChildForm = ({ close, id, openForEdit ,onCaseChange,getMemberDetails = null,childInfo,isFromFamily = false }) => {
+const ManageChildForm = ({
+  handleChildModalOpen,
+  setHideChildModal,
+  id,
+  openForEdit,
+  onCaseChange,
+  getMemberDetails = null,
+  childInfo,
+  isFromFamily = false,
+  refreshTable,
+}) => {
   const { t } = useTranslation(["common"]);
   const [isLoading, setIsLoading] = useState(false); // Defined missing state
   const mounted = useMounted();
@@ -56,22 +72,24 @@ const ManageChildForm = ({ close, id, openForEdit ,onCaseChange,getMemberDetails
     locationList?.find((loc) => loc.id == userRegion)?.states || [];
   const [isEditing, setIsEditing] = useState(false);
   const [isUniqueChild, setIsuniqueChild] = useState(true);
+  const phoneRef = useRef({});
 
   useEffect(() => {
     if (id) {
       getChildDetails();
     }
-    console.log("Child Info in ManageChildForm: ", childInfo);
-    if(isFromFamily && childInfo && !id) {
+    if (isFromFamily && childInfo && !id) {
       setChildDetails(childInfo);
     }
-
   }, [id, isFromFamily, childInfo]);
 
-   const handleResponse = useCallback((payload) => {
-          getMemberDetails?.(payload);
-          close();
-      }, [getMemberDetails, close]);
+  const handleResponse = useCallback(
+    (payload) => {
+      getMemberDetails?.(payload);
+      handleChildModalOpen();
+    },
+    [getMemberDetails, handleChildModalOpen],
+  );
 
   useEffect(() => {
     if (openForEdit) {
@@ -81,18 +99,20 @@ const ManageChildForm = ({ close, id, openForEdit ,onCaseChange,getMemberDetails
 
   const getChildDetails = useCallback(async () => {
     try {
+      setIsLoading(true);
       const res = await APIS.GetChildDetails(id);
       setChildDetails(res.data?.data); // Assuming API returns child details in res.data
       // Map API response to form values and set them (not implemented here)
     } catch (err) {
       console.error(err);
     } finally {
-      // Any cleanup if needed
+      setIsLoading(false);
     }
   }, [id]);
 
   const getUserList = useCallback(async () => {
     try {
+      setIsLoading(true);
       const payload = {
         rowCount: "10000",
         pageNumber: "1",
@@ -107,13 +127,14 @@ const ManageChildForm = ({ close, id, openForEdit ,onCaseChange,getMemberDetails
       setUsers(data && data.data && data.data.data);
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   }, [mounted]);
 
-  console.log("Users List in ManageChildForm: ", childDropdownLists);
-
   const getFamilyList = useCallback(async () => {
     try {
+      setIsLoading(true);
       let getFamListpayload = {
         rowCount: 10000,
         listType: "MEDIUM",
@@ -135,6 +156,8 @@ const ManageChildForm = ({ close, id, openForEdit ,onCaseChange,getMemberDetails
       ); // Assuming API returns family list in res.data.data
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
@@ -146,29 +169,40 @@ const ManageChildForm = ({ close, id, openForEdit ,onCaseChange,getMemberDetails
     // If the checkbox is checked, clear the address fields
     if (checked) {
       try {
+        setIsLoading(true);
         const res = await APIS.GetFamilyDetails({
-          id: values.family,
+          id: values.TWFamilyId,
           listType: "DETAILED",
         });
         const familyData = res.data?.data?.contactInformation;
         if (familyData) {
-          setFieldValue("addressline1", familyData.addressLine1 || "");
-          setFieldValue("addressline2", familyData.addressLine2 || "");
-          setFieldValue("city", familyData.city || "");
-          setFieldValue("TWStateId", familyData.TWStateId || "");
-          setFieldValue("zipCode", familyData.zipCode || "");
+          setFieldValue(
+            "contactInformation.addressLine1",
+            familyData.addressLine1 || "",
+          );
+          setFieldValue(
+            "contactInformation.addressLine2",
+            familyData.addressLine2 || "",
+          );
+          setFieldValue("contactInformation.city", familyData.city || "");
+          setFieldValue(
+            "contactInformation.TWStateId",
+            familyData.TWStateId || "",
+          );
+          setFieldValue("contactInformation.zipCode", familyData.zipCode || "");
         }
       } catch (error) {
         console.error(error);
       } finally {
+        setIsLoading(false);
       }
       // Clear address fields logic here
     } else {
-      setFieldValue("addressline1", null);
-      setFieldValue("addressline2", null);
-      setFieldValue("city", null);
-      setFieldValue("TWStateId", null);
-      setFieldValue("zipCode", null);
+      setFieldValue("contactInformation.addressLine1", null);
+      setFieldValue("contactInformation.addressLine2", null);
+      setFieldValue("contactInformation.city", null);
+      setFieldValue("contactInformation.TWStateId", null);
+      setFieldValue("contactInformation.zipCode", null);
     }
   };
 
@@ -179,7 +213,66 @@ const ManageChildForm = ({ close, id, openForEdit ,onCaseChange,getMemberDetails
   }, []);
 
   const handleFamilyChange = async ({ data, setFieldValue }) => {
+    if (
+      childDetails?.TWFamilyId &&
+      childDetails.TWFamilyId !== data?.TWFamilyId
+    ) {
+      setHideChildModal(true);
+      ModalService.open(
+        ({ close }) => (
+          <FamilyChangeModal
+            close={close}
+            onFamilyChangeConfirm={onFamilyChangeConfirm}
+            onFamilyChangeCancel={onFamilyChangeCancel}
+            setFieldValue={setFieldValue}
+            setHideChildModal={setHideChildModal}
+            // closeEditForm={closeEditForm}
+            // onCaseClose={onCaseChange}
+            // childId={childId}
+          />
+        ),
+        {
+          modalTitle: t(
+            "common:common.Change family assignment?",
+            "Change family assignment?",
+          ),
+          width: "40%",
+          hideModalFooter: true,
+          enableClose: true,
+          height: "95%",
+        },
+      );
+    }
     setFieldValue("caseWorkerId", data?.caseWorkerId);
+  };
+
+  const onFamilyChangeConfirm = ({ setFieldValue, familyChangeValues }) => {
+    setFieldValue(
+      "familyChangeDetails.childDischargedDate",
+      new Date(
+        familyChangeValues?.familyChangeDetails?.childDischargedDate,
+      ).toISOString(),
+    );
+    setFieldValue(
+      "familyChangeDetails.childDischargeReason",
+      familyChangeValues?.familyChangeDetails?.childDischargeReason,
+    );
+    setFieldValue(
+      "familyChangeDetails.otherReason",
+      familyChangeValues?.familyChangeDetails?.otherReason,
+    );
+    setFieldValue("familyChangeDetails.previousFamilyCutoffDaysCount", 0);
+    handleSameAddressChange({
+      checked: valuesRef.current?.isSameAsFamilyAddress,
+      values: valuesRef.current,
+      setFieldValue,
+    });
+    setHideChildModal(false);
+  };
+
+  const onFamilyChangeCancel = (setFieldValue) => {
+    setFieldValue("TWFamilyId", childDetails?.TWFamilyId);
+    setFieldValue("familyChangeDetails", null);
   };
 
   const uniqueCheckHandler = useDebouncedCallback(
@@ -297,8 +390,8 @@ const ManageChildForm = ({ close, id, openForEdit ,onCaseChange,getMemberDetails
     try {
       const res = await APIS.ReOpenChidCase({ childId: id });
       if (res?.status === 200) {
-        close(); // Close the current form/modal
-        if (onCaseChange) onCaseChange(); // Callback to parent to refresh data or update UI
+        handleChildModalOpen(); // Close the current form/modal
+        if (refreshTable) refreshTable(); // Callback to parent to refresh data or update UI
         ModalService.open(() => null, {
           width: "30%",
           modalDescription: (
@@ -320,7 +413,7 @@ const ManageChildForm = ({ close, id, openForEdit ,onCaseChange,getMemberDetails
   };
 
   const onCloseCaseHandler = () => {
-    if (onCaseChange) onCaseChange(); // Callback to parent to refresh data or update UI
+    if (refreshTable) refreshTable(); // Callback to parent to refresh data or update UI
   };
 
   return (
@@ -333,14 +426,12 @@ const ManageChildForm = ({ close, id, openForEdit ,onCaseChange,getMemberDetails
         firstName: childDetails?.firstName || null,
         lastName: childDetails?.lastName || null,
         gender: childDetails?.gender || null,
-        dateOfBirth: childDetails?.dateOfBirth
-          ? dateFormatter(childDetails.dateOfBirth)
-          : null,
+        dateOfBirth: childDetails?.dateOfBirth || null,
         TWFamilyId: childDetails?.TWFamilyId || null,
         TWChildCurrentPlacementStatusId:
-          childDetails?.TWChildPlacementStatusId || null,
+          childDetails?.TWChildCurrentPlacementStatusId || null,
         caseWorkerId: childDetails?.caseWorkerId || null,
-        childhasdisability: childDetails?.childhasdisability || false,
+        childHasDisability: childDetails?.childHasDisability || false,
         isSameAsFamilyAddress: childDetails?.isSameAsFamilyAddress || false,
 
         // Contact Details
@@ -350,8 +441,8 @@ const ManageChildForm = ({ close, id, openForEdit ,onCaseChange,getMemberDetails
             localStorage.getItem("userRegion"),
           TWStateId: childDetails?.contactInformation?.TWStateId || null, // From commented dropdown
           TWDistrictId: childDetails?.contactInformation?.TWDistrictId || null,
-          addressline1: childDetails?.contactInformation?.addressLine1 || null,
-          addressline2: childDetails?.contactInformation?.addressLine2 || null,
+          addressLine1: childDetails?.contactInformation?.addressLine1 || null,
+          addressLine2: childDetails?.contactInformation?.addressLine2 || null,
           city: childDetails?.contactInformation?.city || null,
           zipCode: childDetails?.contactInformation?.zipCode || null,
         },
@@ -384,6 +475,11 @@ const ManageChildForm = ({ close, id, openForEdit ,onCaseChange,getMemberDetails
           previousPlacementsCount:
             childDetails?.caseManagementInformation?.previousPlacementsCount ||
             null, // From commented # of previous placements
+        },
+        familyChangeDetails: {
+          childDischargedDate: null,
+          childDischargeReason: null,
+          otherReason: null,
         },
       }}
       validationSchema={Yup.object().shape({
@@ -421,39 +517,29 @@ const ManageChildForm = ({ close, id, openForEdit ,onCaseChange,getMemberDetails
             ),
           )
           .nullable(),
-        childhasdisability: Yup.boolean(),
+        childHasDisability: Yup.boolean(),
 
         // Contact Details
         isSameAsFamilyAddress: Yup.boolean(),
         contactInformation: Yup.object().shape({
-          addressline1: Yup.string().max(255).nullable(),
-          addressline2: Yup.string().max(255).nullable(),
+          addressLine1: Yup.string().max(255).nullable(),
+          addressLine2: Yup.string().max(255).nullable(),
           TWStateId: Yup.string().max(255).nullable(),
           city: Yup.string().max(255).nullable(),
           zipCode: Yup.string()
-            .max(20)
-            .nullable()
-            .test({
-              name: "zip-format-validation",
-              exclusive: true,
-              message: t(
-                "common:warnings.Invalid ZIP code format",
-                "Invalid ZIP code format",
-              ),
-              test: function (zip_code) {
-                const country = localStorage.getItem("userRegion");
-                const countryObj = locationList?.find(
-                  (obj) => obj.id == country,
-                );
-                const isoCode = countryObj?.isoCode?.toUpperCase();
-                if (!zip_code) return true; // allow empty if nullable
-                if (isoCode === "IND") {
-                  return /^\d{6}$/.test(zip_code);
+            .test(
+              "zip-format-validation",
+              "Please enter a valid ZIP code",
+              (value) => {
+                if (!value) return true; // Only validate if there is a value
+                if (userRegion == "1") {
+                  return /^\d{6}$/.test(value);
                 } else {
-                  return /^\d{5}$/.test(zip_code);
+                  return /^\d{5}$/.test(value);
                 }
               },
-            }),
+            )
+            .nullable(),
         }),
 
         // Additional Details
@@ -465,7 +551,11 @@ const ManageChildForm = ({ close, id, openForEdit ,onCaseChange,getMemberDetails
             )
             .max(255)
             .nullable(),
-          phoneNumber: Yup.string().max(20).nullable(),
+          phoneNumber: Yup.string().test(
+            "phone-format-validation",
+            t("common:warnings.Invalid Phone number"),
+            (value) => validatePhoneNumber(value, phoneRef),
+          ),
           TWLanguageId: Yup.string().nullable(),
           ethnicity: Yup.string().nullable(),
           TWChildEducationLevelId: Yup.string().nullable(),
@@ -583,27 +673,57 @@ const ManageChildForm = ({ close, id, openForEdit ,onCaseChange,getMemberDetails
       onSubmit={async (values, { setSubmitting }) => {
         setIsLoading(true);
         try {
+          let res;
+            if (
+              values?.profileInformation?.phoneNumber &&
+              "+" + phoneRef.current.dialCode ===
+                values?.profileInformation?.phoneNumber
+            ) {
+              values.profileInformation.phoneNumber = null;
+            }
           if (id) {
             let changedValues = getChangedValues(
               values,
               initialValuesRef.current,
             );
             changedValues.id = id;
-            const res = await APIS.UpdateChild(changedValues);
+            if (changedValues?.TWFamilyId) {
+              changedValues.caseWorkerId = values.caseWorkerId;
+            }
+            res = await APIS.UpdateChild(changedValues);
             if (isFromFamily) {
-              handleResponse(changedValues)
-            }       
+              handleResponse(changedValues);
+            }
           } else {
-            const res = await APIS.CreateChild(values);
+            res = await APIS.CreateChild(values);
             if (isFromFamily) {
               const newPayload = {
                 ...values,
                 _rowKey: childInfo?._rowKey,
-              }
-              handleResponse(newPayload)
-            }                  
+              };
+              handleResponse(newPayload);
+            }
           }
-          close();
+          handleChildModalOpen();
+          if (res?.status === 200) {
+            if (id) {
+              toast.success(
+                t(
+                  "common:child.Child details updated successfully",
+                  "Child details updated successfully",
+                ),
+              );
+            } else {
+              toast.success(
+                t(
+                  "common:child.Child created successfully",
+                  "Child created successfully",
+                ),
+              );
+            }
+
+            refreshTable();
+          }
         } catch (error) {
           console.error(error);
         } finally {
@@ -639,69 +759,90 @@ const ManageChildForm = ({ close, id, openForEdit ,onCaseChange,getMemberDetails
           (el?.parentElement ?? el)?.scrollIntoView({ behavior: "smooth" });
         }
         return (
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-              mb={2}
-            >
-              <Stack direction="row" justifyContent="flex-start" spacing={1}>
-                <Heading heading="Child" />
-                <Heading
-                  heading={`${childDetails?.status}${childDetails?.status === "Case Closed" ? ` ${MonthDayYearFormatter(childDetails?.lastCaseClosedDate, "short")}` : ""}`}
-                  color="#F37123"
+          <>
+            <Loader loading={isLoading} />
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+                mb={2}
+              >
+                <Stack direction="row" justifyContent="flex-start" spacing={1}>
+                  <Heading heading="Child" />
+                  <Heading
+                    heading={
+                      childDetails
+                        ? `${childDetails?.status}${
+                            childDetails?.status === "Case Closed"
+                              ? ` ${MonthDayYearFormatter(
+                                  childDetails?.lastCaseClosedDate,
+                                  "short",
+                                )}`
+                              : ""
+                          }`
+                        : "Active"
+                    }
+                    color="#F37123"
+                  />
+                </Stack>
+                <CloseIcon
+                  style={{ color: "#000", cursor: "pointer" }}
+                  onClick={handleChildModalOpen}
                 />
               </Stack>
-              <CloseIcon style={{ color: "#000" }} onClick={close} />
-            </Stack>
-            <Form id="add-child-form">
-              <Box mx={-2}>
-                <Box sx={{ maxHeight: "70vh", overflowY: "auto", px: 2 }}>
-                  <Grid container spacing={2}>
-                    <DynamicForm
-                      values={values}
-                      errors={errors}
-                      touched={touched}
-                      handleChange={handleChange}
-                      handleBlur={handleBlur}
-                      setFieldValue={setFieldValue}
-                      config={ChildBasicDetails({
-                        childDropdownLists,
-                        users,
-                        familyList,
-                        values,
-                        setFieldValue,
-                        handleFamilyChange,
-                        uniqueCheckHandler,
-                        setFieldError,
-                        validateForm,
-                      })}
-                      isDisabled={isSubmitting}
-                    />
-                    <Grid item xs={12}>
-                      <SubHeading
-                        value={t(
-                          "common:common.Contact information",
-                          "Contact information",
-                        )}
+              <Form id="add-child-form">
+                <Box ml={-2}>
+                  <Box sx={{ maxHeight: "70vh", overflowY: "auto", px: 2 }}>
+                    <Grid container spacing={2}>
+                      <DynamicForm
+                        values={values}
+                        errors={errors}
+                        touched={touched}
+                        handleChange={handleChange}
+                        handleBlur={handleBlur}
+                        setFieldValue={setFieldValue}
+                        config={ChildBasicDetails({
+                          childDropdownLists,
+                          users,
+                          familyList,
+                          values,
+                          setFieldValue,
+                          handleFamilyChange,
+                          uniqueCheckHandler,
+                          setFieldError,
+                          validateForm,
+                        })}
+                        isDisabled={
+                          isSubmitting || childDetails?.status === "Case Closed"
+                        }
                       />
-                      <Grid container spacing={2} sx={{ mt: 0.5 }}>
-                        <DynamicForm
-                          values={values}
-                          errors={errors}
-                          touched={touched}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                          setFieldValue={setFieldValue}
-                          config={ChildAddressConditionalFields({
-                            values,
-                            handleSameAddressChange,
-                            setFieldValue,
-                          })}
-                          isDisabled={isSubmitting}
+                      <Grid item xs={12}>
+                        <SubHeading
+                          value={t(
+                            "common:common.Contact information",
+                            "Contact information",
+                          )}
                         />
-                        {!values?.isSameAsFamilyAddress && (
+                        <Grid container spacing={2} sx={{ mt: 0.5 }}>
+                          <DynamicForm
+                            values={values}
+                            errors={errors}
+                            touched={touched}
+                            handleChange={handleChange}
+                            handleBlur={handleBlur}
+                            setFieldValue={setFieldValue}
+                            config={ChildAddressConditionalFields({
+                              values,
+                              handleSameAddressChange,
+                              setFieldValue,
+                            })}
+                            isDisabled={
+                              isSubmitting ||
+                              childDetails?.status === "Case Closed"
+                            }
+                          />
+
                           <DynamicForm
                             values={values}
                             errors={errors}
@@ -715,74 +856,88 @@ const ManageChildForm = ({ close, id, openForEdit ,onCaseChange,getMemberDetails
                               values,
                               setFieldValue,
                             })}
-                            isDisabled={isSubmitting}
+                            t={t}
+                            isDisabled={
+                              isSubmitting ||
+                              childDetails?.status === "Case Closed" ||
+                              values?.isSameAsFamilyAddress
+                            }
                           />
-                        )}
+                        </Grid>
+                      </Grid>
+
+                      <Grid item xs={12}>
+                        <CommonAccordion
+                          title={t(
+                            "common:common.Additional profile information (optional)",
+                            "Additional profile information (optional)",
+                          )}
+                        >
+                          <Grid container spacing={2}>
+                            <DynamicForm
+                              values={values}
+                              errors={errors}
+                              touched={touched}
+                              handleChange={handleChange}
+                              handleBlur={handleBlur}
+                              setFieldValue={setFieldValue}
+                              locationList={locationList}
+                              config={ChildAdditionalDetails({
+                                childDropdownLists,
+                                allLanguagesList,
+                                phoneRef,
+                              })}
+                              isDisabled={
+                                isSubmitting ||
+                                childDetails?.status === "Case Closed"
+                              }
+                            />
+                          </Grid>
+                        </CommonAccordion>
+                      </Grid>
+
+                      <Grid item xs={12}>
+                        <CommonAccordion
+                          title={t(
+                            "common:common.Case management details (optional)",
+                            "Case management details (optional)",
+                          )}
+                        >
+                          <Grid container spacing={2}>
+                            <DynamicForm
+                              values={values}
+                              errors={errors}
+                              touched={touched}
+                              handleChange={handleChange}
+                              handleBlur={handleBlur}
+                              setFieldValue={setFieldValue}
+                              config={CaseManagementDetails(childDropdownLists)}
+                              isDisabled={
+                                isSubmitting ||
+                                childDetails?.status === "Case Closed"
+                              }
+                            />
+                          </Grid>
+                        </CommonAccordion>
                       </Grid>
                     </Grid>
-
-                    <Grid item xs={12}>
-                      <CommonAccordion
-                        title={t(
-                          "common:common.Additional profile information (optional)",
-                          "Additional profile information (optional)",
-                        )}
-                      >
-                        <Grid container spacing={2}>
-                          <DynamicForm
-                            values={values}
-                            errors={errors}
-                            touched={touched}
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                            setFieldValue={setFieldValue}
-                            config={ChildAdditionalDetails({
-                              childDropdownLists,
-                              allLanguagesList,
-                            })}
-                            isDisabled={isSubmitting}
-                          />
-                        </Grid>
-                      </CommonAccordion>
-                    </Grid>
-
-                    <Grid item xs={12}>
-                      <CommonAccordion
-                        title={t(
-                          "common:common.Case management details (optional)",
-                          "Case management details (optional)",
-                        )}
-                      >
-                        <Grid container spacing={2}>
-                          <DynamicForm
-                            values={values}
-                            errors={errors}
-                            touched={touched}
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                            setFieldValue={setFieldValue}
-                            config={CaseManagementDetails(childDropdownLists)}
-                            isDisabled={isSubmitting}
-                          />
-                        </Grid>
-                      </CommonAccordion>
-                    </Grid>
-                  </Grid>
+                  </Box>
                 </Box>
-              </Box>
 
-              <ChildFormFooter
-                childId={id}
-                childDetails={childDetails}
-                close={close}
-                onCaseChange={onCloseCaseHandler}
-                isSubmitting={isSubmitting}
-                onSubmit={handleSubmit}
-                deleteChildClickHandler={deleteChildClickHandler}
-                reOpenCaseHandler={reOpenCaseHandler}
-              />
-            </Form>
-          </LocalizationProvider>
+                <ChildFormFooter
+                  childId={id}
+                  childDetails={childDetails}
+                  handleChildModalOpen={handleChildModalOpen}
+                  setHideChildModal={setHideChildModal}
+                  onCaseChange={onCloseCaseHandler}
+                  isSubmitting={isSubmitting}
+                  onSubmit={handleSubmit}
+                  deleteChildClickHandler={deleteChildClickHandler}
+                  reOpenCaseHandler={reOpenCaseHandler}
+                />
+              </Form>
+            </LocalizationProvider>
+          </>
         );
       }}
     </Formik>

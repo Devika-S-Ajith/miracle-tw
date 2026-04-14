@@ -6,7 +6,12 @@ const BASE = AppConfig.baseURL;
 const createEndpoints = (prefix, map) => {
   const fullUrls = {};
   for (const [key, path] of Object.entries(map)) {
-    fullUrls[key] = path.startsWith("/") ? `${BASE}${prefix}${path}` : `${BASE}${prefix}/${path}`;
+    if (path === "") {
+      // If path is empty, do not append an extra slash
+      fullUrls[key] = `${BASE}${prefix}`;
+    } else {
+      fullUrls[key] = path.startsWith("/") ? `${BASE}${prefix}${path}` : `${BASE}${prefix}/${path}`;
+    }
   }
   return fullUrls;
 };
@@ -26,12 +31,22 @@ const API_URLS = {
     }),
     root: "/system-messages",
   },
+  reports: createEndpoints("/report", {
+    exportLegacyAssessmentScore: "/legacyDataExport",
+  }),
+  forms: createEndpoints("", {
+    activeForms: "/default-forms",
+    formList: "/get-all-forms",
+  }),
+  assessment: createEndpoints("/tw-assessment", {
+    skipDomain: "/milestoneDeactivationReasons",
+  }),
 
   user: createEndpoints("/user", {
     ChangeUserStatusByOrgId: "/changeUserStatusByOrg",
   }),
 
-  consentForm: createEndpoints("/ht-consent-new", {
+  consentForm: createEndpoints("/tw-consent-new", {
     familyChildConsent: "/familyChildConsent",
     generateConsentPDF: "/generateConsentPdf",
   }),

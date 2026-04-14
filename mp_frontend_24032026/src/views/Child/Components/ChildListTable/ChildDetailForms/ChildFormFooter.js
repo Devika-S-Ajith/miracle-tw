@@ -9,7 +9,8 @@ import CloseCaseForm from "./CloseCaseForm";
 const ChildFormFooter = ({
   childId,
   childDetails,
-  close: closeEditForm,
+  handleChildModalOpen,
+  setHideChildModal,
   onCaseChange,
   onSubmit,
   deleteChildClickHandler,
@@ -18,11 +19,14 @@ const ChildFormFooter = ({
   const { t } = useTranslation(["common"]);
 
   const closeCaseHandler = () => {
+    // handleChildModalOpen();
+    setHideChildModal(true);
     ModalService.open(
       ({ close }) => (
         <CloseCaseForm
           close={close}
-          closeEditForm={closeEditForm}
+          handleChildModalOpen={handleChildModalOpen}
+          setHideChildModal={setHideChildModal}
           onCaseClose={onCaseChange}
           childId={childId}
         />
@@ -50,7 +54,7 @@ const ChildFormFooter = ({
           />
           <PrimaryButton
             label={t("common:common.Close", "Close")}
-            onClick={closeEditForm}
+            onClick={handleChildModalOpen}
           />
         </Stack>
       ) : (
@@ -61,11 +65,11 @@ const ChildFormFooter = ({
           mt={3}
         >
           <Stack direction="row" spacing={2}>
-            <SecondaryButton
+            {/* <SecondaryButton
               label={t("common:common.Delete", "Delete")}
               sx={{ visibility: childId ? "visible" : "hidden" }}
               onClick={deleteChildClickHandler}
-            />
+            /> */}
             <SecondaryButton
               label={t("common:common.Close case", "Close case")}
               sx={{ visibility: childId ? "visible" : "hidden" }}
@@ -75,7 +79,7 @@ const ChildFormFooter = ({
           <Stack direction="row" spacing={2}>
             <SecondaryButton
               label={t("common:common.Cancel", "Cancel")}
-              onClick={closeEditForm}
+              onClick={handleChildModalOpen}
             />
             <PrimaryButton
               label={t("common:common.Save", "Save")}

@@ -18,55 +18,24 @@ import {
   PRIVATE_CCI,
   SUPER_ADMIN,
   VIEW_ONLY,
+  CASEMANAGER,
+  ADMIN_CASEMANAGER,
 } from "../../../../helpers/constant";
 import { useContext, useState, useEffect } from "react";
 import { CommonDataContext } from "../../../../common/contexts/CommonDataContext";
 import ReportsPieChart from "./ReportsPieChart";
+import DashboardCountWidgets from "./DashboardCountWidgets";
+import { getNavbarFilterPayload } from "../../../../constants";
+import APIS from "../../../../common/hooks/UseApiCalls";
+
 
 const ConsolidatedOverviewPage = () => {
   const { t } = useTranslation(["common"]);
-  const { signedinUserRoleHT, signedinOrgType } = useContext(CommonDataContext);
+  const { signedinUserRoleHT, signedinUserRoleFS, signedinOrgType } = useContext(CommonDataContext);
   const [filteredItems, setFilteredItems] = useState([]);
-  const isSuperAdmin = signedinUserRoleHT === SUPER_ADMIN;
-  const tileData = {
-    childPlacement: [
-      {
-        "Foster care": "88",
-        "Semi-independent living": "62",
-        "Parents/step parents": "35",
-        Other: "9",
-        "Independent living": "1",
-        Kinship: "30",
-        CCI: "21",
-        "After care": "116",
-        "Group living": "5",
-      },
-    ],
-  };
-
-  const canViewReport =
-    [MIRACLE, GOVT_CCI, GOVT_ORG, PRIVATE_CCI, NGO_PARTNER].includes(
-      signedinOrgType,
-    ) && [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER].includes(signedinUserRoleHT);
-
-  const pieChartProps = {
-    data: 3,
-    canViewReport,
-    reportLink: "/dashboard/reportsCurrentPlacement",
-    title: t("common:common.Current Placement"),
-    res: tileData?.childPlacement ? tileData?.childPlacement[0] : [],
-    labels: [
-      "Foster care",
-      "Semi- independent living",
-      "Parents/step parents",
-      "Other",
-      "Independent living",
-      "Kinship",
-      "CCI",
-      "After care",
-      "Group living",
-    ],
-  };
+  const [tileData, setTileData] = useState({});
+  const [loading, setLoading] = useState(false);
+  const isSuperAdmin = (signedinUserRoleHT === SUPER_ADMIN || signedinUserRoleFS === SUPER_ADMIN) || false;
 
   const items = [
     {
@@ -74,59 +43,101 @@ const ConsolidatedOverviewPage = () => {
       key: "orgOverview",
       sequence: 0,
       column: "left",
-      Allowed_Roles: [
-        SUPER_ADMIN,
-        ADMIN,
-        CASEWORKER,
-        ADMIN_CASEWORKER,
-        VIEW_ONLY,
-      ],
+      Allowed_Roles_HT: [SUPER_ADMIN, ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY],
+      Allowed_Roles_FS: [SUPER_ADMIN, ADMIN, CASEMANAGER, ADMIN_CASEMANAGER, VIEW_ONLY],
       Allowed_Acc_Type: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
       component: () => <OrganizationalOverview isGeneralDashboard={true} isSuperAdmin={isSuperAdmin} />,
     },
     {
-      title: "ReportsPieChart1",
-      key: "pieChart1",
+      title: "Current living condition",
+      key: "currentLivingCondition",
       sequence: 1,
       column: "left",
-      Allowed_Roles: [ADMIN, ADMIN_CASEWORKER],
-      Allowed_Acc_Type: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
-      component: () => <ReportsPieChart {...pieChartProps} />,
+      Allowed_Roles_HT: [ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY],
+      Allowed_Roles_FS: [ADMIN, CASEMANAGER, ADMIN_CASEMANAGER, VIEW_ONLY],
+      Allowed_Acc_Type: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+      component: (data) => (
+        <ReportsPieChart
+          title="Current living condition"
+          res={data?.[0]}
+          loading={loading}
+          reportLink="/dashboard/reportsCurrentLivingCondition"
+          canViewReport={true}
+        />
+      ),
     },
     {
-      title: "ReportsPieChart2",
-      key: "pieChart2",
+      title: "Family situation",
+      key: "familySituation",
       sequence: 2,
       column: "left",
-      Allowed_Roles: [ADMIN, ADMIN_CASEWORKER],
-      Allowed_Acc_Type: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
-      component: () => <ReportsPieChart {...pieChartProps} />,
+      Allowed_Roles_HT: [ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY],
+      Allowed_Roles_FS: [ADMIN, CASEMANAGER, ADMIN_CASEMANAGER, VIEW_ONLY],
+      Allowed_Acc_Type: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+      component: (data) => (
+        <ReportsPieChart
+          title="Family situation"
+          res={data?.[0]}
+          loading={loading}
+          reportLink="/dashboard/reportsFamilySituation"
+          canViewReport={false}
+        />
+      ),
+    },
+    {
+      title: "All overdue assessments",
+      key: "overallOverdue",
+      sequence: 3,
+      column: "left",
+      Allowed_Roles_HT: [ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY],
+      Allowed_Roles_FS: [],
+      Allowed_Acc_Type: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+      component: (data) => (
+        <DashboardCountWidgets
+          title="All overdue assessments"
+          data={data}
+          isloading={loading}
+          linkAddress="/dashboard/reportsChildrenOverdue"
+          canViewReport={false}
+        />
+      ),
     },
     {
       title: "RedflagOverview",
       key: "redflagOverview",
-      sequence: 3,
+      sequence: 4,
       column: "left",
-      Allowed_Roles: [ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY],
-      Allowed_Acc_Type: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+      Allowed_Roles_HT: [ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY],
+      Allowed_Roles_FS: [],
+      Allowed_Acc_Type: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
       component: () => <RedflagOverview isGeneralDashboard={true} />,
     },
     {
-      title: "ReportsPieChart3",
-      key: "pieChart3",
-      sequence: 4,
+      title: "Closed case",
+      key: "closedCases",
+      sequence: 5,
       column: "left",
-      Allowed_Roles: [ADMIN, ADMIN_CASEWORKER],
-      Allowed_Acc_Type: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
-      component: () => <ReportsPieChart {...pieChartProps} />,
+      Allowed_Roles_HT: [ADMIN, CASEWORKER, ADMIN_CASEWORKER],
+      Allowed_Roles_FS: [ADMIN, CASEMANAGER, ADMIN_CASEMANAGER],
+      Allowed_Acc_Type: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+      component: (data) => (
+        <ReportsPieChart
+          title="Closed case"
+          res={data?.[0]}
+          loading={loading}
+          reportLink="/dashboard/reportsClosedCases"
+          canViewReport={true}
+        />
+      ),
     },
     {
       title: "BehaviourLog",
       key: "behaviourLog",
-      sequence: 5,
+      sequence: 6,
       column: "right",
-      Allowed_Roles: [ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY],
-      Allowed_Acc_Type: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+      Allowed_Roles_HT: [],
+      Allowed_Roles_FS: [ADMIN, CASEMANAGER, ADMIN_CASEMANAGER, VIEW_ONLY],
+      Allowed_Acc_Type: [],
       component: () => (
         <Card>
           <CardContent>
@@ -138,19 +149,21 @@ const ConsolidatedOverviewPage = () => {
     {
       title: "AverageThriveScaleScores",
       key: "avgThriveScores",
-      sequence: 6,
+      sequence: 7,
       column: "right",
-      Allowed_Roles: [ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY],
-      Allowed_Acc_Type: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+      Allowed_Roles_HT: [ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY],
+      Allowed_Roles_FS: [],
+      Allowed_Acc_Type: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
       component: () => <AverageThriveScaleScores isGeneralDashboard={true} />,
     },
     {
       title: "TableWithTrendLines",
       key: "domainScoreTable",
-      sequence: 7,
+      sequence: 8,
       column: "right",
-      Allowed_Roles: [ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY],
-      Allowed_Acc_Type: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+      Allowed_Roles_HT: [ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY],
+      Allowed_Roles_FS: [],
+      Allowed_Acc_Type: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
       component: () => <TableWithTrendLines isGeneralDashboard={true} />,
     },
   ];
@@ -158,11 +171,73 @@ const ConsolidatedOverviewPage = () => {
   useEffect(() => {
     const filtered = items.filter(
       (item) =>
-        item.Allowed_Roles?.includes(signedinUserRoleHT) &&
+        (item.Allowed_Roles_HT?.includes(signedinUserRoleHT) || item.Allowed_Roles_FS?.includes(signedinUserRoleFS)) &&
         item.Allowed_Acc_Type?.includes(signedinOrgType),
     );
     setFilteredItems(filtered);
-  }, [signedinUserRoleHT, signedinOrgType]);
+  }, [signedinUserRoleHT, signedinUserRoleFS, signedinOrgType]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        // let payload = getNavbarFilterPayload() || {};
+        let payload = {
+          HTCountryId: "1",
+          countryFilter: "",
+          districtFilter: "",
+          endDate: "",
+          pageNumber: "1",
+          rowCount: "100",
+          startDate: "",
+          stateFilter: "",
+        };
+        // const response = await APIS.DashboardTileData(payload);
+        let data = {
+          overallOverdue: "52",
+          familySituation: [
+            {
+              Intake: "0",
+              Assessment: "3",
+              Planning: "0",
+              FollowUp: "1",
+              "Case Closed": "1",
+            },
+          ],
+          closedCases: [
+            {
+              Orphan: "39",
+              "Semi-Orphan": "54",
+              "Economic Orphan": "24",
+            },
+          ],
+          currentLivingCondition: [
+            {
+              "Foster care": "98",
+              "Semi-independent living": "66",
+              "Parents/step parents": "37",
+              Other: "9",
+              "Independent living": "1",
+              Kinship: "31",
+              CCI: "22",
+              "After care": "127",
+              "Group living": "5",
+            },
+          ],
+        };
+
+        // if (response && response.status === 200) {
+        //   setTileData({ ...response.data.message });
+        // }
+        setTileData({ ...data });
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   const leftItems = filteredItems
     .filter((item) => item.column === "left")
@@ -179,7 +254,7 @@ const ConsolidatedOverviewPage = () => {
           data={[{ label: t("common:common.Overview", "Overview") }]}
         />
       </Box>
-      {/* Org Overview - full width ONLY for super admin */}
+
       {isSuperAdmin && (
         <Box sx={{ px: 2, pt: 2 }}>
           {filteredItems.find((i) => i.key === "orgOverview")?.component()}
@@ -187,10 +262,6 @@ const ConsolidatedOverviewPage = () => {
       )}
 
       <Grid p={2} container spacing={2} alignItems="stretch">
-        {/* ══════════════════════════════════════
-            LEFT COLUMN  (xs=12 → stacks on mobile, md=5 on desktop)
-            Contains: OrganizationalOverview · 3× PieChart · RedflagOverview
-        ══════════════════════════════════════ */}
         <Grid
           item
           xs={12}
@@ -198,16 +269,11 @@ const ConsolidatedOverviewPage = () => {
           sx={{ display: "flex", flexDirection: "column", gap: 2 }}
         >
           {leftItems
-            .filter(i => isSuperAdmin ? i.key !== "orgOverview" : true)
+            .filter((i) => (isSuperAdmin ? i.key !== "orgOverview" : true))
             .map((item) => (
-                <Box key={item.key}>{item.component()}</Box>
+              <Box key={item.key}>{item.component(tileData[item.key])}</Box>
             ))}
         </Grid>
-
-        {/* ══════════════════════════════════════
-            RIGHT COLUMN  (xs=12 → stacks on mobile, md=7 on desktop)
-            Contains: Behaviour Log · AverageThriveScaleScores · DomainScore/TableWithTrendLines
-        ══════════════════════════════════════ */}
         <Grid
           item
           xs={12}
@@ -215,7 +281,7 @@ const ConsolidatedOverviewPage = () => {
           sx={{ display: "flex", flexDirection: "column", gap: 2 }}
         >
           {rightItems.map((item) => (
-            <Box key={item.key}>{item.component()}</Box>
+            <Box key={item.key}>{item.component(tileData[item.key])}</Box>
           ))}
         </Grid>
       </Grid>

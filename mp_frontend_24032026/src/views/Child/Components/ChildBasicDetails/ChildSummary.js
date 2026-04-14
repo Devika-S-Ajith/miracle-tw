@@ -130,7 +130,7 @@ const ChildSummary = ({ child }) => {
           <LabelValue
             label="Case number"
             // check whether case no is placement id
-            value={child?.caseNumber || "-"}
+            value={`CHLD-${child?.id}`}
             labelColor="#535F66"
             fontWeight={700}
           />

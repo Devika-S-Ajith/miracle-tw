@@ -25,7 +25,7 @@ const FamilyBasicDetails = ({ family }) => {
   const { htLanguagesList } =
     useContext(CommonDataContext);
   const { t } = useTranslation(["common"]);
-  const [data, setData] = useState({});
+  const [mostRecentAssesmentSummary, setMostRecentAssesmentSummary] = useState({});
   const [loadingMostRecentAssessmentSummary, setLoadingMostRecentAssessmentSummary] = useState(false);
   const [apiError, setApiError] = useState(false);
 
@@ -41,7 +41,7 @@ const FamilyBasicDetails = ({ family }) => {
       const response = await APIS.GetMostRecentAssesmentSummary(family?.id);
       if (response.data && response.data.data) {
         const mostRecentAssesmentSummary = response.data.data;
-        setData(
+        setMostRecentAssesmentSummary(
           mostRecentAssesmentSummary
         );
       }
@@ -59,31 +59,31 @@ const FamilyBasicDetails = ({ family }) => {
       <Box sx={{ height: "fit-content" }}>
         <FamilySummary t={t} family={family} />
       </Box>
-      <Box height="fit-content">
+      {/* <Box height="fit-content">
         <ChildOverviewList t={t} />
-      </Box>
+      </Box> */}
       <Box height="fit-content">
-        <ToDoWidget t={t} HTFamilyId={family?.id} />
+        <ToDoWidget t={t} TWFamilyId={family?.id} />
       </Box>
-      <Box height="fit-content">
+      {/* <Box height="fit-content">
         <ConcerningBehaviorList />
-      </Box>
+      </Box> */}
       <Box height="fit-content">
         <FamilyInterventionsTiles familyId={family?.id} />
       </Box> 
-      <Box height="fit-content">
+      {/* <Box height="fit-content">
         <FamilyInterventionsTiles familyId={family?.id} />
-      </Box>
-      <Box height="fit-content">
+      </Box> */}
+      {/* <Box height="fit-content">
         <FamilyInterventionsTiles familyId={family?.id} />
-      </Box>
-      <Box height="fit-content">
+      </Box> */}
+      {<Box height="fit-content">
         <MostReccentAssessmentSummary
           reloadFunc={getMostRecentAssesmentSummary}
           apiError={apiError}
-          data={data}
+          data={mostRecentAssesmentSummary}
           loading={loadingMostRecentAssessmentSummary} />
-      </Box>
+      </Box>}
       <Box height="fit-content">
         <FamilyMembersAndCaregivers  members={family?.members} />
       </Box>

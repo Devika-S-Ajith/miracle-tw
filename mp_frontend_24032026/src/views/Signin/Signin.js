@@ -28,12 +28,13 @@ import Checkbox from "@mui/material/Checkbox";
 import { useStyles } from "../../theme/CustomHooks";
 import _ from "lodash";
 import "./signin.css";
-import { PARENT_ROLE_ID, UNASSIGNED } from "../../helpers/constant";
+import { PARENT_ROLE_ID } from "../../helpers/constant";
 import FosterParentAccountPopup from "./FosterParentAccountPopup";
 import { ModalService } from "../../components/Modal";
 import PrivacyAndTerms from "../TermsOfUse/PrivacyAndTerms";
 import useAuth from "../../common/hooks/UseAuth";
-import Amplify from "aws-amplify";
+import {Amplify} from "aws-amplify";
+import { ca } from "date-fns/locale";
 
 const SignIn = (props) => {
   const { t } = useTranslation(["common"]);
@@ -51,6 +52,7 @@ const SignIn = (props) => {
     setDBRegion,
     getSystemMessages,
     setSystemMessagesFetchedAtLogin,
+    callCommonAPISAfterLogin
   } = useContext(CommonDataContext);
   const navigate = useNavigate();
   const [challenge, setChallenge] = useState(false);
@@ -62,11 +64,9 @@ const SignIn = (props) => {
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [canLogin, setCanLogin] = useState(true);
   const [helpEnabled, setHelpEnabled] = useState(false);
+  const isExtraSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const [capsLockOn, setCapsLockOn] = useState(false);
   const passwordRegex = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-
-  useEffect(() => {
-    return () => {};
-  });
 
 
   // Function to fetch and set user region
@@ -95,9 +95,7 @@ const SignIn = (props) => {
   }
   
   // Handle navigation based on user role and org type
-  if (signedinUserRoleHT === UNASSIGNED) {
-    navigate("/fostershare/dashboard", { replace: true });
-  } else if (localStorage.getItem("signedinOrgType") == "6") {
+  if (localStorage.getItem("signedinOrgType") == "6") {
     navigate("/governmentDashboardOverview", { replace: true });
   } else {
     navigate("/dashboard", { replace: true });
@@ -177,20 +175,15 @@ const SignIn = (props) => {
     await getUserDetails();
     getSystemMessages(true);
     setSystemMessagesFetchedAtLogin(true);
-    if (![UNASSIGNED].includes(ht_role)) {
-      if (localStorage.getItem("signedinOrgType") == 6) {
-        navigate("/governmentDashboardOverview", { replace: true });
-      } else {
-        navigate("/dashboard", { replace: true });
-      }
+    if (localStorage.getItem("signedinOrgType") == 6) {
+      navigate("/governmentDashboardOverview", { replace: true });
     } else {
-      navigate("/fostershare/dashboard", { replace: true });
+      navigate("/dashboard", { replace: true });
     }
       setLoading(false);
   };
 
-  const isExtraSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const [capsLockOn, setCapsLockOn] = useState(false);
+
   const handleKeyUp = (event) => {
     const capsLockActivated =
       event.getModifierState && event.getModifierState("CapsLock");
@@ -236,7 +229,7 @@ const SignIn = (props) => {
         setLoading(true);
         try {
           const fetchedRegion = await fetchAndSetUserRegion();
-          await Amplify.configure(getAmplifyConfig())
+          Amplify.configure(getAmplifyConfig())
           
           if (isEmailVerified) {
             let signinData = {
@@ -275,115 +268,6 @@ const SignIn = (props) => {
                     res.signInUserSession &&
                     res?.attributes["email_verified"]
                   ) {
-                    let isMigrated =
-                      res.attributes && res.attributes["custom:isMigrated"];
-                    // if (isMigrated) {
-                    //   let username = res.attributes["sub"];
-                    //   let signInUserSession = res && res.signInUserSession;
-                    //   const data = await APIS.UserDetails(username);
-                    //   if (data) {
-                    //     const isTermsOfUseAccepted =
-                    //       data?.data?.data?.isTermsOfUseAccepted;
-                    //     let responseData = res;
-                    //     if (isTermsOfUseAccepted === false) {
-                    //       ModalService.open(
-                    //         ({ close }) => (
-                    //           <PrivacyAndTerms
-                    //             onClose={close}
-                    //             id={data?.data?.data?.id}
-                    //             onAcceptingHandler={() =>
-                    //               setBasicUserDetails(
-                    //                 responseData,
-                    //                 username,
-                    //                 signInUserSession,
-                    //                 responseData?.attributes[
-                    //                   "custom:account_id"
-                    //                 ],
-                    //                 null
-                    //               )
-                    //             }
-                    //           />
-                    //         ),
-                    //         {
-                    //           modalTitle: "",
-                    //           width: "30%",
-                    //           hideModalFooter: true,
-                    //         }
-                    //       );
-                    //     } else {
-                    //       setBasicUserDetails(
-                    //         responseData,
-                    //         username,
-                    //         signInUserSession,
-                    //         responseData?.attributes["custom:account_id"],
-                    //         null
-                    //       );
-                    //     }
-                    //   } else {
-                    //     toast.error("something went wrong");
-                    //     setLoading(false);
-                    //     return;
-                    //   }
-                    // } else {
-                    //   const payload = {
-                    //     email: signinData.username,
-                    //     eventType: "cognito_user_migration",
-                    //   };
-                    //   const migrationResponse = await APIS.migrateUserToNewDB(
-                    //     payload
-                    //   );
-                    //   if (migrationResponse.status === 200) {
-                    //     let username = res.attributes["sub"];
-                    //     await APIS.refresh();
-                    //     let signInUserSession = res && res.signInUserSession;
-                    //     let responseData = res;
-                    //     const data = await APIS.UserDetails(username);
-                    //     if (data) {
-                    //       const isTermsOfUseAccepted =
-                    //         data?.data?.data?.isTermsOfUseAccepted;
-                    //       if (!isTermsOfUseAccepted) {
-                    //         ModalService.open(
-                    //           ({ close }) => (
-                    //             <PrivacyAndTerms
-                    //               onClose={close}
-                    //               id={data?.data?.data?.id}
-                    //               onAcceptingHandler={() =>
-                    //                 setBasicUserDetails(
-                    //                   responseData,
-                    //                   username,
-                    //                   signInUserSession,
-                    //                   migrationResponse?.data?.accountId,
-                    //                   null
-                    //                 )
-                    //               }
-                    //             />
-                    //           ),
-                    //           {
-                    //             modalTitle: "",
-                    //             width: "30%",
-                    //             hideModalFooter: true,
-                    //           }
-                    //         );
-                    //       } else {
-                    //         setBasicUserDetails(
-                    //           responseData,
-                    //           username,
-                    //           signInUserSession,
-                    //           migrationResponse?.data?.accountId,
-                    //           null
-                    //         );
-                    //       }
-                    //     } else {
-                    //       toast.error("something went wrong");
-                    //       setLoading(false);
-                    //       return;
-                    //     }
-                    //   } else {
-                    //     console.error(
-                    //       `Error: ${migrationResponse.status} - ${migrationResponse.data}`
-                    //     );
-                    //   }
-                    // }
                     let isMigratedInd =
                       res.attributes && res.attributes["custom:isMigratedInd"];
                     if (isMigratedInd || localStorage.getItem('userDBRegion') === 'us-east-1') {
@@ -956,7 +840,7 @@ const SignIn = (props) => {
                                 variant="body1"
                                 onClick={() =>
                                   window.open(
-                                    "https://www.thrivewellapp.com/faqs",
+                                    "https://www.portal.thrivewellapp.com/faqs",
                                     "_blank"
                                   )
                                 }

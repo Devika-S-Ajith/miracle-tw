@@ -1,12 +1,12 @@
-import { Stack } from "@mui/system";
 import CommonCard from "../../../../components/CommonCard";
-import { Chip, Divider, Grid, Typography } from "@mui/material";
-import TrendingFlatIcon from '@mui/icons-material/TrendingFlat';
-import { dateFormatter } from "../../../../constants";
-import { getDistrictList, getSelectedCountryDetails, getStateList } from "../../../../helpers/helperFunction";
+import { Chip, Divider, Grid } from "@mui/material";
+import {
+  formatAddressFromContactInfo,
+} from "../../../../helpers/helperFunction";
 import { useContext } from "react";
 import { CommonDataContext } from "../../../../common/contexts/CommonDataContext";
 import LabelValue from "../../../../components/LabelValue/LabelValue";
+
 
 const FamilySummary = ({ t, family }) => {
 
@@ -19,19 +19,37 @@ const FamilySummary = ({ t, family }) => {
     caseworker,
     isActive,
     thriveScaleScore,
-    assessmentDate,
-    firstAssessmentThriveScaleScore = null,
-    firstAssessmentDateOfAssessment = null,
-    percentageChangeFromFirst = null
+    percentageChangeFromFirst = null,
   } = family || {};
 
-  const { addressLine1, addressLine2, city, TWDistrictId, TWStateId, TWCountryId } = contactInformation || {};
-  const { TWLanguageId , DateStartedasFP } = additionalInformation || {};
 
-  const { locationList, htLanguagesList, familyDropdownLists } = useContext(CommonDataContext);
+  const {
+    addressLine1,
+    addressLine2,
+    city,
+    TWDistrictId,
+    TWStateId,
+    TWCountryId,
+  } = contactInformation || {};
+  const { TWLanguageId, DateStartedasFP } = additionalInformation || {};
+
+
+  const { locationList, htLanguagesList, familyDropdownLists } =
+    useContext(CommonDataContext);
   const { familyRelations } = familyDropdownLists || {};
-  const hasAssessment = thriveScaleScore !== null && thriveScaleScore !== undefined;
-  const hasMultipleAssessment = percentageChangeFromFirst !== null && percentageChangeFromFirst !== undefined;
+  const hasAssessment =
+    thriveScaleScore !== null && thriveScaleScore !== undefined;
+  const hasMultipleAssessment =
+    percentageChangeFromFirst !== null &&
+    percentageChangeFromFirst !== undefined;
+
+
+  const statusLabel =
+    family?.status ||
+    (isActive
+      ? t("common:common.Active", "Active")
+      : t("common:common.Case closed", "Case closed"));
+
 
   return (
  <CommonCard
@@ -166,5 +184,5 @@ const FamilySummary = ({ t, family }) => {
   );
 };
 
-export default FamilySummary;
 
+export default FamilySummary;

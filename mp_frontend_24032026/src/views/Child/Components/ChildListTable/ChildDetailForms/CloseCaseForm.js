@@ -14,7 +14,7 @@ import BodyText from "../../../../../components/BodyText/BodyText";
 import { CommonDataContext } from "../../../../../common/contexts/CommonDataContext";
 import APIS from "../../../../../common/hooks/UseApiCalls";
 
-const CloseCaseForm = ({ close, closeEditForm, onCaseClose, childId }) => {
+const CloseCaseForm = ({ close, setHideChildModal, handleChildModalOpen, onCaseClose, childId }) => {
   const { t } = useTranslation(["common"]);
   const { childDropdownLists } = useContext(CommonDataContext);
 
@@ -46,7 +46,6 @@ const CloseCaseForm = ({ close, closeEditForm, onCaseClose, childId }) => {
       };
       const res = await APIS.CloseChildCase(payload);
       if (res?.status === 200) {
-        closeEditForm();
         close();
         onCaseClose();
         ModalService.open(() => null, {
@@ -67,6 +66,12 @@ const CloseCaseForm = ({ close, closeEditForm, onCaseClose, childId }) => {
       console.error("Error closing case:", error);
     }
   };
+
+  const cancelHandler = () => {
+    close();
+    // handleChildModalOpen();
+    setHideChildModal(false);
+  }
   return (
     <>
       <Box mx={-2}>
@@ -125,7 +130,7 @@ const CloseCaseForm = ({ close, closeEditForm, onCaseClose, childId }) => {
           <SecondaryButton
             label={t("common:common.No, Cancel", "No, Cancel")}
             fullWidth
-            onClick={close}
+            onClick={cancelHandler}
           />
         </Grid>
         <Grid item xs={12} md={6}>

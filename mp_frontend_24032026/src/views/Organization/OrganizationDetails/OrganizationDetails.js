@@ -141,8 +141,6 @@ const OrganizationDetails = () => {
                         getOrganisation={getOrganisation}
                       />
                     </Grid>
-
-                    {/* OrganizationalOverview: only for super admin */}
                     {signedinUserRoleHT === "superadmin" && (
                       <Grid item xs={6}>
                         <OrganizationalOverview

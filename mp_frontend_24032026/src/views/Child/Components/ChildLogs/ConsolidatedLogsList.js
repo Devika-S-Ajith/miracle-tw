@@ -60,9 +60,9 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
       globalSearchQuery: search,
     };
     if (showForChild) {
-      payload.FSFamilyDetailId = id;
+      payload.TWFamilyId = id;
     } else {
-      payload.FSChildId = id;
+      payload.TWChildId = id;
     }
     if (logType && logType !== "all") {
       const matchedLogType = logTypes.find((type) => type.value == logType);
@@ -261,6 +261,7 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
     },
     {
       align: "right",
+      label: "",
       render: ({ row }) => (
         <IconButton
           onClick={() => {
@@ -281,13 +282,13 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
             }
           }}
           aria-label={
-            row.formBehaviorType === "RECURSIVE" && row.Type === "RECURSIVE"
+            row?.formBehaviorType === "RECURSIVE" && row?.Type === "RECURSIVE"
               ? "Go to Med Logs"
               : "View"
           }
         >
-          {row.formBehaviorType === "RECURSIVE" ? (
-            row.Type === "RECURSIVE" ? (
+          {row?.formBehaviorType === "RECURSIVE" ? (
+            row?.Type === "RECURSIVE" ? (
               <ChevronRightIcon />
             ) : row?.recursiveItemResponse ? (
               <VisibilityIcon />

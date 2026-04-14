@@ -13,7 +13,7 @@ import ChevronRightIcon from "../../../assets/icons/ChevronRight";
 import { SUPER_ADMIN } from "../../../helpers/constant";
 
 const UserList = () => {
-  const { clearListingPageDetails, signedinUserRoleHT } =
+  const { signedinUserRoleHT } =
     useContext(CommonDataContext);
   const { t } = useTranslation(["common"]);
   const navigate = useNavigate();
@@ -49,7 +49,6 @@ const UserList = () => {
   useEffect(() => {
     document.title = "Team | ThriveWell";
     setLoading(true);
-    clearListingPageDetails("userPageData");
     getOrgList();
     if (localStorage.getItem("userPageData") === null) {
       getUserList();
@@ -63,7 +62,6 @@ const UserList = () => {
         status: `${localPageData.statusFilter}`,
       };
       setPageData({ ...localPageData });
-
       getUserList(pageObject);
     }
   }, []);

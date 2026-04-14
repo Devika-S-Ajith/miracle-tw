@@ -13,6 +13,7 @@ import {
     Typography,
     Skeleton,
 } from "@mui/material";
+import { v4 as uuidv4 } from "uuid";
 import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
 import APIS from "../../../common/hooks/UseApiCalls";
 import Loader from "../../../components/UserComponents/Loader";
@@ -38,7 +39,7 @@ const ManageFamilyForm = (props) => {
     const { family, careGiver } = props;
     const { t } = useTranslation(["common"]);
     const navigate = useNavigate();
-    const { locationList, getFamilyList, relationList, htLanguagesList, situationsAndGoals, signedinUserRoleHT, getTsFamilyListData, familyDropdownLists } =
+    const { locationList, getFamilyList, relationList, htLanguagesList, situationsAndGoals, signedinUserRoleHT, getTsFamilyListData, familyDropdownLists,childDropdownLists } =
         useContext(CommonDataContext);
     const [isLoading, setIsLoading] = useState(false);
     const [caseWorkerList, setCaseWorkerList] = useState([]);
@@ -63,7 +64,7 @@ const ManageFamilyForm = (props) => {
         firstName:null,
         lastName:null,
         dateOfBirth:null,
-        _rowKey: crypto.randomUUID(),
+        _rowKey: uuidv4(),
     }).current;
 
     // Set up beforeunload handler for browser refresh
@@ -613,10 +614,10 @@ const ManageFamilyForm = (props) => {
                             existingChildren,
                             removedMembers: members
                                 .filter(m => m.id && m.isDeleted && !m.isChild)
-                                .map(m => m.id),
+                                .map(m => ({ id: m.id, reason: m.reason, closureDate: m.deactivationDate })),
                             removedChildren: members
                                 .filter(m => m.id && m.isDeleted && m.isChild)
-                                .map(m => m.id),
+                                .map(m => ({ id: m.id, reason: m.reason, closureDate: m.deactivationDate })),
                         };
                         await APIS.UpdateFamily(payload).then(async (res) => {
                             if (res && res.data && res.status === 200) {
@@ -744,6 +745,8 @@ const ManageFamilyForm = (props) => {
                                                                     //isFamilyActive={family?.id ? checked : true}
                                                                     setIsLoading={setIsLoading}
                                                                     familyRelations={familyDropdownLists.familyRelations || []}
+                                                                    memberDeleteReasons={familyDropdownLists.familyDeleteReason || []}
+                                                                    familyChangeReasons={childDropdownLists.familyChangeReasons || []} 
                                                                     isFamilyActive={family?.isActive }
                                                                 />
                                                             </>

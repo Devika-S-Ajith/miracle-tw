@@ -32,26 +32,16 @@ import FollowUps from "../../Assessments/Components/FollowUps";
 import FamilyMilestones from "../Components/FamilyMilestones/FamilyMilestones";
 import FamilyInterventions from "./FamilyInterventions";
 import ConsolidatedAssessmentProgressReport from "../../../components/ConsolidatedAssessmentProgressReport";
+import ChildLogs from "../../Child/Components/ChildLogs";
+import { ADMIN, ADMIN_CASEMANAGER, ADMIN_CASEWORKER, CASEMANAGER, CASEWORKER, SUPER_ADMIN, VIEW_ONLY } from "../../../helpers/constant";
 
-const tabs = [
-  { label: "Details", value: "details", id: "tab_details" },
-  { label: "Assessments & Progress Reports", value: "assessmentsProgressReports", id: "tab_assessments_progress_reports" },
-  //{ label: "Milestones", value: "milestones" ,id:"tab_milestones" },
-  //{ label: "Interventions", value: "interventions", id: "tab_interventions" },
-  { label: "Follow - ups", value: "followUps" },
-  {
-    label: "Thrive scale score trend",
-    value: "thriveScale score trend",
-    id: "tab_thriveScale_score_trend",
-  },
-  { label: "History", value: "history", id: "tab_history" },
-  { label: "Documents", value: "documents", id: "tab_documents" },
-];
+
+
 
 const FamilyDetails = () => {
   const { t } = useTranslation(["common"]);
   const navigate = useNavigate();
-  const { familyList, signedinUserRoleHT, signedinOrgType } =
+  const { familyList, signedinUserRoleHT, signedinOrgType ,signedinUserRoleFS} =
     useContext(CommonDataContext);
   const [loading, setLoading] = useState(false);
   const [family, setFamily] = useState(null);
@@ -61,6 +51,27 @@ const FamilyDetails = () => {
   const [memberListLoading, setMemberListLoading] = useState(false);
   const [memberList, setMemberList] = useState([]);
 
+  const IS_FS_ALLOWED = [SUPER_ADMIN, ADMIN, CASEMANAGER, ADMIN_CASEMANAGER, VIEW_ONLY].includes(signedinUserRoleFS);
+  const IS_HT_ALLOWED = [SUPER_ADMIN, ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY].includes(signedinUserRoleHT);
+  const BOTH_FS_HT_ALLOWED = IS_FS_ALLOWED || IS_HT_ALLOWED;
+
+  const tabs = [
+    { label: "Details", value: "details", id: "tab_details", Permission:BOTH_FS_HT_ALLOWED },
+    { label: "Logs", value: "ConsolidatedLog", id: "tab_logs", Permission:IS_FS_ALLOWED },
+    { label: "Assessments & Progress Reports", value: "assessmentsProgressReports", id: "tab_assessments_progress_reports" , Permission:IS_HT_ALLOWED  },
+    //{ label: "Milestones", value: "milestones" ,id:"tab_milestones" },
+    //{ label: "Interventions", value: "interventions", id: "tab_interventions" },
+    { label: "Follow - ups", value: "followUps", id: "tab_follow_ups", Permission:IS_HT_ALLOWED },
+    {
+      label: "Thrive scale score trend",
+      value: "thriveScale score trend",
+      id: "tab_thriveScale_score_trend",
+      Permission:IS_HT_ALLOWED
+    },
+    { label: "History", value: "history", id: "tab_history" , Permission:BOTH_FS_HT_ALLOWED },
+    { label: "Documents", value: "documents", id: "tab_documents", Permission:BOTH_FS_HT_ALLOWED },
+  ];
+
   useEffect(() => {
     if (locationValues) {
       setCurrentTab(locationValues.tabvalue);
@@ -69,35 +80,16 @@ const FamilyDetails = () => {
 
   let { id } = useParams();
 
-  const getFamilies = () => {
-    setLoading(true);
-    familyList &&
-      familyList.forEach((family) => {
-        if (family.id === id) {
-          setFamily(family);
-          let members = family.HT_familyMembers;
-          let primaryCareGiver = members?.find(
-            (member) => member.isPrimaryCareGiver === true
-          );
-          setPrimaryCaregiver(primaryCareGiver);
-        }
-      });
-    setLoading(false);
-  };
-
-
+ 
   useEffect(() => {
     document.title = "Family | Details | ThriveWell";
-   // getFamilies();
     getFamilyDetails();
-    //getMembersUnderFamily();
-
     return () => {};
   }, []);
 
   useAuthorization(
     signedinUserRoleHT,
-    null,
+    signedinUserRoleFS,
     signedinOrgType,
     "ManageFamily",
     true
@@ -123,22 +115,8 @@ const FamilyDetails = () => {
     setCurrentTab(value);
   };
 
-  const getMembersUnderFamily = useCallback(async () => {
-    // setMemberListLoading(true);
-    // try {
-    //   const data = await APIS.familyMembers(id);
-    //   const members = data?.data?.familyDetails?.members || [];
-    //   if (members) {
-    //     setMemberList(members);
-    //   }
-    //   setMemberListLoading(false);
-    // } catch (err) {
-    //   setMemberListLoading(false);
-    //   console.error(err);
-    // }
-  });
+
   const renderTabContent = () => {
-    console.log("Rendering tab content for:", currentTab);
     switch (currentTab) {
       case "details":
         return (
@@ -170,6 +148,8 @@ const FamilyDetails = () => {
         return <FamilyMilestones  familyMembers={memberList}  familyName={family.familyName} />;
       case "assessmentsProgressReports":
         return <ConsolidatedAssessmentProgressReport id={family?.id} pageType="FAMILY" />;
+      case "ConsolidatedLog":
+        return <ChildLogs module="family" showForChild={true} />;
       default:
         return null;
     }
@@ -228,7 +208,7 @@ const FamilyDetails = () => {
                 value={currentTab}
                 variant="scrollable"
               >
-                {tabs.map((tab) => (
+                {tabs.filter((tab) => tab.Permission).map((tab) => (
                   <Tab
                     key={tab.value}
                     id={tab.id}

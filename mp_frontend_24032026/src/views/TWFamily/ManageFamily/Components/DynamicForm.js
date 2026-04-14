@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@mui/material';
+import { FormGroup, Grid, Typography } from '@mui/material';
 import { Field } from 'formik';
 import TextFieldWithExternalLabel from './TextFieldWithExternalLabel';
 import DropdownWithExternalLabel from './DropdownWithExternalLabel';
@@ -13,11 +13,14 @@ import dayjs from 'dayjs';
 import { get, size } from 'lodash';
 import { Checkbox, FormControlLabel } from '@mui/material';
 import { PhoneTextInput } from '../../../../components/PhoneTextInput/PhoneTextInput';
-import { is } from 'date-fns/locale';
+import { id, is } from 'date-fns/locale';
 import CalendarIcon from '../../../../assets/icons/CalendarIcon';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import CustomFieldLabel from './CustomFieldLabel';
 import { useRef } from 'react';
+import FileUploadField from '../../../Dashboard/Components/FileUploadField';
+import RadioGroupList from './RadioGroupList';
+import BodyText from '../../../../components/BodyText/BodyText';
 
 const DynamicForm = ({
     t,
@@ -258,19 +261,19 @@ const getFieldTouched = (name) => get(touched, name, false);
                             disabled={isDisabled}
                             onChange={(newValue) => {
                                 // If custom handleDateChange is provided, use it
-                                currentValueRef.current = newValue ? dayjs(newValue) : '';
+                                currentValueRef.current = newValue ? newValue : '';
                                 if (handleDateChange) {
-                                    handleDateChange(newValue);
+                                    handleDateChange(new Date(newValue).toISOString(), fullFieldName);
                                 } else {
                                     // Otherwise, just set the field value
-                                    setFieldValue(fullFieldName, newValue);
+                                    setFieldValue(fullFieldName, new Date(newValue).toISOString());
                                     fieldProps?.onChange?.(newValue); // Call any custom onChange provided in fieldProps
                                 }
                             }}
-                            onClose={() => {
-                                // Trigger blur event when date picker closes
-                                handleBlur({ target: { name: fullFieldName, value: currentValueRef.current } });
-                            }}
+                            // onClose={() => {
+                            //     // Trigger blur event when date picker closes
+                            //     handleBlur({ target: { name: fullFieldName, value: currentValueRef.current } });
+                            // }}
                             maxDate={dayjs().endOf('day')}
                             slots={{
                                 openPickerIcon: CalendarIcon,
@@ -303,16 +306,12 @@ const getFieldTouched = (name) => get(touched, name, false);
                             fullWidth
                             helperText={fieldTouched && fieldError}
                             placeholder={
-                                locationList
-                                    .find((obj) => obj.id == values.country)
-                                    ?.isoCode?.toUpperCase() === "IND"
+                                localStorage.getItem("userRegion") === "1"
                                     ? "888888"
                                     : "88888"
                             }
                             format={
-                                locationList
-                                    .find((obj) => obj.id == values.country)
-                                    ?.isoCode?.toUpperCase() === "IND"
+                                localStorage.getItem("userRegion") === "1"
                                     ? "######"
                                     : "#####"
                             }
@@ -324,7 +323,7 @@ const getFieldTouched = (name) => get(touched, name, false);
                             onBlur={handleBlur}
                             onChange={handleChange}
                             value={fieldValue || ''} // Use helper function
-                            disabled={!values.country || isDisabled}
+                            disabled={isDisabled}
                         />
                     </Grid>
                 );
@@ -354,19 +353,54 @@ const getFieldTouched = (name) => get(touched, name, false);
                         />
                     </Grid>);
 
+            case 'MultipleCheckBoxWithLabel':
+                return (
+                  <Grid item {...gridProps} key={fullFieldName}>
+                    {fieldProps.label && (
+                        <CustomFieldLabel sx={{ mb: 1 }}>
+                            {`${t ? t(fieldProps.label) : fieldProps.label}${fieldProps?.required ? '*' : ''}`}
+                        </CustomFieldLabel>
+                    )}
+                    <FormGroup>
+                      {fieldConfig?.options.map((item) => (
+                        <FormControlLabel
+                          key={item.id}
+                          control={
+                            <Checkbox
+                              checked={fieldValue.includes(item.id)}
+                              onChange={() =>
+                              {
+                                setFieldValue(
+                                  fullFieldName,
+                                  fieldValue.includes(item.id)
+                                    ? fieldValue.filter(
+                                        (id) => id !== item.id,
+                                      )
+                                    : [...fieldValue, item.id],
+                                )
+                              }
+                              }
+                            />
+                          }
+                          label={item.value}
+                        />
+                      ))}
+                    </FormGroup>
+                  </Grid>
+                );
             case 'PhoneNumber':
                 return (
                     <Grid item {...gridProps} key={fullFieldName}>
                         <PhoneTextInput
                             name='phone'
                             id="phone"
-                            phoneRef={phoneRef}
+                            phoneRef={fieldProps?.phoneRef}
                             onBlur={handleBlur}
                             error={fieldTouched && Boolean(fieldError)}
                             helperText={fieldTouched && fieldError}
                             value={fieldValue}
                             onChange={(phone) => setFieldValue(fullFieldName, phone)}
-                            defaultCountry={locationList?.find((loc) => loc.id == 1)?.iso2Code || 'us'}
+                            defaultCountry={locationList?.find((loc) => loc.id == localStorage.getItem("userRegion"))?.iso2Code || 'us'}
                             showAttachedLabel={false}
                             disabled={isDisabled}
                         />
@@ -390,7 +424,7 @@ const getFieldTouched = (name) => get(touched, name, false);
                         slotProps={{
                             textField: {
                                 fullWidth: true,
-                                size:"small",
+                                size:"medium",
                                 error: fieldTouched && Boolean(fieldError),
                                 helperText: fieldTouched && fieldError,
                                 placeholder:fieldProps.placeholder || "Select time",
@@ -399,6 +433,46 @@ const getFieldTouched = (name) => get(touched, name, false);
                     />
                     </Grid>
                 );
+                case 'FileUpload':
+                    return (
+                        <Grid item {...gridProps} key={fullFieldName}>
+                            {fieldProps.label && (
+                                <CustomFieldLabel sx={{ mb: 1 }}>
+                                    {`${t ? t(fieldProps.label) : fieldProps.label}${fieldProps?.required ? '*' : ''}`}
+                                </CustomFieldLabel>
+                            )}
+                            <FileUploadField
+                                values={values}
+                                setFieldValue={setFieldValue}
+                            />
+                        </Grid>
+                    );
+                case "radioGroup":
+                    return (
+                      <Grid item {...gridProps} key={fullFieldName}>
+                        {fieldProps.label && (
+                          <CustomFieldLabel>
+                            {`${t ? t(fieldProps.label) : fieldProps.label}${fieldProps?.required ? "*" : ""}`}
+                          </CustomFieldLabel>
+                        )}
+                        <RadioGroupList
+                          name={fullFieldName}
+                          options={fieldProps.options || []}
+                          value={fieldValue}
+                          onChange={(e) =>
+                            setFieldValue(fullFieldName, e.target.value)
+                          }
+                          renderPrimary={(option) => (
+                            <BodyText value={option.label} />
+                          )}
+                        />
+                        {fieldTouched && fieldError && (
+                          <Typography color="error" variant="caption" sx={{ mt: 0.5 }}>
+                            {fieldError}
+                          </Typography>
+                        )}
+                      </Grid>
+                    );
             default:
                 return null;
         }
