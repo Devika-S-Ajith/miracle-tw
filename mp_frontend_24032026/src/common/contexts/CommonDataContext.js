@@ -501,13 +501,12 @@ const CommonDataContextProvider = (props) => {
 
   const getOrganizationList = useCallback(async () => {
     try {
-      const isSuperAdmin = localStorage.getItem("role") === "superadmin";
       const payload = {
         rowCount: "10000",
         pageNumber: "1",
         globalSearchQuery: "",
         orderByField: [["accountName", "ASC"]],
-        TWCountryId: isSuperAdmin ? "" : localStorage.getItem("userRegion"),
+        MPCountryId: localStorage.getItem("userRegion"),
       };
       const data = await APIS.OrganizationList(payload);
       if (data?.data?.data?.length) setOrganizationList(data.data.data);

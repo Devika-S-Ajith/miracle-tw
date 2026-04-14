@@ -7,7 +7,7 @@ const ReportTableData = ({ item, columns }) => {
       <TableRow>
         {columns.map((column, index) => (
           <TableCell key={index}>
-            {column.render ? column.render(item) : item[column.key]}
+            {column.render ? column.render(item) : (item[column.key] || "-")}
           </TableCell>
         ))}
       </TableRow>

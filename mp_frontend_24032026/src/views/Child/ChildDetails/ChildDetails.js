@@ -13,8 +13,10 @@ import {
   Tab,
   Tabs,
   Typography,
-  IconButton
+  IconButton,
+  Modal
 } from "@mui/material";
+import ChildContactDetails from "../Components/ChildContactDetails";
 import ChildHistory from "../Components/ChildHistory";
 import Documents from "../Components/Documents";
 import ProgressReport from "../Components/ProgressReport";
@@ -31,10 +33,11 @@ import ChildMilestones from "../Components/ChildMilestones/ChildMilestones";
 import FollowUps from "../../Assessments/Components/FollowUps";
 import ChildInterventions from "./ChildInterventions";
 import ConsolidatedAssessmentProgressReport from "../../../components/ConsolidatedAssessmentProgressReport";
+import ChildSummary from "../Components/ChildBasicDetails";
 import ChildBasicDetails from "../Components/ChildBasicDetails";
 import ChildLogs from "../Components/ChildLogs";
-import { ModalService } from "../../../components/Modal";
 import ManageChildForm from "../Components/ChildListTable/ChildDetailForms/ManageChildForm";
+import PageBreadcrumbs from "../../../components/PageBreadcrumbs/PageBreadcrumbs";
                                                                     
 const tabs = [
   { label: "Details", value: "details" },
@@ -62,9 +65,17 @@ const ChildDetails = () => {
   const { allowedRoles, allowedOrgTypes } = authorizationConfig["AddChild"];
   const[memberList, setMemberList] = useState([]);
   const[childDetailsLoading, setChildDetailsLoading] = useState(false);
+  const [isActiveFamily,setIsActiveFamily] = useState(false);
+
+  const [childModalOpen, setChildModalOpen] = useState(false);
+  const [hideChildModal, setHideChildModal] = useState(false);
+  const handleChildModalOpen = () => {
+    setChildModalOpen(!childModalOpen);
+  };
 
   const getMembersUnderFamily = async (familyId) => {
     try {
+      
       if (!familyId) {
         setMemberList([]);
         setChildDetailsLoading(false);
@@ -87,9 +98,8 @@ const ChildDetails = () => {
     setChildren(null)
     try {
       const res = await APIS.GetChildDetails(id);
-      
       setChildren(res.data.data);
-      const familyId = res.data.data?.HTFamilyId ?? res.data.data?.TWFamilyId;
+      const familyId = res.data.data?.TWFamilyId;
       getMembersUnderFamily(familyId);
     } catch (err) {
       setChildDetailsLoading(false)
@@ -97,7 +107,7 @@ const ChildDetails = () => {
     }
   }, [id]);
 
-  useEffect(() => {
+    useEffect(() => {
     document.title = "Child | Details | ThriveWell";
     getChildren();
     return () => {};
@@ -186,6 +196,32 @@ const ChildDetails = () => {
 
   return (
     <>
+    <Modal
+        open={childModalOpen}
+        onClose={handleChildModalOpen}
+        sx={{ visibility: hideChildModal ? "hidden" : "visible" }}
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: { xs: "90%", sm: 500, md: 600, lg: 700 },
+            bgcolor: "background.paper",
+            // border: "2px solid #000",
+            p: 3,
+            boxShadow: 24,
+          }}
+        >
+          <ManageChildForm
+            handleChildModalOpen={handleChildModalOpen}
+            id={id}
+            // refreshTable={getTableData} // Refresh data after re-opening case
+            setHideChildModal={setHideChildModal}
+          />
+        </Box>
+      </Modal>
       <Loader loading={childDetailsLoading} />
       <Box
         sx={{
@@ -197,39 +233,18 @@ const ChildDetails = () => {
         <Grid container width={1}>
           <Grid item xs={12} sx={{ mr: 1 }}>
             <Grid container justifyContent="space-between" spacing={3}>
-              <Grid item sx={{ display: "flex", flexDirection: "row" }}>
-                <Typography
-                  color="textPrimary"
-                  variant="h5"
-                  sx={{ cursor: "pointer" }}
-                  onClick={() => navigate("/dashboard")}
-                >
-                  {t("common:common.Thrive Scale")}
-                </Typography>
-                <Box
-                  sx={{
-                    m: 0.75,
-                  }}
-                  style={{ cursor: "text" }}
-                >
-                  <ChevronRightIcon color="disabled" fontSize="small" />
-                </Box>
-                <Grid item>
-                  <Typography
-                    color="textPrimary"
-                    variant="h5"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => navigate(-1)}
-                  >
-                    {t("common:common.Children")}
-                  </Typography>
-                </Grid>
-                <IconButton color="disabled" sx={{ mt: -0.5 }}>
-                  <ChevronRightIcon fontSize="small" />
-                </IconButton>
-                <Typography color="textPrimary" variant="h5">
-                  {`${children?.firstName} ${children?.lastName ?? ""}`}
-                </Typography>
+           <Grid item>
+           <PageBreadcrumbs
+              data={[
+               {
+                label: t("common:common.Children"),
+                onClick: () => navigate("/dashboard/children")
+               },
+                {
+                  label: `${children?.firstName} ${children?.lastName ?? ""}`,
+                },
+              ]}
+            />
               </Grid>
               <Grid item>
                 <Box sx={{ m: -1 }}>
@@ -244,17 +259,18 @@ const ChildDetails = () => {
                         sx={{ m: 1 }}
                         variant="contained"
                         onClick={() => {
-                          ModalService.open(
-                            ({ close }) => (
-                              <ManageChildForm close={close} id={id} />
-                            ),
-                            {
-                              width: "30%",
-                              height: "95%",
-                              hideModalFooter: true,
-                              enableClose: false,
-                            },
-                          );
+                          setChildModalOpen(true);
+                          // ModalService.open(
+                          //   ({ close }) => (
+                          //     <ManageChildForm close={close} id={id} />
+                          //   ),
+                          //   {
+                          //     width: "30%",
+                          //     height: "95%",
+                          //     hideModalFooter: true,
+                          //     enableClose: false,
+                          //   },
+                          // );
                         }}
                       >
                         {t("common:common.Edit")}
@@ -263,12 +279,12 @@ const ChildDetails = () => {
                   ) : (
                     <></>
                   )}
-                  {currentTab === "Family" && (children.HTFamilyId ?? children.TWFamilyId) ? (
+                  {currentTab == "Family" && children.TWFamilyId ? (
                     <Button
                       color="primary"
                       component={RouterLink}
                       sx={{ m: 1 }}
-                      to={`/dashboard/families/${children.HTFamilyId ?? children.TWFamilyId}/view`}
+                      to={`/dashboard/families/${children.TWFamilyId}/view`}
                       variant="contained"
                     >
                       {t("common:common.View Family Page")}
@@ -279,7 +295,7 @@ const ChildDetails = () => {
                 </Box>
               </Grid>
             </Grid>
-            <Box sx={{ mt: 3 }}>
+            <Box sx={{ mt: 1 }}>
               <Tabs
                 indicatorColor="primary"
                 onChange={handleTabsChange}

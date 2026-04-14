@@ -255,7 +255,7 @@ const FormListTable = (props) => {
                         </Button>
                       </TableCell>
                       <TableCell>
-                        {utcToLocal(form.updatedAt)}
+                        {signedinUserRoleHT == "superadmin" ? utcToLocal(form?.lastModified) : utcToLocal(form?.updatedAt)}
                       </TableCell>
                       {signedinUserRoleHT != "superadmin" && (
                         <>

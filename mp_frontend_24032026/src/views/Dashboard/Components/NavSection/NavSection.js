@@ -163,7 +163,7 @@ const NavSection = (props) => {
             </span> */}
             <span>
               {isOpenDrawer 
-                ? (title === FosterShare ? title : t(`common:common.${title}`)) 
+                ? (title === FosterShare ? title : t(`common:common.${title}`, title)) 
                 : titleShortName}
             </span>
             <span

@@ -176,7 +176,7 @@ export const ChildContactDetails = ({
     gridProps: { xs: 12 },
   },
   {
-    type: "text",
+    type: "ZIPCode",
     name: "contactInformation.zipCode",
     label: "Mailing code / Postal Index Number / ZIP code",
     required: false,
@@ -188,6 +188,7 @@ export const ChildContactDetails = ({
 ];
 
 export const ChildAdditionalDetails = ({
+  phoneRef,
   childDropdownLists,
   allLanguagesList,
 }) => {
@@ -199,6 +200,7 @@ export const ChildAdditionalDetails = ({
       fullWidth: true,
       variant: "outlined",
       gridProps: { md: 12, xs: 12 },
+      phoneRef: phoneRef
     },
     {
       type: "text",

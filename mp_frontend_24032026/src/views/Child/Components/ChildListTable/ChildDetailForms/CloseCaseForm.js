@@ -46,7 +46,6 @@ const CloseCaseForm = ({ close, setHideChildModal, handleChildModalOpen, onCaseC
       };
       const res = await APIS.CloseChildCase(payload);
       if (res?.status === 200) {
-        // handleChildModalOpen();
         close();
         onCaseClose();
         ModalService.open(() => null, {
@@ -69,7 +68,6 @@ const CloseCaseForm = ({ close, setHideChildModal, handleChildModalOpen, onCaseC
   };
 
   const cancelHandler = () => {
-      console.log("handleChildModalOpen", handleChildModalOpen);
     close();
     // handleChildModalOpen();
     setHideChildModal(false);

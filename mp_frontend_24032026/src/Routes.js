@@ -262,7 +262,7 @@ const ConsolidatedEventsList = Loadable(
 const routes = [
   {
     path: "/",
-    element: <LandingPage />,
+    element: <Signin />,
   },
   {
     path: "/",

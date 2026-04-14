@@ -209,8 +209,13 @@ const [consentChecked, setConsentChecked] = useState(
           .required(t("common:warnings.Country is required")),
 
         defaultLanguage: Yup.string()
+          .nullable()
           .max(255)
-          .required(t("common:warnings.Default assessment language is required")),
+          .when("organization_type", {
+            is: (val) => val && val !== "6",
+            then: (schema) => schema.required(t("common:warnings.Default assessment language is required")),
+            otherwise: (schema) => schema,
+          }),
 
         website: Yup.string().matches(
           webRegExp,
@@ -344,7 +349,7 @@ const [consentChecked, setConsentChecked] = useState(
               caseManagerCount:values.caseMangerCount || null,
               childCount: values.childrenServedCount || null,
               familyCount: values.familyServedCount || null,
-              MPFormId: values.defaultLanguage || null
+              MPFormId: values.organization_type !== "6" ? values.defaultLanguage || null : null
             };
             await APIS.EditOrganization(payload).then((res) => {
               if (res && res.data && res.status === 200) {
@@ -381,7 +386,7 @@ const [consentChecked, setConsentChecked] = useState(
               primaryContact: null,
               permissions:values.organization_type === "6" ? values.parentOrgPermission : "SELF_ORGANIZATION_LEVEL",
               linkedAccountIds:values.selectedItems.length > 0 ? values.selectedItems : [],
-              MPFormId: values.defaultLanguage || null
+              MPFormId: values.organization_type !== "6" ? values.defaultLanguage || null : null
             };
             await APIS.AddOrganization(payload).then((res) => {
               if (res && res.data && res.status === 200) {
@@ -811,58 +816,6 @@ const [consentChecked, setConsentChecked] = useState(
                           </Grid>
                         </>)
                       }
-                      <Grid container item spacing={2} md={12} xs={12}>
-                        <CardHeader
-                          title="Defaults"
-                          sx={{ pb: "0px" }}
-                        />
-                      </Grid>
-                      <Grid item md={6} xs={12} sx={{ mt: -2 }}>
-                        {loadingActiveForms ? (
-                          <Box sx={{ display: 'flex', alignItems: 'center', minHeight: 56 }}>
-                            <CircularProgress size={24} />
-                            <Typography sx={{ ml: 2 }}>Loading forms...</Typography>
-                          </Box>
-                        ) : (
-                          <Field
-                            key={values.country || 'no-country'}
-                            error={Boolean(touched.defaultLanguage && errors.defaultLanguage)}
-                            fullWidth
-                            helperText={touched.defaultLanguage && errors.defaultLanguage}
-                            name="defaultLanguage"
-                            accessKey="name"
-                            component={AutoCompleteDropdown}
-                            required={true}
-                            id="defaultLanguage"
-                            label="defaultLanguage"
-                            options={activeForms}
-                            value={values.country ? values.defaultLanguage : null}
-                            textFieldProps={{
-                              fullWidth: true,
-                              margin: "normal",
-                              variant: "outlined",
-                              label: "Default assessment language",
-                            }}
-                            disabled={!values.country}
-                            sx={{
-                              "& fieldset": { borderRadius: "4px" },
-                            }}
-                          />
-                        )}
-                        <Typography
-                          sx={{
-                            color: "#778791",
-                            fontSize: "14px",
-                            fontFamily: "Mulish",
-                            fontWeight: 500,
-                            lineHeight: "17.5px",
-                            wordWrap: "break-word",
-                            // mt: 1
-                          }}
-                        >
-                          All assessments will appear in this language
-                        </Typography>
-                      </Grid>
 
                       <Grid container item spacing={2} md={12} xs={12}>
                         <CardHeader
@@ -1199,6 +1152,63 @@ const [consentChecked, setConsentChecked] = useState(
                         </Grid>
                       )}
                       <Grid />
+                      
+                      {values.country && values.organization_type && values.organization_type != "6" &&
+                      <>
+                        <Grid container item spacing={2} md={12} xs={12}>
+                          <CardHeader
+                            title="Defaults"
+                            sx={{ pb: "0px" }}
+                          />
+                        </Grid>
+
+                        <Grid item md={6} xs={12} sx={{ mt: -2 }}>
+                          {loadingActiveForms ? (
+                            <Box sx={{ display: 'flex', alignItems: 'center', minHeight: 56 }}>
+                              <CircularProgress size={24} />
+                              <Typography sx={{ ml: 2 }}>Loading forms...</Typography>
+                            </Box>
+                          ) : (
+                            <Field
+                              key={values.defaultLanguage || 'no-defaultLanguage'}
+                              error={Boolean(touched.defaultLanguage && errors.defaultLanguage)}
+                              fullWidth
+                              helperText={touched.defaultLanguage && errors.defaultLanguage}
+                              name="defaultLanguage"
+                              accessKey="name"
+                              component={AutoCompleteDropdown}
+                              required={(values.organization_type && values.organization_type != "6") ? true : false}
+                              id="defaultLanguage"
+                              label="defaultLanguage"
+                              options={activeForms}
+                              value={values.country ? values.defaultLanguage : null}
+                              textFieldProps={{
+                                fullWidth: true,
+                                margin: "normal",
+                                variant: "outlined",
+                                label: "Default assessment language",
+                              }}
+                              disabled={!values.country || !values.organization_type || values.organization_type === "6"}
+                              sx={{
+                                "& fieldset": { borderRadius: "4px" },
+                              }}
+                            />
+                          )}
+                          <Typography
+                            sx={{
+                              color: "#778791",
+                              fontSize: "14px",
+                              fontFamily: "Mulish",
+                              fontWeight: 500,
+                              lineHeight: "17.5px",
+                              wordWrap: "break-word",
+                              // mt: 1
+                            }}
+                          >
+                            All assessments will appear in this language
+                          </Typography>
+                        </Grid>
+                      </>}
                     </Grid>
                     <Box
                       sx={{

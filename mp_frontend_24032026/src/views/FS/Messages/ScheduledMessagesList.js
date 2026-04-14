@@ -136,6 +136,7 @@ const ScheduledMessagesList = ({
             {
               modalTitle: "New Message",
               width: "35%",
+              height: "95%",
               hideModalFooter: true,
             }
           );

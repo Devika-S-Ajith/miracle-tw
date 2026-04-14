@@ -840,7 +840,7 @@ const SignIn = (props) => {
                                 variant="body1"
                                 onClick={() =>
                                   window.open(
-                                    "https://www.thrivewellapp.com/faqs",
+                                    "https://www.portal.thrivewellapp.com/faqs",
                                     "_blank"
                                   )
                                 }

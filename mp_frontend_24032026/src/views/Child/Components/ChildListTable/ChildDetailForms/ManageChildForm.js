@@ -39,10 +39,23 @@ import CloseIcon from "@mui/icons-material/Close";
 import FamilyChangeModal from "./FamilyChangeModal";
 import toast from "react-hot-toast";
 import Loader from "../../../../../components/UserComponents/Loader";
+import { PhoneNumberUtil } from "google-libphonenumber";
+import { validatePhoneNumber } from "../../../../../helpers/helperFunction";
 
 const userRegion = localStorage.getItem("userRegion");
+const phoneUtil = PhoneNumberUtil.getInstance();
 
-const ManageChildForm = ({ handleChildModalOpen, setHideChildModal, id, openForEdit ,onCaseChange,getMemberDetails = null,childInfo,isFromFamily = false, refreshTable }) => {
+const ManageChildForm = ({
+  handleChildModalOpen,
+  setHideChildModal,
+  id,
+  openForEdit,
+  onCaseChange,
+  getMemberDetails = null,
+  childInfo,
+  isFromFamily = false,
+  refreshTable,
+}) => {
   const { t } = useTranslation(["common"]);
   const [isLoading, setIsLoading] = useState(false); // Defined missing state
   const mounted = useMounted();
@@ -59,21 +72,24 @@ const ManageChildForm = ({ handleChildModalOpen, setHideChildModal, id, openForE
     locationList?.find((loc) => loc.id == userRegion)?.states || [];
   const [isEditing, setIsEditing] = useState(false);
   const [isUniqueChild, setIsuniqueChild] = useState(true);
+  const phoneRef = useRef({});
 
   useEffect(() => {
     if (id) {
       getChildDetails();
     }
-    if(isFromFamily && childInfo && !id) {
+    if (isFromFamily && childInfo && !id) {
       setChildDetails(childInfo);
     }
-
   }, [id, isFromFamily, childInfo]);
 
-   const handleResponse = useCallback((payload) => {
-          getMemberDetails?.(payload);
-          handleChildModalOpen();
-      }, [getMemberDetails, handleChildModalOpen]);
+  const handleResponse = useCallback(
+    (payload) => {
+      getMemberDetails?.(payload);
+      handleChildModalOpen();
+    },
+    [getMemberDetails, handleChildModalOpen],
+  );
 
   useEffect(() => {
     if (openForEdit) {
@@ -160,10 +176,19 @@ const ManageChildForm = ({ handleChildModalOpen, setHideChildModal, id, openForE
         });
         const familyData = res.data?.data?.contactInformation;
         if (familyData) {
-          setFieldValue("contactInformation.addressLine1", familyData.addressLine1 || "");
-          setFieldValue("contactInformation.addressLine2", familyData.addressLine2 || "");
+          setFieldValue(
+            "contactInformation.addressLine1",
+            familyData.addressLine1 || "",
+          );
+          setFieldValue(
+            "contactInformation.addressLine2",
+            familyData.addressLine2 || "",
+          );
           setFieldValue("contactInformation.city", familyData.city || "");
-          setFieldValue("contactInformation.TWStateId", familyData.TWStateId || "");
+          setFieldValue(
+            "contactInformation.TWStateId",
+            familyData.TWStateId || "",
+          );
           setFieldValue("contactInformation.zipCode", familyData.zipCode || "");
         }
       } catch (error) {
@@ -188,7 +213,10 @@ const ManageChildForm = ({ handleChildModalOpen, setHideChildModal, id, openForE
   }, []);
 
   const handleFamilyChange = async ({ data, setFieldValue }) => {
-    if (childDetails?.TWFamilyId && childDetails.TWFamilyId !== data?.TWFamilyId) {
+    if (
+      childDetails?.TWFamilyId &&
+      childDetails.TWFamilyId !== data?.TWFamilyId
+    ) {
       setHideChildModal(true);
       ModalService.open(
         ({ close }) => (
@@ -218,10 +246,7 @@ const ManageChildForm = ({ handleChildModalOpen, setHideChildModal, id, openForE
     setFieldValue("caseWorkerId", data?.caseWorkerId);
   };
 
-  const onFamilyChangeConfirm = ({
-    setFieldValue,
-    familyChangeValues,
-  }) => {
+  const onFamilyChangeConfirm = ({ setFieldValue, familyChangeValues }) => {
     setFieldValue(
       "familyChangeDetails.childDischargedDate",
       new Date(
@@ -404,7 +429,7 @@ const ManageChildForm = ({ handleChildModalOpen, setHideChildModal, id, openForE
         dateOfBirth: childDetails?.dateOfBirth || null,
         TWFamilyId: childDetails?.TWFamilyId || null,
         TWChildCurrentPlacementStatusId:
-          childDetails?.TWChildPlacementStatusId || null,
+          childDetails?.TWChildCurrentPlacementStatusId || null,
         caseWorkerId: childDetails?.caseWorkerId || null,
         childHasDisability: childDetails?.childHasDisability || false,
         isSameAsFamilyAddress: childDetails?.isSameAsFamilyAddress || false,
@@ -502,29 +527,19 @@ const ManageChildForm = ({ handleChildModalOpen, setHideChildModal, id, openForE
           TWStateId: Yup.string().max(255).nullable(),
           city: Yup.string().max(255).nullable(),
           zipCode: Yup.string()
-            .max(20)
-            .nullable()
-            .test({
-              name: "zip-format-validation",
-              exclusive: true,
-              message: t(
-                "common:warnings.Invalid ZIP code format",
-                "Invalid ZIP code format",
-              ),
-              test: function (zip_code) {
-                const country = localStorage.getItem("userRegion");
-                const countryObj = locationList?.find(
-                  (obj) => obj.id == country,
-                );
-                const isoCode = countryObj?.isoCode?.toUpperCase();
-                if (!zip_code) return true; // allow empty if nullable
-                if (isoCode === "IND") {
-                  return /^\d{6}$/.test(zip_code);
+            .test(
+              "zip-format-validation",
+              "Please enter a valid ZIP code",
+              (value) => {
+                if (!value) return true; // Only validate if there is a value
+                if (userRegion == "1") {
+                  return /^\d{6}$/.test(value);
                 } else {
-                  return /^\d{5}$/.test(zip_code);
+                  return /^\d{5}$/.test(value);
                 }
               },
-            }),
+            )
+            .nullable(),
         }),
 
         // Additional Details
@@ -536,7 +551,11 @@ const ManageChildForm = ({ handleChildModalOpen, setHideChildModal, id, openForE
             )
             .max(255)
             .nullable(),
-          phoneNumber: Yup.string().max(20).nullable(),
+          phoneNumber: Yup.string().test(
+            "phone-format-validation",
+            t("common:warnings.Invalid Phone number"),
+            (value) => validatePhoneNumber(value, phoneRef),
+          ),
           TWLanguageId: Yup.string().nullable(),
           ethnicity: Yup.string().nullable(),
           TWChildEducationLevelId: Yup.string().nullable(),
@@ -655,28 +674,35 @@ const ManageChildForm = ({ handleChildModalOpen, setHideChildModal, id, openForE
         setIsLoading(true);
         try {
           let res;
+            if (
+              values?.profileInformation?.phoneNumber &&
+              "+" + phoneRef.current.dialCode ===
+                values?.profileInformation?.phoneNumber
+            ) {
+              values.profileInformation.phoneNumber = null;
+            }
           if (id) {
             let changedValues = getChangedValues(
               values,
               initialValuesRef.current,
             );
             changedValues.id = id;
-            if(changedValues?.TWFamilyId) {
+            if (changedValues?.TWFamilyId) {
               changedValues.caseWorkerId = values.caseWorkerId;
             }
             res = await APIS.UpdateChild(changedValues);
             if (isFromFamily) {
-              handleResponse(changedValues)
-            }       
+              handleResponse(changedValues);
+            }
           } else {
             res = await APIS.CreateChild(values);
             if (isFromFamily) {
               const newPayload = {
                 ...values,
                 _rowKey: childInfo?._rowKey,
-              }
-              handleResponse(newPayload)
-            }                  
+              };
+              handleResponse(newPayload);
+            }
           }
           handleChildModalOpen();
           if (res?.status === 200) {
@@ -758,7 +784,10 @@ const ManageChildForm = ({ handleChildModalOpen, setHideChildModal, id, openForE
                     color="#F37123"
                   />
                 </Stack>
-                <CloseIcon style={{ color: "#000" }} onClick={handleChildModalOpen} />
+                <CloseIcon
+                  style={{ color: "#000", cursor: "pointer" }}
+                  onClick={handleChildModalOpen}
+                />
               </Stack>
               <Form id="add-child-form">
                 <Box ml={-2}>
@@ -811,26 +840,27 @@ const ManageChildForm = ({ handleChildModalOpen, setHideChildModal, id, openForE
                               childDetails?.status === "Case Closed"
                             }
                           />
-                         
-                            <DynamicForm
-                              values={values}
-                              errors={errors}
-                              touched={touched}
-                              handleChange={handleChange}
-                              handleBlur={handleBlur}
-                              setFieldValue={setFieldValue}
-                              config={ChildContactDetails({
-                                StateList,
-                                handleFamilyChange,
-                                values,
-                                setFieldValue,
-                              })}
-                              isDisabled={
-                                isSubmitting ||
-                                childDetails?.status === "Case Closed"
-                                || values?.isSameAsFamilyAddress
-                              }
-                            />
+
+                          <DynamicForm
+                            values={values}
+                            errors={errors}
+                            touched={touched}
+                            handleChange={handleChange}
+                            handleBlur={handleBlur}
+                            setFieldValue={setFieldValue}
+                            config={ChildContactDetails({
+                              StateList,
+                              handleFamilyChange,
+                              values,
+                              setFieldValue,
+                            })}
+                            t={t}
+                            isDisabled={
+                              isSubmitting ||
+                              childDetails?.status === "Case Closed" ||
+                              values?.isSameAsFamilyAddress
+                            }
+                          />
                         </Grid>
                       </Grid>
 
@@ -849,9 +879,11 @@ const ManageChildForm = ({ handleChildModalOpen, setHideChildModal, id, openForE
                               handleChange={handleChange}
                               handleBlur={handleBlur}
                               setFieldValue={setFieldValue}
+                              locationList={locationList}
                               config={ChildAdditionalDetails({
                                 childDropdownLists,
                                 allLanguagesList,
+                                phoneRef,
                               })}
                               isDisabled={
                                 isSubmitting ||

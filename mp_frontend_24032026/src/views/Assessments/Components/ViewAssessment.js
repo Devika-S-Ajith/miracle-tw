@@ -453,8 +453,9 @@ const ViewAssessment = forwardRef((props, ref) => {
   const getTWScore = () => {
     let totalScoreInPercentageAsString;
     if (score && score.totalScoreInPercentageAsString) {
-      totalScoreInPercentageAsString =
-        score.totalScoreInPercentageAsString + " %";
+      // Remove decimal part before returning
+      const intPart = Math.floor(Number(score.totalScoreInPercentageAsString));
+      totalScoreInPercentageAsString = intPart + " %";
     }
     return totalScoreInPercentageAsString;
   };

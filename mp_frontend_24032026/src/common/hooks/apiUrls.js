@@ -34,7 +34,7 @@ const API_URLS = {
   reports: createEndpoints("/report", {
     exportLegacyAssessmentScore: "/legacyDataExport",
   }),
-  forms: createEndpoints("/forms", {
+  forms: createEndpoints("", {
     activeForms: "/default-forms",
     formList: "/get-all-forms",
   }),

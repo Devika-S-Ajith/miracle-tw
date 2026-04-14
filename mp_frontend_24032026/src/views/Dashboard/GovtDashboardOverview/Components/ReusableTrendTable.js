@@ -248,19 +248,6 @@ const TableHeaderMemo = memo(({ columns, sortState, onSort, t, boldHeaders, tabl
                                 </Box>
                             )}
                             
-                            {/* Vertical divider with proper padding */}
-                            {/* {idx !== columns.length - 1 && (
-                                <Divider
-                                    orientation="vertical"
-                                    flexItem
-                                    sx={{
-                                        backgroundColor: '#D6DBDE',
-                                        alignSelf: 'stretch',
-                                        mx: 1,
-                                        my: 1
-                                    }}
-                                />
-                            )} */}
                         </Box>
                     </TableCell>
                 ))}
@@ -410,8 +397,7 @@ const ReusableTrendTable = ({
   handleChipDelete,
   clearFilter,
   tableExtraButtons,
-  cancelFilter,
-  onSearchChange,
+  cancelFilter
 }) => {
   // Table state
   const [state, dispatch] = useReducer(tableStateReducer, {
@@ -518,7 +504,10 @@ const ReusableTrendTable = ({
         value.trim().length >= SEARCH_MIN_LENGTH ||
         forceSearch;
       if (shouldSearch) {
-        const filters = buildFilters({ search: value, page: 1 });
+        const filters = buildFilters({
+          search: value,
+          page: 1,
+        });
         triggerReload(filters);
       }
     },
@@ -640,8 +629,7 @@ const ReusableTrendTable = ({
     }),
     [tableSx]
   );
-
-  const resolvedTableExtraButtons = useMemo(() => {
+const resolvedTableExtraButtons = useMemo(() => {
     if (!tableExtraButtons) return null;
     if (typeof tableExtraButtons === "function") {
       return tableExtraButtons({
@@ -652,7 +640,7 @@ const ReusableTrendTable = ({
     }
     return tableExtraButtons;
   }, [tableExtraButtons, state.searchQuery, appliedFiltersChipArray, buildFilters]);
-
+  
   return (
     <Card elevation={0} sx={cardStyles}>
       <Box display="flex" px gap={2} alignItems="center">
@@ -766,10 +754,7 @@ const ReusableTrendTable = ({
               <Chip
                 key={`${key}-${item.value}`}
                 // label={`${item.key}: ${item.label}`}
-                label={`${t(`common:infoCard.${item.key}`)}: ${t(
-                  `common:infoCard.${item.label}`,
-                  item.label
-                )}`}
+                label={`${t(`common:infoCard.${item.key}`)}: ${t(`common:infoCard.${item.label}`), item.label}`}
                 sx={{ mb: 1, backgroundColor: "#34475D", color: "#fff" }}
                 deleteIcon={<CloseIcon style={{ color: "#fff", fontSize: "16px" }} />}
                 onDelete={() => handleChipDelete(key, item.value, { search: state.searchQuery, rowCount: state.rowCount })}

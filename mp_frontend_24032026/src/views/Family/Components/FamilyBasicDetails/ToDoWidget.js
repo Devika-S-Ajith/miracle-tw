@@ -95,7 +95,7 @@ const getItemNote = (item) => {
     return null;
 };
 
-const ToDoWidget = ({ t, HTFamilyId }) => {
+const ToDoWidget = ({ t, TWFamilyId }) => {
 
       const [todoData, setTodoData] = useState([]);
       const [loadingTodoList, setLoadingTodoList] = useState(false);
@@ -112,7 +112,7 @@ const ToDoWidget = ({ t, HTFamilyId }) => {
          const payload = {
             limit:100,
             start:1,
-            HTFamilyId:HTFamilyId
+            TWFamilyId:TWFamilyId
          };
          try {
            const response = await APIS.GetTodoList(payload);

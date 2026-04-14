@@ -306,16 +306,12 @@ const getFieldTouched = (name) => get(touched, name, false);
                             fullWidth
                             helperText={fieldTouched && fieldError}
                             placeholder={
-                                locationList
-                                    .find((obj) => obj.id == values.country)
-                                    ?.isoCode?.toUpperCase() === "IND"
+                                localStorage.getItem("userRegion") === "1"
                                     ? "888888"
                                     : "88888"
                             }
                             format={
-                                locationList
-                                    .find((obj) => obj.id == values.country)
-                                    ?.isoCode?.toUpperCase() === "IND"
+                                localStorage.getItem("userRegion") === "1"
                                     ? "######"
                                     : "#####"
                             }
@@ -327,7 +323,7 @@ const getFieldTouched = (name) => get(touched, name, false);
                             onBlur={handleBlur}
                             onChange={handleChange}
                             value={fieldValue || ''} // Use helper function
-                            disabled={!values.country || isDisabled}
+                            disabled={isDisabled}
                         />
                     </Grid>
                 );
@@ -398,13 +394,13 @@ const getFieldTouched = (name) => get(touched, name, false);
                         <PhoneTextInput
                             name='phone'
                             id="phone"
-                            phoneRef={phoneRef}
+                            phoneRef={fieldProps?.phoneRef}
                             onBlur={handleBlur}
                             error={fieldTouched && Boolean(fieldError)}
                             helperText={fieldTouched && fieldError}
                             value={fieldValue}
                             onChange={(phone) => setFieldValue(fullFieldName, phone)}
-                            defaultCountry={locationList?.find((loc) => loc.id == 1)?.iso2Code || 'us'}
+                            defaultCountry={locationList?.find((loc) => loc.id == localStorage.getItem("userRegion"))?.iso2Code || 'us'}
                             showAttachedLabel={false}
                             disabled={isDisabled}
                         />

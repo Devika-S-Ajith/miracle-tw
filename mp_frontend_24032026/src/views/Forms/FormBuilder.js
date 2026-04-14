@@ -953,7 +953,7 @@ const FormBuilder = (props) => {
                                 ? false
                                 : signedinUserRoleHT ===
                                       "superadmin" ||
-                                    formDetails?.globalDefault
+                                    formDetails?.globalDefault || formDetails?.assessmentStat
                                   ? true
                                   : false
                             }
@@ -980,6 +980,7 @@ const FormBuilder = (props) => {
                           ) : !formDetails.isPublished ? (
                             <Button
                               onClick={handlePublishFormModal}
+                              disabled={formDetails?.isActive && (formDetails?.globalDefault || formDetails?.assessmentStat)}
                               sx={{ borderRadius: "4px" }}
                               variant="contained"
                             >
@@ -988,7 +989,7 @@ const FormBuilder = (props) => {
                           ) : (
                             <Button
                               onClick={handlePublishFormModal}
-                              disabled={formDetails.globalDefault}
+                              disabled={formDetails?.globalDefault || formDetails?.assessmentStat}
                               sx={{ borderRadius: "4px" }}
                               variant="contained"
                             >
@@ -1120,7 +1121,7 @@ const FormBuilder = (props) => {
                                             ? false
                                             : signedinUserRoleHT ===
                                                   "superadmin" ||
-                                                formDetails?.globalDefault
+                                                formDetails?.globalDefault || formDetails?.assessmentStat
                                               ? true
                                               : false
                                         }

@@ -242,11 +242,11 @@ const ConsolidatedFamilyList = (props) => {
   ];
 
   const [isExporting, setIsExporting] = useState(false);
-  
+
   const exportFamilies = async () => {
     setIsExporting(true);
     try {
-      const res = await APIS.exportFamilies(langFilter, statusFilter, query);
+      const res = await APIS.exportFamilies(statusFilter, query);
       const linkSource = `data:application/xlsx;base64,${res.data.body}`;
       const downloadLink = document.createElement("a");
       const fileName = GenerateFileName({
@@ -447,7 +447,7 @@ const ConsolidatedFamilyList = (props) => {
           )}
         />
       </Box>
-      <Box>
+      {/* <Box>
         <BodyText
           value={t("common:infoCard.Language", "Language")}
           sx={{ mb: 1 }}
@@ -492,7 +492,7 @@ const ConsolidatedFamilyList = (props) => {
             </Stack>
           )}
         />
-      </Box>
+      </Box> */}
     </>
   );
 

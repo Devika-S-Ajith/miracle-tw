@@ -543,7 +543,7 @@ const ConsolidatedAssessmentProgressReport = ({ pageType, id }) => {
             style={{ width: 20, height: 20 }}
           />
         }
-        label="New ThriveAI assessment"
+        label="New ThriveAssist assessment"
         onClick={() => {
           window.open('https://aiprojects.thrivewellapp.com/', '_blank');
         }}

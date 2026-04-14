@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import PageBreadcrumbs from "../../../components/PageBreadcrumbs/PageBreadcrumbs";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { useNavigate } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import PencilAltIcon from "../../../assets/icons/PencilAlt";
 import TrashIcon from "../../../assets/icons/Trash";
 import { AssessmentProgressReportIcon } from "../../../assets/icons/SideBarIcons";
@@ -41,9 +41,9 @@ const ConsolidatedChildList = (props) => {
   const [apiError, setApiError] = useState(null);
   const [filterValues, setFilterValues] = useState({});
   const [appliedFiltersChipArray, setAppliedFiltersChipArray] = useState([]);
-  const { signedinOrgId, signedInOrgName, userIdData } = useContext(CommonDataContext);
+  const { signedinOrgId, signedInOrgName, userIdData } =
+    useContext(CommonDataContext);
   const [users, setUsers] = useState([]);
-
   //   actions
   const [menuState, setMenuState] = useState({ anchorEl: null, row: null });
   const [activeChildId, setActiveChildId] = useState(null);
@@ -53,8 +53,6 @@ const ConsolidatedChildList = (props) => {
   const handleChildModalOpen = () => {
     setChildModalOpen(!childModalOpen);
   };
-    console.log("handleChildModalOpen", hideChildModal);
-  
   const handleClick = (event, row) => {
     setMenuState({ anchorEl: event.currentTarget, row });
   };
@@ -160,45 +158,32 @@ const ConsolidatedChildList = (props) => {
                     setChildModalOpen(true);
                     setActiveChildId(menuState?.row?.id);
                     setMenuState(null);
-
-                    // ModalService.open(
-                    //   ({ close }) => (
-                    //     <ManageChildForm
-                    //       close={close}
-                    //       id={menuState?.row?.id}
-                    //       refreshTable={getTableData} // Refresh data after re-opening case
-                    //     />
-                    //   ),
-                    //   {
-                    //     width: "30%",
-                    //     height: "95%",
-                    //     hideModalFooter: true,
-                    //     enableClose: false,
-                    //   },
-                    // );
                   }}
                   id="edit-family"
                 >
                   <PencilAltIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
-              <Tooltip
-              // title={
-              //   family?.numberOfChildrenActive > 0
-              //     ? (t("common:family.Cannot delete family with active children", "Cannot delete family with active children"))
-              //     : t("common:family.Delete Family")
-              // }
+              {/* <Tooltip
+                title={
+                  family?.numberOfChildrenActive > 0
+                    ? t(
+                        "common:family.Cannot delete family with active children",
+                        "Cannot delete family with active children",
+                      )
+                    : t("common:family.Delete Family")
+                }
               >
                 <span>
                   <IconButton
-                    // disabled={family?.numberOfChildrenActive > 0}
-                    // onClick={() => handleDelete(family.id)}
+                    disabled={family?.numberOfChildrenActive > 0}
+                    onClick={() => handleDelete(family.id)}
                     id="delete-family"
                   >
                     <TrashIcon fontSize="small" />
                   </IconButton>
                 </span>
-              </Tooltip>
+              </Tooltip> */}
 
               <Tooltip
                 title={t(
@@ -264,33 +249,7 @@ const ConsolidatedChildList = (props) => {
       setLoading(false);
     }
   };
-  const [isExporting, setIsExporting] = useState(false);
-  const exportChildren = async ({ query, statusFilter } = {}) => {
-    setIsExporting(true);
-    try {
-      const res = await APIS.exportChildren({
-        childStatusFilter: statusFilter, // "inActive","all"
-        globalSearchQuery: query || "",
-      });
-      const linkSource = `data:application/xlsx;base64,${res.data}`;
-      const downloadLink = document.createElement("a");
-      const fileName = GenerateFileName({
-        signedInOrgName,
-        userIdData,
-        module: `Children`,
-      });
-      downloadLink.href = linkSource;
-      downloadLink.download = fileName;
-      downloadLink.target = "_blank";
-      downloadLink.style.display = "none";
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
-      setIsExporting(false);
-    } catch (error) {
-      setIsExporting(false);
-    }
-  };
+
   const getUserList = useCallback(async () => {
     try {
       const payload = {
@@ -323,11 +282,12 @@ const ConsolidatedChildList = (props) => {
     getUserList();
   }, []);
 
-  const tableExtraButtons = ({ query, appliedFiltersChipArray }) => {
+    const tableExtraButtons = ({ query, appliedFiltersChipArray }) => {
     const selectedStatuses =
       (appliedFiltersChipArray?.status || []).map((s) => s.value) || [];
     const derivedStatusFilter =
       selectedStatuses.length === 1 ? selectedStatuses[0] : "all";
+
 
     return (
       <>
@@ -353,32 +313,36 @@ const ConsolidatedChildList = (props) => {
             loading={isExporting}
           />
           <SecondaryButton
-            startIcon={
-              <img
-                src="/static/icons/AddIcon.svg"
-                alt=""
-                style={{ width: 20, height: 20 }}
-              />
-            }
-            label={t("common:child.Add new child")}
-            onClick={() =>
-              ModalService.open(
-                ({ close }) => (
-                  <ManageChildForm close={close} refreshTable={getTableData} />
-                ),
-                {
-                  width: "30%",
-                  height: "95%",
-                  enableClose: false,
-                  hideModalFooter: true,
-                },
-              )
-            }
-          />
+          startIcon={
+            <img
+              src="/static/icons/AddIcon.svg"
+              style={{ width: 20, height: 20 }}
+            />
+          }
+          label={t("common:child.Add new child")}
+          onClick={() =>
+            ModalService.open(
+              ({ close }) => (
+                <ManageChildForm
+                  handleChildModalOpen={close}
+                  setHideChildModal={setHideChildModal}
+                  refreshTable={getTableData}
+                />
+              ),
+              {
+                width: { xs: "90%", sm: 500, md: 600, lg: 700 },
+                height: "95%",
+                enableClose: false,
+                hideModalFooter: true,
+              },
+            )
+          }
+        />
         </Stack>
       </>
     );
   };
+
 
   const filterComponent = (
     <>
@@ -498,19 +462,52 @@ const ConsolidatedChildList = (props) => {
     const clearedFilters = {};
     setFilterValues(clearedFilters);
   };
+
+   const [isExporting, setIsExporting] = useState(false);
+  const exportChildren = async ({ query, statusFilter } = {}) => {
+    setIsExporting(true);
+    try {
+      const res = await APIS.exportChildren({
+        childStatusFilter: statusFilter, // "inActive","all"
+        globalSearchQuery: query || "",
+      });
+      const linkSource = `data:application/xlsx;base64,${res.data}`;
+      const downloadLink = document.createElement("a");
+      const fileName = GenerateFileName({
+        signedInOrgName,
+        userIdData,
+        module: `Children`,
+      });
+      downloadLink.href = linkSource;
+      downloadLink.download = fileName;
+      downloadLink.target = "_blank";
+      downloadLink.style.display = "none";
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      setIsExporting(false);
+    } catch (error) {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <>
-      <Modal open={childModalOpen} onClose={handleChildModalOpen} sx={{visibility: hideChildModal ? "hidden" : "visible"}}>
+      <Modal
+        open={childModalOpen}
+        onClose={handleChildModalOpen}
+        sx={{ visibility: hideChildModal ? "hidden" : "visible" }}
+      >
         <Box
           sx={{
             position: "absolute",
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: 700,
+            width: { xs: "90%", sm: 500, md: 600, lg: 700 },
             bgcolor: "background.paper",
             // border: "2px solid #000",
-            p:2,
+            p: 3,
             boxShadow: 24,
           }}
         >
@@ -522,7 +519,6 @@ const ConsolidatedChildList = (props) => {
           />
         </Box>
       </Modal>
-      ;
       <Box
         sx={{
           backgroundColor: "background.default",

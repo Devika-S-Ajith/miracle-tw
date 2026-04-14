@@ -398,9 +398,9 @@ const ChildCombinedLogsList = ({ payloadId, showForChild = false, module }) => {
         globalSearchQuery: globalSearchQuery,
       };
       if (showForChild) {
-        payload.FSFamilyDetailId = id;
+        payload.TWFamilyId = id;
       } else {
-        payload.FSChildId = id;
+        payload.TWChildId = id;
       }
       if (logType && logType !== "all") {
         const matchedLogType = logTypes.find((type) => type.value == logType);
