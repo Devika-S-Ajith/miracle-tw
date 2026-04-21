@@ -19,51 +19,6 @@ import { useTranslation } from "react-i18next";
 import APIS from "../../../../common/hooks/UseApiCalls";
 import moment from "moment";
 
-const tempData = {
-  data: [
-    {
-      id: "1023",
-      HTChildId: "123",
-      entity: "firstName",
-      oldvalue: "Anandhu",
-      newvalue: "Anandu",
-      updatedby: "44b53f47-912b-4dfa-9028-deac116c21b8",
-      updateGroupId: "1637746970617",
-      createdAt: "2021-11-19T16:42:01.563Z",
-    },
-    {
-      id: "1024",
-      HTChildId: "123",
-      entity: "firstName",
-      oldvalue: "Anandhu",
-      newvalue: "Anandu",
-      updatedby: "44b53f47-912b-4dfa-9028-deac116c21b8",
-      updateGroupId: "1637746970617",
-      createdAt: "2021-11-19T16:42:01.563Z",
-    },
-    {
-      id: "1025",
-      HTChildId: "123",
-      entity: "firstName",
-      oldvalue: "Anandhu",
-      newvalue: "Anandu",
-      updatedby: "44b53f47-912b-4dfa-9028-deac116c21b8",
-      updateGroupId: "1637746970616",
-      createdAt: "2021-11-19T16:42:01.563Z",
-    },
-    {
-      id: "1026",
-      HTChildId: "123",
-      entity: "firstName",
-      oldvalue: "Anandhu",
-      newvalue: "Anandu",
-      updatedby: "44b53f47-912b-4dfa-9028-deac116c21b8",
-      updateGroupId: "1637746970615",
-      createdAt: "2021-11-19T16:42:01.563Z",
-    },
-  ],
-  pageCount: 1,
-};
 
 const Keywords = {
   HTFamilyId: "Family Id",
@@ -99,14 +54,14 @@ const ChildHistory = (props) => {
   const [page, setPage] = useState(1);
   const [pageCount, setPageCount] = useState(1);
   const { id, caseId, ...other } = props;
-  const [auditList, setAuditList] = useState(tempData);
+  const [auditList, setAuditList] = useState([]);
   const [loading, setLoading] = useState(false);
 
   let getAuditListpayload = {
     rowCount: "10",
     pageNumber: "1",
-    childId: "1021",
-    caseId: "1031",
+    childId: id,    // ← was "1021"
+    caseId: caseId, // ← was "1031"
   };
 
   const getAuditLog = useCallback(async (pageValue = 1) => {
@@ -123,11 +78,11 @@ const ChildHistory = (props) => {
       console.error(err);
       setLoading(false);
     }
-  }, []);
+  }, [id, caseId]);
 
   useEffect(() => {
     getAuditLog();
-  }, []);
+  }, [getAuditLog]);
 
   const handlePageChange = (event, value) => {
     getAuditLog(value);

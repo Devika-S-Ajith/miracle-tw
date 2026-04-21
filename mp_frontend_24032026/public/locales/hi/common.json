@@ -182,7 +182,9 @@
     "Confirm": "पुष्टि करना",
     "Child Name": "बच्चे का नाम",
     "Family Name": "परिवार के सदस्य का नाम",
+    "Family name": "परिवार के सदस्य का नाम",
     "Case Worker": "केस वर्कर",
+    "Case worker": "केस वर्कर",
     "Caseworker Name": "केस वर्कर का नाम",
     "Language": "भाषा",
     "Primary Language": "Primary Language",
@@ -227,6 +229,7 @@
     "Created Date": "रचना तिथि",
     "Number of Assessments": "आंकलन की संख्या",
     "Search": "खोजें",
+    "searchPlaceholder": "खोजें...",
     "No of Members": "सदस्यों की संख्या",
     "No of Children": "बच्चों की संख्या",
     "General Information": "सामान्य जानकारी",
@@ -1387,7 +1390,9 @@
       "Active": "सक्रिय",
       "Case Closed": "मामला समाप्त",
       "Status": "स्थिति",
-      "Case Worker": "केस वर्कर"
+    "Case manager": "केस वर्कर",
+    "Case Worker": "केस वर्कर",
+    "InActive": "Inactive"
 },
 "tableColumn":{
   "Organization name": "संगठन का नाम",
@@ -1444,6 +1449,7 @@
   "Intervention status": "हस्तक्षेप स्थिति",
   "% of cases assigned" : "% of cases assigned",
   "Completion rate": "Completion rate",
-  "Overall rating": "Overall rating"
+  "Overall rating": "Overall rating",
+  "Name": "नाम"
 }
 }

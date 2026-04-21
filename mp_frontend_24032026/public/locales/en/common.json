@@ -100,6 +100,7 @@
     "FirstName": "First name",
     "LastName": "Last name",
     "Family Name": "Family Name",
+    "Family name": "Family Name",
     "Id": "ID",
     "UserId": "User ID",
     "Details": "Details",
@@ -186,6 +187,7 @@
     "No": "No",
     "Child Name": "Child Name",
     "Case Worker": "Case Worker",
+    "Case worker": "Case worker",
     "Caseworker Name": "Caseworker Name",
     "Language": "Language",
     "Primary Language": "Primary Language",
@@ -235,6 +237,7 @@
     "Created Date": "Created Date",
     "Number of Assessments": "Number of Assessments",
     "Search": "Search",
+    "searchPlaceholder": "Search...",
     "No of Members": "Number of Members",
     "No of Children": "Number of Children",
     "General Information": "General information",
@@ -1440,7 +1443,9 @@
     "Active": "Active",
     "Case Closed": "Case Closed",
     "Status": "Status",
-    "Case Worker": "Case Worker"
+    "Case Worker": "Case Worker",
+    "Case manager": "Case manager",
+    "Inactive": "Inactive"
  },
  "tableColumn": {
   "Organization name": "Organization name",
@@ -1497,6 +1502,7 @@
   "Intervention status": "Intervention status",
   "% of cases assigned" : "% of cases assigned",
   "Completion rate": "Completion rate",
-  "Overall rating": "Overall rating"
+  "Overall rating": "Overall rating",
+  "Name": "Name"
 }
 }

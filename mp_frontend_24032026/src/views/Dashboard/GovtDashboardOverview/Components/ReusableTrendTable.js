@@ -388,7 +388,7 @@ const ReusableTrendTable = ({
   t,
   defaultSortField = null,
   defaultSortFieldOrder = null,
-  searchPlaceholder = "Search...",
+  searchPlaceholder = "searchPlaceholder",
   toolBar = null,
   boldHeaders = true,
   filterComponent = null,

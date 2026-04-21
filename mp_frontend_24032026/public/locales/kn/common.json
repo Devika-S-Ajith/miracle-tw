@@ -99,6 +99,7 @@
     "FirstName": "ಮೊದಲ ಹೆಸರು",
     "LastName": "ಕೊನೆಯ ಹೆಸರು",
     "Family Name": "ಕುಟುಂಬದ ಹೆಸರು",
+    "Family name": "ಕುಟುಂಬದ ಹೆಸರು",
     "Id": "ಐಡಿ",
     "UserId": "ಬಳಕೆದಾರ ಐಡಿ",
     "Details": "ವಿವರಗಳು",
@@ -184,6 +185,7 @@
     "No": "ಇಲ್ಲ",
     "Child Name": "ಮಗುವಿನ ಹೆಸರು",
     "Case Worker": "ಕೇಸ್ ವರ್ಕರ್",
+    "Case worker": "ಕೇಸ್ ವರ್ಕರ್",
     "Caseworker Name": "ಕೇಸ್ ವರ್ಕರ್ ಹೆಸರು",
     "Language": "ಭಾಷೆ",
     "Primary Language": "ಪ್ರಾಥಮಿಕ ಭಾಷೆ",
@@ -233,6 +235,7 @@
     "Created Date": "ರಚಿಸಿದ ದಿನಾಂಕ",
     "Number of Assessments": "ಮೌಲ್ಯಮಾಪನಗಳ ಸಂಖ್ಯೆ",
     "Search": "ಹುಡುಕಿ",
+    "searchPlaceholder": "ಹುಡುಕಿ...",
     "No of Members": "ಸದಸ್ಯರ ಸಂಖ್ಯೆ",
     "No of Children": "ಮಕ್ಕಳ ಸಂಖ್ಯೆ",
     "General Information": "ಸಾಮಾನ್ಯ ಮಾಹಿತಿ",
@@ -1350,7 +1353,9 @@
     "Active": "ಸಕ್ರಿಯ",
     "Case Closed": "ಪ್ರಕರಣವನ್ನು ಇತ್ಯರ್ಥ ಪಡಿಸಲಾಗಿದೆ",
     "Status": "ಸ್ಥಿತಿ",
-    "Case Worker": "ಕೇಸ್ ವರ್ಕರ್"
+    "Case Worker": "ಕೇಸ್ ವರ್ಕರ್",
+    "Case manager": "ಕೇಸ್ ಮ್ಯಾನೇಜರ್",
+    "Inactive": "ನಿಷ್ಕ್ರಿಯ"
 },
 "tableColumn":{
   "Organization name": "ಸಂಸ್ಥೆಯ ಹೆಸರು",
@@ -1407,6 +1412,7 @@
   "Intervention status": "ಮಧ್ಯಸ್ಥಿಕೆ ಸ್ಥಿತಿ",
   "% of cases assigned": "ನಿಯೋಜಿತ ಪ್ರಕರಣಗಳ %",
   "Completion rate": "ಪೂರ್ಣಗೊಳಿಸುವ ಪ್ರಮಾಣ",
-  "Overall rating": "ಒಟ್ಟಾರೆ ಶ್ರೇಯಾಂಕ"
+  "Overall rating": "ಒಟ್ಟಾರೆ ಶ್ರೇಯಾಂಕ",
+  "Name": "ಹೆಸರು"
 }
 }

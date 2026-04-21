@@ -286,22 +286,6 @@ const EditFamily = () => {
                 <Typography
                   color="textPrimary"
                   variant="h5"
-                  sx={{ cursor: "pointer" }}
-                  onClick={() => navigate("/dashboard")}
-                >
-                  {t("common:common.Thrive Scale")}
-                </Typography>
-                <Box
-                  sx={{
-                    m: 0.75,
-                  }}
-                  style={{ cursor: "text" }}
-                >
-                  <ChevronRightIcon color="disabled" fontSize="small" />
-                </Box>
-                <Typography
-                  color="textPrimary"
-                  variant="h5"
                   style={{ cursor: "pointer" }}
                   onClick={() => navigate("/dashboard/families")}
                 >

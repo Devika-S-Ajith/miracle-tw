@@ -99,6 +99,7 @@
     "FirstName": "पहिले नाव ",
     "LastName": "आडनाव",
     "Family Name": "कुटुंबाचे नाव",
+    "Family name": "कुटुंबाचे नाव",
     "Id": "आयडी",
     "UserId": "यूजर आयडी",
     "Details": "तपशील",
@@ -184,6 +185,7 @@
     "No": "नाही",
     "Child Name": "बालकाचे नाव",
     "Case Worker": "केस वर्कर",
+    "Case worker": "केस वर्कर",
     "Caseworker Name": "केसवर्करचे नाव",
     "Language": "भाषा",
     "Primary Language": "प्राथमिक भाषा",
@@ -233,6 +235,7 @@
     "Created Date": "तयार करण्याची तारीख  ",
     "Number of Assessments": "मूल्यमापनाची संख्या",
     "Search": "शोधा",
+    "searchPlaceholder": "शोधा...",
     "No of Members": "सदस्यांची संख्या",
     "No of Children": "बालकांची संख्या",
     "General Information": "सामान्य माहिती",
@@ -1354,7 +1357,9 @@
     "Active": "सक्रिय",
     "Case Closed": "केस बंद",
     "Status": "स्थिती",
-    "Case Worker": "केस वर्कर"
+    "Case Worker": "केस वर्कर",
+    "Case manager": "केस मॅनेजर",
+    "Inactive": "निष्क्रिय"
 },
 "tableColumn":{
   "Organization name": "संस्थेचे नाव",
@@ -1411,6 +1416,7 @@
   "Intervention status": "हस्तक्षेप स्थिती",
   "% of cases assigned": "नियुक्त प्रकरणांची टक्केवारी",
   "Completion rate": "पूर्णता दर",
-  "Overall rating": "एकूण रेटिंग"
+  "Overall rating": "एकूण रेटिंग",
+  "Name": "नाव"
 }
 }

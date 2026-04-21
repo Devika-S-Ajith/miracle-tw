@@ -45,7 +45,7 @@ export const InlineChildCreationConfig = [
     {
         type: 'SearchableTextField',
         name: 'firstName',
-        placeholder: 'First name',
+        placeholder: ('common:common.First name','First name'),
         required: true,
         showTooltip: false,
         fullWidth: true,
@@ -57,7 +57,7 @@ export const InlineChildCreationConfig = [
     {
         type: 'text',
         name: 'lastName',
-        placeholder: 'Last name',
+        placeholder: ('common:common.Last name','Last name'),
         size: 'small',
         color:"#FFFFFF",
         required: false,
@@ -68,7 +68,7 @@ export const InlineChildCreationConfig = [
     {
         type: 'dropdown',
         name: 'gender',
-        placeholder: 'Gender',
+        placeholder: 'common:common.Gender',
         translateLabels: true,
         size: 'small',
         color:"#FFFFFF",
@@ -81,7 +81,7 @@ export const InlineChildCreationConfig = [
      {
         type: 'DatePicker',
         name: 'dateOfBirth',
-        placeholder: 'Date of Birth',
+        placeholder: 'common:common.Date of Birth',
         size: 'small',
         color:"#FFFFFF",
         required: false,

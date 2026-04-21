@@ -65,7 +65,7 @@ const FamilySummary = ({ t, family }) => {
       <Grid container direction="row" spacing={1}>
         <Grid item xs={6}>
           <LabelValue
-            label="Family name"
+            label={t("common:common.Family name")}
             value={familyName}
             labelColor="#535F66"
             fontWeight={700}
@@ -73,7 +73,7 @@ const FamilySummary = ({ t, family }) => {
         </Grid>
         <Grid item xs={6}>
           <LabelValue
-            label="Status"
+            label={t("common:common.Status")}
             valueComponent={
               <Chip
                 label={
@@ -97,7 +97,7 @@ const FamilySummary = ({ t, family }) => {
         </Grid>
         <Grid item xs={6}>
           <LabelValue
-            label="Address"
+            label= {t("common:common.Address")}
             value={(() => {
               const parts = [
                 addressLine1,
@@ -126,7 +126,7 @@ const FamilySummary = ({ t, family }) => {
         </Grid>
         <Grid item xs={6}>
           <LabelValue
-            label="Phone number"
+            label= {t("common:common.Phone Number")}
             value={phoneNumber}
             labelColor="#535F66"
             fontWeight={700}
@@ -134,7 +134,7 @@ const FamilySummary = ({ t, family }) => {
         </Grid>
         <Grid item xs={6}>
           <LabelValue
-            label="Primary language"
+            label={t("common:common.Primary Language")}
             value={
               TWLanguageId &&
               `  ${
@@ -162,7 +162,7 @@ const FamilySummary = ({ t, family }) => {
 
         <Grid item xs={6}>
           <LabelValue
-            label="Case worker"
+            label= {t("common:common.Case worker","Case worker")}
             value={caseworker || "-"}
             labelColor="#535F66"
             fontWeight={700}

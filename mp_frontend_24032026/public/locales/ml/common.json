@@ -99,6 +99,7 @@
     "FirstName": "പ്രഥമ നാമം",
     "LastName": "ഒടുവിലത്തെ നാമം",
     "Family Name": "കുടുംബ നാമം",
+    "Family name": "കുടുംബ നാമം",
     "Id": "ഐഡി",
     "UserId": "യൂസർ ഐഡി",
     "Details": "വിശദാംശങ്ങൾ",
@@ -183,6 +184,7 @@
     "Yes": "അതെ",
     "No": "ഇല്ല",
     "Child Name": "കുട്ടിയുടെ പേര്",
+    "Case worker": "കേസ് വർക്കർ",
     "Case Worker": "കേസ് വർക്കർ",
     "Caseworker Name": "കേസ് വർക്കറുടെ പേര്",
     "Language": "ഭാഷ",
@@ -233,6 +235,7 @@
     "Created Date": "ഉണ്ടാക്കിയ തീയതി",
     "Number of Assessments": "വിലയിരുത്തലുകളുടെ എണ്ണം",
     "Search": "തിരയുക",
+    "searchPlaceholder": "തിരയുക...",
     "No of Members": "അംഗങ്ങളുടെ എണ്ണം",
     "No of Children": "കുട്ടികളുടെ എണ്ണം",
     "General Information": "പൊതുവായ വിവരം",
@@ -1353,7 +1356,9 @@
     "Active": "സജീവമായത്",
     "Case Closed": "കേസ് ക്ലോസ് ചെയ്തു",
     "Status": "അവസ്ഥ",
-    "Case Worker": "കേസ് വർക്കർ"
+    "Case Worker": "കേസ് വർക്കർ",
+    "Case manager": "കേസ് മാനേജർ",
+    "Inactive": "നിർജ്ജീവമായത്"
 },
 "tableColumn":{
   "Organization name": "സംഘടനയുടെ പേര്",
@@ -1410,7 +1415,8 @@
   "Intervention status": "ഇടപെടലിന്റെ അവസ്ഥ",
   "% of cases assigned": "നിയോഗിച്ച കേസുകളുടെ ശതമാനം",
   "Completion rate": "പൂർത്തീകരണ നിരക്ക്",
-  "Overall rating": "മൊത്തത്തിലുള്ള റേറ്റിംഗ്"
+  "Overall rating": "മൊത്തത്തിലുള്ള റേറ്റിംഗ്",
+  "Name": "പേര്"
 }
 }
 
