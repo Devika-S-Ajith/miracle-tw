@@ -69,7 +69,7 @@ const FamilyBasicDetails = ({ family }) => {
         <ConcerningBehaviorList />
       </Box> */}
       <Box height="fit-content">
-        <FamilyInterventionsTiles familyId={family?.id} />
+        <FamilyInterventionsTiles t={t} familyId={family?.id} />
       </Box> 
       {/* <Box height="fit-content">
         <FamilyInterventionsTiles familyId={family?.id} />

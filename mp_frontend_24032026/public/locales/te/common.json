@@ -99,6 +99,7 @@
     "FirstName": "మొదటి పేరు",
     "LastName": "ఇంటిపేరు",
     "Family Name": "ఇంటి పేరు",
+    "Family name": "ఇంటి పేరు",
     "Id": "గుర్తింపు ",
     "UserId": "వినియోగదారు గుర్తింపు ",
     "Details": "వివరాలు",
@@ -184,6 +185,7 @@
     "No": "కాదు",
     "Child Name": "పిల్లల పేరు",
     "Case Worker": "కేసు కార్యకర్త",
+    "Case worker": "కేసు కార్యకర్త",
     "Caseworker Name": "కేసు కార్యకర్త పేరు",
     "Language": "భాష",
     "Primary Language": "ప్రాథమిక భాష",
@@ -233,6 +235,7 @@
     "Created Date": "సృష్టించిన తేదీ",
     "Number of Assessments": "అంచనా పరీక్షల సంఖ్య",
     "Search": "శోధించండి",
+    "searchPlaceholder": "శోధించండి...",
     "No of Members": "సభ్యుల సంఖ్య",
     "No of Children": "పిల్లల సంఖ్య",
     "General Information": "సాధారణ సమాచారం",
@@ -1352,7 +1355,9 @@
     "Active": "క్రియాశీల",
     "Case Closed": "కేసు మూసివేయబడింది",
     "Status": "స్థితి",
-    "Case Worker": "కేస్ వర్కర్"
+    "Case Worker": "కేస్ వర్కర్",
+    "Case manager": "కేసు నిర్వాహకుడు",
+    "Inactive": "నిష్క్రియ"
 },
 "tableColumn":{
   "Organization name": "సంస్థ పేరు",
@@ -1409,6 +1414,7 @@
   "Intervention status": "ఇంటర్వెన్షన్ స్థితి",
   "% of cases assigned": "అన్ని కేసుల్లో % కేటాయించబడింది",
   "Completion rate": "పూర్తి రేటు",
-  "Overall rating": "మొత్తం రేటింగ్"
+  "Overall rating": "మొత్తం రేటింగ్",
+  "Name": "పేరు"
 }
 }

@@ -14,7 +14,7 @@ export const familyBasicDetails = [
     {
         type: 'dropdown',
         name: 'caseWorker',
-        label: 'Case worker',
+        label: 'common:common.Case worker',
         translateLabels: true,
         required: true,
         validateOnChange: true,

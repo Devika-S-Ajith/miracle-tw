@@ -99,6 +99,7 @@
     "FirstName": "முதல் பெயர்",
     "LastName": "கடைசி பெயர்",
     "Family Name": "குடும்பப் பெயர்",
+    "Family name": "குடும்பப் பெயர்",
     "Id": "எண்",
     "UserId": "பயனர் எண்",
     "Details": "விவரங்கள்",
@@ -185,6 +186,7 @@
     "No": "இல்லை",
     "Child Name": "குழந்தையின் பெயர்",
     "Case Worker": "வழக்குப் பணியாளர்",
+    "Case worker": "வழக்குப் பணியாளர்",
     "Caseworker Name": "வழக்குப் பணியாளர் பெயர்",
     "Language": "மொழி",
     "Primary Language": "Primary Language",
@@ -234,6 +236,7 @@
     "Created Date": "உருவாக்கிய தேதி",
     "Number of Assessments": "மதிப்பீடுகளின் எண்ணிக்கை",
     "Search": "தேடிடு",
+    "searchPlaceholder": "தேடிடு...",
     "No of Members": "உறுப்பினர்களின் எண்ணிக்கை",
     "No of Children": "குழந்தைகளின் எண்ணிக்கை",
     "General Information": "பொது தகவல்",
@@ -1386,7 +1389,9 @@
     "Active": "செயலில் உள்ளது",
     "Case Closed": "வழக்கு மூடப்பட்டது",
     "Status": "நிலை",
-    "Case Worker": "வழக்குப் பணியாளர்"
+    "Case Worker": "வழக்குப் பணியாளர்",
+    "Case manager": "வழக்குப் பணியாளர்",
+    "Inactive": "செயலற்றதாக உள்ளது"
   },
 "tableColumn":{
   "Organization name": "நிறுவனத்தின் பெயர்",
@@ -1443,6 +1448,7 @@
   "Intervention status": "தலையீட்டு நிலை",
   "% of cases assigned" : "% of cases assigned",
   "Completion rate": "Completion rate",
-  "Overall rating": "Overall rating"
+  "Overall rating": "Overall rating",
+  "Name": "பெயர்"
 }
 }

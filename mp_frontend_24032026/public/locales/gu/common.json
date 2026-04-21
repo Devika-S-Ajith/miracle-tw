@@ -99,6 +99,7 @@
     "FirstName": "પ્રથમ નામ",
     "LastName": "છેલ્લું નામ ",
     "Family Name": "પરિવારનું નામ/અટક ",
+    "Family name": "પરિવારનું નામ/અટક ",
     "Id": "આઈ.ડી. ",
     "UserId": "ઉપયોગકર્તાનું આઈ.ડી. ",
     "Details": "વિગતો ",
@@ -184,6 +185,7 @@
     "No": "ના ",
     "Child Name": "બાળકનું નામ ",
     "Case Worker": "કેસ વર્કર ",
+    "Case worker": "કેસ વર્કર ",
     "Caseworker Name": "કેસ વર્કરનું નામ ",
     "Language": "ભાષા ",
     "Primary Language": "પ્રાથમિક ભાષા ",
@@ -233,6 +235,7 @@
     "Created Date": "બનાવ્યા તારીખ ",
     "Number of Assessments": "આકરણીની  સંખ્યા",
     "Search": "શોધો ",
+    "searchPlaceholder": "શોધો...",
     "No of Members": "સભ્યોની સંખ્યા ",
     "No of Children": "બાળકોની સંખ્યા ",
     "General Information": "સામાન્ય માહિતી ",
@@ -1352,7 +1355,9 @@
     "Active": "સક્રિય",
     "Case Closed": "કેસ બંધ કરેલ છે",
     "Status": "સ્થિતિ",
-    "Case Worker": "કેસ વર્કર"
+    "Case Worker": "કેસ વર્કર",
+    "Case manager": "કેસ મેનેજર ",
+    "Inactive": "નિષ્ક્રિય  "
 },
 "tableColumn": {
   "Organization name": "સંસ્થા નામ",
@@ -1409,6 +1414,7 @@
   "Intervention status": "હસ્તક્ષેપ સ્થિતિ",
   "% of cases assigned": "કેસો ફાળવવાના ટકા",
   "Completion rate": "પૂર્ણતા દર",
-  "Overall rating": "એકંદર રેટિંગ"
+  "Overall rating": "એકંદર રેટિંગ",
+  "Name": "નામ "
 }
 }
