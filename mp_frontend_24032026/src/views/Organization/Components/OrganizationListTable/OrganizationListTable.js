@@ -59,7 +59,7 @@ import { getLocationNames } from "../../../../helpers/helperFunction";
 import DeactivateAccount from "../DeactivateAccount";
 import "./OrganizationListTable.css";
 import ListPaging from "../../../../components/UserComponents/ListPaging";
-import { ADMIN, ADMIN_CASEMANAGER, ADMIN_CASEWORKER, SUPER_ADMIN } from "../../../../helpers/constant";
+import { ADMIN, ADMIN_CASEWORKER, SUPER_ADMIN } from "../../../../helpers/constant";
 
 const columnHeaders = [
   {
@@ -1616,7 +1616,7 @@ const handleDeactivateOrReactivate = async (account, ref) => {
                           </MenuItem>
                           {([SUPER_ADMIN].includes(signedinUserRoleHT) ||
                             (account.id === loggedInUserOrgId &&
-                              ([ADMIN, ADMIN_CASEMANAGER].includes(
+                              ([ADMIN, ADMIN_CASEWORKER].includes(
                                 signedinUserRoleFS
                               ) ||
                                 [ADMIN, ADMIN_CASEWORKER].includes(
@@ -1644,7 +1644,7 @@ const handleDeactivateOrReactivate = async (account, ref) => {
                           {([SUPER_ADMIN, ADMIN_CASEWORKER, ADMIN].includes(
                             signedinUserRoleHT
                           ) ||
-                            [SUPER_ADMIN, ADMIN, ADMIN_CASEMANAGER].includes(
+                            [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER].includes(
                               signedinUserRoleFS
                             )) &&
                             account.isActive && (

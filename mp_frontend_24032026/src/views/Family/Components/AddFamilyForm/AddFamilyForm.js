@@ -578,7 +578,7 @@ const AddFamilyForm = (props) => {
                   <Grid item md={12} xs={12}>
                     <Typography variant="h6">
                       {/* Member {index + 1} */}
-                      {t("common:family.Family Details", "Family Details")}
+                      {t("common:family.Family Detail")}
                     </Typography>
                   </Grid>
 

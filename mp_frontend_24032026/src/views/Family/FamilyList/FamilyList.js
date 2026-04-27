@@ -30,13 +30,13 @@ const FamilyList = () => {
     isOpen: false,
   });
 
-  useAuthorization(
-    signedinUserRoleHT,
-    null,
-    signedinOrgType,
-    "ManageFamily",
-    true
-  );
+  // useAuthorization(
+  //   signedinUserRoleHT,
+  //   null,
+  //   signedinOrgType,
+  //   "ManageFamily",
+  //   true
+  // );
 
   const getFamilyListpayloadConstant = {
     rowCount: "10",

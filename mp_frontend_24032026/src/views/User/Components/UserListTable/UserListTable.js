@@ -57,7 +57,6 @@ import ListPaging from "../../../../components/UserComponents/ListPaging";
 import { useDebouncedCallback } from "use-debounce";
 import {
   ADMIN,
-  ADMIN_CASEMANAGER,
   ADMIN_CASEWORKER,
   PARENT_ROLE_ID,
   SUPER_ADMIN,
@@ -1237,7 +1236,7 @@ const UserListTable = (props) => {
           </Menu>
         </Box>
         {([SUPER_ADMIN, ADMIN_CASEWORKER, ADMIN].includes(signedinUserRoleHT) ||
-          [SUPER_ADMIN, ADMIN, ADMIN_CASEMANAGER].includes(
+          [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER].includes(
             signedinUserRoleFS
           )) && (
           <Button
@@ -1400,7 +1399,7 @@ const UserListTable = (props) => {
                             [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER].includes(
                               signedinUserRoleHT
                             ) ||
-                            [SUPER_ADMIN, ADMIN, ADMIN_CASEMANAGER].includes(
+                            [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER].includes(
                               signedinUserRoleFS
                             ) ? (
                               <Link
@@ -1543,7 +1542,7 @@ const UserListTable = (props) => {
                       {([SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER].includes(
                         signedinUserRoleHT
                       ) ||
-                        [SUPER_ADMIN, ADMIN, ADMIN_CASEMANAGER].includes(
+                        [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER].includes(
                           signedinUserRoleFS
                         )) && (
                         <TableCell align="right">

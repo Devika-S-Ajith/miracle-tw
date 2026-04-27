@@ -4,15 +4,17 @@ import { Box, Chip, Divider, Grid, Stack } from "@mui/material";
 import BodyText from "../../../../components/BodyText/BodyText";
 import { convertUnderscoreToText, dateFormatter } from "../../../../constants";
 import {
-  calculateAgeReverseOrder,
   getLanguageNameFromId,
   formatAddressFromContactInfo,
+  calculateAge,
 } from "../../../../helpers/helperFunction";
 import LabelValue from "../../../../components/LabelValue/LabelValue";
 import { CommonDataContext } from "../../../../common/contexts/CommonDataContext";
+import { useTranslation } from "react-i18next";
 
 
 const ChildSummary = ({ child }) => {
+  const { t } = useTranslation(["common"]); 
   const { locationList } = useContext(CommonDataContext);
   return (
     <CommonCard title="Child Summary">
@@ -20,7 +22,7 @@ const ChildSummary = ({ child }) => {
         <Grid item xs={12} md={6}>
           <LabelValue
             label="Full name"
-            value={`${child?.firstName} ${child?.lastName}`}
+            value={`${child?.firstName} ${child?.lastName ? child.lastName : ""}`}
             labelColor="#535F66"
             fontWeight={700}
           />
@@ -29,10 +31,23 @@ const ChildSummary = ({ child }) => {
           <LabelValue
             label="Status"
             value={
-              <Chip label={child?.status} sx={{ backgroundColor: "#71C5D4" }} />
+              <Chip
+                label={child?.status}
+                size="small"
+                sx={{
+                  backgroundColor:
+                    child?.status === "Active"
+                      ? "#3DAA1D"
+                      : child?.status === "Case Closed"
+                        ? "#D6DBDE"
+                        : "#71C5D4",
+                  color: child?.status === "Active" ? "white" : "black",
+                  fontSize: "0.75rem",
+                  fontWeight: 600,
+                  borderRadius: "20px",
+                }}
+              />
             }
-            labelColor="#535F66"
-            fontWeight={700}
           />
         </Grid>
         <Grid item xs={12} md={6}>
@@ -40,7 +55,7 @@ const ChildSummary = ({ child }) => {
             label="Date of Birth / Age"
             value={
               child?.dateOfBirth &&
-              `${dateFormatter(child?.dateOfBirth, "short")} (${calculateAgeReverseOrder(dateFormatter(child?.dateOfBirth))})`
+              `${dateFormatter(child?.dateOfBirth, "short")} (${calculateAge(dateFormatter(child?.dateOfBirth), t)})`
             }
             labelColor="#535F66"
             fontWeight={700}

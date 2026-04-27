@@ -11,7 +11,8 @@ import {
     Menu,
     CircularProgress,
     Skeleton,
-    MenuItem
+    MenuItem,
+    Modal
 } from '@mui/material';
 import { Stack } from '@mui/system';
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -62,8 +63,12 @@ const InlineMemberCreation = ({
     const [isAdding, setIsAdding] = useState(false);
     const [menuState, setMenuState] = useState({ anchorEl: null, member: null });
     const open = Boolean(menuState.anchorEl);
-
-
+    const [childToEdit, setChildToEdit] = useState(null);
+    const [childModalOpen, setChildModalOpen] = useState(false);
+    const [hideChildModal, setHideChildModal] = useState(false);
+    const handleChildModalOpen = () => {
+        setChildModalOpen(!childModalOpen);
+    };
     const getMemberDetailsRef = useRef(null);
     getMemberDetailsRef.current = (member) => {
     formik?.setValues(prev => {
@@ -120,7 +125,7 @@ const InlineMemberCreation = ({
 
     const menuActions = [
         {
-            label: t("common:family.Edit", "Edit"),
+            label: t("common:common.Edit", "Edit"),
             icon: PencilEditIcon,
             onClick: (obj) => handleEditMember(obj),
         },
@@ -179,28 +184,33 @@ const InlineMemberCreation = ({
             }
             : modalConfig;
 
-        ModalService.open(({ close }) => (
-            ["3", "9"].includes(member.TWFamilyRelationId) ? (
-                <ManageChildForm
-                    isFromFamily={true}
-                    close={close}
-                    getMemberDetails={getMemberDetails}
-                    id={member?.id}
-                    childInfo={{ ...member, TWFamilyId: familyId, caseWorkerId: caseWorker }}
-                />
-            ) : (
-                <AddFamilyMemberModal
-                    onClose={close}
-                    getMemberDetails={getMemberDetails}
-                    member={member}
-                    familyId={familyId}
-                    isFamilyActive={isFamilyActive}
-                    isMemberActive={member?.isActive}
-                    dropdownValues={{ familyRelations: familyRelations.filter(relation => relation.groupValue !== "Child") }}
-                />
-            )
-        ), updatedConfig);
+        
+            ["3", "9"].includes(member.TWFamilyRelationId)
+              ? handleChildEdit(member?.id)
+              : ModalService.open(
+                  ({ close }) => (
+                    <AddFamilyMemberModal
+                      onClose={close}
+                      getMemberDetails={getMemberDetails}
+                      member={member}
+                      familyId={familyId}
+                      isFamilyActive={isFamilyActive}
+                      isMemberActive={member?.isActive}
+                      dropdownValues={{
+                        familyRelations: familyRelations.filter(
+                          (relation) => relation.groupValue !== "Child",
+                        ),
+                      }}
+                    />
+                  ),
+                  updatedConfig,
+                );
     };
+
+    const handleChildEdit= (child) => {
+        setChildToEdit(child);
+        setChildModalOpen(true);
+    }
 
     const handleAddMember = async (push) => {
         setIsAdding(true);
@@ -565,8 +575,35 @@ const localReasonRef = useRef("");
         return isChild ? familyRelations.filter(relation => relation.groupValue === "Child")
             : familyRelations.filter(relation => relation.groupValue !== "Child");
     };
-
     return (
+        <>
+           <Modal
+        open={childModalOpen}
+        onClose={handleChildModalOpen}
+        sx={{ visibility: hideChildModal ? "hidden" : "visible" }}
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: { xs: "90%", sm: 500, md: 600, lg: 700 },
+            bgcolor: "background.paper",
+            // border: "2px solid #000",
+            p: 3,
+            boxShadow: 24,
+          }}
+        >
+          <ManageChildForm
+            handleChildModalOpen={handleChildModalOpen}
+            id={childToEdit}
+            // refreshData={getChildren}
+            // refreshTable={getTableData} // Refresh data after re-opening case
+            setHideChildModal={setHideChildModal}
+          />
+        </Box>
+      </Modal>
         <FieldArray name="members">
             {({ insert, remove, push }) => (
                 <>
@@ -703,7 +740,7 @@ const localReasonRef = useRef("");
                                                             }}
                                                         />
                                                         <Typography sx={{ whiteSpace: 'wrap' }}>
-                                                            {t('common:family.Primary contact', 'Primary contact')}
+                                                            {t('common:common.Primary contact', 'Primary contact')}
                                                         </Typography>
                                                         <IconButton
                                                             aria-label="more"
@@ -751,6 +788,7 @@ const localReasonRef = useRef("");
                 </>
             )}
         </FieldArray>
+        </>
     );
 };
 

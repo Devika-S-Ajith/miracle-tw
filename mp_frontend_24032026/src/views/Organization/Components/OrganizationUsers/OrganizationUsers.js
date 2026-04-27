@@ -31,7 +31,6 @@ import APIS from "../../../../common/hooks/UseApiCalls";
 import { CommonDataContext } from "../../../../common/contexts/CommonDataContext";
 import {
   ADMIN,
-  ADMIN_CASEMANAGER,
   ADMIN_CASEWORKER,
   SUPER_ADMIN,
 } from "../../../../helpers/constant";
@@ -406,7 +405,7 @@ const OrganizationUsers = ({ selectedCountry }) => {
                           {[SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER].includes(
                             signedinUserRoleHT
                           ) ||
-                          [SUPER_ADMIN, ADMIN, ADMIN_CASEMANAGER].includes(
+                          [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER].includes(
                             signedinUserRoleFS
                           ) ? (
                             <RouterLink
@@ -486,7 +485,7 @@ const OrganizationUsers = ({ selectedCountry }) => {
                         {([SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER].includes(
                           signedinUserRoleHT
                         ) ||
-                          [SUPER_ADMIN, ADMIN, ADMIN_CASEMANAGER].includes(
+                          [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER].includes(
                             signedinUserRoleFS
                           )) && (
                           <TableCell align="right">

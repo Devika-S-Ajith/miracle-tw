@@ -306,7 +306,6 @@ const AddFamilyMemberModal = ({ onClose, getMemberDetails,familyId, member, isFa
 
                 // Sync valuesRef every render — safe mutation, does NOT trigger re-render
                 valuesRef.current = values;
-
                 return (
                     <fieldset disabled={isSubmitting} style={{ border: "none", padding: 0 }}>
                         <form onSubmit={handleSubmit}>
@@ -329,7 +328,7 @@ const AddFamilyMemberModal = ({ onClose, getMemberDetails,familyId, member, isFa
                                         <AccordionSection title={t("common:family.Profile information", "Profile information")}>
                                             <Grid container spacing={1}>
                                                 <DynamicForm
-                                                    config={modalMemberPersonalFormConfig}
+                                                    config={modalMemberPersonalFormConfig({phoneRef})}
                                                     values={values}
                                                     errors={errors}
                                                     touched={touched}

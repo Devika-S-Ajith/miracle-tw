@@ -55,6 +55,8 @@ const ManageChildForm = ({
   childInfo,
   isFromFamily = false,
   refreshTable,
+  refreshData,
+  hideChildModal
 }) => {
   const { t } = useTranslation(["common"]);
   const [isLoading, setIsLoading] = useState(false); // Defined missing state
@@ -392,6 +394,7 @@ const ManageChildForm = ({
       if (res?.status === 200) {
         handleChildModalOpen(); // Close the current form/modal
         if (refreshTable) refreshTable(); // Callback to parent to refresh data or update UI
+        if (refreshData) refreshData(); // Refresh child details if callback provided
         ModalService.open(() => null, {
           width: "30%",
           modalDescription: (
@@ -414,6 +417,7 @@ const ManageChildForm = ({
 
   const onCloseCaseHandler = () => {
     if (refreshTable) refreshTable(); // Callback to parent to refresh data or update UI
+    if (refreshData) refreshData(); // Refresh child details if callback provided
   };
 
   return (
@@ -722,7 +726,8 @@ const ManageChildForm = ({
               );
             }
 
-            refreshTable();
+            if (refreshTable) refreshTable();
+            if (refreshData) refreshData();
           }
         } catch (error) {
           console.error(error);
@@ -751,8 +756,6 @@ const ManageChildForm = ({
         valuesRef.current = values;
         isFormDirtyRef.current = dirty;
 
-        console.log("Formik Errors: ", errors, values);
-
         // Auto-scroll to error
         if (isSubmitting && Object.keys(errors)?.length > 0) {
           const el = document.querySelector(".Mui-error, [data-error]");
@@ -769,11 +772,11 @@ const ManageChildForm = ({
                 mb={2}
               >
                 <Stack direction="row" justifyContent="flex-start" spacing={1}>
-                  <Heading heading="Child" />
+                  <Heading heading={t("common:common.Child", "Child")} />
                   <Heading
                     heading={
                       childDetails
-                        ? `${childDetails?.status}${
+                        ? `${t(`common:common.${childDetails?.status}`, childDetails?.status)}${
                             childDetails?.status === "Case Closed"
                               ? ` ${MonthDayYearFormatter(
                                   childDetails?.lastCaseClosedDate,
@@ -781,7 +784,7 @@ const ManageChildForm = ({
                                 )}`
                               : ""
                           }`
-                        : "Active"
+                        : t("common:common.Active", "Active")
                     }
                     color="#F37123"
                   />
@@ -812,6 +815,7 @@ const ManageChildForm = ({
                           uniqueCheckHandler,
                           setFieldError,
                           validateForm,
+                          t
                         })}
                         isDisabled={
                           isSubmitting || childDetails?.status === "Case Closed"
@@ -820,7 +824,7 @@ const ManageChildForm = ({
                       <Grid item xs={12}>
                         <SubHeading
                           value={t(
-                            "common:common.Contact information",
+                            "common:family.Contact information",
                             "Contact information",
                           )}
                         />
@@ -836,6 +840,7 @@ const ManageChildForm = ({
                               values,
                               handleSameAddressChange,
                               setFieldValue,
+                              t
                             })}
                             isDisabled={
                               isSubmitting ||
@@ -855,6 +860,7 @@ const ManageChildForm = ({
                               handleFamilyChange,
                               values,
                               setFieldValue,
+                              t
                             })}
                             t={t}
                             isDisabled={
@@ -925,6 +931,7 @@ const ManageChildForm = ({
                 </Box>
 
                 <ChildFormFooter
+                  hideChildModal={hideChildModal}
                   childId={id}
                   childDetails={childDetails}
                   handleChildModalOpen={handleChildModalOpen}

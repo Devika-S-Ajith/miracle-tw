@@ -321,7 +321,6 @@ const MessagesList = () => {
   ];
 
   const showMessageActivityHandler = async (row) => {
-    console.log("row", row);
     try {
       setIsLoading(true);
       const res = await APIS.getReadCount({

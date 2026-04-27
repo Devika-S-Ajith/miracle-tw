@@ -70,10 +70,9 @@ const resetTokenURL =
 const ForgotPasswordURL = AppConfig.baseURL + "/user/forgot-password";
 const UpdatePasswordURL = AppConfig.baseURL + "/user/update-password";
 const NewPasswordOnRegistrationURL = AppConfig.baseURL + "/user/register";
-const validateTSRoleChangeURL = AppConfig.baseURL + "/validate-ht-role-change";
-const validateFSRoleChangeURL = AppConfig.baseURL + "/validate-fs-role-change";
+const validateRoleChangeURL = AppConfig.baseURL + "/validate-tw-role-change";
 const ValidateUserDeactivationTSURL =
-  AppConfig.baseURL + "/validate-ht-user-deactivation";
+  AppConfig.baseURL + "/tw-cases/validate-ht-role-change";
 const ValidateUserDeactivationFSURL =
   AppConfig.baseURL + "/fs-user-deactivation-check";
 const ChildListURL = AppConfig.baseURL + "/tw-child/list";
@@ -220,10 +219,10 @@ const fsParentsURL = AppConfig.baseURL + "/user/parents";
 const getFsFamilyURL = AppConfig.baseURL + "/fs-family";
 const fsFamilyDropdownURL = AppConfig.baseURL + "/fs-family-list";
 const GetFamilyImagesURL = AppConfig.baseURL + "/fs-family-images";
-const getMessageListURL = AppConfig.baseURL + "/tw-messages";
-const createScheduleMessageURL = AppConfig.baseURL + "/tw-scheduled-message";
-const createMessageURL = AppConfig.baseURL + "/tw-message";
-const getScheduledMessageListURL = AppConfig.baseURL + "/tw-scheduled-messages";
+const getMessageListURL = AppConfig.baseURL + "/fs-messages";
+const createScheduleMessageURL = AppConfig.baseURL + "/fs-scheduled-message";
+const createMessageURL = AppConfig.baseURL + "/fs-message";
+const getScheduledMessageListURL = AppConfig.baseURL + "/fs-scheduled-messages";
 const getFamilyPerCaseWorkerURL =
   AppConfig.baseURL + "/fs-reports/getFamiliesPerUser";
 const getCaseManagerChildPerAccountURL =
@@ -1004,8 +1003,7 @@ const APIS = {
 
   validateRoleChange(payload, name) {
     let prerequest = this.PreRequestCall();
-    let APIURL =
-      name === "FSRole" ? validateFSRoleChangeURL : validateTSRoleChangeURL;
+    let APIURL = validateRoleChangeURL;
     return axios.all([prerequest]).then((res) => {
       return axios
         .post(APIURL, payload)

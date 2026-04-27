@@ -13,10 +13,10 @@ const AddChild = () => {
   const comingFromFam = Boolean(state?.fromFamily);
   const famNumber = state?.fromFamily;
   const { t } = useTranslation(["common"]);
-  const { signedinOrgType, signedinUserRoleHT } = useContext(CommonDataContext);
+  const { signedinOrgType, signedinUserRoleHT, signedinUserRoleFS } = useContext(CommonDataContext);
 
   //handle role permissions
-  useAuthorization(signedinUserRoleHT, null, signedinOrgType, 'AddChild', true)
+  useAuthorization(signedinUserRoleHT, signedinUserRoleFS, signedinOrgType, 'AddChild', true)
 
   return (
     <>

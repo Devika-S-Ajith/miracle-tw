@@ -26,7 +26,6 @@ import {
 import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
 import {
   ADMIN,
-  ADMIN_CASEMANAGER,
   ADMIN_CASEWORKER,
   SUPER_ADMIN,
 } from "../../../helpers/constant";
@@ -215,7 +214,7 @@ const handleDeactivateOrReactivate = async (account, ref) => {
         {([SUPER_ADMIN].includes(signedinUserRoleHT) ||
           (account.id === loggedInUserOrgId &&
             ([ADMIN_CASEWORKER, ADMIN].includes(signedinUserRoleHT) ||
-              [ADMIN, ADMIN_CASEMANAGER].includes(signedinUserRoleFS)))) && (
+              [ADMIN, ADMIN_CASEWORKER].includes(signedinUserRoleFS)))) && (
           <Grid item>
             <IconButton color="inherit" onClick={handleMenuClick}>
               <img
@@ -446,7 +445,7 @@ const handleDeactivateOrReactivate = async (account, ref) => {
               </Grid>
             ) : 
             ([ADMIN, ADMIN_CASEWORKER].includes(signedinUserRoleHT) ||
-              [ADMIN, ADMIN_CASEMANAGER].includes(signedinUserRoleFS)) &&
+              [ADMIN, ADMIN_CASEWORKER].includes(signedinUserRoleFS)) &&
             <Grid item xs={12} md={6}>
               {/* Case Managers Section */}
               {account.caseManagerCount && (

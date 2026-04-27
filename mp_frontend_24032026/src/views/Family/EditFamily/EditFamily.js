@@ -72,6 +72,7 @@ const EditFamily = () => {
     memberTypeList,
     childFamilyList,
     signedinUserRoleHT,
+    signedinUserRoleFS,
     signedinOrgType,
     userRegion,
   } = useContext(CommonDataContext);
@@ -101,13 +102,13 @@ const EditFamily = () => {
     setCurrentTab(value);
   };
 
-  useAuthorization(
-    signedinUserRoleHT,
-    null,
-    signedinOrgType,
-    "ManageFamily",
-    true
-  );
+  // useAuthorization(
+  //   signedinUserRoleHT,
+  //   signedinUserRoleFS,
+  //   signedinOrgType,
+  //   "ManageFamily",
+  //   true
+  // );
 
   useEffect(() => {
     if (id) {

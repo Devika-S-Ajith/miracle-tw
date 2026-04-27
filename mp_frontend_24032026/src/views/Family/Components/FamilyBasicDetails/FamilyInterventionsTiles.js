@@ -5,7 +5,7 @@ import CommonCard from "../../../../components/CommonCard/CommonCard";
 import { InterventionsIconBlack } from "../../../../assets/icons/SideBarIcons";
 import APIS from "../../../../common/hooks/UseApiCalls";
 
-const FamilyInterventionsTiles = ({ t, familyId }) => {
+const FamilyInterventionsTiles = ({ familyId, t }) => {
   const [interventions, setInterventions] = useState({
     active_interventions: 0,
     completed_interventions: 0,

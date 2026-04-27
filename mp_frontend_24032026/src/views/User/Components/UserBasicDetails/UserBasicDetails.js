@@ -42,10 +42,7 @@ import CustomTableHeader from "../../../../components/UserComponents/CustomTable
 import { getLocationNames } from "../../../../helpers/helperFunction";
 import {
   ADMIN,
-  ADMIN_CASEMANAGER,
-  ADMIN_CASEMANAGER_FOSTER,
   ADMIN_CASEWORKER,
-  CASEMANAGER,
   CASEWORKER,
   PENDING,
   SUPER_ADMIN,
@@ -163,7 +160,7 @@ const UserBasicDetails = (props) => {
         getChildList();
       }
       if (
-        ([ADMIN, ADMIN_CASEMANAGER].includes(signedinUserRoleFS) ||
+        ([ADMIN, ADMIN_CASEWORKER].includes(signedinUserRoleFS) ||
           id === signedinUserId) &&
         selectedCountry?.id == 2
       ) {
@@ -651,7 +648,7 @@ const UserBasicDetails = (props) => {
                     }
                     secondary={
                       <Typography variant="body2" color="textSecondary">
-                        {phone}
+                        {phone || "-"}
                       </Typography>
                     }
                   />
@@ -791,7 +788,7 @@ const UserBasicDetails = (props) => {
           }}
         /> */}
       </Grid>
-      {[ADMIN, ADMIN_CASEMANAGER, CASEMANAGER, SUPER_ADMIN].includes(
+      {[ADMIN, ADMIN_CASEWORKER, CASEWORKER, SUPER_ADMIN].includes(
         signedinUserRoleFS
       ) &&
         selectedCountry?.id == 2 && (
@@ -817,14 +814,14 @@ const UserBasicDetails = (props) => {
                         label={t("common:common.ACTIVE FOSTER FAMILIES")}
                         signedinUserRoleHT={signedinUserRoleHT}
                         redirectLink={
-                          ([CASEMANAGER, ADMIN_CASEMANAGER].includes(
+                          ([CASEWORKER, ADMIN_CASEWORKER].includes(
                             signedinUserRoleFS
                           ) ||
                             id === signedinUserId) &&
                           (roleListFS.find((item) => item.id === FSRole)
-                            ?.cognitoValue === ADMIN_CASEMANAGER ||
+                            ?.cognitoValue === ADMIN_CASEWORKER ||
                             roleListFS.find((item) => item.id === FSRole)
-                              ?.cognitoValue === CASEMANAGER)
+                              ?.cognitoValue === CASEWORKER)
                             ? `/fostershare/families`
                             : ""
                         }
@@ -843,14 +840,14 @@ const UserBasicDetails = (props) => {
                         count={tileData?.childrenServed}
                         label={t("common:common.ACTIVE CHILDREN")}
                         redirectLink={
-                          ([CASEMANAGER, ADMIN_CASEMANAGER].includes(
+                          ([CASEWORKER, ADMIN_CASEWORKER].includes(
                             signedinUserRoleFS
                           ) ||
                             id === signedinUserId) &&
                           (roleListFS.find((item) => item.id === FSRole)
-                            ?.cognitoValue === ADMIN_CASEMANAGER ||
+                            ?.cognitoValue === ADMIN_CASEWORKER ||
                             roleListFS.find((item) => item.id === FSRole)
-                              ?.cognitoValue === CASEMANAGER)
+                              ?.cognitoValue === CASEWORKER)
                             ? `/fostershare/children`
                             : ""
                         }

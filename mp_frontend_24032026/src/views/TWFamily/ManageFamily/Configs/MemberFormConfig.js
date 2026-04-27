@@ -45,7 +45,7 @@ export const InlineChildCreationConfig = [
     {
         type: 'SearchableTextField',
         name: 'firstName',
-        placeholder: ('common:common.First name','First name'),
+         placeholder: ('common:common.First name','First name'),
         required: true,
         showTooltip: false,
         fullWidth: true,
@@ -57,7 +57,7 @@ export const InlineChildCreationConfig = [
     {
         type: 'text',
         name: 'lastName',
-        placeholder: ('common:common.Last name','Last name'),
+          placeholder: ('common:common.Last name','Last name'),
         size: 'small',
         color:"#FFFFFF",
         required: false,
@@ -137,13 +137,14 @@ export const modalMemberBasicFormConfig = [
 
 ];
 
-export const modalMemberPersonalFormConfig = [{
+export const modalMemberPersonalFormConfig = ({phoneRef}) => [{
         type: 'PhoneNumber',
         name: 'phoneNumber',
         label: 'common:common.Phone Number',
         fullWidth: true,
         variant: 'outlined',
-        gridProps: { md: 12, xs: 12 }
+        gridProps: { md: 12, xs: 12 },
+        phoneRef: phoneRef
     },
     {
         type: 'text',

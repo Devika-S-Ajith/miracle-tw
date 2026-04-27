@@ -33,7 +33,7 @@ import FamilyMilestones from "../Components/FamilyMilestones/FamilyMilestones";
 import FamilyInterventions from "./FamilyInterventions";
 import ConsolidatedAssessmentProgressReport from "../../../components/ConsolidatedAssessmentProgressReport";
 import ChildLogs from "../../Child/Components/ChildLogs";
-import { ADMIN, ADMIN_CASEMANAGER, ADMIN_CASEWORKER, CASEMANAGER, CASEWORKER, SUPER_ADMIN, VIEW_ONLY } from "../../../helpers/constant";
+import { ADMIN, ADMIN_CASEWORKER,CASEWORKER, SUPER_ADMIN, VIEW_ONLY } from "../../../helpers/constant";
 
 
 
@@ -51,7 +51,7 @@ const FamilyDetails = () => {
   const [memberListLoading, setMemberListLoading] = useState(false);
   const [memberList, setMemberList] = useState([]);
 
-  const IS_FS_ALLOWED = [SUPER_ADMIN, ADMIN, CASEMANAGER, ADMIN_CASEMANAGER, VIEW_ONLY].includes(signedinUserRoleFS);
+  const IS_FS_ALLOWED = [SUPER_ADMIN, ADMIN, CASEWORKER, ADMIN_CASEWORKER , VIEW_ONLY].includes(signedinUserRoleFS);
   const IS_HT_ALLOWED = [SUPER_ADMIN, ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY].includes(signedinUserRoleHT);
   const BOTH_FS_HT_ALLOWED = IS_FS_ALLOWED || IS_HT_ALLOWED;
 
@@ -87,13 +87,13 @@ const FamilyDetails = () => {
     return () => {};
   }, []);
 
-  useAuthorization(
-    signedinUserRoleHT,
-    signedinUserRoleFS,
-    signedinOrgType,
-    "ManageFamily",
-    true
-  );
+  // useAuthorization(
+  //   signedinUserRoleHT,
+  //   signedinUserRoleFS,
+  //   signedinOrgType,
+  //   "ManageFamily",
+  //   true
+  // );
 
   const getFamilyDetails = useCallback(async () => {
     setLoading(true);
@@ -171,7 +171,6 @@ const FamilyDetails = () => {
               <Grid item>
                 <PageBreadcrumbs
                   data={[
-                    // BreadcrumbsLinkThriveScale(t, navigate),
                     {
                       label: t("common:family.Families"),
                       onClick: () => navigate("/dashboard/families"),
