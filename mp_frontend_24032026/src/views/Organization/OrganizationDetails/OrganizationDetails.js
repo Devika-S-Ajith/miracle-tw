@@ -62,7 +62,7 @@ const OrganizationDetails = () => {
 
   useEffect(() => {
     getOrganisation();
-    return () => {};
+    return () => { };
   }, []);
 
   const handleRefresh = () => {
@@ -75,9 +75,6 @@ const OrganizationDetails = () => {
     }
   }, [refresh]);
 
-  if (!account) {
-    return null;
-  }
 
   return (
     <>
@@ -121,87 +118,32 @@ const OrganizationDetails = () => {
                   <ChevronRightIcon color="disabled" fontSize="small" />
                 </Box>
                 <Typography color="textPrimary" variant="h5">
-                  {account.accountName}
+                  {account?.accountName}
                 </Typography>
               </Grid>
             </Grid>
             <Grid container spacing={2} style={{ marginTop: "0px" }}>
               <Grid item xs={12}>
                 <Grid item xs={12}>
-                  <Grid container spacing={2}>
-                    {/* AccountDetailsCard: full width for non-super-admins */}
-                    <Grid
-                      item
-                      xs={signedinUserRoleHT === "superadmin" ? 6 : 12}
-                    >
+                  {/* ✅ alignItems="stretch" makes both items grow to the tallest sibling */}
+                  <Grid container spacing={2} alignItems="stretch">
+                    <Grid item xs={6} >
                       <AccountDetailsCard
                         account={account}
                         loading={loading}
                         setRefresh={handleRefresh}
                         getOrganisation={getOrganisation}
+                        sx={{  height: "100%" }} // ← pass if AccountDetailsCard uses Box/Card with sx
                       />
                     </Grid>
-                    {signedinUserRoleHT === "superadmin" && (
-                      <Grid item xs={6}>
-                        <OrganizationalOverview
-                          isGeneralDashboard={false}
-                          isSuperAdmin={false}
-                        />
-                      </Grid>
-                    )}
-                  </Grid>
-                </Grid>
-              </Grid>
-
-              <Grid item xs={12}>
-                <Grid container spacing={2}>
-                  {signedinUserRoleFS !== UNASSIGNED &&
-                    signedinUserRoleHT !== "superadmin" && (
-                    <Grid item xs={5}>
-                      <Paper style={{ height: "100%" }}>
-                        {account?.accessType === "BOTH" ||
-                        account?.accessType === "FOSTER_SHARE" ? (
-                          <FosterShareDetailsCard
-                            accountId={id}
-                            selectedCountry={selectedCountry}
-                          />
-                        ) : (
-                          <Card sx={{ borderRadius: "8px", px: 2, height: 1 }}>
-                            <CardHeader
-                              title={t("common:common.FosterShare")}
-                            />
-                            <CardContent sx={{ pt: 0 }}>No access</CardContent>
-                          </Card>
-                        )}
-                      </Paper>
+                    <Grid item xs={6} >
+                      <OrganizationalOverview
+                        isGeneralDashboard={false}
+                        isSuperAdmin={false}
+                        sx={{ height: "100%" }} // ← same
+                      />
                     </Grid>
-                  )}
-                  {signedinUserRoleHT !== UNASSIGNED &&
-                    signedinUserRoleHT !== "superadmin" &&
-                    ![6].includes(Number(signedinOrgType)) && (
-                      <Grid item xs={7}>
-                        <Paper style={{ height: "100%" }}>
-                          {account?.accessType === "BOTH" ||
-                          account?.accessType === "THRIVE_SCALE" ? (
-                            <ThriveScaleDetailsCard
-                              accountId={id}
-                              selectedCountry={selectedCountry}
-                            />
-                          ) : (
-                            <Card
-                              sx={{ borderRadius: "8px", px: 2, height: 1 }}
-                            >
-                              <CardHeader
-                                title={t("common:common.Thrive Scale")}
-                              />
-                              <CardContent sx={{ pt: 0 }}>
-                                No access
-                              </CardContent>
-                            </Card>
-                          )}
-                        </Paper>
-                      </Grid>
-                    )}
+                  </Grid>
                 </Grid>
               </Grid>
               <Grid item xs={12}>

@@ -9,7 +9,7 @@ import FamilyMembersAndCaregivers from "../../../Family/Components/FamilyMembers
 
 const ChildBasicDetails = ({ child, members }) => {
   const { t } = useTranslation(["common"]);
-  const familyId = child?.HTFamilyId ?? child?.TWFamilyId;
+  const childId = child?.id;
 
 
   return (
@@ -29,7 +29,7 @@ const ChildBasicDetails = ({ child, members }) => {
         <ChildOverviewList t={t} />
       </Box> */}
       <Box height="fit-content">
-        <ToDoWidget t={t} HTFamilyId={familyId} />
+        <ToDoWidget t={t} TWChildId={childId} />
       </Box>
       {/* <Box height="fit-content">
         <ConcerningBehaviorList />

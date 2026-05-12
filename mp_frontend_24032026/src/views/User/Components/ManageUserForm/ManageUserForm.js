@@ -367,11 +367,7 @@ const ManageUserForm = (props) => {
             ? user?.zipCode.slice(0, 5) + "-" + user?.zipCode.slice(5)
             : user?.zipCode
           : "",
-        phone: accIdFromAccountCreation
-          ? locationList?.find(
-              (individualCountry) => individualCountry.id == initialCountry
-            )?.countryCode
-          : user?.phoneNumber || "+1",
+        phone: user?.phoneNumber || "",
         state: user?.TWStateId || "",
         submit: null,
         city: user?.city || "",
@@ -456,14 +452,7 @@ const ManageUserForm = (props) => {
           .test(
             "phone-format-validation",
             t("common:warnings.Invalid Phone number"),
-            (value, context) => {
-              try {
-                const phoneNumber = phoneUtil.parseAndKeepRawInput(value);
-                return phoneUtil.isValidNumber(phoneNumber);
-              } catch (error) {
-                return false; // Handle parsing errors
-              }
-            }
+            (value) => validatePhoneNumber(value, phoneRef, {required: true}),
           ),
         state: Yup.string()
           .max(255)

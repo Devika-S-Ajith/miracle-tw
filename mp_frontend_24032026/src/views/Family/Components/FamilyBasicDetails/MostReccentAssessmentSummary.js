@@ -56,7 +56,7 @@ const AssessmentSkeleton = () => (
 );
 
 // Empty state subcomponent
-const NoAssessmentState = () => (
+const NoAssessmentState = ({t}) => (
     <Stack alignItems="center" justifyContent="center" spacing={1.5} sx={{ py: 4 }}>
         <Box
             sx={{
@@ -72,10 +72,10 @@ const NoAssessmentState = () => (
             <AssignmentOutlined sx={{ fontSize: 28, color: 'text.secondary' }} />
         </Box>
         <Typography variant="body1" fontWeight="medium" color="text.primary">
-            No assessment done yet
+            {t("common:family.no_assessment_done_yet", "No assessment done yet")}
         </Typography>
         <Typography variant="body2" color="text.secondary" textAlign="center">
-            Assessment results will appear here once the first assessment is completed.
+            {t("common:family.assessment_results","Assessment results will appear here once the first assessment is completed.")}
         </Typography>
     </Stack>
 );
@@ -105,8 +105,10 @@ const MostRecentAssessmentSummary = ({ apiError, reloadFunc, data, loading }) =>
     return (
         <CommonCard
             title={
-                "Most recent assessment summary" +
-                (data?.assessmentNumber ? ` (Assessment #${data?.assessmentNumber})` : "")
+            t("common:family.most_recent_assessment_summary", "Most recent assessment summary") +
+            (data?.assessmentNumber
+              ? ` (${t("common:family.assessment_number", "Assessment #{{number}}", { number: data?.assessmentNumber })})`
+              : "")
             }
             apiError={apiError}
             onReload={reloadFunc}
@@ -128,14 +130,14 @@ const MostRecentAssessmentSummary = ({ apiError, reloadFunc, data, loading }) =>
                                 </Typography>
                                 {getScoreChangeIcon(data?.percentageChangeFromFirst)}
                                 <Typography variant="body2" color="text.secondary">
-                                    (since assessment #1)
+                                    {t("common:family.since_assessment_1", "(since assessment #1)")}
                                 </Typography>
                             </Stack>
                         )}
                     </Stack>
 
                     <Typography variant="h6" component="h3" fontWeight="bold" my={0}>
-                        Domains
+                        {t("common:family.Domains", "Domains")}
                     </Typography>
                     <Stack
                         direction="row"
@@ -184,7 +186,7 @@ const MostRecentAssessmentSummary = ({ apiError, reloadFunc, data, loading }) =>
                     </Stack>
 
                     <Typography variant="h6" component="h3" fontWeight="bold" my={1}>
-                        Milestones
+                        {t("common:common.Milestones", "Milestones")}
                     </Typography>
                     <Stack direction="row" spacing={1}>
                         {Object.entries(milestoneKeysToShow).map(([key, value]) => (

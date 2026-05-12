@@ -13,6 +13,7 @@ import {
 import ArrowRightIcon from "../../../../assets/icons/ArrowRight";
 import { useTranslation } from "react-i18next";
 import MUIPieChart from "./MUIPieCharts";
+import { filter } from "lodash";
 
 const ReportsPieChart = (props) => {
   const { title, res, loading, labels, reportLink, canViewReport, ...other } = props;
@@ -84,6 +85,7 @@ const ReportsPieChart = (props) => {
             navigate(reportLink, {
               state: {
                 fromDashboard: true,
+                filters: { status:['Inactive']}
               },
             })
           }

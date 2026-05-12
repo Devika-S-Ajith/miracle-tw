@@ -6,31 +6,29 @@ import {
 import { useContext } from "react";
 import { CommonDataContext } from "../../../../common/contexts/CommonDataContext";
 import LabelValue from "../../../../components/LabelValue/LabelValue";
+import { Stack } from "@mui/system";
+import BodyText from "../../../../components/BodyText/BodyText";
+import { MonthDayYearFormatter } from "../../../../constants";
 
 
-const FamilySummary = ({ t, family }) => {
-
+const FamilySummary = ({ t, family, mostRecentAssesmentSummary }) => {
   const {
-    id,
+    familyCode,
     familyName,
     contactInformation,
     additionalInformation,
     phoneNumber,
     caseworker,
     isActive,
-    thriveScaleScore,
-    percentageChangeFromFirst = null,
+   
   } = family || {};
-
-
   const {
-    addressLine1,
-    addressLine2,
-    city,
-    TWDistrictId,
-    TWStateId,
-    TWCountryId,
-  } = contactInformation || {};
+    thriveScaleScore,
+    firstAssessmentDateOfAssessment,
+    firstAssessmentThriveScaleScore,
+    assessmentDate,
+    percentageChangeFromFirst = null
+  } = mostRecentAssesmentSummary || {};
   const { TWLanguageId, DateStartedasFP } = additionalInformation || {};
 
 
@@ -167,7 +165,7 @@ const FamilySummary = ({ t, family }) => {
         <Grid item xs={6}>
           <LabelValue
             label="Case number"
-            value={`FAM-${id}`}
+            value={`FAM-${familyCode}`}
             labelColor="#535F66"
             fontWeight={700}
           />
@@ -176,7 +174,27 @@ const FamilySummary = ({ t, family }) => {
           <Divider sx={{ mt: 1, borderBottomWidth: 2, mb: 1 }} />
         </Grid>
       </Grid>
-   
+      {firstAssessmentThriveScaleScore && <Stack
+        justifyContent="center"
+        alignItems="center"
+        direction="row"
+        spacing={2}
+        mt={1}
+      >
+        <Stack>
+          <BodyText value={firstAssessmentThriveScaleScore} fontWeight={600} />
+          <BodyText value={MonthDayYearFormatter(firstAssessmentDateOfAssessment,"short")} />
+        </Stack>
+        <img
+          // key={index}
+          src="/static/icons/rightArrow.png"
+          style={{ width: 25, height: 25 }}
+        />
+        {thriveScaleScore &&<Stack>
+          <BodyText value={thriveScaleScore} fontWeight={600} />
+          <BodyText value={MonthDayYearFormatter(assessmentDate,"short")} />
+        </Stack>}
+      </Stack>}
     </CommonCard>
 
 

@@ -93,6 +93,7 @@ const ManageFamilyForm = (props) => {
                 globalSearchQuery: "",
                 accountId: [localStorage.getItem("orgId")],
                 HTUserRoleId: ["4", "5"],
+                 FSUserRoleId:["4", "5"],
                 HTCountryId: localStorage.getItem("userRegion"),
             };
             payload.HTCountryId = localStorage.getItem("userRegion");
@@ -471,15 +472,19 @@ const ManageFamilyForm = (props) => {
                             .nullable()
                             .max(255)
                             .when('TWFamilyRelationId', (TWFamilyRelationId, schema) => {
-                                return TWFamilyRelationId ? schema.required('First Name is required') : schema;
+                               return TWFamilyRelationId ? schema.required(t('common:warnings.First Name is required', 'First Name is required')) : schema;
+
                             }),
                         lastName: Yup.string()
                             .nullable()
-                            .max(255),
+                            .max(255)
+                            .when('TWFamilyRelationId', (TWFamilyRelationId, schema) => {
+                                return TWFamilyRelationId && !['3','9'].includes(TWFamilyRelationId) ? schema.required('Last Name is required') : schema;
+                            }),
                         dateOfBirth: Yup.date()
                             .nullable()
                             .when('TWFamilyRelationId', (TWFamilyRelationId, schema) => {
-                                return ["3", "9"].includes(TWFamilyRelationId) ? schema.required('DOB is required') : schema;
+                                return ["3", "9"].includes(TWFamilyRelationId) ? schema.required(t('common:warnings.DOB is required', 'DOB is required')) : schema;
                             }),
                         gender: Yup.string()
                             .nullable()
@@ -527,7 +532,7 @@ const ManageFamilyForm = (props) => {
                                 .map(({ isMajor, ...rest }) => ({ ...rest, isMinor: !isMajor })),
                             "existingChildren": values.members
                                 .filter(member => member.isExistingChild && !member.isDeleted)
-                                .map(({ isChild, isMajor, isActive, isExistingChild, ...rest }) => ({ ...rest, isMinor: !rest.isMajor })),
+                                .map(({ isChild, isMajor, isActive, isExistingChild,_rowKey,profileInformation, ...rest }) => ({ ...rest, isMinor: !rest.isMajor })),
                         };
 
 
@@ -826,7 +831,7 @@ const ManageFamilyForm = (props) => {
                                                         />
                                                     ),
                                                     {
-                                                        modalTitle: t("common:family.Close case", "Close case"),
+                                                       modalTitle: t("common:common.Close case", "Close case"),
                                                         width: '30%',
                                                         hideModalFooter: true,
                                                         enableClose: true,

@@ -18,20 +18,21 @@ import { Masonry } from "@mui/lab";
 import { ConcerningBehaviorList } from "../../../Child/Components/ChildBasicDetails/ConcerningBehaviorList";
 import { ChildOverviewList } from "../../../Child/Components/ChildBasicDetails/ChildOverviewList";
 import FamilyMembersAndCaregivers from "../FamilyMembersAndCaregivers";
+import useCRUDPermissions from "../../../../components/UserComponents/useCRUDPermissions";
 
 const FamilyBasicDetails = ({ family }) => {
-
-
-  const { htLanguagesList } =
-    useContext(CommonDataContext);
+  const { signedinUserRoleHT, signedinUserRoleFS } = useContext(CommonDataContext);
   const { t } = useTranslation(["common"]);
   const [mostRecentAssesmentSummary, setMostRecentAssesmentSummary] = useState({});
   const [loadingMostRecentAssessmentSummary, setLoadingMostRecentAssessmentSummary] = useState(false);
   const [apiError, setApiError] = useState(false);
+  const { 
+    IS_HT_ALLOWED, 
+    BOTH_FS_HT_ALLOWED, 
+  } = useCRUDPermissions();
 
   useEffect(() => {
-    getMostRecentAssesmentSummary()
-    return () => { };
+    getMostRecentAssesmentSummary();
   }, []);
 
   const getMostRecentAssesmentSummary = async () => {
@@ -40,10 +41,7 @@ const FamilyBasicDetails = ({ family }) => {
     try {
       const response = await APIS.GetMostRecentAssesmentSummary(family?.id);
       if (response.data && response.data.data) {
-        const mostRecentAssesmentSummary = response.data.data;
-        setMostRecentAssesmentSummary(
-          mostRecentAssesmentSummary
-        );
+        setMostRecentAssesmentSummary(response.data.data);
       }
     } catch (error) {
       setApiError(true);
@@ -53,92 +51,61 @@ const FamilyBasicDetails = ({ family }) => {
     }
   };
 
-  return (
+  // --- RENDERING LOGIC ---
 
+  // Define the widgets to keep code clean
+  const SummaryWidget = BOTH_FS_HT_ALLOWED && (
+    <Box sx={{ height: "fit-content", width: "100%" }}>
+      <FamilySummary t={t} family={family} mostRecentAssesmentSummary={mostRecentAssesmentSummary} />
+    </Box>
+  );
+
+  const MembersWidget = BOTH_FS_HT_ALLOWED && (
+    <Box sx={{ height: "fit-content", width: "100%" }}>
+      <FamilyMembersAndCaregivers members={family?.members} />
+    </Box>
+  );
+
+  // If HT is not allowed, we only have 2 widgets. Use Grid for stability.
+  if (!IS_HT_ALLOWED) {
+    return (
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={6}>
+          {SummaryWidget}
+        </Grid>
+        <Grid item xs={12} md={6}>
+          {MembersWidget}
+        </Grid>
+      </Grid>
+    );
+  }
+
+  // If HT is allowed, use Masonry for the multi-widget dashboard look
+  return (
     <Masonry columns={2} spacing={2}>
+      {SummaryWidget}
+      
       <Box sx={{ height: "fit-content" }}>
-        <FamilySummary t={t} family={family} />
-      </Box>
-      {/* <Box height="fit-content">
-        <ChildOverviewList t={t} />
-      </Box> */}
-      <Box height="fit-content">
         <ToDoWidget t={t} TWFamilyId={family?.id} />
       </Box>
-      {/* <Box height="fit-content">
-        <ConcerningBehaviorList />
-      </Box> */}
-      <Box height="fit-content">
-        <FamilyInterventionsTiles familyId={family?.id} />
-      </Box> 
-      {/* <Box height="fit-content">
-        <FamilyInterventionsTiles familyId={family?.id} />
-      </Box> */}
-      {/* <Box height="fit-content">
-        <FamilyInterventionsTiles familyId={family?.id} />
-      </Box> */}
-      {<Box height="fit-content">
+
+      <Box sx={{ height: "fit-content" }}>
+        <FamilyInterventionsTiles t={t} familyId={family?.id} />
+      </Box>
+
+      <Box sx={{ height: "fit-content" }}>
         <MostReccentAssessmentSummary
           reloadFunc={getMostRecentAssesmentSummary}
           apiError={apiError}
           data={mostRecentAssesmentSummary}
-          loading={loadingMostRecentAssessmentSummary} />
-      </Box>}
-      <Box height="fit-content">
-        <FamilyMembersAndCaregivers  members={family?.members} />
+          loading={loadingMostRecentAssessmentSummary}
+          t={t}
+        />
       </Box>
+
+      {MembersWidget}
     </Masonry>
-
-
-
-
-    // <Grid container spacing={2}>
-    //   <Grid item md={5.9} sm={11.5}>
-    //     <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-    //       <FamilySummary
-    //         t={t}
-    //         familyName={familyName}
-    //         address1={address1}
-    //         address2={address2}
-    //         city={city}
-    //         district={district}
-    //         state={state}
-    //         country={country}
-    //         phoneNumber={familyMembers?.find(member => member.isPrimaryCareGiver)?.phoneNumber}
-    //         caseworkerName={caseworkerName}
-    //         id={id}
-    //         status={status}
-    //         language={language}
-    //         htLanguagesList={htLanguagesList || []}
-    //         firstAssessmentThriveScaleScore={data?.firstAssessmentThriveScaleScore}
-    //         thriveScaleScore={data?.thriveScaleScore}
-    //         assessmentDate={data?.assessmentDate}
-    //         firstAssessmentDateOfAssessment={data?.firstAssessmentDateOfAssessment}
-    //         percentageChangeFromFirst={data?.percentageChangeFromFirst}
-    //       />
-    //       {/* <ToDoWidget t={t} HTFamilyId={id} />
-    //       <FamilyHistory t={t} HTFamilyId={id} /> */}
-    //     </Box>
-    //   </Grid>
-    //   <Grid item md={5.9} xs={11.5}>
-    //     <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-    //       {/* {data?.assessmentId && 
-    //         <MostReccentAssessmentSummary reloadFunc={getMostRecentAssesmentSummary} apiError={apiError} data={data} loading={loadingMostRecentAssessmentSummary} />
-    //       }
-    //       <FamilyInterventionsTiles familyId={id} /> */}
-    //       {/* <FamilyMembers
-    //         familyMembers={familyMembers}
-    //         caseworkerName={caseworkerName}
-    //         familyId={id}
-    //         familyName={familyName}
-    //         getFamilyMembers={getMembersUnderFamily}
-    //         type={"FAMILY"}
-    //         isActiveFamily={status}
-    //       /> */}
-    //     </Box>
-    //   </Grid>
-    // </Grid>
-  )
+  );
 };
 
 export default FamilyBasicDetails;

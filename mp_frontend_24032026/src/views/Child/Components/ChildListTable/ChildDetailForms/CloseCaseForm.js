@@ -9,8 +9,6 @@ import { useTranslation } from "react-i18next";
 import { ModalService } from "../../../../../components/Modal";
 import SubHeading from "../../../../../components/SubHeading/SubHeading";
 import { Box } from "@mui/system";
-import RadioGroupList from "../../../../TWFamily/ManageFamily/Components/RadioGroupList";
-import BodyText from "../../../../../components/BodyText/BodyText";
 import { CommonDataContext } from "../../../../../common/contexts/CommonDataContext";
 import APIS from "../../../../../common/hooks/UseApiCalls";
 
@@ -67,6 +65,59 @@ const CloseCaseForm = ({ close, setHideChildModal, handleChildModalOpen, onCaseC
     }
   };
 
+  const {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleBlur,
+    setFieldValue,
+    handleSubmit,
+  } = useFormik({
+    onSubmit: caseCloseHandler,
+    initialValues: {
+      dateCaseClosed: new Date(),
+      association: "",
+      deactivationReason: "",
+      otherReason: null,
+    },
+    validationSchema: Yup.object().shape({
+      dateCaseClosed: Yup.string()
+        .required(
+          t(
+            "common:common.Date case closed is required",
+            "Date case closed is required",
+          ),
+        )
+        .nullable(),
+      association: Yup.string().required(
+        t(
+          "common:common.Please select an association option",
+          "Please select an association option",
+        ),
+      ),
+      deactivationReason: Yup.string().required(
+        t(
+          "common:common.Please select a deactivation reason",
+          "Please select a deactivation reason",
+        ),
+      ),
+      otherReason: Yup.string().when("deactivationReason", {
+        is: (val) => {
+          return val === "37" || val === 37;
+        },
+        then: (schema) =>
+          schema.required(
+            t(
+              "common:common.Please specify other reason",
+              "Please specify other reason",
+            ),
+          ),
+        otherwise: (schema) => schema.notRequired(),
+      }).nullable(),
+    }),
+  });
+
   const cancelHandler = () => {
     close();
     // handleChildModalOpen();
@@ -81,6 +132,7 @@ const CloseCaseForm = ({ close, setHideChildModal, handleChildModalOpen, onCaseC
               values={values}
               errors={errors}
               touched={touched}
+              t={t}
               handleChange={handleChange}
               handleBlur={handleBlur}
               setFieldValue={setFieldValue}

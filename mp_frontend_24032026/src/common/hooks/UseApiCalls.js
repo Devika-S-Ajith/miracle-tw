@@ -70,12 +70,11 @@ const resetTokenURL =
 const ForgotPasswordURL = AppConfig.baseURL + "/user/forgot-password";
 const UpdatePasswordURL = AppConfig.baseURL + "/user/update-password";
 const NewPasswordOnRegistrationURL = AppConfig.baseURL + "/user/register";
-const validateTSRoleChangeURL = AppConfig.baseURL + "/validate-ht-role-change";
-const validateFSRoleChangeURL = AppConfig.baseURL + "/validate-fs-role-change";
+const validateRoleChangeURL = AppConfig.baseURL + "/tw-cases/validate-tw-role-change";
 const ValidateUserDeactivationTSURL =
-  AppConfig.baseURL + "/validate-ht-user-deactivation";
-const ValidateUserDeactivationFSURL =
-  AppConfig.baseURL + "/fs-user-deactivation-check";
+  AppConfig.baseURL + "/tw-cases/validate-ht-role-change";
+const ValidateUserDeactivationURL =
+  AppConfig.baseURL + "/tw-cases/validate-tw-user-deactivation";
 const ChildListURL = AppConfig.baseURL + "/tw-child/list";
 const ChildDetailsPartialURL = AppConfig.baseURL + "/tw-child?child_id=";
 const AddChildURL = AppConfig.baseURL + "/tw-child";
@@ -225,7 +224,7 @@ const createScheduleMessageURL = AppConfig.baseURL + "/tw-scheduled-message";
 const createMessageURL = AppConfig.baseURL + "/tw-message";
 const getScheduledMessageListURL = AppConfig.baseURL + "/tw-scheduled-messages";
 const getFamilyPerCaseWorkerURL =
-  AppConfig.baseURL + "/fs-reports/getFamiliesPerUser";
+  AppConfig.baseURL + "/tw-reports/getFamiliesPerUser";
 const getCaseManagerChildPerAccountURL =
   AppConfig.baseURL + "/fs-reports/getCaseManager-Child-PerAccount";
 
@@ -933,11 +932,11 @@ const APIS = {
     });
   },
 
-  ValidateUserDeactivationFS(payload) {
+  ValidateUserDeactivation(payload) {
     let prerequest = this.PreRequestCall();
     return axios.all([prerequest]).then((res) => {
       return axios
-        .post(ValidateUserDeactivationFSURL, payload)
+        .post(ValidateUserDeactivationURL, payload)
         .then((response) => {
           return response;
         })
@@ -3616,6 +3615,9 @@ const APIS = {
   ReOpenChidCase: (payload) => APIS.makePatchRequest(API_URLS.child.reOpenChildCase, payload),
   // events
   GetEventList: (payload) => APIS.makePostRequest(API_URLS.events.getEventList, payload),
+  //Dashboards
+  GetFamilySituatiionCounts: (payload) => APIS.makePostRequest(API_URLS.dashboards.familySituationCounts,payload),
+  GetFamilyClosedCases: (payload) => APIS.makePostRequest(API_URLS.dashboards.closedCases,payload),
 };
 
 export default APIS;

@@ -78,7 +78,7 @@ const FormListTable = (props) => {
 
   const onViewClick = (form) => {
     localStorage.removeItem('isCreateForm')
-    navigate('/dashboard/forms/buildform', { state: { formName: form.formName, formDetails: form, defaultForm: formList[0] } })
+    navigate('/dashboard/forms/buildform', { state: { formName: form.formName, formDetails: form, defaultForm: defaultForm } })
   }
 
   const getForms = useCallback(async () => {

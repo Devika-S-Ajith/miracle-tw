@@ -63,14 +63,6 @@ const OrganizationOverviewCard = ({
             sm={6}
             md={colSize}
             key={item.label}
-            sx={{
-              "& .MuiCardContent-root:first-of-type": {
-                minHeight: 120,
-                "& p": {
-                  fontWeight: 600,
-                },
-              },
-            }}
           >
             <InfoTile
               key={idx}

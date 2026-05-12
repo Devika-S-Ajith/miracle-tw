@@ -33,13 +33,7 @@ const AuthError = () => {
         return { link: '/', auth: false };
       }
 
-      // HT role assigned
-      if (!isHTUnassigned) {
-        return { link: '/dashboard', auth: true };
-      }
-
-      // FS role assigned (HT unassigned)
-      return { link: '/dashboard/team', auth: true };
+      return { link: '/dashboard', auth: true };
     };
 
     const { link, auth } = determineRedirectAndAuth();

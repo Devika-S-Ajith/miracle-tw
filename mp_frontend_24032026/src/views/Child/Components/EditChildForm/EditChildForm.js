@@ -369,6 +369,7 @@ const EditChildForm = (props) => {
         // needFullData: "true",
         // "HTUserRoleId": caseWorkerRoleId,
         HTUserRoleId: ["4", "5"],
+        FSUserRoleId:["4", "5"],
         HTCountryId: localStorage.getItem("userRegion"),
         // todo - handle the HTUserRoleId dynamically
       };

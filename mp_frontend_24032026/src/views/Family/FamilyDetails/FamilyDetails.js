@@ -27,13 +27,13 @@ import FamilyDocuments from "../Components/FamilyDocuments/FamilyDocuments";
 import RadarGraph from "../../Child/Components/RadarGraph/RadarGraph";
 import FamilyHistory from "../Components/FamilyHistory";
 import PageBreadcrumbs from "../../../components/PageBreadcrumbs/PageBreadcrumbs";
-import { BreadcrumbsLinkThriveScale } from "../../../constants";
 import FollowUps from "../../Assessments/Components/FollowUps";
 import FamilyMilestones from "../Components/FamilyMilestones/FamilyMilestones";
 import FamilyInterventions from "./FamilyInterventions";
 import ConsolidatedAssessmentProgressReport from "../../../components/ConsolidatedAssessmentProgressReport";
 import ChildLogs from "../../Child/Components/ChildLogs";
-import { ADMIN, ADMIN_CASEMANAGER, ADMIN_CASEWORKER, CASEMANAGER, CASEWORKER, SUPER_ADMIN, VIEW_ONLY } from "../../../helpers/constant";
+import useCRUDPermissions from "../../../components/UserComponents/useCRUDPermissions";
+
 
 
 
@@ -41,19 +41,18 @@ import { ADMIN, ADMIN_CASEMANAGER, ADMIN_CASEWORKER, CASEMANAGER, CASEWORKER, SU
 const FamilyDetails = () => {
   const { t } = useTranslation(["common"]);
   const navigate = useNavigate();
-  const { familyList, signedinUserRoleHT, signedinOrgType ,signedinUserRoleFS} =
-    useContext(CommonDataContext);
   const [loading, setLoading] = useState(false);
   const [family, setFamily] = useState(null);
-  const [primaryCaregiver, setPrimaryCaregiver] = useState(null);
   const [currentTab, setCurrentTab] = useState("details");
   const { state: locationValues } = useLocation();
-  const [memberListLoading, setMemberListLoading] = useState(false);
   const [memberList, setMemberList] = useState([]);
+  const { 
+    IS_HT_ALLOWED, 
+    IS_FS_ALLOWED,
+    BOTH_FS_HT_ALLOWED, 
+    IS_EDIT_ALLOWED 
+  } = useCRUDPermissions();
 
-  const IS_FS_ALLOWED = [SUPER_ADMIN, ADMIN, CASEMANAGER, ADMIN_CASEMANAGER, VIEW_ONLY].includes(signedinUserRoleFS);
-  const IS_HT_ALLOWED = [SUPER_ADMIN, ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY].includes(signedinUserRoleHT);
-  const BOTH_FS_HT_ALLOWED = IS_FS_ALLOWED || IS_HT_ALLOWED;
 
   const tabs = [
     { label: "Details", value: "details", id: "tab_details", Permission:BOTH_FS_HT_ALLOWED },
@@ -154,7 +153,6 @@ const FamilyDetails = () => {
         return null;
     }
   };
-
   return (
     <>
       <Loader loading={loading} />
@@ -184,12 +182,13 @@ const FamilyDetails = () => {
                 />
               </Grid>
 
-              <Grid item>
-                <Box sx={{ m: -1 }}>
-                  <Button
-                    color="primary"
-                    component={RouterLink}
-                    startIcon={<PencilAltIcon fontSize="small" />}
+              {IS_EDIT_ALLOWED && (
+                <Grid item>
+                  <Box sx={{ m: -1 }}>
+                    <Button
+                      color="primary"
+                      component={RouterLink}
+                      startIcon={<PencilAltIcon fontSize="small" />}
                     sx={{ m: 1 }}
                     to={`/dashboard/families/${family && family.id}/edit`}
                     variant="contained"
@@ -197,7 +196,7 @@ const FamilyDetails = () => {
                     {t("common:common.Edit")}
                   </Button>
                 </Box>
-              </Grid>
+              </Grid>)}
             </Grid>
             <Box sx={{ mt: 3 }}>
               <Tabs

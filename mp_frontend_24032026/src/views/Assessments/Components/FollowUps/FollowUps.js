@@ -30,7 +30,6 @@ const FollowUps = ({ id, type }) => {
     initialValues: { from: null, to: null },
   });
   const values = form?.values || { from: null, to: null };
-
   const columnDefinition = [
     {
       id: "dateOfFollowup",
@@ -102,7 +101,7 @@ const FollowUps = ({ id, type }) => {
                 cursor: "pointer",
               }}
               onClick={() =>
-                navigate(`/dashboard/assessments/${row.HTAssessmentId}/view`, {
+                navigate(`/dashboard/assessments/${row.TWAssessmentId}/view`, {
                   state: {
                     viewAssessment: true,
                   },
@@ -286,7 +285,7 @@ const FollowUps = ({ id, type }) => {
                 width: "30%",
                 cancelButtonText: t("common:common.Close"),
                 hideActionButton: true,
-                height: "300px",
+                height: "95%",
               }
             )
           }

@@ -159,6 +159,7 @@ const UserDetails = () => {
                       zip={user.zipCode}
                       address2={user.addressLine2}
                       cognitoId={user.cognitoId}
+                      getUsers={getUsers}
                     />
                   )}
                 </Grid>

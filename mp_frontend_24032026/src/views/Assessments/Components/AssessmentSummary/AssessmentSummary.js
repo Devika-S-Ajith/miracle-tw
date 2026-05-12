@@ -5,11 +5,10 @@ import {
 import SpiderChart from "../SpiderChart";
 
 function AssessmentSummary({ score, domains}) {
-
   const getRadarChartScore = () => {
     // Use the order of the domains prop
     const radarScore = (domains || []).map(domain => {
-      const item = score && score.questionDomains && score.questionDomains.find(item => String(item.HTQuestionDomainId) === String(domain.id));
+      const item = score && score.questionDomains && score.questionDomains.find(item => String(item.TWQuestionDomainId) === String(domain.id));
       return item ? { axis: domain.domainName, value: item.totalScoreInPercentage } : { axis: domain.domainName, value: null };
     });
     return radarScore;

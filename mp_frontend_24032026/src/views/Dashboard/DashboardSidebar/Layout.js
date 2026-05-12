@@ -48,13 +48,13 @@ export default makeStyles((theme) => ({
     width: DRAWER_WIDTH,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen-300,
+      duration: 400, // smoother transition
     }),
   },
   drawerClose: {
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen - 300,
+      duration: 400, // smoother transition
     }),
     overflowX: 'hidden',
     width: 85, //theme.spacing(7) + 1,
@@ -73,7 +73,7 @@ export default makeStyles((theme) => ({
     boxShadow: theme.shadows[3],
     transition: theme.transitions.create(['left'], {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen-300 ,
+      duration: 400, // smoother transition
     }),
     zIndex: 1
   },

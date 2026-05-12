@@ -28,10 +28,6 @@ const getChangedValues = (values, initial) =>
         return acc;
     }, {});
 
-const isDirty = (values, initial) =>
-    Object.keys(initial).some((key) => values[key] !== initial[key]);
-
-
 const AddFamilyMemberModal = ({ onClose, getMemberDetails,familyId, member, isFamilyActive = true, isMemberActive = true, dropdownValues = {} }) => {
     const { relationList, locationList } = useContext(CommonDataContext);
     const { t } = useTranslation(['common']);
@@ -201,7 +197,9 @@ const AddFamilyMemberModal = ({ onClose, getMemberDetails,familyId, member, isFa
                 firstName: Yup.string()
                     .max(255)
                     .required(t("common:warnings.First Name is required")),
-                lastName: Yup.string().max(255),
+                lastName: Yup.string()
+                    .max(255)
+                    .required(t("common:warnings.Last Name is required")),
                 email: Yup.string()
                     .test('unique-email', 'Email already in use', function (value) {
                         // Skip API call if email hasn't passed format validation
@@ -228,11 +226,13 @@ const AddFamilyMemberModal = ({ onClose, getMemberDetails,familyId, member, isFa
                     }),
                 occupation: Yup.string().max(255),
                 TWFamilyRelationId: Yup.string().max(255),
-                phoneNumber: Yup.string().test(
-                    "phone-format-validation",
-                    t("common:warnings.Invalid Phone number"),
-                    (value) => validatePhoneNumber(value, phoneRef)
-                ),
+                phoneNumber: Yup.string()
+                          .required(t("common:warnings.Phone Number is required"))
+                          .test(
+                            "phone-format-validation",
+                            t("common:warnings.Invalid Phone number"),
+                            (value) => validatePhoneNumber(value, phoneRef, {required: true}),
+                          ),
                 isMinor: Yup.boolean(),
                 note: Yup.string().max(500),
                 appAccessEnabled: Yup.boolean(),
@@ -325,6 +325,7 @@ const AddFamilyMemberModal = ({ onClose, getMemberDetails,familyId, member, isFa
                                             setFieldValue={setFieldValue}
                                             isDisabled={!(isFamilyActive && isMemberActive)}
                                             dropdownValues={dropdownValues}
+                                            t={t}
                                         />
                                         <AccordionSection title={t("common:family.Profile information", "Profile information")}>
                                             <Grid container spacing={1}>
@@ -339,6 +340,7 @@ const AddFamilyMemberModal = ({ onClose, getMemberDetails,familyId, member, isFa
                                                     isDisabled={!(isFamilyActive && isMemberActive)}
                                                     phoneRef={phoneRef}
                                                     locationList={locationList}
+                                                    t={t}
                                                 />
                                             </Grid>
                                         </AccordionSection>
@@ -351,6 +353,7 @@ const AddFamilyMemberModal = ({ onClose, getMemberDetails,familyId, member, isFa
                                             handleChange={handleChange}
                                             setFieldValue={setFieldValue}
                                             isDisabled={!(isFamilyActive && isMemberActive)}
+                                            t={t}
                                         />
                                     </Grid>
                                 </Box>
@@ -406,7 +409,7 @@ const AddFamilyMemberModal = ({ onClose, getMemberDetails,familyId, member, isFa
                                         disabled={isSubmitting}
                                         id="cancel"
                                         variant={!(isMemberActive) ? "contained" : "outlined"}
-                                        onClick={handleCancelClick}
+                                        onClick={onClose}
                                     >
                                         {!(isMemberActive) ? t('common:common.Close', "Close") : t('common:common.Cancel', "Cancel")}
                                     </Button>

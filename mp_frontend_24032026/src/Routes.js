@@ -215,8 +215,8 @@ const SupportServices = Loadable(
 const SupportServiceDetails = Loadable(
   lazy(() => import("./views/SupportServices/SupportServiceDetails/SupportServiceDetailsContainer.js"))
 );
-const MedLogDetailsFS = Loadable(
-  lazy(() => import("./views/FS/Components/MedLogDetails"))
+const MedLogDetails = Loadable(
+  lazy(() => import("./views/Child/Components/ChildLogs/MedLogDetails/MedLogContainer.js"))
 );
 const EventDetailsFS = Loadable(
   lazy(() => import("./views/FS/Events/EventDetails"))
@@ -478,7 +478,7 @@ const routes = [
       },
       {
         path: "/medlogs/:id",
-        element: <MedLogDetailsFS />,
+        element: <MedLogDetails />,
       },
       {
         path: "/resources",

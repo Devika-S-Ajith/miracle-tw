@@ -431,7 +431,7 @@ const FormBuilder = (props) => {
     let payload = {
       formName: "",
       TWFormId: "",
-      limit: 10,
+      limit: 200,
       page: 1,
     };
     try {
@@ -560,7 +560,7 @@ const FormBuilder = (props) => {
         return pre.concat(cur);
       })
       .map(function (e, i) {
-        return { HTQuestionId: e.questionId, order: (i + 1).toString() };
+        return { TWQuestionId: e.questionId, order: (i + 1).toString() };
       });
 
     if (formName === "" || formName === undefined) {

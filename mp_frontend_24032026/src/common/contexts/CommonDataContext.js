@@ -319,38 +319,51 @@ const CommonDataContextProvider = (props) => {
     setSystemMessageTypes(res?.data?.data);
   };
 
+    const getCurrentDayOfWeek = () => {
+    const daysOfWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+    const currentDayIndex = new Date().getDay();
+    return daysOfWeek[currentDayIndex];
+  };
+
   const getSystemMessages = async (isLoginCall = false) => {
     try {
-      const htId = localStorage.getItem("HTUserRoleId");
-      const fsId = localStorage.getItem("FSUserRoleId");
+      const signedinHTUserRoleId = localStorage.getItem("HTUserRoleId");
+      const signedinFSUserRoleId = localStorage.getItem("FSUserRoleId");
 
-      const now = new Date();
-      const hourStart = now.toISOString();
-      now.setTime(now.getTime() + 60 * 60 * 1000);
-      const hourEnd = now.toISOString();
+      const date = new Date();
 
+      const currentTime = date.toISOString();
+
+      // Add 1 hour (60 minutes * 60 seconds * 1000 milliseconds)
+      date.setTime(date.getTime() + (60 * 60 * 1000));
+      const oneHourLater = date.toISOString(); // Time 1 hour later in ISO format
+
+      // Check if one hour has passed since the last API call
       const data = await APIS.GetSystemMessagesAfterLogin({
-        FSUserRoleId: fsId,
+        FSUserRoleId: signedinFSUserRoleId,
         MPAccountId: localStorage.getItem("orgId"),
-        HTUserRoleId: htId,
+        HTUserRoleId: signedinHTUserRoleId,
         viewingFrom: "WEB",
-        dayOfWeek: getDayOfWeek(),
-        hourStart,
-        hourEnd,
+        dayOfWeek: getCurrentDayOfWeek(),
+        hourStart: currentTime,
+        hourEnd: oneHourLater,
         status: "Active",
-        userCountryId: localStorage.getItem("userRegion"),
+        userCountryId: localStorage.getItem("userRegion")
       });
 
-      let messages = filterMessagesByCurrentTime(data?.data?.data);
+      let messages = filterMessagesByCurrentTime(data?.data?.data)
       if (!isLoginCall) {
-        messages = messages?.filter((msg) => msg.messageFrequency !== "ON_EVERY_LOGIN");
+        messages = messages?.filter(msg => msg.messageFrequency !== "ON_EVERY_LOGIN")
       }
+      const filteredPopupMessages = messages?.filter(msg => msg.MPSystemMessageTypeId == 1);
+      const filteredBannerMessages = messages?.filter(msg => msg.MPSystemMessageTypeId == 3);
 
-      setAllSystemMessages(messages);
-      setPopupMessages(messages?.filter((msg) => msg.MPSystemMessageTypeId === 1));
-      setBannerMessages(messages?.filter((msg) => msg.MPSystemMessageTypeId === 3));
-    } catch (err) {
-      console.error("Failed to fetch system messages", err);
+      // Update the message lists
+      setAllSystemMessages(messages)
+      setPopupMessages(filteredPopupMessages);
+      setBannerMessages(filteredBannerMessages);
+    } catch (error) {
+      console.error("Failed to fetch system messages", error);
     }
   };
 
@@ -625,7 +638,7 @@ const CommonDataContextProvider = (props) => {
     try {
       const res = await APIS.GetFamilyDropdownLists({
         dropdowns: [
-          { name: "familymembertype",       languageId: langId, sortOrder: "ASC" },
+          { name: "familymembertype",        languageId: langId, sortOrder: "ASC" },
           { name: "familysituation",         languageId: langId, sortOrder: "ASC" },
           { name: "familyrelation",          languageId: langId, sortOrder: "ASC" },
           { name: "familytypeandgoal",       languageId: langId, sortOrder: "ASC" },

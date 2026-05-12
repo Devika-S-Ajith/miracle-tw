@@ -130,18 +130,15 @@ const ChildSummary = ({ child }) => {
           <LabelValue
             label="Case number"
             // check whether case no is placement id
-            value={`CHLD-${child?.id}`}
+            value={`CHLD-${child?.childCode}`}
             labelColor="#535F66"
             fontWeight={700}
           />
         </Grid>
-        <Grid item xs={12}>
-          <Divider sx={{ mt: 1, borderBottomWidth: 2, mb: 1 }} />
-        </Grid>
       </Grid>
 
 
-      <Stack
+      {/* <Stack
         justifyContent="center"
         alignItems="center"
         direction="row"
@@ -161,7 +158,7 @@ const ChildSummary = ({ child }) => {
           <BodyText value={"55.7%"} fontWeight={600} />
           <BodyText value={"Jan 1 2024"} />
         </Stack>
-      </Stack>
+      </Stack> */}
     </CommonCard>
   );
 };

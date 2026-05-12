@@ -39,8 +39,8 @@ const ConsolidatedChildList = (props) => {
   const [tableData, setTableData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
-  const [filterValues, setFilterValues] = useState({});
-  const [appliedFiltersChipArray, setAppliedFiltersChipArray] = useState([]);
+  const [filterValues, setFilterValues] = useState({ status: [], caseWorker: [] });
+  const [appliedFiltersChipArray, setAppliedFiltersChipArray] = useState({ status: [], caseWorker: [] });
   const { signedinOrgId, signedInOrgName, userIdData } =
     useContext(CommonDataContext);
   const [users, setUsers] = useState([]);
@@ -103,6 +103,7 @@ const ConsolidatedChildList = (props) => {
             cursor: "pointer",
             fontWeight: 700,
           }}
+          onClick={() => navigate(`/dashboard/families/${row.familyId}/view`)}
         />
       ),
     },
@@ -112,7 +113,7 @@ const ConsolidatedChildList = (props) => {
       enableSorting: true,
       render: (row) => `${row.caseWorkerFirstName} ${row.caseWorkerLastName}`,
     },
-    { id: "childPlacementStatusValue", label: "Current Living Situation" },
+    { id: "childPlacementStatusValue", label: "Current Living Situation", render: (row) => <BodyText value={row?.childPlacementStatusValue ? t(`common:common.${row.childPlacementStatusValue}`, row.childPlacementStatusValue) : "-"} /> },
     {
       id: "status",
       label: "Status",
@@ -259,6 +260,7 @@ const ConsolidatedChildList = (props) => {
         globalSearchQuery: "",
         accountId: [signedinOrgId],
         HTUserRoleId: ["4", "5"],
+        FSUserRoleId:["4", "5"],
         HTCountryId: localStorage.getItem("userRegion"),
       };
       payload.HTCountryId = localStorage.getItem("userRegion");
@@ -355,7 +357,7 @@ const ConsolidatedChildList = (props) => {
           disablePortal
           options={statusOptions}
           multiple
-          value={filterValues?.status}
+          value={filterValues?.status || []}
           getOptionLabel={(option) =>
             t(`common:infoCard.${option.label}`, option.label)
           }
@@ -378,14 +380,14 @@ const ConsolidatedChildList = (props) => {
                   deleteIcon={
                     <CloseIcon style={{ color: "#fff", fontSize: "16px" }} />
                   }
-                  onDelete={() =>
+                  onDelete={() => {
                     setFilterValues((prev) => ({
                       ...prev,
-                      status: prev.status.filter(
-                        (item) => item.value !== option.value,
-                      ),
-                    }))
-                  }
+                      status: Array.isArray(prev.status)
+                        ? prev.status.filter((item) => item.value !== option.value)
+                        : [],
+                    }));
+                  }}
                 />
               ))}
             </Stack>
@@ -402,7 +404,7 @@ const ConsolidatedChildList = (props) => {
           options={users}
           getOptionLabel={(option) => option.label}
           multiple
-          value={filterValues?.caseWorker}
+          value={filterValues?.caseWorker || []}
           isOptionEqualToValue={(option, value) => option.value === value.value}
           onChange={(event, newValue) => {
             setFilterValues((prev) => ({
@@ -425,9 +427,9 @@ const ConsolidatedChildList = (props) => {
                   onDelete={() =>
                     setFilterValues((prev) => ({
                       ...prev,
-                      caseWorker: prev.caseWorker.filter(
-                        (item) => item.value !== option.value,
-                      ),
+                      caseWorker: Array.isArray(prev.caseWorker)
+                        ? prev.caseWorker.filter((item) => item.value !== option.value)
+                        : [],
                     }))
                   }
                 />

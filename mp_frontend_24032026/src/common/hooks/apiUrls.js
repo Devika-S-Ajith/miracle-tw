@@ -77,6 +77,10 @@ const API_URLS = {
   events: createEndpoints("/events", {
     getEventList: "",
   }),
+  dashboards: createEndpoints("/tw-report", {
+    familySituationCounts: "/family-situation-counts",
+    closedCases: "/case-closed-counts",
+  }),
 };
 
 export default API_URLS;

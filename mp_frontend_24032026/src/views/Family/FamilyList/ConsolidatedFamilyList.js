@@ -1,6 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import ReusableTrendTable from "../../Dashboard/GovtDashboardOverview/Components/ReusableTrendTable";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom";
 import APIS from "../../../common/hooks/UseApiCalls";
 import {
   Autocomplete,
@@ -25,18 +26,25 @@ import CloseIcon from "@mui/icons-material/Close";
 import { GenerateFileName } from "../../../helpers/helperFunction";
 import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
 import FileUploadIcon from '@mui/icons-material/FileUpload';
+import { ADMIN, ADMIN_CASEWORKER, CASEWORKER } from "../../../helpers/constant";
+import useCRUDPermissions from "../../../components/UserComponents/useCRUDPermissions";
+import { fr } from "date-fns/locale";
 
 const ConsolidatedFamilyList = (props) => {
   const { t } = useTranslation(["common"]);
   const navigate = useNavigate();
+  const location = useLocation();
+  const fromDashboard = location.state && location.state.fromDashboard;
   const [tableData, setTableData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
-  const [filterValues, setFilterValues] = useState({});
+  const [filterValues, setFilterValues] = useState(fromDashboard ? location.state.filters : {});
   const [appliedFiltersChipArray, setAppliedFiltersChipArray] = useState([]);
   const [query, setQuery] = useState("");
+  const { signedinUserRoleHT, signedinUserRoleFS } = useContext(CommonDataContext);
   const { htLanguagesList, signedInOrgName, userIdData } =
     useContext(CommonDataContext);
+  const { IS_EDIT_ALLOWED,CAN_DELETE } = useCRUDPermissions(); 
   const statusOptions = [
     {
       label: t("common:common.All"),
@@ -189,7 +197,7 @@ const ConsolidatedFamilyList = (props) => {
             onClose={handleClose}
           >
             <Stack direction="row" spacing={0.5}>
-              <Tooltip title={t("common:family.Edit Family")}>
+              {IS_EDIT_ALLOWED &&<Tooltip title={t("common:family.Edit Family")}>
                 <IconButton
                   component={RouterLink}
                   to={`/dashboard/families/${menuState.row?.id}/edit`}
@@ -197,8 +205,8 @@ const ConsolidatedFamilyList = (props) => {
                 >
                   <PencilAltIcon fontSize="small" />
                 </IconButton>
-              </Tooltip>
-              <Tooltip
+              </Tooltip>}
+              {/* {CAN_DELETE &&<Tooltip
                 title={
                   menuState.row?.numberOfChildrenActive > 0
                     ? t(
@@ -217,7 +225,7 @@ const ConsolidatedFamilyList = (props) => {
                     <TrashIcon fontSize="small" />
                   </IconButton>
                 </span>
-              </Tooltip>
+              </Tooltip>} */}
               <Tooltip
                 title={t(
                   "common:common.Assessments & Progress Reports",
@@ -291,6 +299,7 @@ const ConsolidatedFamilyList = (props) => {
       caseWorker: "",
       listType: "LARGE",
       filters: filter
+
     };
     try {
       const response = await APIS.GetFamilyList(payload);
@@ -331,20 +340,19 @@ const ConsolidatedFamilyList = (props) => {
           onClick={exportFamilies}
           loading={isExporting}
           loadingPosition="start"
-          // color="primary"
-          // variant="contained"
           id="export-families-btn"
         />
-        <SecondaryButton
-          startIcon={
-            <img
-              src="/static/icons/AddIcon.svg"
-              style={{ width: 20, height: 20 }}
-            />
+        {([ADMIN,ADMIN_CASEWORKER,CASEWORKER].includes(signedinUserRoleHT) || [ADMIN,ADMIN_CASEWORKER,CASEWORKER].includes(signedinUserRoleFS)) && (
+          <SecondaryButton
+            startIcon={
+              <img
+                src="/static/icons/AddIcon.svg"
+                style={{ width: 20, height: 20 }}
+              />
           }
           label={t("common:family.Add New Family")}
           onClick={handleAddFamily}
-        />
+        />)}
       </Stack>
     </>
   );

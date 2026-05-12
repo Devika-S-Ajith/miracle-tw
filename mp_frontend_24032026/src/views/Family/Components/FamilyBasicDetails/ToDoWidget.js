@@ -95,16 +95,16 @@ const getItemNote = (item) => {
     return null;
 };
 
-const ToDoWidget = ({ t, TWFamilyId }) => {
+const ToDoWidget = ({ t, TWFamilyId, TWChildId }) => {
 
       const [todoData, setTodoData] = useState([]);
       const [loadingTodoList, setLoadingTodoList] = useState(false);
       const [apiError, setApiError] = useState(false);
 
      useEffect(() => {
-         getTodoList()
+        if (TWFamilyId || TWChildId) { getTodoList()}
          return () => { };
-       }, []);
+       }, [TWFamilyId, TWChildId]);
 
        const getTodoList = async () => {
          setLoadingTodoList(true);
@@ -112,7 +112,8 @@ const ToDoWidget = ({ t, TWFamilyId }) => {
          const payload = {
             limit:100,
             start:1,
-            TWFamilyId:TWFamilyId
+            TWFamilyId:TWFamilyId,
+            TWChildId:TWChildId
          };
          try {
            const response = await APIS.GetTodoList(payload);

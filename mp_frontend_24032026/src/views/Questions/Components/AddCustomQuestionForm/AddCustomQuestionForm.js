@@ -110,11 +110,11 @@ const AddCustomQuestionForm = (props) => {
     }
   }, []);
 
-  const checkUnique = async (values, questionId) => {
+  const checkUnique = async (values, questionId, TWQuestionDomainId) => {
     let checkUniquePayload = {
       id: questionId !== undefined ? questionId : "",
       questionText: values.question,
-      HTQuestionDomainId: "1",
+      TWQuestionDomainId: TWQuestionDomainId,
       HTOrganizationId: null,
       formId: formId,
     };
@@ -228,7 +228,7 @@ const AddCustomQuestionForm = (props) => {
         } else {
           // setMinOptionError(false)
           setIsLoading(true);
-          checkUnique(values, questionId)
+          checkUnique(values, questionId, question?.TWQuestionDomainId)
             .then(async (res) => {
               if (
                 res &&

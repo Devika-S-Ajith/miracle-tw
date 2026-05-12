@@ -64,19 +64,20 @@ export const ChildBasicDetails = ({
     gridProps: { xs: 12, md: 12 },
     // onChange: ()=>uniqueCheckHandler({values, setFieldError, validateForm})
   },
-  {
-    type: "dropdown",
-    name: "TWFamilyId",
-    label: "Family child is living with",
-    translateLabels: true,
-    required: false,
-    validateOnChange: true,
-    options: familyList || [],
-    onChange: (name, fieldValue, data, reason) => {
-      handleFamilyChange({ data, setFieldValue });
-    },
-    gridProps: { md: 12, xs: 12 },
-  },
+    ...(!values?.isNewFamily
+      ? [{
+        type: "dropdown",
+        name: "TWFamilyId",
+        label: "Family child is living with",
+        translateLabels: true,
+        required: false,
+        validateOnChange: true,
+        options: familyList || [],
+        onChange: (name, fieldValue, data, reason) => {
+          handleFamilyChange({ data, setFieldValue });
+        },
+        gridProps: { md: 12, xs: 12 },
+      }] : []),
   {
     type: "dropdown",
     name: "TWChildCurrentPlacementStatusId",

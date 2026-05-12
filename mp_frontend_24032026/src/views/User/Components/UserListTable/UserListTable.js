@@ -59,6 +59,7 @@ import {
   ADMIN,
   ADMIN_CASEMANAGER,
   ADMIN_CASEWORKER,
+  CASEWORKER,
   PARENT_ROLE_ID,
   SUPER_ADMIN,
 } from "../../../../helpers/constant";
@@ -73,21 +74,20 @@ const columnHeaders = [
     value: "HTOrganizationId",
   },
   {
-    label: "FosterShare",
+    label: "FosterShare role",
+    value: "FSUserRoleId",
+  },
+  {
+    label: "Thrive Scale role",
     value: "HTUserRoleId",
   },
   {
-    label: "Foster families",
-    subLabel: "FosterShare",
-    value: "email",
+    label: "# active families",
+    value: "familyCount", 
   },
+ 
   {
-    label: "Thrive Scale",
-    value: "phoneNumber",
-  },
-  {
-    label: "Children",
-    subLabel: "ThriveScale",
+    label: "# active children",
     value: "Children",
   },
 
@@ -257,82 +257,32 @@ const UserListTable = (props) => {
     }
   };
 
-  const handleDeactivateUser = async (
-    id,
-    accountID,
-    HTRole,
-    FSRole,
-    countryName,
-    ref
-  ) => {
-    try {
-      const payloadRoleCheck = {
-        TWUserId: id,
-        TWAccountId: accountID,
-        HTRoleFrom: HTRole,
-        country: countryNameList[countryName.toLowerCase()].label,
-      };
-
-      if (
-        [SUPER_ADMIN].includes(signedinUserRoleHT) ||
-        [SUPER_ADMIN].includes(signedinUserRoleFS)
-      ) {
-        deactivateUserAfterValidation(id, ref);
-      } else {
-        if (HTRole !== "9") {
-          await APIS.ValidateUserDeactivationTS(payloadRoleCheck).then((res) => {
-            if (res?.data?.message === "NOT OK") {
-              ModalService.open(({ close }) => <></>, {
-                modalTitle: "Deactivate user",
-                width: "30%",
-                modalDescription: t(`common:common.${res?.data?.data}`),
-                cancelButtonText: "Ok",
-                hideActionButton: true,
-              });
-            } else if (res?.data?.message === "OK") {
-              if (FSRole !== "9") {
-                const payloadRoleCheckFS = {
-                  FSUserId: id,
-                  TWAccountId: accountID,
-                  FSRoleFrom: FSRole,
-                  country: countryNameList[countryName.toLowerCase()].label,
-                };
-                APIS.ValidateUserDeactivationFS(payloadRoleCheckFS).then((res) => {
-                  if (res?.data?.message === "NOT OK") {
-                    ModalService.open(({ close }) => <></>, {
-                      modalTitle: "Deactivate user",
-                      width: "30%",
-                      modalDescription: t(`common:common.${res?.data?.data.replace(/\.$/, '')}`,res?.data?.data.replace(/\.$/, '')),
-                      cancelButtonText: "Ok",
-                      hideActionButton: true,
-                    });
-                  } else if (res?.data?.message === "OK") {
-                    deactivateUserAfterValidation(id, ref);
-                  } else {
-                    toast.error(t("common:common.Something went wrong"));
-                  }
-                });
-              }else{
-                deactivateUserAfterValidation(id, ref);
-              } 
-            } else {
-              toast.error(t("common:common.Something went wrong"));
-            }
-          });
+   const handleDeactivateUser = async (
+      id,
+      accountID,
+      HTRole,
+      FSRole,
+      countryName,
+      ref
+    ) => {
+      try {
+        if ([SUPER_ADMIN].includes(signedinUserRoleHT) || [SUPER_ADMIN].includes(signedinUserRoleFS)) {
+          deactivateUserAfterValidation(id, ref);
         } else {
-          if (FSRole !== "9") {
-            const payloadRoleCheckFS = {
-              FSUserId: id,
+          if ([CASEWORKER, ADMIN_CASEWORKER, ADMIN].includes(HTRole) ||
+            [CASEWORKER, ADMIN_CASEWORKER, ADMIN].includes(FSRole)) {
+            const payloadRoleCheck = {
+              TWUserId: id,
               TWAccountId: accountID,
-              FSRoleFrom: FSRole,
-              country: countryNameList[countryName.toLowerCase()].label,
+              htuserRole: HTRole,
+              fsuserRole: FSRole,
             };
-            APIS.ValidateUserDeactivationFS(payloadRoleCheckFS).then((res) => {
+            APIS.ValidateUserDeactivation(payloadRoleCheck).then((res) => {
               if (res?.data?.message === "NOT OK") {
                 ModalService.open(({ close }) => <></>, {
                   modalTitle: "Deactivate user",
                   width: "30%",
-                  modalDescription: t(`common:common.${res?.data?.data.replace(/\.$/, '')}`,res?.data?.data.replace(/\.$/, '')),
+                  modalDescription: t(`common:common.${res?.data?.data.replace(/\.$/, '')}`, res?.data?.data.replace(/\.$/, '')),
                   cancelButtonText: "Ok",
                   hideActionButton: true,
                 });
@@ -342,48 +292,15 @@ const UserListTable = (props) => {
                 toast.error(t("common:common.Something went wrong"));
               }
             });
+          } else {
+            deactivateUserAfterValidation(id, ref);
           }
         }
-        // await APIS.ValidateUserDeactivationTS(payloadRoleCheck).then((res) => {
-        //   if (res?.data?.message === "NOT OK") {
-        //     ModalService.open(({ close }) => <></>, {
-        //       modalTitle: "Deactivate user",
-        //       width: "30%",
-        //       modalDescription:t(`common:common.${res?.data?.data}`),
-        //       cancelButtonText: "Ok",
-        //       hideActionButton: true,
-        //     });
-        //   } else if (res?.data?.message === "OK") {
-        //     const payloadRoleCheckFS = {
-        //       FSUserId: id,
-        //       TWAccountId: accountID,
-        //       FSRoleFrom: FSRole,
-        //       country: countryNameList[countryName.toLowerCase()].label,
-        //     };
-        //     APIS.ValidateUserDeactivationFS(payloadRoleCheckFS).then((res) => {
-        //       if (res?.data?.message === "NOT OK") {
-        //         ModalService.open(({ close }) => <></>, {
-        //           modalTitle: "Deactivate user",
-        //           width: "30%",
-        //           modalDescription: t(`common:common.${res?.data?.data.replace(/\.$/, '')}`),
-        //           cancelButtonText: "Ok",
-        //           hideActionButton: true,
-        //         });
-        //       } else if (res?.data?.message === "OK") {
-        //         deactivateUserAfterValidation(id, ref);
-        //       } else {
-        //         toast.error(t("common:common.Something went wrong"));
-        //       }
-        //     });
-        //   } else {
-        //     toast.error(t("common:common.Something went wrong"));
-        //   }
-        // });
+        
+      } catch (err) {
+        toast.error(t("common:common.Something went wrong"));
       }
-    } catch (err) {
-      toast.error(t("common:common.Something went wrong"));
-    }
-  };
+    };
 
   const handleReactivateUser = async (id, MPAccountId) => {
     try {
@@ -1468,20 +1385,7 @@ const UserListTable = (props) => {
                           </Typography>
                         )}
                       </TableCell>
-                      <TableCell>
-                        {customer?.FSFamilyCount ? (
-                          customer?.FSFamilyCount
-                        ) : (
-                          <Typography
-                            variant="body2"
-                            color="textSecondary"
-                            fontStyle="italic"
-                          >
-                            {t("common:common.none")}
-                          </Typography>
-                        )}
-                      </TableCell>
-                      <TableCell>
+                       <TableCell>
                         {roleListHT &&
                         roleListHT.length &&
                         customer.HTUserRoleId &&
@@ -1511,6 +1415,20 @@ const UserListTable = (props) => {
                           </Typography>
                         )}
                       </TableCell>
+                      <TableCell>
+                        {customer?.FSFamilyCount ? (
+                          customer?.FSFamilyCount
+                        ) : (
+                          <Typography
+                            variant="body2"
+                            color="textSecondary"
+                            fontStyle="italic"
+                          >
+                            {t("common:common.none")}
+                          </Typography>
+                        )}
+                      </TableCell>
+                     
                       <TableCell>
                         {customer.TSChildCount ? (
                           customer.TSChildCount

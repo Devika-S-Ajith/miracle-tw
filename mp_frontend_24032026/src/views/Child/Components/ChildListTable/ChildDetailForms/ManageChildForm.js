@@ -41,6 +41,7 @@ import toast from "react-hot-toast";
 import Loader from "../../../../../components/UserComponents/Loader";
 import { PhoneNumberUtil } from "google-libphonenumber";
 import { validatePhoneNumber } from "../../../../../helpers/helperFunction";
+import _, { first } from "lodash";
 
 const userRegion = localStorage.getItem("userRegion");
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -120,9 +121,9 @@ const ManageChildForm = ({
         globalSearchQuery: "",
         accountId: [localStorage.getItem("orgId")],
         HTUserRoleId: ["4", "5"],
-        HTCountryId: localStorage.getItem("userRegion"),
+        FSUserRoleId: ["4", "5"],
+        TWCountryId: localStorage.getItem("userRegion"),
       };
-      payload.HTCountryId = localStorage.getItem("userRegion");
       const data = await APIS.ListUsers(payload);
       setUsers(data && data.data && data.data.data);
     } catch (err) {
@@ -433,7 +434,7 @@ const ManageChildForm = ({
         caseWorkerId: childDetails?.caseWorkerId || null,
         childHasDisability: childDetails?.childHasDisability || false,
         isSameAsFamilyAddress: childDetails?.isSameAsFamilyAddress || false,
-
+        isNewFamily: childInfo?.isNewFamily || false,
         // Contact Details
         contactInformation: {
           TWCountryId:
@@ -682,6 +683,7 @@ const ManageChildForm = ({
               values.profileInformation.phoneNumber = null;
             }
           if (id) {
+            console.log("Values being submitted for update:", values, initialValuesRef.current);
             let changedValues = getChangedValues(
               values,
               initialValuesRef.current,
@@ -692,14 +694,36 @@ const ManageChildForm = ({
             }
             res = await APIS.UpdateChild(changedValues);
             if (isFromFamily) {
-              handleResponse(changedValues);
+              const newPayload = {
+                ...(changedValues?.firstName && { firstName: values.firstName }),
+                ...(changedValues?.lastName && { lastName: values.lastName }),
+                id: res.data?.data?.id,
+                ...(changedValues?.gender && { gender: values.gender }),
+                ...(changedValues?.dateOfBirth && { dateOfBirth: values.dateOfBirth }),
+                isExistingChild: true,
+                _rowKey: childInfo?._rowKey
+              };
+              handleResponse(newPayload);
             }
           } else {
             res = await APIS.CreateChild(values);
+            const changedValues = {};
+           
+           
             if (isFromFamily) {
+              ["firstName", "lastName", "dateOfBirth", "gender"].forEach((field) => {
+                if (values[field] !== childInfo[field]) {
+                  changedValues[field] = values[field];
+                }
+              });
               const newPayload = {
-                ...values,
-                _rowKey: childInfo?._rowKey,
+                ...(changedValues?.firstName && { firstName: values.firstName }),
+                ...(changedValues?.lastName && { lastName: values.lastName }),
+                id: res.data?.data?.id,
+                ...(changedValues?.gender && { gender: values.gender }),
+                ...(changedValues?.dateOfBirth && { dateOfBirth: values.dateOfBirth }),
+                isExistingChild: true,
+                _rowKey: childInfo?._rowKey
               };
               handleResponse(newPayload);
             }
@@ -772,8 +796,8 @@ const ManageChildForm = ({
                   <Heading heading="Child" />
                   <Heading
                     heading={
-                      childDetails
-                        ? `${childDetails?.status}${
+                      childDetails && id
+                        ? `${t(`common:common.${childDetails?.status}`, childDetails?.status)}${
                             childDetails?.status === "Case Closed"
                               ? ` ${MonthDayYearFormatter(
                                   childDetails?.lastCaseClosedDate,
@@ -799,6 +823,7 @@ const ManageChildForm = ({
                         values={values}
                         errors={errors}
                         touched={touched}
+                        t={t}
                         handleChange={handleChange}
                         handleBlur={handleBlur}
                         setFieldValue={setFieldValue}
@@ -825,10 +850,11 @@ const ManageChildForm = ({
                           )}
                         />
                         <Grid container spacing={2} sx={{ mt: 0.5 }}>
-                          <DynamicForm
+                          {values?.TWFamilyId && <DynamicForm
                             values={values}
                             errors={errors}
                             touched={touched}
+                            t={t}
                             handleChange={handleChange}
                             handleBlur={handleBlur}
                             setFieldValue={setFieldValue}
@@ -841,12 +867,13 @@ const ManageChildForm = ({
                               isSubmitting ||
                               childDetails?.status === "Case Closed"
                             }
-                          />
+                          />}
 
                           <DynamicForm
                             values={values}
                             errors={errors}
                             touched={touched}
+                            t={t}
                             handleChange={handleChange}
                             handleBlur={handleBlur}
                             setFieldValue={setFieldValue}
@@ -856,7 +883,6 @@ const ManageChildForm = ({
                               values,
                               setFieldValue,
                             })}
-                            t={t}
                             isDisabled={
                               isSubmitting ||
                               childDetails?.status === "Case Closed" ||
@@ -878,6 +904,7 @@ const ManageChildForm = ({
                               values={values}
                               errors={errors}
                               touched={touched}
+                              t={t}
                               handleChange={handleChange}
                               handleBlur={handleBlur}
                               setFieldValue={setFieldValue}
@@ -908,6 +935,7 @@ const ManageChildForm = ({
                               values={values}
                               errors={errors}
                               touched={touched}
+                              t={t}
                               handleChange={handleChange}
                               handleBlur={handleBlur}
                               setFieldValue={setFieldValue}

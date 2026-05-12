@@ -10,7 +10,7 @@ const SupportServiceDetailsContainer = () => {
   const { t } = useTranslation(["common"]);
 
   return (
-    <Box m={2}>
+    <Box m={2} mx={1}>
       <PageBreadcrumbs
         data={[
           {
@@ -19,8 +19,8 @@ const SupportServiceDetailsContainer = () => {
           },
           {
             label: t(
-              "common:common.Support Service details",
-              "Support Service details",
+              "common:infoCard.Support service details",
+              "Support service details",
             ),
           },
         ]}

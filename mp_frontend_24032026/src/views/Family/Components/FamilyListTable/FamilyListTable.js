@@ -598,7 +598,7 @@ const fileName = GenerateFileName({
         </Box>
        
           <Box sx={{ flexGrow: 1, display: "flex", textAlign: "right", gap: 2, justifyContent: "flex-end" }}>
-            {signedinUserRoleHT !== "viewonly" && (
+            {signedinUserRoleHT == "viewonly" && (
               <Button
                 startIcon={<PlusIcon fontSize="small" />}
                 variant="contained"

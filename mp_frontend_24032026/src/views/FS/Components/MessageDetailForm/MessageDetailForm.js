@@ -364,7 +364,6 @@ const MessageDetailForm = ({ close, onSuccess }) => {
             id="event-participants"
             options={familyList}
             clearIcon={false}
-            clea
             disableCloseOnSelect
             getOptionLabel={(option) =>
               option.familyName
@@ -418,7 +417,7 @@ const MessageDetailForm = ({ close, onSuccess }) => {
                 return <li {...props}>{option.label}</li>;
               }
               return (
-                <li {...props}>
+                <li {...props} key={option?.id}>
                   <Checkbox
                     icon={icon}
                     checkedIcon={checkedIcon}
