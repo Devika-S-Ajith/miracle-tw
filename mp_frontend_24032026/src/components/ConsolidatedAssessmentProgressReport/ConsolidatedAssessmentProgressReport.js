@@ -150,7 +150,7 @@ const ConsolidatedAssessmentProgressReport = ({ pageType, id }) => {
     {
       id: "totalScore",
       label: "ThriveScale Score",
-      render: (row, value) => <SmallText value={value ? `${value}%` : "-"} />,
+      render: (row, value) => row?.status === "Completed" ? <SmallText value={value ? `${value}%` : "-"} /> : <SmallText value="-" />,
     },
     {
       id: "progressReportStatus",

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Select, MenuItem } from '@mui/material';
 
-const ListPaging = ({ rowCount, handleRowCountChange }) => {
+const ListPaging = ({ rowCount, handleRowCountChange, rowCountOptions }) => {
+	const options = rowCountOptions || [10, 20, 30];
     return (
         <>
             <Select
@@ -18,9 +19,11 @@ const ListPaging = ({ rowCount, handleRowCountChange }) => {
                     cursor: "pointer",
                 }}
             >
-                <MenuItem value={10}>10</MenuItem>
-                <MenuItem value={20}>20</MenuItem>
-                <MenuItem value={30}>30</MenuItem>
+                {options.map((option) => (
+                    <MenuItem key={option} value={option}>
+                        {option}
+                    </MenuItem>
+                ))}
             </Select>
         </>
     )

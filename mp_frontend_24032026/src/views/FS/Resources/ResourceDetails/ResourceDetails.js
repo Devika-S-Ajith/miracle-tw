@@ -41,6 +41,8 @@ const IconOverlay = styled(Box)({
 });
 
 const ResourceDetails = () => {
+
+  const { t } = useTranslation(["common"]);
   const { signedinUserRoleFS, organizationList } =
     useContext(CommonDataContext);
   const { id } = useParams();
@@ -134,7 +136,7 @@ const ResourceDetails = () => {
                 fontWeight={700}
                 fontSize="1.25rem"
               >
-                {"Article details"}
+               {t("common:resources.Article details", "Article details")}
               </Typography>
               <EditIcon
                 sx={{ cursor: "pointer" }}
@@ -150,6 +152,7 @@ const ResourceDetails = () => {
                     {
                       modalTitle: "Resource information",
                       hideModalFooter: true,
+                      height: "95%",
                     }
                   );
                 }}
@@ -181,7 +184,8 @@ const ResourceDetails = () => {
               </Grid>
               <Grid item xs={12}>
                 <LabelValue
-                  label="Categories"
+                  tooltip={false}
+                  label= {t("common:resources.Categories", "Categories")}
                   value={
                     <Box
                       my
@@ -211,7 +215,7 @@ const ResourceDetails = () => {
                       ? organizationList.find(
                           (org) => org.id === resourceDetail?.TWAccountId
                         )?.accountName
-                      : "All"
+                      :t("common:common.All", "All")
                   }
                 />
               </Grid>
@@ -271,7 +275,7 @@ const ResourceDetails = () => {
                     window.open(resourceDetail?.url, "_blank");
                   }}
                 >
-                  Preview
+                   {t("common:resources.Preview", "Preview")}
                 </Button>
               </Grid>
             </Grid>

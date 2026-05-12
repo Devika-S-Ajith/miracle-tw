@@ -63,6 +63,7 @@ const FamilyChangeModal = ({ onFamilyChangeConfirm, onFamilyChangeCancel, close,
               values={familyChangeValues}
               errors={errors}
               touched={touched}
+              t={t}
               handleChange={handleChange}
               handleBlur={handleBlur}
               setFieldValue={setFamilyChangeFieldValue}

@@ -492,15 +492,20 @@ export const getLanguageId = () => {
   return langId;
 };
 
-export const validatePhoneNumber = (value, ref) => {
+export const validatePhoneNumber = (value, ref, params) => {
+  
   if(!value) return true
   const phoneUtil = PhoneNumberUtil.getInstance();
   try {
     const phoneNumber = phoneUtil.parseAndKeepRawInput(value);
     return phoneUtil.isValidNumber(phoneNumber);
   } catch (error) {
-    if ("+" + ref.current.dialCode === value) {
-      return true;
+    // Allow only dial code if not required, or disallow if required and only dial code is present
+    if (value === "+" + ref.current.dialCode) {
+      return !params?.required;
+    }
+    if (value === ref.current.dialCode && params?.required) {
+      return false;
     }
     return false; // Handle parsing errors
   }

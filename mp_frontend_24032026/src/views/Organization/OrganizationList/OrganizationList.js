@@ -1,9 +1,5 @@
-import { useState, useEffect, useCallback, useContext } from "react";
-import {
-  Box,
-  Grid,
-  Typography
-} from "@mui/material";
+import { useState, useEffect, useCallback, useContext, useRef } from "react";
+import { Box, Grid, Typography } from "@mui/material";
 import OrganizationListTable from "../Components/OrganizationListTable";
 import useMounted from "../../../common/hooks/UseMounted";
 import ChevronRightIcon from "../../../assets/icons/ChevronRight";
@@ -13,21 +9,39 @@ import { useTranslation } from "react-i18next";
 import { SUPER_ADMIN } from "../../../helpers/constant";
 import { getLocationNames } from "../../../helpers/helperFunction";
 
+const DEFAULT_PAYLOAD = {
+  rowCount: "10",
+  pageNumber: "1",
+  globalSearchQuery: "",
+  accountStatus: "active",
+  accountTypeFilter: "",
+  orderByField: [["accountName", "ASC"]],
+  fsStatus: "enabled",
+  HTStatus: "enabled",
+  MPAccountTypeId: [],
+};
+
 const OrganizationList = () => {
   const { t } = useTranslation(["common"]);
-  const {
-    locationList,
-    signedinUserRoleHT,
-    getUserTokens,
-  } = useContext(CommonDataContext);
+  const { locationList, signedinUserRoleHT, getUserTokens } =
+    useContext(CommonDataContext);
+
   const mounted = useMounted();
+
+  // Keep latest role/locationList in refs so getOrganizations stays stable
+  // and doesn't get recreated (which would re-trigger child effects)
+  const roleRef = useRef(signedinUserRoleHT);
+  const locationListRef = useRef(locationList);
+  const loggedInUserOrgId = localStorage.getItem("orgId");
+
+  useEffect(() => { roleRef.current = signedinUserRoleHT; }, [signedinUserRoleHT]);
+  useEffect(() => { locationListRef.current = locationList; }, [locationList]);
+
   const [accounts, setAccounts] = useState([]);
-  const [activeAccountCount, setActiveAccountCount] = useState();
-  const [pageCount, setpageCount] = useState(1);
-  const [presentPage, setpresentPage] = useState(1);
+  const [activeAccountCount, setActiveAccountCount] = useState(0);
+  const [pageCount, setPageCount] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [payloadData, setPayloadData] = useState({});
-  let dataList;
+
   const [pageData, setPageData] = useState({
     page: 1,
     query: "",
@@ -35,166 +49,116 @@ const OrganizationList = () => {
     typeFilter: "",
     statusFilter: "",
   });
-  const [isExportDisabled, setIsExportDisabled] = useState(true);
-  const loggedInUserOrgId = localStorage.getItem("orgId");
 
-  const savePageData = (pageObject = {}) => {
+  const savePageData = useCallback((pageObject = {}) => {
     localStorage.setItem("orgPageData", JSON.stringify(pageObject));
-  };
+  }, []);
 
-  const saveCurrentPage = (currentPage) => {
-    setpresentPage(currentPage);
-    console.log(`%c${presentPage}`, "display:none");
-  };
+  const saveCurrentPage = useCallback(() => {}, []);
 
-  let getOrgListpayload = {
-    rowCount: "10",
-    pageNumber: "1",
-    globalSearchQuery: "",
-    accountStatus: "",
-    orgTypeFilter: "",
-    orderByField: [["accountName", "ASC"]],
-    fsStatus: "enabled",
-    HTStatus: "enabled",
-    MPAccountTypeId: []
-  };
-
-  const getOrgListpayloadConstant = {
-    rowCount: "10",
-    pageNumber: "1",
-    globalSearchQuery: "",
-    accountStatus: "active",
-    accountTypeFilter: "",
-    orderByField: [["accountName", "ASC"]],
-    addressLine1Like: "",
-    fsStatus: null,
-    HTStatus: "enabled",
-    MPAccountTypeId: [],
-  };
-
+  // ── Stable fetcher ───────────────────────────────────────────────────────
+  // Uses refs for role/locationList so the function identity never changes
+  // due to context updates — prevents child buildPayload from going stale.
   const getOrganizations = useCallback(
     async (payload = null) => {
-      setLoading(true);
-      try {
-        let finalPayload;
-        if (payload === null) {
-          finalPayload = getOrgListpayloadConstant;
-        } else {
-          finalPayload = { ...payload };
-          getOrgListpayload = { ...finalPayload };
-        }
-        dataList = { ...finalPayload };
-        setPayloadData(dataList);
+      if (!mounted.current) return;
 
-        if ([SUPER_ADMIN].includes(signedinUserRoleHT)) {
-          const data = await APIS.OrganizationList(finalPayload);
-          setAccounts(data && data.data && data.data.data);
-          setpageCount(data && data.data && data.data.pageCount);
-          setActiveAccountCount(data && data.data && data.data?.totalActive);
-          setLoading(false);
-          if (data && data.data && data.data.data.length === 0) {
-            setIsExportDisabled(true);
-          } else {
-            setIsExportDisabled(false);
-          }
+      // Clear immediately — old rows must never appear on the new page
+      setAccounts([]);
+      setLoading(true);
+
+      try {
+        const finalPayload = payload ? { ...payload } : { ...DEFAULT_PAYLOAD };
+
+        if ([SUPER_ADMIN].includes(roleRef.current)) {
+          finalPayload.userCountryId = localStorage.getItem("userRegion"); // Super admin sees all org types
+          const res = await APIS.OrganizationList(finalPayload);
+          if (!mounted.current) return;
+
+          setAccounts(res?.data?.data ?? []);
+          setPageCount(res?.data?.pageCount ?? 1);
+          setActiveAccountCount(res?.data?.totalActive ?? 0);
         } else {
-          let data = [];
-          const temp = await APIS.OrganisationDetails(loggedInUserOrgId);
-          data[0] = temp.data.data;
-          data[0].countryName = getLocationNames(
-            locationList,
-            temp.data.data.MPCountryId
-          );
-          setAccounts(data);
-          setpageCount(1);
-          setActiveAccountCount(1);
-          setLoading(false);
-          if (data && data?.length === 0) {
-            setIsExportDisabled(true);
+          const res = await APIS.OrganisationDetails(loggedInUserOrgId);
+          if (!mounted.current) return;
+
+          const orgData = res?.data?.data;
+          if (orgData) {
+            orgData.countryName = getLocationNames(
+              locationListRef.current,
+              orgData.MPCountryId
+            );
+            setAccounts([orgData]);
           } else {
-            setIsExportDisabled(false);
+            setAccounts([]);
           }
+          setPageCount(1);
+          setActiveAccountCount(orgData ? 1 : 0);
         }
       } catch (err) {
-        console.error(err);
-        setLoading(false);
+        console.error("Error fetching organizations:", err);
+        if (mounted.current) setAccounts([]);
+      } finally {
+        if (mounted.current) setLoading(false);
       }
     },
-    [mounted]
+    [mounted, loggedInUserOrgId] // stable — context values are read via refs
   );
 
   useEffect(() => {
     document.title = "Organizations | ThriveWell";
     getUserTokens();
-    setLoading(true);
-    if (localStorage.getItem("orgPageData") === null) {
+
+    const stored = localStorage.getItem("orgPageData");
+    if (stored === null) {
       getOrganizations();
     } else {
-      let localPageData = JSON.parse(localStorage.getItem("orgPageData"));
-      let pageObject = {
-        orderByField: [[`${localPageData.sort}`, "ASC"]],
-        globalSearchQuery: `${localPageData.query}`,
-        pageNumber: `${localPageData.page}`,
-        accountStatus: "active",
-        accountTypeFilter: `${localPageData.typeFilter}`,
-        fsStatus: "enabled",
-        HTStatus: "enabled",
-        MPAccountTypeId: [],
-      };
-      setPageData({ ...localPageData });
-      getOrganizations(pageObject);
+      const local = JSON.parse(stored);
+      setPageData({ ...local });
+      getOrganizations({
+        ...DEFAULT_PAYLOAD,
+        orderByField: [[`${local.sort ?? "accountName"}`, "ASC"]],
+        globalSearchQuery: local.query ?? "",
+        pageNumber: `${local.page ?? 1}`,
+        accountTypeFilter: local.typeFilter ?? "",
+      });
     }
-    return () => { };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <>
-      <Box
-        sx={{
-          backgroundColor: "background.default",
-          minHeight: "100%",
-          pt: 2, //new style
-        }}
-      >
-        <Grid container width={1}>
-          <Grid item xs={12}>
-            <Grid container justifyContent="space-between" spacing={3}>
-              <Grid
-                item
-                sx={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}
-              >
-                <Typography color="textPrimary" variant="h5">
+    <Box sx={{ backgroundColor: "background.default", minHeight: "100%", pt: 2 }}>
+      <Grid container width={1}>
+        <Grid item xs={12}>
+          <Grid container justifyContent="space-between" spacing={3}>
+            <Grid item sx={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
+              <Typography color="textPrimary" variant="h5">
                 {t("common:common.Admin")}
-                </Typography>
-                <Box
-                  sx={{
-                    m: 0.75,
-                  }}
-                  style={{ cursor: "text" }}
-                >
-                  <ChevronRightIcon color="disabled" fontSize="small" />
-                </Box>
-                <Typography color="textPrimary" variant="h5">
-                  {t("common:common.Organizations")}
-                </Typography>
-              </Grid>
+              </Typography>
+              <Box sx={{ m: 0.75 }} style={{ cursor: "text" }}>
+                <ChevronRightIcon color="disabled" fontSize="small" />
+              </Box>
+              <Typography color="textPrimary" variant="h5">
+                {t("common:common.Organizations")}
+              </Typography>
             </Grid>
-            <Box sx={{ mt: 3 }} mr={1}>
-              <OrganizationListTable
-                savePageData={savePageData}
-                pageCount={pageCount}
-                activeAccountCount={activeAccountCount}
-                pageData={pageData}
-                accounts={accounts}
-                saveCurrentPage={saveCurrentPage}
-                loading={loading}
-                getOrganisationlist={getOrganizations}
-              />
-            </Box>
           </Grid>
-        </Grid>{" "}
-      </Box>
-    </>
+
+          <Box sx={{ mt: 3 }} mr={1}>
+            <OrganizationListTable
+              savePageData={savePageData}
+              saveCurrentPage={saveCurrentPage}
+              pageCount={pageCount}
+              activeAccountCount={activeAccountCount}
+              pageData={pageData}
+              accounts={accounts}
+              loading={loading}
+              getOrganisationlist={getOrganizations}
+            />
+          </Box>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 

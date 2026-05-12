@@ -23,9 +23,15 @@ const dataTemplate2 = {
   }
 }
 
-
-// const CountArray = ['CCI 1', 'CCI 2', 'CCI 3'];
-
+// Helper: converts a raw score value to a chart-safe value.
+// "-"  → null  (ApexCharts skips null points; tooltip will show "-")
+// "0" or 0 → 0
+// anything else → parseFloat(value)
+const parseScore = (value) => {
+  if (value === '-' || value === undefined || value === null) return null;
+  const parsed = parseFloat(value);
+  return isNaN(parsed) ? null : parsed;
+};
 
 
 const ReportsTrafficSources = (props) => {
@@ -75,8 +81,7 @@ const ReportsTrafficSources = (props) => {
     t('common:common.Living Conditions Score'),
     t('common:common.Overall Score')
   ];
-  const { title, chartData1, payload,isFamily = false, showCheckbox = true, showLabels = true, ...other } = props
-  // console.log('----props arrived:',chartData1)
+  const { title, chartData1, payload, isFamily = false, showCheckbox = true, showLabels = true, ...other } = props
   const { signedInOrgName, signedinOrgType, signedinUserRole, languageChange } = useContext(CommonDataContext);
   const theme = useTheme();
   const [chartData, setChartData] = useState(dataTemplate)
@@ -100,12 +105,13 @@ const ReportsTrafficSources = (props) => {
       parsedData.series[5].name = t('common:common.Overall Score');
     } else {
       data.forEach(item => {
-        parsedData.series[0].data.push(parseFloat(item?.EducationScore));
-        parsedData.series[1].data.push(parseFloat(item?.FamilyandSocialRelationshipsScore));
-        parsedData.series[2].data.push(parseFloat(item?.HealthAndMentalHealthScore));
-        parsedData.series[3].data.push(parseFloat(item?.HouseholdEconomyScore));
-        parsedData.series[4].data.push(parseFloat(item?.LivingConditionsScore));
-        parsedData.series[5].data.push(parseFloat(item?.OverallScore));
+        // Use parseScore instead of parseFloat so "-" becomes null and "0" stays 0
+        parsedData.series[0].data.push(parseScore(item?.EducationScore));
+        parsedData.series[1].data.push(parseScore(item?.FamilyandSocialRelationshipsScore));
+        parsedData.series[2].data.push(parseScore(item?.HealthAndMentalHealthScore));
+        parsedData.series[3].data.push(parseScore(item?.HouseholdEconomyScore));
+        parsedData.series[4].data.push(parseScore(item?.LivingConditionsScore));
+        parsedData.series[5].data.push(parseScore(item?.OverallScore));
         parsedData.xaxis.dataPoints.push(item?.lastDate);
       });
       parsedData.series[0].name = t('common:common.Education Score');
@@ -123,7 +129,7 @@ const ReportsTrafficSources = (props) => {
     let parsedData = _.cloneDeep(dataTemplate2);
     if (data.length !== 0) {
       data.forEach(item => {
-        parsedData.series[0].data.push(parseFloat(item?.noOfChildren));
+        parsedData.series[0].data.push(parseScore(item?.noOfChildren));
         parsedData.xaxis.dataPoints.push(item?.monthEndDateDateOfEntry);
       });
       parsedData.series[0].name = signedInOrgName;
@@ -139,7 +145,7 @@ const ReportsTrafficSources = (props) => {
     let parsedData = _.cloneDeep(dataTemplate2);
     if (data.length !== 0) {
       data.forEach(item => {
-        parsedData.series[0].data.push(parseFloat(item?.noOfChildren));
+        parsedData.series[0].data.push(parseScore(item?.noOfChildren));
         parsedData.xaxis.dataPoints.push(item?.monthEndDateOfLeaving);
       });
       parsedData.series[0].name = signedInOrgName;
@@ -163,7 +169,7 @@ const ReportsTrafficSources = (props) => {
       }
     } catch (err) {
       if (latestRequestId.current === requestId) {
-        setChartData(dataTemplate); // Optionally reset on error
+        setChartData(dataTemplate);
       }
       console.error(err);
     } finally {
@@ -230,7 +236,7 @@ const ReportsTrafficSources = (props) => {
       if (chartData1 === 'chartData') {
         getChildServed(payload)
         setSelectedSeries(AvgArray)
-        isFamily?setCurrentRoute('/dashboard/reportAverageThriveScaleScoresFamilies'): setCurrentRoute('/dashboard/reportAverageThriveScoreChildren')
+        isFamily ? setCurrentRoute('/dashboard/reportAverageThriveScaleScoresFamilies') : setCurrentRoute('/dashboard/reportAverageThriveScoreChildren')
       } else if (chartData1 === 'dataTemplate') {
         getNewlyAdmittedChildren(payload)
         setSelectedSeries([signedInOrgName]);
@@ -244,8 +250,6 @@ const ReportsTrafficSources = (props) => {
             setCurrentRoute('/dashboard/reportsNewlyAddeddChildren')
           }
         }
-        // setChartData(data)
-        // setSelectedSeries(CountArray)
       } else if (chartData1 === 'data') {
         if (payload && Object.keys(payload).length > 0) {
           getChildrenInCCI(payload);
@@ -301,8 +305,6 @@ const ReportsTrafficSources = (props) => {
             setCurrentRoute('/dashboard/reportsNewlyAddeddChildren')
           }
         }
-        // setChartData(data)
-        // setSelectedSeries(CountArray)
       } else if (chartData1 === 'data') {
         if (payload && Object.keys(payload).length > 0) {
           getChildrenInCCI(payload);
@@ -405,6 +407,12 @@ const ReportsTrafficSources = (props) => {
       lineCap: 'butt',
       width: 3
     },
+    // Show "-" in tooltip for null values instead of nothing
+    tooltip: {
+      y: {
+        formatter: (value) => (value === null || value === undefined ? '-' : value)
+      }
+    },
     theme: {
       mode: theme.palette.mode
     },
@@ -467,51 +475,51 @@ const ReportsTrafficSources = (props) => {
         )}
       />
       {!loading ? (<>
-      {showLabels && (
-      <Box
-        sx={{
-          alignItems: 'center',
-          display: 'flex',
-          flexWrap: 'wrap',
-          px: 2
-        }}
-      >
-        {chartData.series.map((item) => (
+        {showLabels && (
           <Box
-            key={item.name}
             sx={{
               alignItems: 'center',
               display: 'flex',
-              mr: 2
+              flexWrap: 'wrap',
+              px: 2
             }}
           >
-            {showCheckbox && 
-              <Checkbox
-                checked={selectedSeries.some((visibleItem) => visibleItem === item.name)}
-                color="primary"
-                onChange={(event) => handleChange(event, item.name)}
-              />
-            }
-            <Box
-              sx={{
-                backgroundColor: item.color,
-                borderRadius: '50%',
-                height: 8,
-                ml: 1,
-                mr: 2,
-                width: 8
-              }}
-            />
-            <Typography
-              color="textPrimary"
-              variant="subtitle2"
-            >
-              {item.name}
-            </Typography>
+            {chartData.series.map((item) => (
+              <Box
+                key={item.name}
+                sx={{
+                  alignItems: 'center',
+                  display: 'flex',
+                  mr: 2
+                }}
+              >
+                {showCheckbox &&
+                  <Checkbox
+                    checked={selectedSeries.some((visibleItem) => visibleItem === item.name)}
+                    color="primary"
+                    onChange={(event) => handleChange(event, item.name)}
+                  />
+                }
+                <Box
+                  sx={{
+                    backgroundColor: item.color,
+                    borderRadius: '50%',
+                    height: 8,
+                    ml: 1,
+                    mr: 2,
+                    width: 8
+                  }}
+                />
+                <Typography
+                  color="textPrimary"
+                  variant="subtitle2"
+                >
+                  {item.name}
+                </Typography>
+              </Box>
+            ))}
           </Box>
-        ))}
-      </Box>
-      )}
+        )}
         <Chart
           height="390"
           // width="690"

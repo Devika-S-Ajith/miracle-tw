@@ -30,10 +30,10 @@ const MedLogContainer = () => {
       const data = await APIS.DetailRecLog(payload);
       if (data && data.data && data.data.data && data.data.data?.logs) {
         const logs = data?.data?.data?.logs;
-        const { FSChildId, FSFormEngineId, entity, id, date } = logs;
+        const { TWChildId, TWFormEngineId, entity, id, date } = logs;
         setMedLogDetail(logs);
-        setChildId(FSChildId);
-        getMedicationList(FSChildId, FSFormEngineId, entity, id, date);
+        setChildId(TWChildId);
+        getMedicationList(TWChildId, TWFormEngineId, entity, id, date);
       }
       //setpageCount(data && data.data && data.data.pageCount);
     } catch (err) {
@@ -42,18 +42,18 @@ const MedLogContainer = () => {
   }, []);
 
   const getMedicationList = useCallback(
-    async (FSChildId, FSFormEngineId, entity, id, date) => {
+    async (TWChildId, TWFormEngineId, entity, id, date) => {
       setLoadingMedicationList(true);
       try {
         const payload = {
-          formEngineId: FSFormEngineId,
+          formEngineId: TWFormEngineId,
           entity: "MEDICINE",
           stepOrder: "0",
           currentUserId: localStorage.getItem("username"),
           date: utcToLocalDateReverse(date),
           dependingEntity: entity,
           filter: {
-            dependingEntityId: FSChildId,
+            dependingEntityId: TWChildId,
             hasUnsignedMedicinesOnly: false,
             formResponseId: id, //for pastdues only
           },

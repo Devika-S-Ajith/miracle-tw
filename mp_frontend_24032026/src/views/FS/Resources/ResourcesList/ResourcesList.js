@@ -13,6 +13,8 @@ import PlusIcon from "../../../../assets/icons/Plus";
 import { dateFormatter } from "../../../../constants";
 
 const ResourcesList = () => {
+
+  const { t } = useTranslation(["common"]);
   const navigate = useNavigate();
   const { signedinUserRoleFS } = useContext(CommonDataContext);
   const gridRef = useRef(null);
@@ -58,7 +60,7 @@ const ResourcesList = () => {
       field: "published",
       headerName: "Published",
       minWidth: 100,
-      renderCell: (params) => (params?.row?.published ? "Published" : "Draft"),
+      renderCell: (params) => (params?.row?.published ? t("common:resources.Published", "Published") : t("common:resources.Draft", "Draft")),
     },
     {
       field: "updatedAt",
@@ -108,7 +110,7 @@ const ResourcesList = () => {
               id: each?.id,
               title: each?.title,
               categories: each?.categories,
-              createdBy: each?.FSAuthor?.createdBy,
+              createdBy: each?.TWAuthor?.createdBy,
               createdAt: dateFormatter(each?.createdAt),
               published: each?.published,
               updatedAt: dateFormatter(each?.updatedAt),
@@ -146,7 +148,7 @@ const ResourcesList = () => {
               />
             ),
             {
-              modalTitle: "Resource information",
+               modalTitle: t("common:resources.Resource information", "Resource information"),
               hideModalFooter: true,
               width: "35%",
               height: "95%",
@@ -163,27 +165,11 @@ const ResourcesList = () => {
     <Box p={1}>
       <Grid item sx={{ display: "flex", flexDirection: "row" }} my={1}>
         <Typography
-          color="textPrimary"
-          variant="h5"
-          onClick={() => navigate("/fostershare/dashboard")}
-          sx={{ cursor: "pointer" }}
-        >
-          FosterShare
-        </Typography>
-        <Box
-          sx={{
-            m: 0.75,
-          }}
-          style={{ cursor: "text" }}
-        >
-          <ChevronRightIcon color="disabled" fontSize="small" />
-        </Box>
-        <Typography
           id="support services-table-label"
           color="textPrimary"
           variant="h5"
         >
-          Resources
+          {t("common:resources.Resources", "Resources")}
         </Typography>
       </Grid>
 

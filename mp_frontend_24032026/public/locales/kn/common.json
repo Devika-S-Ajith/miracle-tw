@@ -583,7 +583,36 @@
     "Please confirm that this person is over the legal age of consent If this person is under the legal age of consent enter them as a child": "ದಯವಿಟ್ಟು ಈ ವ್ಯಕ್ತಿ ಕಾನೂನುಬದ್ಧ ಒಪ್ಪಿಗೆಯ ವಯಸ್ಸನ್ನು ಮೀರುವವರೇ ಎಂದು ದೃಢೀಕರಿಸಿ. ಈ ವ್ಯಕ್ತಿ ಒಪ್ಪಿಗೆಯ ಕಾನೂನುಬದ್ಧ ವಯಸ್ಸಿಗಿಂತ ಕಡಿಮೆ ಇದ್ದರೆ, ಅವರನ್ನು ಮಗುವಾಗಿ ನಮೂದಿಸಿ.",
     "Minor": "ಸಣ್ಣವರು",
     "Adult": "ಪ್ರೌಢರು",
-    "Child's address is the same as family's address": "ಮಗುವಿನ ವಿಳಾಸವು ಕುಟುಂಬದ ವಿಳಾಸದಂತೆಯೇ ಇದೆ"
+    "Child's address is the same as family's address": "ಮಗುವಿನ ವಿಳಾಸವು ಕುಟುಂಬದ ವಿಳಾಸದಂತೆಯೇ ಇದೆ",
+    "Date of birth": "ಹುಟ್ಟಿದ ದಿನಾಂಕ",
+    "Family name": "ಕುಟುಂಬದ ಹೆಸರು",
+    "Case worker": "ಕೇಸ್ ವರ್ಕರ್",
+    "searchPlaceholder": "ಹುಡುಕಿ...",
+    "Contact Info": "ಸಂಪರ್ಕ ಮಾಹಿತಿ",
+    "First fostered": "ಮೊದಲ ಬಾರಿಗೆ ಫೋಸ್ಟರ್ ಮಾಡಲಾಗಿದೆ",
+    "Case number": "ಪ್ರಕರಣ ಸಂಖ್ಯೆ",
+    "Resolved interventions": "ಪರಿಹಾರವಾದ ಹಸ್ತಕ್ಷೇಪಗಳು",
+    "No options": "ಆಯ್ಕೆಗಳು ಇಲ್ಲ",
+    "Role in family": "ಕುಟುಂಬದಲ್ಲಿ ಪಾತ್ರ",
+    "First name": "ಮೊದಲ ಹೆಸರು",
+    "Last name": "ಕೊನೆಯ ಹೆಸರು",
+    "Licence number": "ಲೈಸೆನ್ಸ್ ಸಂಖ್ಯೆ",
+    "Close case": "ಪ್ರಕರಣವನ್ನು ಮುಚ್ಚಿ",
+    "Date case was closed": "ಪ್ರಕರಣ ಮುಚ್ಚಿದ ದಿನಾಂಕ",
+    "Why is this case being closed?": "ಈ ಪ್ರಕರಣವನ್ನು ಏಕೆ ಮುಚ್ಚಲಾಗುತ್ತಿದೆ?",
+    "No, cancel": "ಇಲ್ಲ, ರದ್ದುಮಾಡಿ",
+    "Yes, close case": "ಹೌದು, ಪ್ರಕರಣ ಮುಚ್ಚಿ",
+    "Filter":"ಫಿಲ್ಟರ್",
+    "Primary language": "ಪ್ರಾಥಮಿಕ ಭಾಷೆ",
+    "Phone number":"ಫೋನ್ ಸಂಖ್ಯೆ",
+    "Active interventions": "ಸಕ್ರಿಯ ಹಸ್ತಕ್ಷೇಪಗಳು",
+    "Over age consent": "ವಯಸ್ಸಿನ ಮಿತಿಯನ್ನು ಮೀರಿ ಒಪ್ಪಿಗೆ",
+    "Attach link": "ಲಿಂಕ್ ಅನ್ನು ಸೇರಿಸಿ",
+    "Image link": "ಚಿತ್ರದ ಲಿಂಕ್",
+    "Select categories": "ವರ್ಗಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+    "Select an account": "ಖಾತೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+    "Action": "ಕ್ರಿಯೆ"
+
   },
   "signin": {
     "Sign in to your account": "ನಿಮ್ಮ ಖಾತೆಗೆ ಸೈನ್ ಇನ್ ಮಾಡಿ.",
@@ -1008,7 +1037,24 @@
     "specifyReason":"ಸ್ಟೇಟಸ್ ಬದಲಾವಣೆಯ ಕಾರಣವನ್ನು ವಿವರಿಸಿ.",
     "Contact information": "ಕಾಂಟಾಕ್ಟ್ ಇನ್ಫರ್ಮೇಶನ್",
     "Family status": "ಕುಟುಂಬದ ಸ್ಟೇಟಸ್",
-    "Cannot delete family with active children": "ಸಕ್ರಿಯ ಮಕ್ಕಳಿರುವ ಕುಟುಂಬವನ್ನು ಅಳಿಸಲಾಗದು"
+    "Cannot delete family with active children": "ಸಕ್ರಿಯ ಮಕ್ಕಳಿರುವ ಕುಟುಂಬವನ್ನು ಅಳಿಸಲಾಗದು",
+    "todo_title":"ಮಾಡಬೇಕಾದವು",
+    "todo_subtitle":"ಎಲ್ಲಾ ಕ್ರಿಯೆಗಳು ಮೊಬೈಲ್ ಅಪ್ಲಿಕೇಶನ್‌ನಲ್ಲಿ ಪೂರ್ಣಗೊಳ್ಳಬೇಕು",
+    "most_recent_assessment_summary": "ಇತ್ತೀಚಿನ ಮೌಲ್ಯಮಾಪನ ಸಾರಾಂಶ",
+    "Interventions summary": "ಹಸ್ತಕ್ಷೇಪಗಳ ಸಾರಾಂಶ",
+    "Family members and caregivers": "ಕುಟುಂಬ ಸದಸ್ಯರು ಮತ್ತು ಪಾಲಕರು ({{count}})",
+    "no_assessment_done_yet": "ಇನ್ನೂ ಯಾವುದೇ ಮೌಲ್ಯಮಾಪನ ಮಾಡಲಾಗಿಲ್ಲ",
+    "assessment_results": "ಮೊದಲ ಮೌಲ್ಯಮಾಪನ ಪೂರ್ಣಗೊಂಡ ನಂತರ ಫಲಿತಾಂಶಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ",
+    "View Assessment": "ಮೌಲ್ಯಮಾಪನವನ್ನು ವೀಕ್ಷಿಸಿ",
+    "Domains":"ಡೊಮೇನ್‌ಗಳು",
+    "since_assessment_1":"ಮೌಲ್ಯಮಾಪನ #1 ರಿಂದ",
+    "assessment_number": "ಮೌಲ್ಯಮಾಪನ  #{{number}}",
+    "Add another family member": "ಮತ್ತೊಬ್ಬ ಕುಟುಂಬ ಸದಸ್ಯರನ್ನು ಸೇರಿಸಿ",
+    "Family contact information": "ಕುಟುಂಬ ಸಂಪರ್ಕ ಮಾಹಿತಿ",
+    "Family type": "ಕುಟುಂಬದ ಪ್ರಕಾರ",
+    "Date the family first started serving as a foster family": "ಕುಟುಂಬವು ಮೊದಲ ಬಾರಿಗೆ ಫೋಸ್ಟರ್ ಕುಟುಂಬವಾಗಿ ಸೇವೆ ಪ್ರಾರಂಭಿಸಿದ ದಿನಾಂಕ"
+ 
+
   },
   "form": {
     "formList": "ಅರ್ಜಿಯ ವಿವರಣೆಗಳು",
@@ -1186,7 +1232,12 @@
     "Children served count max value is 9999": "ಮಕ್ಕಳ ಸೇವೆ ಸಂಖ್ಯೆ ಗರಿಷ್ಠ ಮೌಲ್ಯ 9999 ಆಗಿರಬೇಕು",
     "Children served count is required": "ಮಕ್ಕಳ ಸೇವೆ ಸಂಖ್ಯೆಯ ಅಗತ್ಯವಿದೆ",
     "Families served count max value is 9999": "ಕುಟುಂಬ ಸೇವೆ ಸಂಖ್ಯೆ ಗರಿಷ್ಠ ಮೌಲ್ಯ 9999 ಆಗಿರಬೇಕು",
-    "Families served count is required": "ಕುಟುಂಬ ಸೇವೆ ಸಂಖ್ಯೆಯ ಅಗತ್ಯವಿದೆ"
+    "Families served count is required": "ಕುಟುಂಬ ಸೇವೆ ಸಂಖ್ಯೆಯ ಅಗತ್ಯವಿದೆ",
+    "Family Name is required": "ಕುಟುಂಬದ ಹೆಸರು ಅಗತ್ಯವಿದೆ",
+    "DOB is required": "ಜನ್ಮ ದಿನಾಂಕ ಅಗತ್ಯವಿದೆ",
+    "Summary is required": "ಸಾರಾಂಶ ಅಗತ್ಯವಿದೆ",
+    "Article link is required": "ಲೇಖದ ಲಿಂಕ್ ಅಗತ್ಯವಿದೆ",
+    "Image link is required": "ಚಿತ್ರದ ಲಿಂಕ್ ಅಗತ್ಯವಿದೆ"
   },
   "message": {
     "Title": "ಶೀರ್ಷಿಕೆ",
@@ -1355,7 +1406,18 @@
     "Status": "ಸ್ಥಿತಿ",
     "Case Worker": "ಕೇಸ್ ವರ್ಕರ್",
     "Case manager": "ಕೇಸ್ ಮ್ಯಾನೇಜರ್",
-    "Inactive": "ನಿಷ್ಕ್ರಿಯ"
+    "Inactive": "ನಿಷ್ಕ್ರಿಯ",
+    "Support services": "ಬೆಂಬಲ ಸೇವೆಗಳು",
+    "Support service details": "ಬೆಂಬಲ ಸೇವೆಯ ವಿವರಗಳು",
+    "Support service name": "ಬೆಂಬಲ ಸೇವೆಯ ಹೆಸರು",
+    "Description": "ವಿವರಣೆ",
+    "Phone": "ದೂರವಾಣಿ",
+    "Email": "ಇಮೇಲ್",
+    "URL": "ಯುಆರ್‌ಎಲ್",
+    "Go to URL": "ಯುಆರ್‌ಎಲ್‌ಗೆ ಹೋಗಿ",
+    "Support service information": "ಬೆಂಬಲ ಸೇವೆಯ ಮಾಹಿತಿ"
+    
+    
 },
 "tableColumn":{
   "Organization name": "ಸಂಸ್ಥೆಯ ಹೆಸರು",
@@ -1413,6 +1475,40 @@
   "% of cases assigned": "ನಿಯೋಜಿತ ಪ್ರಕರಣಗಳ %",
   "Completion rate": "ಪೂರ್ಣಗೊಳಿಸುವ ಪ್ರಮಾಣ",
   "Overall rating": "ಒಟ್ಟಾರೆ ಶ್ರೇಯಾಂಕ",
-  "Name": "ಹೆಸರು"
+  "Case Manager": "ಕೇಸ್ ಮ್ಯಾನೇಜರ್",
+  "Status": "ಸ್ಥಿತಿ",
+  "Name": "ಹೆಸರು",
+  "Child Name": "ಮಕ್ಕಳ ಹೆಸರು",
+  "Family Name": "ಕುಟುಂಬದ ಹೆಸರು",
+  "Current Living Condition": "ಪ್ರಸ್ತುತ ವಾಸಿಸುವ ಪರಿಸ್ಥಿತಿ",
+  "Add new child": "ಹೊಸ ಮಗುವನ್ನು ಸೇರಿಸಿ",
+  "Add Support Service": "ಬೆಂಬಲ ಸೇವೆಯನ್ನು ಸೇರಿಸಿ",
+  "Support Service Name": "ಬೆಂಬಲ ಸೇವೆಯ ಹೆಸರು",
+  "Phone": "ದೂರವಾಣಿ",
+  "Email": "ಇಮೇಲ್",
+  "Website": "ಜಾಲತಾಣ",
+   "Action": "ಕ್ರಿಯೆ",
+  "Due": "ನಿಗದಿತ ದಿನಾಂಕ",
+  "Contact information": "ಕಾಂಟಾಕ್ಟ್ ಇನ್ಫರ್ಮೇಶನ್",
+  "Role": "ಪಾತ್ರ"
+},
+"resources": {
+  "Title": "ಶೀರ್ಷಿಕೆ",
+  "Categories": "ವರ್ಗಗಳು",
+  "Created at": "ರಚಿಸಲಾಗಿದೆ",
+  "Created by": "ರಚಿಸಿದವರು",
+  "Published": "ಪ್ರಕಟಿಸಲಾಗಿದೆ",
+  "Draft": "ಕರಡು",
+  "Updated at": "ನವೀಕರಿಸಲಾಗಿದೆ",
+  "Resource information": "ಸಂಪನ್ಮೂಲ ಮಾಹಿತಿ",
+  "Add resource": "ಸಂಪನ್ಮೂಲವನ್ನು ಸೇರಿಸಿ",
+  "Resource details": "ಸಂಪನ್ಮೂಲ ವಿವರಗಳು",
+  "Article details": "ಲೇಖದ ವಿವರಗಳು",
+  "Published by": "ಪ್ರಕಟಿಸಿದವರು",
+  "Published on": "ಪ್ರಕಟಿಸಿದ ದಿನಾಂಕ",
+  "Updated on": "ನವೀಕರಿಸಿದ ದಿನಾಂಕ",
+  "Agency": "ಏಜೆನ್ಸಿ",
+  "Preview": "ಪೂರ್ವವೀಕ್ಷಣೆ"
 }
 }
+

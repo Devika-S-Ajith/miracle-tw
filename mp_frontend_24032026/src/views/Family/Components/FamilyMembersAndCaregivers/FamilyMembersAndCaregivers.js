@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import { Typography, Box, IconButton, Stack } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -6,6 +6,13 @@ import ReusableTrendTable from '../../../Dashboard/GovtDashboardOverview/Compone
 import ChipComponent from '../../../../components/ChipComponent';
 import { useTranslation } from 'react-i18next';
 import { CommonDataContext } from '../../../../common/contexts/CommonDataContext';
+import { ModalService } from '../../../../components/Modal';
+import ManageChildForm from '../../../Child/Components/ChildListTable/ChildDetailForms/ManageChildForm';
+import AddFamilyMemberModal from '../../../TWFamily/ManageFamily/Components/AddFamilyMemberModal';
+import FamilyMemberCard from '../../../TWFamily/ManageFamily/Components/FamilyMemberCard';
+import { nav } from 'aws-amplify';
+import { useNavigate } from 'react-router';
+
 
 
 
@@ -13,7 +20,8 @@ import { CommonDataContext } from '../../../../common/contexts/CommonDataContext
 const FamilyMembersTable = ({ members }) => {
   const { t } = useTranslation(['common']);
   const {familyDropdownLists} = useContext(CommonDataContext);
-  
+  const [hideChildModal, setHideChildModal] = useState(false);
+   const navigate = useNavigate();
   const getRoleBackgroundColor = (roleType) => {
     if (roleType === 'child') return '#F29D64';
     return '#6BC4CE';
@@ -23,6 +31,75 @@ const FamilyMembersTable = ({ members }) => {
   const getRoleTextColor = (roleType) => {
     if (roleType === 'child') return '#000000';
     return '#FFFFFF';
+  };
+
+  const handleViewMember = (member) => {
+     const modalConfig = {
+      width: '30%',
+      hideModalFooter: true,
+      //modalTitle: member.firstName + ' ' + member.lastName,
+      enableClose: true,
+    };
+    member?.isChild? navigate(`/dashboard/children/${member.id}/view`) :  ModalService.open(
+      ({ close }) => (
+       <FamilyMemberCard data={member} />
+      ),
+      modalConfig,
+    );
+   
+    
+   
+
+  }
+
+
+  const handleEditMember = (member) => {
+    const modalConfig = {
+      width: '30%',
+      hideModalFooter: true,
+      maxHeight: "90%",
+      
+    };
+
+    const updatedConfig = !member.isChild
+      ? {
+        ...modalConfig,
+        modalTitle: t('common:family.Family member or caregiver', 'Family member or caregiver'),
+        modalExtraTitle: member.isActive
+          ? ` ${t('common:common.Active')}`
+          : ` ${t('common:common.Deactivated')} ${member?.deactivatedDate ?? ''}`,
+        enableClose: true,
+      }
+      : modalConfig;
+
+
+    ["3", "9"].includes(member.TWFamilyRelationId)
+      ? ModalService.open(
+        ({ close }) => (
+          <ManageChildForm
+            hideChildModal={hideChildModal}
+            childInfo={member}
+            id={member?.id || null}
+            setHideChildModal={setHideChildModal}
+          />
+        ),
+        updatedConfig,
+      )
+      : ModalService.open(
+        ({ close }) => (
+          <AddFamilyMemberModal
+            onClose={close}
+            member={member}
+            isMemberActive={member?.isActive}
+            dropdownValues={{
+              familyRelations: familyDropdownLists?.familyRelations.filter(
+                (relation) => relation.groupValue !== "Child",
+              ),
+            }}
+          />
+        ),
+        updatedConfig,
+      );
   };
 
   const columnDefinition = useMemo(
@@ -121,10 +198,10 @@ const FamilyMembersTable = ({ members }) => {
            
             <Stack direction="row" spacing={1}>
               <IconButton size="small" sx={{ color: '#2C3E50' }}>
-                <EditIcon fontSize="small" />
+                <EditIcon fontSize="small" onClick={() => handleEditMember(row)} />
               </IconButton>
               <IconButton size="small" sx={{ color: '#2C3E50' }}>
-                <VisibilityIcon fontSize="small" />
+                <VisibilityIcon fontSize="small" onClick={() => handleViewMember(row)} />
               </IconButton>
             </Stack>
           </Box>
@@ -138,7 +215,7 @@ const FamilyMembersTable = ({ members }) => {
   return (
     <ReusableTrendTable
       columns={columnDefinition}
-      title={`Family members and caregivers (${members?.length || 0})`}
+      title={t("common:family.Family members and caregivers", "Family members and caregivers ({{count}})", { count: members?.length || 0 })}
       subheader=""
       tableData={members || []}
       loading={false}

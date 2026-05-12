@@ -1,4 +1,4 @@
-import { useCallback, useState, useRef, useEffect} from 'react';
+import { useCallback, useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
     Box,
@@ -46,7 +46,7 @@ const InlineMemberCreation = ({
     setIsLoading,
     familyRelations,
     isFamilyActive = true,
-    memberDeleteReasons = [], 
+    memberDeleteReasons = [],
     familyChangeReasons = [],
 }) => {
     const { t } = useTranslation(['common']);
@@ -66,32 +66,32 @@ const InlineMemberCreation = ({
 
     const getMemberDetailsRef = useRef(null);
     getMemberDetailsRef.current = (member) => {
-    formik?.setValues(prev => {
-        const currentMembers = prev.members || [];
+        formik?.setValues(prev => {
+            const currentMembers = prev.members || [];
 
-        const memberIndex = currentMembers.findIndex(m =>
-            member._rowKey
-                ? m._rowKey === member._rowKey
-                : m.id === member.id && m.isChild === member.isChild
-        );
+            const memberIndex = currentMembers.findIndex(m =>
+                member._rowKey
+                    ? m._rowKey === member._rowKey
+                    : m.id === member.id && m.isChild === member.isChild
+            );
 
-        if (memberIndex === -1) return prev; // no change, Formik won't re-render
+            if (memberIndex === -1) return prev; // no change, Formik won't re-render
 
-        const existing = currentMembers[memberIndex];
-        const updatedMembers = [...currentMembers];
-        updatedMembers[memberIndex] = {
-            ...existing,
-            ...member,
-            profileInformation: {
-                ...existing.profileInformation,
-                ...member.profileInformation,
-            },
-        };
+            const existing = currentMembers[memberIndex];
+            const updatedMembers = [...currentMembers];
+            updatedMembers[memberIndex] = {
+                ...existing,
+                ...member,
+                profileInformation: {
+                    ...existing.profileInformation,
+                    ...member.profileInformation,
+                },
+            };
 
-        return { ...prev, members: updatedMembers };
-        
-    });
-};
+            return { ...prev, members: updatedMembers };
+
+        });
+    };
 
     const getMemberDetails = useCallback((member) => {
         getMemberDetailsRef.current?.(member);
@@ -141,7 +141,7 @@ const InlineMemberCreation = ({
     const iconSx = {
         cursor: "pointer",
         fontSize: 23,
-        color:"midhnightblue",
+        color: "midhnightblue",
         "&:hover": { color: "midhnightblue" },
     };
 
@@ -165,7 +165,7 @@ const InlineMemberCreation = ({
             width: '30%',
             hideModalFooter: true,
             maxHeight: "90%",
-           
+
         };
 
         const updatedConfig = !member.isChild
@@ -179,28 +179,33 @@ const InlineMemberCreation = ({
             }
             : modalConfig;
 
-        ModalService.open(({ close }) => (
-            ["3", "9"].includes(member.TWFamilyRelationId) ? (
-                <ManageChildForm
-                    isFromFamily={true}
-                    close={close}
-                    getMemberDetails={getMemberDetails}
-                    id={member?.id}
-                    childInfo={{ ...member, TWFamilyId: familyId, caseWorkerId: caseWorker }}
-                />
-            ) : (
-                <AddFamilyMemberModal
-                    onClose={close}
-                    getMemberDetails={getMemberDetails}
-                    member={member}
-                    familyId={familyId}
-                    isFamilyActive={isFamilyActive}
-                    isMemberActive={member?.isActive}
-                    dropdownValues={{ familyRelations: familyRelations.filter(relation => relation.groupValue !== "Child") }}
-                />
-            )
-        ), updatedConfig);
+
+        ["3", "9"].includes(member.TWFamilyRelationId)
+            ? handleChildEdit(member)
+            : ModalService.open(
+                ({ close }) => (
+                    <AddFamilyMemberModal
+                        onClose={close}
+                        getMemberDetails={getMemberDetails}
+                        member={member}
+                        familyId={familyId}
+                        isFamilyActive={isFamilyActive}
+                        isMemberActive={member?.isActive}
+                        dropdownValues={{
+                            familyRelations: familyRelations.filter(
+                                (relation) => relation.groupValue !== "Child",
+                            ),
+                        }}
+                    />
+                ),
+                updatedConfig,
+            );
     };
+
+    const handleChildEdit = (child) => {
+        setChildToEdit({ ...child, caseWorkerId: formik?.values?.caseWorker ,isNewFamily: !formik?.values?.id});
+        setChildModalOpen(true);
+    }
 
     const handleAddMember = async (push) => {
         setIsAdding(true);
@@ -469,95 +474,95 @@ const InlineMemberCreation = ({
         });
     };
 
-      // Local state for modal fields
-   const localDateRef = useRef(null);
-const localReasonRef = useRef("");
+    // Local state for modal fields
+    const localDateRef = useRef(null);
+    const localReasonRef = useRef("");
 
-     const handleDeleteConfirmation = useCallback((member) => {
-    // Find the member index in the Formik array
-    const currentMembers = formik?.values?.members || [];
-    const memberIndex = currentMembers.findIndex(m =>
-        member._rowKey
-            ? m._rowKey === member._rowKey
-            : m.id === member.id && m.isChild === member.isChild
-    );
+    const handleDeleteConfirmation = useCallback((member) => {
+        // Find the member index in the Formik array
+        const currentMembers = formik?.values?.members || [];
+        const memberIndex = currentMembers.findIndex(m =>
+            member._rowKey
+                ? m._rowKey === member._rowKey
+                : m.id === member.id && m.isChild === member.isChild
+        );
 
-    localDateRef.current = null;
-    localReasonRef.current = "";
-    let removeReasonOptions = (member?.isChild ? familyChangeReasons : memberDeleteReasons) || [];
-    
-    ModalService.open(({ close }) => (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Box sx={{ p: 3 }}>
-                <Typography variant="body1" sx={{ mb: 2 }}>
-                    {t(
-                        `common:child.Closing a family's case also closes the cases for all family members and children in the family.`,
-                        `Closing a family's case also closes the cases for all family members and children in the family.`
-                    )}
-                </Typography>
-                <Box sx={{ mb: 2 }}>
-                    <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold' }}>
-                        {t('common:family.Date of deactivation', 'Date of deactivation')}
+        localDateRef.current = null;
+        localReasonRef.current = "";
+        let removeReasonOptions = (member?.isChild ? familyChangeReasons : memberDeleteReasons) || [];
+
+        ModalService.open(({ close }) => (
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <Box sx={{ p: 3 }}>
+                    <Typography variant="body1" sx={{ mb: 2 }}>
+                        {t(
+                            `common:child.Closing a family's case also closes the cases for all family members and children in the family.`,
+                            `Closing a family's case also closes the cases for all family members and children in the family.`
+                        )}
                     </Typography>
-                    <DatePicker
-                        value={localDateRef.current ? dayjs(localDateRef.current) : null}
-                        format={DateFormatFromRegion(true)}
-                        onChange={(newValue) => {
-                            localDateRef.current = newValue ? newValue.toISOString() : null;
-                        }}
-                        maxDate={dayjs().endOf('day')}
-                        slots={{ openPickerIcon: CalendarIcon }}
-                        slotProps={{
-                            textField: {
-                                fullWidth: true,
-                                required: true,
-                                variant: "outlined",
-                                placeholder: "",
-                            },
-                        }}
-                    />
+                    <Box sx={{ mb: 2 }}>
+                        <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold' }}>
+                            {t('common:family.Date of deactivation', 'Date of deactivation')}
+                        </Typography>
+                        <DatePicker
+                            value={localDateRef.current ? dayjs(localDateRef.current) : null}
+                            format={DateFormatFromRegion(true)}
+                            onChange={(newValue) => {
+                                localDateRef.current = newValue ? newValue.toISOString() : null;
+                            }}
+                            maxDate={dayjs().endOf('day')}
+                            slots={{ openPickerIcon: CalendarIcon }}
+                            slotProps={{
+                                textField: {
+                                    fullWidth: true,
+                                    required: true,
+                                    variant: "outlined",
+                                    placeholder: "",
+                                },
+                            }}
+                        />
+                    </Box>
+                    <Box sx={{ p: 2, borderRadius: 1, mb: 3 }}>
+                        <SmallText value={t('common:family. Why is this person being deleted?', 'Why is this person being deleted?')} />
+                        <RadioGroupList
+                            name="deleteReason"
+                            options={removeReasonOptions}
+                            value={localReasonRef.current}
+                            onChange={(e) => {
+                                localReasonRef.current = e.target.value;
+                            }}
+                            renderPrimary={(option) => <SmallText value={option.value} />}
+                        />
+                    </Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+                        <Button variant="outlined" fullWidth onClick={close}>
+                            {t('common:common.No,Cancel', 'No, Cancel')}
+                        </Button>
+                        <Button
+                            variant="contained"
+                            fullWidth
+                            type="button"
+                            onClick={() => {
+                                if (memberIndex !== -1) {
+                                    formik?.setFieldValue(`members.${memberIndex}.isDeleted`, true);
+                                    formik?.setFieldValue(`members.${memberIndex}.deactivationDate`, localDateRef.current);
+                                    formik?.setFieldValue(`members.${memberIndex}.reason`, removeReasonOptions.find(option => option.id === localReasonRef.current)?.value || '');
+                                }
+                                close();
+                            }}
+                        >
+                            {t('common:common.Yes, Delete', 'Yes, Delete')}
+                        </Button>
+                    </Box>
                 </Box>
-                <Box sx={{ p: 2, borderRadius: 1, mb: 3 }}>
-                    <SmallText value={t('common:family. Why is this person being deleted?', 'Why is this person being deleted?')} />
-                    <RadioGroupList
-                        name="deleteReason"
-                        options={removeReasonOptions}
-                        value={localReasonRef.current}
-                        onChange={(e) => {
-                            localReasonRef.current = e.target.value;
-                        }}
-                        renderPrimary={(option) => <SmallText value={option.value} />}
-                    />
-                </Box>
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-                    <Button variant="outlined" fullWidth onClick={close}>
-                        {t('common:common.No,Cancel', 'No, Cancel')}
-                    </Button>
-                    <Button
-                        variant="contained"
-                        fullWidth
-                        type="button"
-                        onClick={() => {
-                            if (memberIndex !== -1) {
-                                formik?.setFieldValue(`members.${memberIndex}.isDeleted`, true);
-                               formik?.setFieldValue(`members.${memberIndex}.deactivationDate`, localDateRef.current);
-                              formik?.setFieldValue(`members.${memberIndex}.reason`, removeReasonOptions.find(option => option.id === localReasonRef.current)?.value || '');
-                            }
-                            close();
-                        }}
-                    >
-                        {t('common:common.Yes, Delete', 'Yes, Delete')}
-                    </Button>
-                </Box>
-            </Box>
-        </LocalizationProvider>
-    ), {
-        modalTitle: t('common:family.Delete this family member?', 'Delete this family member?'),
-        width: '30%',
-        hideModalFooter: true,
-        enableClose: true,
-    });
-}, [formik, memberDeleteReasons, familyChangeReasons, t]);
+            </LocalizationProvider>
+        ), {
+            modalTitle: t('common:family.Delete this family member?', 'Delete this family member?'),
+            width: '30%',
+            hideModalFooter: true,
+            enableClose: true,
+        });
+    }, [formik, memberDeleteReasons, familyChangeReasons, t]);
 
 
     const buildFamilyOptions = (isChild, memberId) => {
@@ -566,191 +571,228 @@ const localReasonRef = useRef("");
             : familyRelations.filter(relation => relation.groupValue !== "Child");
     };
 
+
     return (
-        <FieldArray name="members">
-            {({ insert, remove, push }) => (
-                <>
-                    {memberList
-                        ?.map((obj, trueIndex) => ({ obj, trueIndex }))
-                        .filter(({ obj }) => !obj.isDeleted)
-                        .map(({ obj, trueIndex: i }) => (
-                           
-                            <Box key={obj.id || obj._rowKey}
-                                sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    backgroundColor: "#FFFFFF",
-                                    borderRadius: 1,
-                                }}
-                            >
-                                 
-                                <RadioGroup value={selectedCareGiver}>
-                                    <Box
-                                        sx={{
-                                            flex: 1,
-                                            backgroundColor: "#F3F6FA",
-                                            border: "1px solid #D9D9D9",
-                                            borderRadius: 1,
-                                            p: 1,
-                                            mb: 1,
-                                            maxHeight: { xs: "unset", md: 75 },
-                                            minHeight: { xs: 75, md: "unset" },
-                                        }}
-                                    >
-                                        
-                                        <Grid container spacing={2} alignItems="center">
-                                            <Grid item md={2} xs={12}>
-                                                <Field
-                                                    name={`members.${i}.TWFamilyRelationId`}
-                                                    component={DropdownWithExternalLabel}
-                                                    options={buildFamilyOptions(obj.isChild, obj?.id)}
-                                                    customFunction={(newValue) => {
-                                                        formik?.setFieldValue(
-                                                            `members.${i}.isChild`,
-                                                            ["3", "9"].includes(newValue) ? true : false
-                                                        );
-                                                    }}
-                                                    required={true}
-                                                    disabled={!(obj?.isActive && isFamilyActive)}
-                                                    validateOnChange={true}
-                                                    labelKey="value"
-                                                    grouped={true}
-                                                    groupBy="groupValue"
-                                                    placeholder= {t("common:common.Role in family","Role in family")}
-                                                    textFieldProps={{
-                                                        disabled: !(obj?.isActive && isFamilyActive),
-                                                        variant: "outlined",
-                                                        margin: "none",
-                                                        size: "small",
-                                                        sx: {
-                                                            "& .MuiOutlinedInput-root": {
-                                                                backgroundColor: "#FFFFFF",
-                                                            },
-                                                            "& .MuiAutocomplete-input": {
-                                                                backgroundColor: "transparent",
-                                                            },
-                                                            "& .MuiFormHelperText-root": {
-                                                                margin: 0,
-                                                                marginTop: "2px",
-                                                                marginLeft: "2px",
-                                                            },
-                                                        },
-                                                    }}
-                                                />
-                                               
-                                            </Grid>
-                                            {obj.TWFamilyRelationId && (
-                                                ["3", "9"].includes(
-                                                    obj.TWFamilyRelationId
-                                                ) ? (
-                                                    <DynamicForm
-                                                        t={t}
-                                                        values={obj}
-                                                        errors={formik?.errors?.members?.[i]}
-                                                        touched={formik?.touched?.members?.[i]}
-                                                        handleChange={formik?.handleChange}
-                                                        handleBlur={(e) => {
-                                                            formik?.handleBlur(e);
-                                                            const fieldName = e.target.name.split('.').pop();
-                                                            handleFieldBlur(i, fieldName, e.target.value);
+        <>
+            <Modal
+                open={childModalOpen}
+                onClose={handleChildModalOpen}
+                sx={{ visibility: hideChildModal ? "hidden" : "visible" }}
+            >
+                <Box
+                    sx={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        width: { xs: "90%", sm: 500, md: 600, lg: 700 },
+                        bgcolor: "background.paper",
+                        // border: "2px solid #000",
+                        p: 3,
+                        boxShadow: 24,
+                    }}
+                >
+                    <ManageChildForm
+                        handleChildModalOpen={handleChildModalOpen}
+                        childInfo={childToEdit}
+                        id={childToEdit?.id || null}
+                        isFromFamily={true}
+                        getMemberDetails={getMemberDetails}
+                        setHideChildModal={setHideChildModal}
+                    />
+                </Box>
+            </Modal>
+            <FieldArray name="members">
+                {({ insert, remove, push }) => (
+                    <>
+                        {memberList
+                            ?.map((obj, trueIndex) => ({ obj, trueIndex }))
+                            .filter(({ obj }) => !obj.isDeleted)
+                            .map(({ obj, trueIndex: i }) => (
+
+                                <Box key={obj.id || obj._rowKey}
+                                    sx={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        backgroundColor: "#FFFFFF",
+                                        borderRadius: 1,
+                                    }}
+                                >
+
+                                    <RadioGroup value={selectedCareGiver}>
+                                        <Box
+                                            sx={{
+                                                flex: 1,
+                                                backgroundColor: "#F3F6FA",
+                                                border: "1px solid #D9D9D9",
+                                                borderRadius: 1,
+                                                p: 1,
+                                                mb: 1,
+                                                maxHeight: { xs: "unset", md: 75 },
+                                                minHeight: { xs: 75, md: "unset" },
+                                            }}
+                                        >
+
+                                            <Grid container spacing={2} alignItems="center">
+                                                <Grid item md={2} xs={12}>
+                                                    <Field
+                                                        name={`members.${i}.TWFamilyRelationId`}
+                                                        component={DropdownWithExternalLabel}
+                                                        options={buildFamilyOptions(obj.isChild, obj?.id)}
+                                                        customFunction={(newValue) => {
+                                                            formik?.setFieldValue(
+                                                                `members.${i}.isChild`,
+                                                                ["3", "9"].includes(newValue) ? true : false
+                                                            );
                                                         }}
-                                                        key={obj.gender}
-                                                        handleDateChange={(newValue) => handleDateChange(i, newValue)}
-                                                        setFieldValue={formik?.setFieldValue}
-                                                        config={InlineChildCreationConfig}
-                                                        searchFunction={(inputvalue) => searchChildren(inputvalue, obj.id)}
-                                                        RenderOptionList={ChildRenderOption}
-                                                        handleChildSelection={(child) => handleChildSelection(child, i)}
-                                                        index={i}
-                                                        parentFieldName="members"
-                                                        initialTextValue={obj.firstName || ''}
-                                                        isDisabled={!(obj?.isActive && isFamilyActive)}
-                                                    />
-                                                ) : (
-                                                    <DynamicForm
-                                                        t={t}
-                                                        values={obj}
-                                                        errors={formik?.errors?.members?.[i]}
-                                                        touched={formik?.touched?.members?.[i]}
-                                                        handleChange={formik?.handleChange}
-                                                        handleBlur={formik?.handleBlur}
-                                                        setFieldValue={formik?.setFieldValue}
-                                                        config={InlineMemberCreationConfig}
-                                                        index={i}
-                                                        parentFieldName="members"
-                                                        isDisabled={!(obj?.isActive && isFamilyActive)}
-                                                    />
-                                                )
-                                            )}
-                                            {obj.TWFamilyRelationId &&
-                                                <Grid item xs="auto" sx={{ marginLeft: 'auto', flexShrink: 0 }}>
-                                                    <Box
-                                                        sx={{
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            gap: 0.5,
-                                                            flexShrink: 0,
+                                                        required={true}
+                                                        disabled={!(obj?.isActive && isFamilyActive) || !formik?.values?.caseWorker || !formik?.values?.familyName}
+                                                        validateOnChange={true}
+                                                        labelKey="value"
+                                                        grouped={true}
+                                                        groupBy="groupValue"
+                                                        placeholder="Role in family"
+                                                        textFieldProps={{
+                                                            disabled: !(obj?.isActive && isFamilyActive) || !formik?.values?.caseWorker || !formik?.values?.familyName,
+                                                            variant: "outlined",
+                                                            margin: "none",
+                                                            size: "small",
+                                                            sx: {
+                                                                "& .MuiOutlinedInput-root": {
+                                                                    backgroundColor: "#FFFFFF",
+                                                                },
+                                                                "& .MuiAutocomplete-input": {
+                                                                    backgroundColor: "transparent",
+                                                                },
+                                                                "& .MuiFormHelperText-root": {
+                                                                    margin: 0,
+                                                                    marginTop: "2px",
+                                                                    marginLeft: "2px",
+                                                                },
+                                                            },
                                                         }}
-                                                    >
-                                                        <Radio
-                                                            checked={selectedCareGiver === (obj.id || obj._rowKey)}
-                                                            onChange={(e) => handleRadioChange(e, obj)}
-                                                            disabled={!(obj?.isActive && isFamilyActive)}
-                                                            sx={{
-                                                                color: '#1D334B',
-                                                                '&.Mui-checked': { color: '#1D334B' },
-                                                                padding: 0.5,
-                                                            }}
-                                                        />
-                                                        <Typography sx={{ whiteSpace: 'wrap' }}>
-                                                            {t('common:family.Primary contact', 'Primary contact')}
+                                                    />
+
+                                                </Grid>
+                                                {!formik?.values?.caseWorker || !formik?.values?.familyName ? (
+                                                    <Grid item md={6} xs={6}>
+                                                        <Typography variant="body2" color="textSecondary">
+                                                            {t('common:family.Please select case worker and enter family name to add members', 'Please select case worker and enter family name to add members')}
                                                         </Typography>
-                                                        <IconButton
-                                                            aria-label="more"
-                                                            onClick={(e) => handleClick(e, obj)}
+                                                    </Grid>) : null}
+                                                {obj.TWFamilyRelationId && (
+                                                    ["3", "9"].includes(
+                                                        obj.TWFamilyRelationId
+                                                    ) ? (
+                                                        <DynamicForm
+                                                            t={t}
+                                                            values={obj}
+                                                            errors={formik?.errors?.members?.[i]}
+                                                            touched={formik?.touched?.members?.[i]}
+                                                            handleChange={formik?.handleChange}
+                                                            handleBlur={(e) => {
+                                                                formik?.handleBlur(e);
+                                                                const fieldName = e.target.name.split('.').pop();
+                                                                handleFieldBlur(i, fieldName, e.target.value);
+                                                            }}
+                                                            key={obj.gender}
+                                                            handleDateChange={(newValue) => handleDateChange(i, newValue)}
+                                                            setFieldValue={formik?.setFieldValue}
+                                                            config={InlineChildCreationConfig}
+                                                            searchFunction={(inputvalue) => searchChildren(inputvalue, obj.id)}
+                                                            RenderOptionList={ChildRenderOption}
+                                                            handleChildSelection={(child) => handleChildSelection(child, i)}
+                                                            index={i}
+                                                            parentFieldName="members"
+                                                            initialTextValue={obj.firstName || ''}
+                                                            isDisabled={!(obj?.isActive && isFamilyActive)}
+                                                        />
+                                                    ) : (
+                                                        <DynamicForm
+                                                            t={t}
+                                                            values={obj}
+                                                            errors={formik?.errors?.members?.[i]}
+                                                            touched={formik?.touched?.members?.[i]}
+                                                            handleChange={formik?.handleChange}
+                                                            handleBlur={formik?.handleBlur}
+                                                            setFieldValue={formik?.setFieldValue}
+                                                            config={InlineMemberCreationConfig}
+                                                            index={i}
+                                                            parentFieldName="members"
+                                                            isDisabled={!(obj?.isActive && isFamilyActive)}
+                                                        />
+                                                    )
+                                                )}
+                                                {obj.TWFamilyRelationId &&
+                                                    <Grid item xs="auto" sx={{ marginLeft: 'auto', flexShrink: 0 }}>
+                                                        <Box
+                                                            sx={{
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                gap: 0.5,
+                                                                flexShrink: 0,
+                                                            }}
                                                         >
-                                                            <MoreVertIcon />
-                                                        </IconButton>
-                                                        <Menu anchorEl={menuState.anchorEl} open={open} onClose={handleClose}>
-                                                            <Stack direction="column" spacing={0.5}>
-                                                                {menuActions
-                                                                    .filter(({ isDisabled }) => !(isDisabled && isDisabled(menuState.member)))
-                                                                    .map(({ label, icon: Icon, onClick }) => (
-                                                                        <MenuItem
-                                                                            key={label}
-                                                                            onClick={() => { onClick(menuState.member, push); handleClose(); }}
-                                                                            sx={{ justifyContent: 'flex-start', gap: 1, px: 1.5 }}
-                                                                        >
-                                                                            <Icon sx={iconSx} />
-                                                                            <Typography>{label}</Typography>
-                                                                        </MenuItem>
-                                                                    ))}
-                                                            </Stack>
-                                                        </Menu>
-                                                    </Box>
-                                                </Grid>}
-                                        </Grid>
-                                    </Box>
-                                </RadioGroup>
-                            </Box>
-                        ))}
-                    {isAdding ? (
-                        <Skeleton variant="rectangular" animation="wave" height={50} width="100%" sx={{ mb: 1 }} />
-                    ) : (
-                        <Button
-                            onClick={() => handleAddMember(push)}
-                            disabled={isAdding || memberList?.length > 20 || checkEmptyDataFields(memberList?.length - 1)}
-                            variant={memberList?.length < 1 ? "contained" : "text"}
-                            startIcon={isAdding ? <CircularProgress size={14} /> : null}
-                        >
-                            {memberList?.length < 1
-                                ? t("common:family.Add a new family member", "Add a new family member")
-                                : t("common:family.Add another family member", "Add another family member")}
-                        </Button>
-                    )}
-                </>
-            )}
-        </FieldArray>
+                                                            <Radio
+                                                                checked={selectedCareGiver === (obj.id || obj._rowKey)}
+                                                                onChange={(e) => handleRadioChange(e, obj)}
+                                                                disabled={!(obj?.isActive && isFamilyActive)}
+                                                                sx={{
+                                                                    color: '#1D334B',
+                                                                    '&.Mui-checked': { color: '#1D334B' },
+                                                                    padding: 0.5,
+                                                                }}
+                                                            />
+                                                            <Typography sx={{ whiteSpace: 'wrap' }}>
+                                                                {t('common:family.Primary contact', 'Primary contact')}
+                                                            </Typography>
+                                                            <IconButton
+                                                                aria-label="more"
+                                                                onClick={(e) => handleClick(e, obj)}
+                                                            >
+                                                                <MoreVertIcon />
+                                                            </IconButton>
+                                                            <Menu anchorEl={menuState.anchorEl} open={open} onClose={handleClose}>
+                                                                <Stack direction="column" spacing={0.5}>
+                                                                    {menuActions
+                                                                        .filter(({ isDisabled }) => !(isDisabled && isDisabled(menuState.member)))
+                                                                        .map(({ label, icon: Icon, onClick }) => (
+                                                                            <MenuItem
+                                                                                key={label}
+                                                                                onClick={() => { onClick(menuState.member, push); handleClose(); }}
+                                                                                sx={{ justifyContent: 'flex-start', gap: 1, px: 1.5 }}
+                                                                            >
+                                                                                <Icon sx={iconSx} />
+                                                                                <Typography>{label}</Typography>
+                                                                            </MenuItem>
+                                                                        ))}
+                                                                </Stack>
+                                                            </Menu>
+                                                        </Box>
+                                                    </Grid>}
+                                            </Grid>
+                                        </Box>
+                                    </RadioGroup>
+                                </Box>
+                            ))}
+                        {isAdding ? (
+                            <Skeleton variant="rectangular" animation="wave" height={50} width="100%" sx={{ mb: 1 }} />
+                        ) : (
+                            <Button
+                                onClick={() => handleAddMember(push)}
+                                disabled={isAdding || memberList?.length > 20 || checkEmptyDataFields(memberList?.length - 1) || !isFamilyActive || !formik?.values?.caseWorker || !formik?.values?.familyName}
+                                variant={memberList?.length < 1 ? "contained" : "text"}
+                                startIcon={isAdding ? <CircularProgress size={14} /> : null}
+                            >
+                                {memberList?.length < 1
+                                    ? t("common:family.Add a new family member", "Add a new family member")
+                                    : t("common:family.Add another family member", "Add another family member")}
+                            </Button>
+                        )}
+                    </>
+                )}
+            </FieldArray>
+        </>
     );
 };
 

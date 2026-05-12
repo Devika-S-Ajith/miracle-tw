@@ -21,6 +21,8 @@ const DashboardLayoutWrapper = styled("div")(({ isSidebarMobileOpen }) => ({
   overflow: "",
   paddingTop: "64px",
   paddingLeft: isSidebarMobileOpen ? "250px" : "120px", // Set padding based on isSidebarMobileOpen
+  transition: "padding-left 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
+  willChange: "padding-left",
   // width:"-webkit-fill-available"
   width: "100%" /* Fills the available width */,
   boxSizing:

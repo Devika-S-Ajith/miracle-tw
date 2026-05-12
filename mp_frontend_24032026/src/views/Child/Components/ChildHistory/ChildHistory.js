@@ -19,7 +19,6 @@ import { useTranslation } from "react-i18next";
 import APIS from "../../../../common/hooks/UseApiCalls";
 import moment from "moment";
 
-
 const Keywords = {
   HTFamilyId: "Family Id",
   firstName: "First Name",

@@ -92,7 +92,7 @@ const EditQuestionForm = (props) => {
     let checkUniquePayload = {
       "id": values.id,
       "questionText": values.question,
-      "HTQuestionDomainId": values.domain,
+      "TWQuestionDomainId": values.domain,
     }
     try {
       const resp = await APIS.CheckIsQuestionUnique(checkUniquePayload)

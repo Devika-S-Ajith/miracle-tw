@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavLink as RouterLink } from "react-router-dom";
 import PropTypes from "prop-types";
 import { Box, Button, Collapse, ListItem } from "@mui/material";
@@ -25,6 +25,16 @@ const NavItem = (props) => {
     ...other
   } = props;
   const [open, setOpen] = useState(openProp);
+  const [showBox, setShowBox] = useState(false);
+    useEffect(() => {
+      let timer;
+      if (isOpenDrawer) {
+        timer = setTimeout(() => setShowBox(true), 100);
+      } else {
+        setShowBox(false);
+      }
+      return () => clearTimeout(timer);
+    }, [isOpenDrawer]);
   const { t } = useTranslation(["common"]);
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -72,7 +82,7 @@ const NavItem = (props) => {
           }}
           variant="text"
         >
-          {isOpenDrawer && (
+          {isOpenDrawer && showBox && (
             <Box sx={{ flexGrow: 1 }}>{t(`common:common.${title}`)}</Box>
           )}
           {info}
@@ -89,7 +99,8 @@ const NavItem = (props) => {
       sx={{
         display: "flex",
         py: 0,
-        ml: isOpenDrawer && 2,
+        // ml: isOpenDrawer && 2,
+        pl: isOpenDrawer && 2,
       }}
     >
       <Button
@@ -122,7 +133,7 @@ const NavItem = (props) => {
         variant={active && isOpenDrawer ? "contained" : "text"}
         to={path}
       >
-        {isOpenDrawer && (
+        {isOpenDrawer && showBox && (
           <Box
             sx={{
               flexGrow: 1,

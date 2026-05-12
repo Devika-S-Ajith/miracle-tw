@@ -139,7 +139,7 @@ const Reports = (props) => {
     if (signedinOrgType !== null && signedinUserRoleHT !== null) {
       if (userListlevel1.includes(signedinUserRoleHT)) {
         let value = ReportCollectionList.filter((item) =>
-          [6, 4, 16, 12, 20,24].includes(item.id)
+          [6, 4, 16, 12, 20].includes(item.id)
         );
         tempValue = _.unionBy(value, tempValue, "id");
       }
@@ -151,7 +151,7 @@ const Reports = (props) => {
       }
       if (userListlevel3.includes(signedinUserRoleHT)) {
         let value = ReportCollectionList.filter((item) =>
-          [1, 3, 5, 7, 8, 14, 10, 13, 18, 19, 20, 21, 23].includes(item.id)
+          [1, 3, 5, 7, 8, 14, 10, 13, 18, 19, 20, 21, 23, 24].includes(item.id)
         );
         tempValue = _.unionBy(value, tempValue, "id");
       }

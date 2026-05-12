@@ -436,6 +436,7 @@ const AddChildForm = (props) => {
         globalSearchQuery: "",
         accountId: [signedinOrgId],
         HTUserRoleId: ["4", "5"],
+        FSUserRoleId:["4", "5"],
         HTCountryId: localStorage.getItem("userRegion"),
       };
       payload.HTCountryId = localStorage.getItem("userRegion");

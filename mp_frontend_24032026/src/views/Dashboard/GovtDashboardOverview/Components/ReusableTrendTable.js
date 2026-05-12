@@ -303,6 +303,7 @@ const PaginationSection = memo(
   ({
     rowCount,
     onRowCountChange,
+    rowCountOptions, 
     page,
     totalPageCount,
     onPageChange,
@@ -331,6 +332,7 @@ const PaginationSection = memo(
           <ListPaging
             rowCount={rowCount}
             handleRowCountChange={onRowCountChange}
+            rowCountOptions={rowCountOptions}
           />
           <Typography variant="body2" sx={{ ml: 2 }}>
             {loading ? (
@@ -397,7 +399,8 @@ const ReusableTrendTable = ({
   handleChipDelete,
   clearFilter,
   tableExtraButtons,
-  cancelFilter
+  cancelFilter,
+  rowCountOptions
 }) => {
   // Table state
   const [state, dispatch] = useReducer(tableStateReducer, {
@@ -647,7 +650,6 @@ const resolvedTableExtraButtons = useMemo(() => {
         {cardHeader}
         {toolBar}
       </Box>
-
       {title && <Divider sx={{ mx: 2, mb: 2, borderBottomWidth: 2 }} />}
       <Stack direction="row" alignItems="center" mt={!title && 2}>
         {searchable && (
@@ -748,20 +750,20 @@ const resolvedTableExtraButtons = useMemo(() => {
         {resolvedTableExtraButtons}        
       </Stack>
 
-      <Stack direction="row" gap={1} flexWrap="wrap" mx={2} mt={2}>
+      {appliedFiltersChipArray && <Stack direction="row" gap={1} flexWrap="wrap" mx={2} mt={2}>
         {appliedFiltersChipArray && Object.entries(appliedFiltersChipArray)?.map(([key, values]) =>
             values.map((item) => (
               <Chip
                 key={`${key}-${item.value}`}
                 // label={`${item.key}: ${item.label}`}
-                label={`${t(`common:infoCard.${item.key}`)}: ${t(`common:infoCard.${item.label}`), item.label}`}
+                label={`${t(`common:infoCard.${item.key}`)}: ${t(`common:infoCard.${item.label}`, item.label)}`}
                 sx={{ mb: 1, backgroundColor: "#34475D", color: "#fff" }}
                 deleteIcon={<CloseIcon style={{ color: "#fff", fontSize: "16px" }} />}
                 onDelete={() => handleChipDelete(key, item.value, { search: state.searchQuery, rowCount: state.rowCount })}
               />
             ))
         )}
-      </Stack>
+      </Stack>}
       <CardContent sx={{ py: 0, width: "100%" }}>
         <Box sx={{ overflowX: "auto", width: "100%" }}>
           <Table sx={tableStyles}>
@@ -794,6 +796,7 @@ const resolvedTableExtraButtons = useMemo(() => {
             onPageChange={handlePageChange}
             totalItems={totalItems}
             loading={loading}
+            rowCountOptions={rowCountOptions}
           />
         )}
       </CardContent>

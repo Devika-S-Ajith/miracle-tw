@@ -453,9 +453,13 @@ const ViewAssessment = forwardRef((props, ref) => {
   const getTWScore = () => {
     let totalScoreInPercentageAsString;
     if (score && score.totalScoreInPercentageAsString) {
-      // Remove decimal part before returning
-      const intPart = Math.floor(Number(score.totalScoreInPercentageAsString));
-      totalScoreInPercentageAsString = intPart + " %";
+      const num = Number(score.totalScoreInPercentageAsString);
+      // Check if decimal part is zero
+      if (Number.isInteger(num)) {
+        totalScoreInPercentageAsString = num + " %";
+      } else {
+        totalScoreInPercentageAsString = score.totalScoreInPercentageAsString + " %";
+      }
     }
     return totalScoreInPercentageAsString;
   };
@@ -548,7 +552,7 @@ const ViewAssessment = forwardRef((props, ref) => {
 
   const getDomainSkippedReason = (domainId) => {
     if (!assessment?.itemsSkipped?.length) return "";
-    const item = assessment.itemsSkipped.find(i => i?.HTQuestionDomainId === domainId);
+    const item = assessment.itemsSkipped.find(i => i?.TWQuestionDomainId === domainId);
     if (!item) return "";
     if (item.notes) return item.notes;
     if (item.domainSkippReasonId && Array.isArray(domainSkippingReasons)) {
@@ -556,6 +560,37 @@ const ViewAssessment = forwardRef((props, ref) => {
       return reasonObj?.reason || "";
     }
     return "";
+  };
+
+  // Combined helper for skipped question info
+  const getSkippedQuestionInfo = (domainId, questionId) => {
+    if (!assessment?.itemsSkipped?.length) return { skipped: false, reason: "" };
+    const domainItem = assessment.itemsSkipped.find(i => i?.TWQuestionDomainId === domainId && i?.isDomainSkipped !== true);
+    if (!domainItem) return { skipped: false, reason: "" };
+    const questionItem = domainItem?.skippedQuestions?.find(i => i?.TWQuestionId === questionId);
+    if (!questionItem) return { skipped: false, reason: "" };
+    let reason = "";
+    if (questionItem?.notes) reason = questionItem.notes;
+    else if (questionItem?.TWReasonId && Array.isArray(domainSkippingReasons)) {
+      const reasonObj = domainSkippingReasons.find(r => r.id === questionItem.TWReasonId);
+      reason = reasonObj?.reason || "";
+    }
+    return { skipped: true, reason };
+  };
+
+  // Helper to render skipped reason (for both domain and question)
+  const renderSkippedReason = (reason, t) => {
+    if (!reason) return null;
+    const maxLen = 30;
+    if (reason.length > maxLen) {
+      return (
+        <Tooltip title={reason} placement="top">
+          <span>{` : ${t("common:assessment.excluded", "excluded")} (${reason.slice(0, maxLen)}…)`}</span>
+        </Tooltip>
+      );
+    } else {
+      return ` : ${t("common:assessment.excluded", "excluded")} (${reason})`;
+    }
   };
 
   return (
@@ -712,8 +747,8 @@ const ViewAssessment = forwardRef((props, ref) => {
                       // Determine if this domain should be disabled (greyed out)
                       const hasActiveQuestion = formQuestions?.some(
                         (item) =>
-                          domain.id === item.HT_question?.HTQuestionDomainId &&
-                          item.HT_question?.HT_responses?.find((c) => !c.isInterResp)?.HTChoiceId
+                          domain.id === item.TW_question?.TWQuestionDomainId &&
+                          item.TW_question?.TW_responses?.find((c) => !c.isInterResp)?.TWChoiceId
                       );
                       return (
                         <Grid item md={12} xs={12} m={2} key={domain.id}>
@@ -811,6 +846,10 @@ const ViewAssessment = forwardRef((props, ref) => {
                                               }}
                                             >
                                               {item.TW_question.questionText}
+                                              {(() => {
+                                                const { skipped, reason } = getSkippedQuestionInfo(domain.id, item.TW_question.id);
+                                                return skipped ? renderSkippedReason(reason, t) : null;
+                                              })()}
                                             </Typography>
                                           </Tooltip>
                                         </div>

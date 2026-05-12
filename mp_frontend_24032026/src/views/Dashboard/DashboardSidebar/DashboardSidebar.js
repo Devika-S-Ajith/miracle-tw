@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
-import { useMediaQuery } from "@mui/material";
+import { Skeleton, useMediaQuery } from "@mui/material";
 import PropTypes from "prop-types";
 import { Box, Divider, Drawer } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
@@ -65,6 +65,7 @@ import {
   PARENT_ORGANIZATION,
 } from "../../../helpers/constant.js";
 import DashboardFilterSection from "../DashboardFilterSection/DashboardFilterSection.js";
+import DashboardSkelton from "./DashboardSkelton.js";
 
 const DashboardSidebar = (props) => {
   const { t } = useTranslation(["common"]);
@@ -167,6 +168,19 @@ const DashboardSidebar = (props) => {
           HT_Allowed_Roles: [
             //ADMIN,
            // VIEW_ONLY,
+          ],
+          Allowed_Acc_Type: [
+            PARENT_ORGANIZATION
+          ],
+        },
+         {
+          title: "Families",
+          path: "/governmentDashboardFamily",
+          icon: <FamilyIcon fontSize="small" />,
+          orangeIcon: <FamilyIconActive fontSize="small" />,
+          HT_Allowed_Roles: [
+            ADMIN,
+           VIEW_ONLY,
           ],
           Allowed_Acc_Type: [
             PARENT_ORGANIZATION
@@ -514,21 +528,23 @@ const DashboardSidebar = (props) => {
       }}
     >
       <Box sx={{ mt: 9, mb: 8 }}>
-        {filteredSections.map((section) => (
-          <NavSection
-            key={section.title}
-            isOpenDrawer={openMobile}
-            pathname={location.pathname}
-            sx={{
-              "& + &": {
-                mt: 1,
-              },
-            }}
-            currentSection={currentSection}
-            drawerOpenHandler={drawerOpenHandler}
-            {...section}
-          />
-        ))}
+        {filteredSections?.[0]?.items?.length > 0 ? (
+          filteredSections.map((section) => (
+            <NavSection
+              key={section.title}
+              isOpenDrawer={openMobile}
+              pathname={location.pathname}
+              sx={{
+                "& + &": {
+                  mt: 1,
+                },
+              }}
+              currentSection={currentSection}
+              drawerOpenHandler={drawerOpenHandler}
+              {...section}
+            />
+          ))
+        ) : <DashboardSkelton isWeb={openMobile}/>}
       </Box>
       <Divider />
     </Box>
@@ -538,7 +554,6 @@ const DashboardSidebar = (props) => {
     <Drawer
       anchor="left"
       onClose={onMobileClose}
-      //onClick={onSidebarMobileOpen}
       open={openMobile}
       variant="permanent"
       className={clsx(classes.drawer, {
@@ -583,7 +598,7 @@ const DashboardSidebar = (props) => {
           </IconButton>
         </div>
       )}
-          {[6].includes(Number(localStorage.getItem("signedinOrgType"))) && <DashboardFilterSection openMobile={openMobile} />}
+      {[6].includes(Number(localStorage.getItem("signedinOrgType"))) && <DashboardFilterSection openMobile={openMobile} />}
       {content}
     </Drawer>
   );

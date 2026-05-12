@@ -36,22 +36,22 @@ const SupportServicesList = () => {
   const columnDefinition = [
     {
       id: "name",
-      label: "Support service name",
+      label: t("common:common.Support Service Name", "Support Service Name"),
       enableSorting: true,
     },
     {
       id: "phoneNumber",
-      label: "Phone",
+      label: t("common:common.Phone", "Phone"),
       enableSorting: false,
     },
     {
       id: "email",
-      label: "Email",
+      label: t("common:common.Email", "Email"),
       enableSorting: false,
     },
     {
       id: "website",
-      label: "Website",
+      label: t("common:common.Website", "Website"),
       enableSorting: false,
     },
     {
@@ -94,7 +94,7 @@ const SupportServicesList = () => {
        const formattedData = response?.data?.data.map((item)=> ({
         id: item?.id,
         name: item?.name,
-        phoneNumber: item?.phoneNumber,
+        phoneNumber: item?.phoneNumber || "-",
         email:item?.email || "-",
         website:item?.website || "-",
         
@@ -130,7 +130,7 @@ const SupportServicesList = () => {
                 style={{ width: 20, height: 20 }}
               />
             }
-            label={t("common:common.Add Support Service", "Add Support Service")}
+            label={t("common:tableColumn.Add Support Service", "Add Support Service")}
             onClick={() =>
               ModalService.open(
                 ({ close }) => 
@@ -140,11 +140,14 @@ const SupportServicesList = () => {
                 {
                   modalTitle: (
                     <Box>
-                      Support service details
+                     {t(
+              "common:infoCard.Support service details",
+              "Support service details",
+            )}
                     </Box>
                   ),
-                  width: "50%",
-                  maxHeight: "90%",
+                  width: "30%",
+                  maxHeight: "95%",
                   hideModalFooter: true,
                   enableClose: true,
                 },
@@ -169,7 +172,7 @@ const SupportServicesList = () => {
             <PageBreadcrumbs
               data={[
                 {
-                  label: t("common:Support Services", "Support Services"),
+                  label: t("common:common.Support Services", "Support Services"),
                 },
               ]}
             />

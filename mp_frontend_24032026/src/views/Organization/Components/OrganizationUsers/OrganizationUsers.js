@@ -33,6 +33,7 @@ import {
   ADMIN,
   ADMIN_CASEMANAGER,
   ADMIN_CASEWORKER,
+  CASEWORKER,
   SUPER_ADMIN,
 } from "../../../../helpers/constant";
 import { statusField } from "../../../../theme/CustomHooks";
@@ -166,87 +167,50 @@ const OrganizationUsers = ({ selectedCountry }) => {
     }
   };
 
-  const handleDeactivateUser = async (
-  id,
-  accountID,
-  HTRole,
-  FSRole,
-  countryName,
-  ref
-) => {
-  try {
-    const country = countryNameList[countryName.toLowerCase()]?.label;
-    
-    if (!country) {
+ const handleDeactivateUser = async (
+    id,
+    accountID,
+    HTRole,
+    FSRole,
+    countryName,
+    ref
+  ) => {
+    try {
+      if ([SUPER_ADMIN].includes(signedinUserRoleHT) || [SUPER_ADMIN].includes(signedinUserRoleFS)) {
+        deactivateUserAfterValidation(id, ref);
+      } else {
+        if ([CASEWORKER, ADMIN_CASEWORKER, ADMIN].includes(HTRole) ||
+          [CASEWORKER, ADMIN_CASEWORKER, ADMIN].includes(FSRole)) {
+          const payloadRoleCheck = {
+            TWUserId: id,
+            TWAccountId: accountID,
+            htuserRole: HTRole,
+            fsuserRole: FSRole,
+          };
+          APIS.ValidateUserDeactivation(payloadRoleCheck).then((res) => {
+            if (res?.data?.message === "NOT OK") {
+              ModalService.open(({ close }) => <></>, {
+                modalTitle: "Deactivate user",
+                width: "30%",
+                modalDescription: t(`common:common.${res?.data?.data.replace(/\.$/, '')}`, res?.data?.data.replace(/\.$/, '')),
+                cancelButtonText: "Ok",
+                hideActionButton: true,
+              });
+            } else if (res?.data?.message === "OK") {
+              deactivateUserAfterValidation(id, ref);
+            } else {
+              toast.error(t("common:common.Something went wrong"));
+            }
+          });
+        } else {
+          deactivateUserAfterValidation(id, ref);
+        }
+      }
+      
+    } catch (err) {
       toast.error(t("common:common.Something went wrong"));
-      return;
     }
-
-    // Helper function to show deactivation modal
-    const showDeactivationModal = () => {
-      ModalService.open(({ close }) => <></>, {
-        modalTitle: "Deactivate user",
-        width: "30%",
-        modalDescription:
-          "This user has families and/or children assigned to them. Before they can be deactivated, families and children must be reassigned to another Case Manager.",
-        cancelButtonText: "Ok",
-        hideActionButton: true,
-      });
-    };
-
-    // Check TS role if HTRole is not 9
-    if (HTRole !== "9") {
-      const payloadRoleCheck = {
-        TWUserId: id,
-        TWAccountId: accountID,
-        HTRoleFrom: HTRole,
-        country,
-      };
-
-      const tsResponse = await APIS.ValidateUserDeactivationTS(payloadRoleCheck);
-      
-      if (tsResponse?.data?.message === "NOT OK") {
-        showDeactivationModal();
-        return;
-      }
-      
-      if (tsResponse?.data?.message !== "OK") {
-        toast.error(t("common:common.Something went wrong"));
-        return;
-      }
-    }
-
-    // Check FS role if FSRole is not 9
-    if (FSRole !== "9") {
-      const payloadRoleCheckFS = {
-        FSUserId: id,
-        TWAccountId: accountID,
-        FSRoleFrom: FSRole,
-        country,
-      };
-
-      const fsResponse = await APIS.ValidateUserDeactivationFS(payloadRoleCheckFS);
-      
-      if (fsResponse?.data?.message === "NOT OK") {
-        showDeactivationModal();
-        return;
-      }
-      
-      if (fsResponse?.data?.message !== "OK") {
-        toast.error(t("common:common.Something went wrong"));
-        return;
-      }
-    }
-
-    // If all validations pass, deactivate the user
-    deactivateUserAfterValidation(id, ref);
-
-  } catch (err) {
-    console.error("Error deactivating user:", err);
-    toast.error(t("common:common.Something went wrong"));
-  }
-};
-
+  };
   const handleReactivateUser = async (id, MPAccountId) => {
     try {
       const payload = {

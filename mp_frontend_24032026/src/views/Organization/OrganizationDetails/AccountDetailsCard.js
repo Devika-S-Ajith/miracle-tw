@@ -9,6 +9,7 @@ import {
   Typography,
   CircularProgress,
   Chip,
+  Skeleton,
 } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -184,7 +185,8 @@ const handleDeactivateOrReactivate = async (account, ref) => {
 
   return (
     // Todo - Handle the menu options based on user role permission
-    <Card sx={{ borderRadius: "8px", minWidth: "100%", px: 2 }}>
+   <>
+   {account ?  <Card sx={{ borderRadius: "8px", minWidth: "100%", px: 2 }}>
       {loading && (
         <CircularProgress
           sx={{
@@ -213,7 +215,7 @@ const handleDeactivateOrReactivate = async (account, ref) => {
           ></CardHeader>
         </Grid>
         {([SUPER_ADMIN].includes(signedinUserRoleHT) ||
-          (account.id === loggedInUserOrgId &&
+          (account?.id === loggedInUserOrgId &&
             ([ADMIN_CASEWORKER, ADMIN].includes(signedinUserRoleHT) ||
               [ADMIN, ADMIN_CASEMANAGER].includes(signedinUserRoleFS)))) && (
           <Grid item>
@@ -237,7 +239,7 @@ const handleDeactivateOrReactivate = async (account, ref) => {
                 onClick={handleMenuClose}
                 style={{ color: "#F37123" }}
                 component={RouterLink}
-                to={`/dashboard/organizations/${account.id}/edit`}
+                to={`/dashboard/organizations/${account?.id}/edit`}
               >
                 <img
                   alt="edit_account"
@@ -317,7 +319,7 @@ const handleDeactivateOrReactivate = async (account, ref) => {
                   {t("common:common.Name")}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
-                  {account.accountName}
+                  {account?.accountName}
                 </Typography>
               </Grid>
               <Grid item>
@@ -325,7 +327,7 @@ const handleDeactivateOrReactivate = async (account, ref) => {
                   {t("common:organization.Organization ID")}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
-                  {account.accountCode}
+                  {account?.accountCode}
                 </Typography>
               </Grid>
               {account?.accessType !== "FOSTER_SHARE" && (
@@ -334,7 +336,7 @@ const handleDeactivateOrReactivate = async (account, ref) => {
                     {t("common:common.Type")}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    {getOrganizationType(account.MPAccountTypeId)}
+                    {getOrganizationType(account?.MPAccountTypeId)}
                   </Typography>
                 </Grid>
               )}
@@ -349,43 +351,43 @@ const handleDeactivateOrReactivate = async (account, ref) => {
                   {t("common:common.Address")}
                 </Typography>
               </Grid>
-              {account.addressLine1 && (
+              {account?.addressLine1 && (
                 <Grid item>
                   <Typography variant="body2" color="textSecondary">
-                    {account.addressLine1}
+                    {account?.addressLine1}
                   </Typography>
                 </Grid>
               )}
-              {account.addressLine2 && (
+              {account?.addressLine2 && (
                 <Grid item>
                   <Typography variant="body2" color="textSecondary">
-                    {account.addressLine2}
+                    {account?.addressLine2}
                   </Typography>
                 </Grid>
               )}
-              {account.city && (
+              {account?.city && (
                 <Grid item>
                   <Typography variant="body2" color="textSecondary">
-                    {account.city}
+                    {account?.city}
                   </Typography>
                 </Grid>
               )}
-              {account.zipCode && (
+              {account?.zipCode && (
                 <Grid item>
                   <Typography variant="body2" color="textSecondary">
-                    {account.zipCode}
+                    {account?.zipCode}
                   </Typography>
                 </Grid>
               )}
-              {account.MPDistrictId && (
+              {account?.MPDistrictId && (
                 <Grid item>
                   <Typography variant="body2" color="textSecondary">
                     {
                       getDistrictList(
                         locationList,
-                        account.MPCountryId,
-                        account.MPStateId
-                      )?.find((item) => item.id == account.MPDistrictId)
+                        account?.MPCountryId,
+                        account?.MPStateId
+                      )?.find((item) => item.id == account?.MPDistrictId)
                         ?.districtName
                     }
                   </Typography>
@@ -395,23 +397,23 @@ const handleDeactivateOrReactivate = async (account, ref) => {
                 <Typography variant="body2" color="textSecondary">
                   {getLocationNames(
                     locationList,
-                    account.MPCountryId,
-                    account.MPStateId
+                    account?.MPCountryId,
+                    account?.MPStateId
                   )}
                 </Typography>
               </Grid>
               <Grid item>
                 <Typography variant="body2" color="textSecondary">
-                  {getLocationNames(locationList, account.MPCountryId)}
+                  {getLocationNames(locationList, account?.MPCountryId)}
                 </Typography>
               </Grid>
             </Grid>
           </Grid>
 
-          {/* Third Column: Linked Organizations */}
+          {/* Third Column: Linked Organizations or Stats */}
           {([6].includes(Number(account?.MPAccountTypeId)) &&
             (account?.linkedAccounts &&
-              account.linkedAccounts?.length > 0))
+              account?.linkedAccounts?.length > 0))
             ?
             (
               <Grid item xs={12} md={6}>
@@ -420,7 +422,7 @@ const handleDeactivateOrReactivate = async (account, ref) => {
                 </Typography>
                 <Grid container spacing={1}>
                   {account?.linkedAccounts?.length > 0 ? (
-                    account.linkedAccounts.map((acc, idx) => {
+                    account?.linkedAccounts?.map((acc, idx) => {
                       const orgName = acc?.accountName;
                       return (
                         <Box sx={{ m: 0.5 }} key={idx}>
@@ -449,37 +451,37 @@ const handleDeactivateOrReactivate = async (account, ref) => {
               [ADMIN, ADMIN_CASEMANAGER].includes(signedinUserRoleFS)) &&
             <Grid item xs={12} md={6}>
               {/* Case Managers Section */}
-              {account.caseManagerCount && (
+              {account?.caseManagerCount && (
                 <Box sx={{ mb: 2 }}>
                   <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
                     {t("common:common.Case managers", "Case managers")}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {account.caseManagerCount}
+                    {account?.caseManagerCount}
                   </Typography>
                 </Box>
               )}
 
               {/* Families Served Section */}
-              {account.familyCount && (
+              {account?.familyCount && (
                 <Box sx={{ mb: 2 }}>
                   <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
                     {t("common:common.Families Served", "Families Served")}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {account.familyCount}
+                    {account?.familyCount}
                   </Typography>
                 </Box>
               )}
 
               {/* Children Served Section */}
-              {account.childCount && (
+              {account?.childCount && (
                 <Box sx={{ mb: 2 }}>
                   <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
                     {t("common:common.Children Served", "Children Served")}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {account.childCount}
+                    {account?.childCount}
                   </Typography>
                 </Box>
               )}
@@ -487,8 +489,40 @@ const handleDeactivateOrReactivate = async (account, ref) => {
           }
         </Grid>
       </CardContent>
-    </Card>
+    </Card> : <AccountDetailsCardSkeletonWithLabels />}
+   </>
   );
 };
+
+export function AccountDetailsCardSkeletonWithLabels() {
+  return (
+    <Card sx={{ borderRadius: "8px", minWidth: "100%", px: 2 }}>
+      <CardContent>
+        <Grid container spacing={2}>
+          {/* First Column: Name, ID, Type */}
+          <Grid item xs={12} md={3}>
+            <Grid container spacing={2} direction="column">
+              <Grid item>
+                
+                <Skeleton variant="text" width={140} height={20} />
+                <Skeleton variant="text" width={200} height={30} />
+              </Grid>
+              <Grid item>
+                <Skeleton variant="text" width={120} height={20} />
+                <Skeleton variant="text" width={160} height={30} />
+              </Grid>
+              <Grid item>
+                <Skeleton variant="text" width={120} height={20} />
+                <Skeleton variant="text" width={180} height={30} />
+              </Grid>
+            </Grid>
+          </Grid>
+
+       
+        </Grid>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default AccountDetailsCard;

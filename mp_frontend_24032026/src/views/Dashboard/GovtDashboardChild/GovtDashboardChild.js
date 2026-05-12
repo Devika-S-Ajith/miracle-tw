@@ -54,7 +54,6 @@ const GovtDashboardFamily = () => {
             <Box px>
                 <PageBreadcrumbs
                     data={[
-                        BreadcrumbsLinkThriveScaleGovtDashboard(t, navigate),
                         {
                             label: t("common:common.Children", "Children"),
                         },

@@ -125,7 +125,7 @@ const ConsolidatedOverviewPage = () => {
           title="Closed case"
           res={data?.[0]}
           loading={loading}
-          reportLink="/dashboard/reportsClosedCases"
+          reportLink="/dashboard/families"
           canViewReport={true}
         />
       ),
@@ -171,8 +171,8 @@ const ConsolidatedOverviewPage = () => {
   useEffect(() => {
     const filtered = items.filter(
       (item) =>
-        (item.Allowed_Roles_HT?.includes(signedinUserRoleHT) || item.Allowed_Roles_FS?.includes(signedinUserRoleFS)) &&
-        item.Allowed_Acc_Type?.includes(signedinOrgType),
+        ((item.Allowed_Roles_HT?.includes(signedinUserRoleHT) &&
+        item.Allowed_Acc_Type?.includes(signedinOrgType)) || item.Allowed_Roles_FS?.includes(signedinUserRoleFS)),
     );
     setFilteredItems(filtered);
   }, [signedinUserRoleHT, signedinUserRoleFS, signedinOrgType]);
@@ -183,47 +183,17 @@ const ConsolidatedOverviewPage = () => {
         setLoading(true);
         // let payload = getNavbarFilterPayload() || {};
         let payload = {
-          HTCountryId: "1",
-          countryFilter: "",
-          districtFilter: "",
-          endDate: "",
-          pageNumber: "1",
-          rowCount: "100",
-          startDate: "",
-          stateFilter: "",
+          TWCountryId: localStorage.getItem("userRegion") || "",
+          
         };
-        // const response = await APIS.DashboardTileData(payload);
+        const response = await APIS.DashboardTileData(payload);
+        const familySituationResponse = await APIS.GetFamilySituatiionCounts(payload);
+        const closedCasesResponse = await APIS.GetFamilyClosedCases(payload);
         let data = {
-          overallOverdue: "52",
-          familySituation: [
-            {
-              Intake: "0",
-              Assessment: "3",
-              Planning: "0",
-              FollowUp: "1",
-              "Case Closed": "1",
-            },
-          ],
-          closedCases: [
-            {
-              Orphan: "39",
-              "Semi-Orphan": "54",
-              "Economic Orphan": "24",
-            },
-          ],
-          currentLivingCondition: [
-            {
-              "Foster care": "98",
-              "Semi-independent living": "66",
-              "Parents/step parents": "37",
-              Other: "9",
-              "Independent living": "1",
-              Kinship: "31",
-              CCI: "22",
-              "After care": "127",
-              "Group living": "5",
-            },
-          ],
+          overallOverdue: response?.data?.message?.overallOverdue || 0,
+          familySituation: familySituationResponse?.data?.message || [],
+          closedCases: closedCasesResponse?.data?.message || [],
+          currentLivingCondition: response?.data?.message?.currentLivingCondition || [],
         };
 
         // if (response && response.status === 200) {
@@ -236,8 +206,10 @@ const ConsolidatedOverviewPage = () => {
         setLoading(false);
       }
     };
-    fetchData();
-  }, []);
+    if(!isSuperAdmin){
+      fetchData();
+    }
+  }, [isSuperAdmin]);
 
   const leftItems = filteredItems
     .filter((item) => item.column === "left")

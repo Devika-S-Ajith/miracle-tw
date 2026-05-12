@@ -1357,7 +1357,17 @@
     "Status": "స్థితి",
     "Case Worker": "కేస్ వర్కర్",
     "Case manager": "కేసు నిర్వాహకుడు",
-    "Inactive": "నిష్క్రియ"
+    "Inactive": "నిష్క్రియ",
+    "Support services": "మద్దతు సేవలు",
+    "Support service details": "మద్దతు సేవ వివరాలు",
+    "Support service name": "మద్దతు సేవ పేరు",
+    "Description": "వివరణ",
+    "Phone": "ఫోన్",
+    "Email": "ఇమెయిల్",
+    "URL": "URL",
+    "Go to URL": "URL కు వెళ్లండి",
+    "Support service information": "మద్దతు సేవ సమాచారం"
+    
 },
 "tableColumn":{
   "Organization name": "సంస్థ పేరు",
@@ -1415,6 +1425,39 @@
   "% of cases assigned": "అన్ని కేసుల్లో % కేటాయించబడింది",
   "Completion rate": "పూర్తి రేటు",
   "Overall rating": "మొత్తం రేటింగ్",
-  "Name": "పేరు"
+  "Case Manager": "కేసు నిర్వాహకుడు",
+  "Status": "స్థితి",
+  "Name": "పేరు",
+  "Child Name": "పిల్ల పేరు",
+  "Family Name": "కుటుంబ పేరు",
+  "Current Living Condition": "ప్రస్తుత నివాస పరిస్థితి",
+  "Add new child": "కొత్త పిల్లను జోడించండి",
+  "Add Support Service": "మద్దతు సేవను జోడించండి",
+  "Support Service Name": "మద్దతు సేవ పేరు",
+  "Phone": "ఫోన్",
+  "Email": "ఇమెయిల్",
+  "Website": "వెబ్‌సైట్",
+   "Action": "చర్య",
+  "Due": "గడువు తేదీ",
+  "Role": "పాత్ర",
+  "Contact information": "కాంటాక్ట్ ఇన్ఫర్మేషన్"                                            
+},
+"resources": {
+  "Title": "శీర్షిక",
+  "Categories": "వర్గాలు",
+  "Created at": "సృష్టించబడింది",
+  "Created by": "సృష్టించినవారు",
+  "Published": "ప్రచురించబడింది",
+  "Draft": "డ్రాఫ్ట్",
+  "Updated at": "నవీకరించబడింది",
+  "Resource information": "వనరుల సమాచారం",
+  "Add resource": "వనరును జోడించండి",
+  "Resource details": "వనరుల వివరాలు",
+  "Article details": "వ్యాస వివరాలు",
+  "Published by": "ప్రచురించిన వారు",
+  "Published on": "ప్రచురించిన తేదీ",
+  "Updated on": "నవీకరించిన తేదీ",
+  "Agency": "ఏజెన్సీ",
+  "Preview": "ప్రీవ్యూ"
 }
 }

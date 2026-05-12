@@ -38,6 +38,7 @@ import ChildBasicDetails from "../Components/ChildBasicDetails";
 import ChildLogs from "../Components/ChildLogs";
 import ManageChildForm from "../Components/ChildListTable/ChildDetailForms/ManageChildForm";
 import PageBreadcrumbs from "../../../components/PageBreadcrumbs/PageBreadcrumbs";
+import useCRUDPermissions from "../../../components/UserComponents/useCRUDPermissions";
                                                                     
 const tabs = [
   { label: "Details", value: "details" },
@@ -50,6 +51,9 @@ const tabs = [
   { label: "Documents", value: "Documents" },
   { label: "Logs", value: "childLogs" },
 ];
+
+
+
 const ChildDetails = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -59,19 +63,41 @@ const ChildDetails = () => {
   const [currentTab, setCurrentTab] = useState(
     comingFromChildList ? currtabvalue : "details"
   );
-  let { id } = useParams();
-  const { signedinOrgType, signedinUserRoleHT } = useContext(CommonDataContext);
+  let { id } = useParams()
   const { t } = useTranslation(["common"]);
-  const { allowedRoles, allowedOrgTypes } = authorizationConfig["AddChild"];
   const[memberList, setMemberList] = useState([]);
   const[childDetailsLoading, setChildDetailsLoading] = useState(false);
   const [isActiveFamily,setIsActiveFamily] = useState(false);
 
   const [childModalOpen, setChildModalOpen] = useState(false);
   const [hideChildModal, setHideChildModal] = useState(false);
+  const { 
+    IS_HT_ALLOWED, 
+    IS_FS_ALLOWED,
+    BOTH_FS_HT_ALLOWED, 
+    IS_EDIT_ALLOWED 
+  } = useCRUDPermissions();
+
   const handleChildModalOpen = () => {
     setChildModalOpen(!childModalOpen);
   };
+
+  const tabs = [
+    { label: "Details", value: "details", id: "details", Permission:BOTH_FS_HT_ALLOWED },
+    { label: "Logs", value: "ConsolidatedLog", id: "childLogs", Permission:IS_FS_ALLOWED },
+    { label: "Assessments & Progress Reports", value: "assessmentsProgressReports", id: "tab_assessments_progress_reports" , Permission:IS_HT_ALLOWED  },
+    //{ label: "Milestones", value: "milestones" ,id:"tab_milestones" },
+    //{ label: "Interventions", value: "interventions", id: "tab_interventions" },
+    { label: "Follow - ups", value: "followUps", id: "tab_follow_ups", Permission:IS_HT_ALLOWED },
+    {
+      label: "Thrive scale score trend",
+      value: "Thrive scale score trend",
+      id: "tab_thriveScale_score_trend",
+      Permission:IS_HT_ALLOWED
+    },
+    { label: "History", value: "history", id: "tab_history" , Permission:BOTH_FS_HT_ALLOWED },
+    { label: "Documents", value: "documents", id: "tab_documents", Permission:BOTH_FS_HT_ALLOWED },
+  ];
 
   const getMembersUnderFamily = async (familyId) => {
     try {
@@ -85,7 +111,8 @@ const ChildDetails = () => {
       const payload = { id: familyId, listType: "DETAILED" };
       const data = await APIS.GetFamilyDetails(payload);
       const members = data?.data?.data?.members || [];
-      setMemberList(members);
+      const membersWithoutCurrentChild = members.filter(member => member.id !== id);
+      setMemberList(membersWithoutCurrentChild);
       setChildDetailsLoading(false);
     } catch (err) {
       setChildDetailsLoading(false);
@@ -127,46 +154,6 @@ const ChildDetails = () => {
       case "details":
         return (
           <ChildBasicDetails child={children} members={memberList} />
-          // <ChildContactDetails
-          //   name={`${children.firstName} ${children.lastName ?? ""}`}
-          //   country={children.HTCountryId}
-          //   gender={children.gender}
-          //   birthdate={children.birthDate}
-          //   isVerified={children.isActive}
-          //   caseManager={
-          //     children?.userFirstName
-          //       ? `${children.userFirstName} ${children.userLastName ?? ""}`
-          //       : ""
-          //   }
-          //   caregiver={children.familyMemberName}
-          //   organization={children.HTOrganizationId}
-          //   email={children.email}
-          //   phone={children.phoneNumber}
-          //   language={children.HTLanguageId}
-          //   id={children.id}
-          //   state={children.HTStateId}
-          //   city={children.city}
-          //   district={children.HTDistrictId}
-          //   zip={children.zipCode}
-          //   address1={children.addressLine1}
-          //   address2={children.addressLine2}
-          //   education={children.HTChildEducationLevelId}
-          //   status={children.HTChildStatusId}
-          //   placementStatus={children.HTChildPlacementStatusId}
-          //   currentPlacement={children.HTChildCurrentPlacementStatusId}
-          //   addDate={children.dateOfEntry}
-          //   closedDate={children.dateOfExit}
-          //   educationSpecific={children.highestEducationLevel}
-          //   profileImage={children.fileUrl}
-          //   familyName={children.familyName}
-          //   familyId={children?.HTFamilyId}
-          //   childStatus={children.isActive}
-          //   childStatusList={children.childStatusList}
-          //   familyMembers={memberList}
-          //   getMembersUnderFamily={getMembersUnderFamily}
-          //   getChildren={getChildren}
-          //   isActiveFamily={isActiveFamily}
-          // />
         );
       case "Assessments":
         return <Assessments childId={children.id} />;
@@ -251,8 +238,7 @@ const ChildDetails = () => {
               </Grid>
               <Grid item>
                 <Box sx={{ m: -1 }}>
-                  {allowedOrgTypes.includes(signedinOrgType) &&
-                  allowedRoles.includes(signedinUserRoleHT) ? (
+                  {IS_EDIT_ALLOWED && (
                     (currentTab === "details" ||
                       currentTab === "CCI" ||
                       currentTab === "Family") && (
@@ -263,24 +249,11 @@ const ChildDetails = () => {
                         variant="contained"
                         onClick={() => {
                           setChildModalOpen(true);
-                          // ModalService.open(
-                          //   ({ close }) => (
-                          //     <ManageChildForm close={close} id={id} />
-                          //   ),
-                          //   {
-                          //     width: "30%",
-                          //     height: "95%",
-                          //     hideModalFooter: true,
-                          //     enableClose: false,
-                          //   },
-                          // );
                         }}
                       >
                         {t("common:common.Edit")}
                       </Button>
                     )
-                  ) : (
-                    <></>
                   )}
                   {currentTab == "Family" && children.TWFamilyId ? (
                     <Button

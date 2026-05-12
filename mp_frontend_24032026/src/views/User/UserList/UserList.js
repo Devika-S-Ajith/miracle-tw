@@ -121,6 +121,11 @@ const UserList = () => {
 
         if (![SUPER_ADMIN].includes(signedinUserRoleHT)) {
           finalPayload.accountId = [loggedInUserOrgId];
+          
+        }
+        if ([SUPER_ADMIN].includes(signedinUserRoleHT)) {
+          finalPayload.userCountryId = localStorage.getItem("userRegion");
+          
         }
         dataList = { ...finalPayload };
         setPayloadData(dataList);
@@ -168,6 +173,7 @@ const UserList = () => {
       accountTypeFilter: "",
       orderByField: [["accountName", "ASC"]],
       addressLine1Like: "",
+      userCountryId:localStorage.getItem("userRegion"),
     };
     payload.TWCountryId = [SUPER_ADMIN].includes(signedinUserRoleHT)
       ? ""

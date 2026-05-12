@@ -66,7 +66,7 @@ const DashboardCountWidgets = (props) => {
                   >
                     {data}
                   </Typography>
-                  {sequence === 2 && (
+                  {/* {sequence === 2 && (
                     <Typography
                       color="#bfb5b2"
                       sx={{ float: "right", mt: 1 }}
@@ -75,7 +75,7 @@ const DashboardCountWidgets = (props) => {
                     >
                       {percentageData}%
                     </Typography>
-                  )}
+                  )} */}
                 </>
               }
             </>

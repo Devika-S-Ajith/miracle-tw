@@ -30,9 +30,9 @@ const ResourceDetailForm = ({ close, onSuccess, ResourceDetail = null }) => {
     ...organizationList,
   ];
   const [typeFilter, setTypeFilter] = useState(agencyList[0]);
-  const actionList = [
-    { id: true, value: "Published" },
-    { id: false, value: "Draft" },
+const actionList = [
+    { id: true, value: t("common:common.Published", "Published") },
+    { id: false, value: t("common:common.Draft", "Draft") },
   ];
 
   const initialValues = {
@@ -64,11 +64,11 @@ const ResourceDetailForm = ({ close, onSuccess, ResourceDetail = null }) => {
     getResourceCategories();
   }, []);
 
-  const validationSchema = Yup.object().shape({
-    title: Yup.string().max(255).required("Title is required"),
-    summary: Yup.string().required("Summary is required"),
-    articleLink: Yup.string().required("Article link is required"),
-    imageLink: Yup.string().required("Image link is required"),
+const validationSchema = Yup.object().shape({
+    title: Yup.string().max(255).required(t("common:warnings.Title is required", "Title is required")),
+    summary: Yup.string().required(t("common:warnings.This is a required field", "Summary is required")),
+    articleLink: Yup.string().required(t("common:warnings.URL is required", "Article link is required")),
+    imageLink: Yup.string().required(t("common:warnings.This is a required field", "Image link is required")),
   });
 
   const formik = useFormik({
@@ -147,7 +147,7 @@ const ResourceDetailForm = ({ close, onSuccess, ResourceDetail = null }) => {
           sx={{
             display: "flex",
             flexDirection: "column",
-            gap: 1.5,
+            gap: 2,
             overflowY: "auto", // 'auto' will add a scrollbar when needed
             maxHeight: "70vh", // Set a maximum height to limit the scrollable area
           }}
@@ -171,7 +171,7 @@ const ResourceDetailForm = ({ close, onSuccess, ResourceDetail = null }) => {
             error={Boolean(touched?.summary && errors?.summary)}
             fullWidth
             helperText={touched?.summary && errors?.summary}
-            label="Summary"
+            label={t("common:resources.Summary", "Summary")}
             name="summary"
             onBlur={handleBlur}
             onChange={handleChange}
@@ -259,7 +259,7 @@ const ResourceDetailForm = ({ close, onSuccess, ResourceDetail = null }) => {
                       label: "",
                       placeholder: "Select categories",
                     }}
-                    placeholder={selectedCount < 1 && "Select categories"}
+                    placeholder={selectedCount < 1 && t("common:common.Select categories", "Select categories")}
                     variant="outlined"
                     InputProps={inputProps}
                   />
@@ -346,7 +346,7 @@ const ResourceDetailForm = ({ close, onSuccess, ResourceDetail = null }) => {
                           placeholder: "Select an account",
                         }}
                         placeholder={
-                          selectedCount < 1 && "Select an organization" + "*"
+                          selectedCount < 1 && t("common:common.Select an organization", "Select an organization") + "*"
                         }
                         variant="outlined"
                         InputProps={inputProps}
@@ -369,7 +369,8 @@ const ResourceDetailForm = ({ close, onSuccess, ResourceDetail = null }) => {
             }}
             sx={{ width: 1 }}
             onChange={(_, newValue) => setFieldValue("action", newValue)}
-            renderInput={(params) => <TextField {...params} label={"Action"} />}
+            renderInput={(params) => <TextField {...params} label={t("common:common.Action", "Action")} />
+            }
           />
         </Box>
         <Box mt sx={{ display: "flex", justifyContent: "end", gap: 2 }}>

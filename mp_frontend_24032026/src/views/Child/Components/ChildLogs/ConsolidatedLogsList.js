@@ -1,10 +1,19 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import ReusableTrendTable from "../../../Dashboard/GovtDashboardOverview/Components/ReusableTrendTable";
-import SecondaryButton from "../../../../components/SecondaryButton/SecondaryButton";
-import { Box, Stack, IconButton } from "@mui/material";
+import {
+  Box,
+  Stack,
+  IconButton,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import { useTranslation } from "react-i18next";
 import {
   monthYearShort,
+  toUTCEndOfDay,
+  toUTCStartofDay,
   utcToDateFormatMonthDayYear,
 } from "../../../../helpers/helperFunction";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
@@ -19,6 +28,11 @@ import toast from "react-hot-toast";
 import APIS from "../../../../common/hooks/UseApiCalls";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import { useSearchParams } from "react-router-dom";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import BehaviorLogDetails from "./BehaviorLogDetails/BehaviorLogDetails";
+import MedLogDetailsModal from "./MedLogDetails/MedLogDetailsModal";
+import RecreationalLogDetails from "./RecreationalLogDetails/RecreationalLogDetails";
 
 const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
   const [tableData, setTableData] = useState({});
@@ -38,6 +52,8 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
   const { t } = useTranslation(["common"]);
   const downloadFileRef = useRef({});
   const navigate = useNavigate();
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
 
   const getTableData = async (params = {}) => {
     setLoading(true);
@@ -45,25 +61,25 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
     const {
       sort = "childName",
       order = "desc",
-      page,
-      rowCount,
+      page = 1,
+      rowCount = 10,
       search = "",
       filter = filterValues,
     } = params || {};
     const payload = {
-      //   startDate: fromDate
-      //     ? dayjs(fromDate).startOf("day").toISOString()
-      //     : undefined,
-      //   endDate: toDate ? dayjs(toDate).endOf("day").toISOString() : undefined,
+      startDate: fromDate ? toUTCStartofDay(fromDate) : undefined,
+      endDate: toDate ? toUTCEndOfDay(toDate) : undefined,
       pageNumber: page,
       rowCount: rowCount,
       globalSearchQuery: search,
     };
+
     if (showForChild) {
       payload.TWFamilyId = id;
     } else {
       payload.TWChildId = id;
     }
+
     if (logType && logType !== "all") {
       const matchedLogType = logTypes.find((type) => type.value == logType);
       payload.formEngineId = matchedLogType.id;
@@ -96,7 +112,7 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
   };
   useEffect(() => {
     getTableData();
-  }, []);
+  }, [fromDate, toDate, logType, payloadId, showForChild, id]);
 
   const [searchParams] = useSearchParams();
 
@@ -146,12 +162,21 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
     }
   }, [genericLogId, logs]);
 
-  const filterComponent = () => <div>Filter</div>;
-
   const columnDefinition = [
     {
       id: "formName",
       label: "Type",
+      render: (row) => (
+        <Box>
+          <Box>{row.formName || "-"}</Box>
+          {row.recursiveItemResponse?.medicationName && (
+            <Box sx={{ fontSize: "0.85em", mt: 0.5 }}>
+              {row.recursiveItemResponse.medicationName}
+              {row.recursiveItemResponse?.strength ? `, ${row.recursiveItemResponse.strength}` : ""}
+            </Box>
+          )}
+        </Box>
+      ),
     },
     ...(showForChild
       ? [
@@ -262,23 +287,23 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
     {
       align: "right",
       label: "",
-      render: ({ row }) => (
+      render: (row) => (
         <IconButton
           onClick={() => {
-            if (row.formBehaviorType === "RECURSIVE") {
-              if (row.Type === "RECURSIVE") {
-                navigate(`/fostershare/medlogs/${row.formResponseId}`, {
-                  state: { module: module, id: row.id },
+            if (row?.formBehaviorType === "RECURSIVE") {
+              if (row?.Type === "RECURSIVE") {
+                navigate(`/fostershare/medlogs/${row?.formResponseId}`, {
+                  state: { module: module, id: row?.id },
                 });
               } else {
-                openMedLogDetailModal(row.formResponseId, row.recursiveItemId);
+                openMedLogDetailModal(row?.formResponseId, row?.recursiveItemId);
               }
-            } else if (row.logDetails.formType === "BEHAVIOR_LOG") {
-              openBehaviorLogDetailModal(row.logDetails.id);
-            } else if (row.logDetails.formType === "RECREATION_LOG") {
-              openRecLogDetailModal(row.logDetails.id);
-            } else if (row.logDetails.formType === "GENERIC_CUSTOM_LOG") {
-              openGenericLogDetailModal(row.logDetails.id, row.formName);
+            } else if (row?.logDetails?.formType === "BEHAVIOR_LOG") {
+              openBehaviorLogDetailModal(row?.logDetails?.id);
+            } else if (row?.logDetails?.formType === "RECREATION_LOG") {
+              openRecLogDetailModal(row?.logDetails?.id);
+            } else if (row?.logDetails?.formType === "GENERIC_CUSTOM_LOG") {
+              openGenericLogDetailModal(row?.logDetails?.id, row?.formName);
             }
           }}
           aria-label={
@@ -306,15 +331,15 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
   const openBehaviorLogDetailModal = (behavioralLogId) => {
     ModalService.open(
       ({ close }) => (
-        // <BehaviorLogDetails
-        //   moduleName={module}
-        //   moduleId={id}
-        //   behavioralLogId={behavioralLogId}
-        //   close={close}
-        // />
-        <></>
+        <BehaviorLogDetails
+          moduleName={module === "family" ? "families" : "children"}
+          moduleId={id}
+          behavioralLogId={behavioralLogId}
+          close={close}
+        />
       ),
       {
+        height: "95%",
         width: "40%",
         hideModalFooter: true,
       },
@@ -324,15 +349,15 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
   const openMedLogDetailModal = (formResponseId, recursiveItemId) => {
     ModalService.open(
       ({ close }) => (
-        // <MedLogDetailsModal
-        //   close={close}
-        //   formResponseId={formResponseId}
-        //   recursiveItemId={recursiveItemId}
-        //   refetchData={true}
-        // />
-        <></>
+        <MedLogDetailsModal
+          close={close}
+          formResponseId={formResponseId}
+          recursiveItemId={recursiveItemId}
+          refetchData={true}
+        />
       ),
       {
+        height: "95%",
         width: "40%",
         hideModalFooter: true,
       },
@@ -342,16 +367,16 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
   const openRecLogDetailModal = (recreationLogId) => {
     ModalService.open(
       ({ close }) => (
-        //   <RecreationalLogDetails
-        //     moduleName={module}
-        //     moduleId={id}
-        //     recId={recreationLogId}
-        //     close={close}
-        //   />
-        <></>
+          <RecreationalLogDetails
+            moduleName={module === "family" ? "families" : "children"}
+            moduleId={id}
+            recId={recreationLogId}
+            close={close}
+          />
       ),
       {
         width: "40%",
+        height: "95%",
         hideModalFooter: true,
       },
     );
@@ -373,30 +398,6 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
         hideModalFooter: true,
       },
     );
-  };
-
-  const handleApplyFilters = ({ search, rowCount }) => {
-    setAppliedFiltersChipArray(filterValues);
-    getTableData({ search, filter: filterValues, rowCount });
-  };
-
-  const cancelFilterHandler = () => {
-    setFilterValues(appliedFiltersChipArray);
-  };
-
-  const handleChipDelete = (key, value, { search, rowCount }) => {
-    let updated = {
-      ...filterValues,
-      [key]: filterValues[key].filter((item) => item.value !== value),
-    };
-    setFilterValues(updated);
-    setAppliedFiltersChipArray(updated);
-    getTableData({ search, filter: updated, rowCount });
-  };
-
-  const clearFiltersHandler = () => {
-    const clearedFilters = {};
-    setFilterValues(clearedFilters);
   };
 
   const handleExport = useCallback(async () => {
@@ -458,6 +459,66 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
         width={1}
         mr={2}
       >
+        <FormControl size="small" sx={{ minWidth: 140 }}>
+          <InputLabel id="log-type-label">Log Type</InputLabel>
+          <Select
+            labelId="log-type-label"
+            value={logType}
+            label="Log Type"
+            onChange={(e) => setLogType(e.target.value)}
+          >
+            {logTypes.map((type) => (
+              <MenuItem key={type.value} value={type.value}>
+                {type.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            label="From"
+            value={fromDate}
+            onChange={(newValue) => setFromDate(newValue)}
+            maxDate={toDate}
+            slotProps={{
+              textField: {
+                size: "small",
+                InputLabelProps: { sx: { top: 0 } },
+                sx: {
+                  minWidth: 140,
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "4px",
+                    height: 40,
+                  },
+                },
+              },
+              field: { clearable: true },
+            }}
+          />
+        </LocalizationProvider>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            label="To"
+            value={toDate}
+            onChange={(newValue) => setToDate(newValue)}
+            minDate={fromDate}
+            slotProps={{
+              textField: {
+                size: "small",
+                InputLabelProps: { sx: { top: 0 } },
+                sx: {
+                  minWidth: 140,
+
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "4px",
+                    height: 40,
+                  },
+                },
+              },
+              field: { clearable: true },
+            }}
+          />
+        </LocalizationProvider>
         <LoadingButton
           onClick={handleExport}
           loading={exportLoading}
@@ -475,19 +536,11 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
   return (
     <ReusableTrendTable
       columns={columnDefinition}
-      searchable
       tableData={tableData.data}
       loading={loading}
       skeltonRowcount={6}
       apiError={apiError}
       onReload={getTableData}
-      filterable
-      filterComponent={filterComponent}
-      handleChipDelete={handleChipDelete}
-      appliedFiltersChipArray={appliedFiltersChipArray}
-      applyFilter={handleApplyFilters}
-      cancelFilter={cancelFilterHandler}
-      clearFilter={clearFiltersHandler}
       tableExtraButtons={tableExtraButtons}
       t={t}
       enablePagination
@@ -497,6 +550,7 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
       defaultSortField={"childName"}
       defaultSortFieldOrder={"asc"}
       boldHeaders={false}
+      rowCountOptions={[10, 20, 30, 50, 100]}
     />
   );
 };

@@ -1,10 +1,12 @@
 import { Box, Grid, Typography } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router";
-import SupportServiceDetails from "./ResourceDetails";
 import ChevronRightIcon from "../../../../assets/icons/ChevronRight";
+import { useTranslation } from "react-i18next";
+import ResourceDetails from "./ResourceDetails";
 
 const ResourceDetailsContainer = () => {
+    const { t } = useTranslation(["common"]);
   const navigate = useNavigate();
   return (
     <Box m={1}>
@@ -50,8 +52,7 @@ const ResourceDetailsContainer = () => {
           {"Resource details"}
         </Typography>
       </Grid>
-
-      <SupportServiceDetails />
+      <ResourceDetails />
     </Box>
   );
 };

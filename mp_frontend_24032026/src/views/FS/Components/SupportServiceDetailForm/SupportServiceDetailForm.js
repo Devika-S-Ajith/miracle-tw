@@ -1,12 +1,6 @@
-import {
-  Box,
-  Button,
-  Chip,
-  TextField,
-  Autocomplete,
-} from "@mui/material";
+import { Box, Button, Chip, TextField, Autocomplete } from "@mui/material";
 import { useFormik } from "formik";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { PhoneNumberUtil } from "google-libphonenumber";
 import * as Yup from "yup";
@@ -17,6 +11,7 @@ import { SUPER_ADMIN } from "../../../../helpers/constant";
 import { CommonDataContext } from "../../../../common/contexts/CommonDataContext";
 import CloseIcon from "@mui/icons-material/Close";
 import { ModalService } from "../../../../components/Modal";
+import { validatePhoneNumber } from "../../../../helpers/helperFunction";
 const phoneUtil = PhoneNumberUtil.getInstance();
 
 const SupportServiceDetailForm = ({
@@ -27,19 +22,20 @@ const SupportServiceDetailForm = ({
   const [loading, setLoading] = useState(false);
   const { signedinUserRoleFS, organizationList } =
     useContext(CommonDataContext);
+  const phoneRef = useRef({});
 
   organizationList.find(
-    (agency) => agency?.id === supportServiceDetail?.TWAccountId
+    (agency) => agency?.id === supportServiceDetail?.TWAccountId,
   );
 
   const [typeFilter, setTypeFilter] = useState(
     supportServiceDetail
       ? organizationList.find(
-          (agency) => agency?.id === supportServiceDetail?.TWAccountId
+          (agency) => agency?.id === supportServiceDetail?.TWAccountId,
         )
       : organizationList?.filter((option) =>
-          ["FOSTER_SHARE", "BOTH"].includes(option.accessType)
-        )[0]
+          ["FOSTER_SHARE", "BOTH"].includes(option.accessType),
+        )[0],
   );
   const initialValues = {
     supportServiceName: supportServiceDetail?.name || "",
@@ -54,20 +50,11 @@ const SupportServiceDetailForm = ({
       .max(255)
       .required("Please provide a title"),
     description: Yup.string().max(255).required("Please provide a description"),
-    phone: Yup.string()
-      .required("Phone number is required")
-      .test(
-        "phone-format-validation",
-        "Please enter a valid phone number",
-        (value) => {
-          try {
-            const phoneNumber = phoneUtil.parseAndKeepRawInput(value);
-            return phoneUtil.isValidNumber(phoneNumber);
-          } catch (error) {
-            return false; // Handle parsing errors
-          }
-        }
-      ),
+    phone: Yup.string().test(
+      "phone-format-validation",
+      "Invalid Phone number",
+      (value) => validatePhoneNumber(value, phoneRef),
+    ),
     email: Yup.string().email(),
     websiteLink: Yup.string().url("Invalid").nullable(),
   });
@@ -102,12 +89,15 @@ const SupportServiceDetailForm = ({
         name: data?.supportServiceName,
         description: data?.description,
         email: data?.email,
-        phoneNumber: data?.phone,
+        phoneNumber: "+" + phoneRef.current.dialCode === values?.phone
+          ? null
+          : values?.phone,
         website: data?.websiteLink,
         accountId: [SUPER_ADMIN].includes(signedinUserRoleFS)
           ? typeFilter?.id
           : localStorage.getItem("orgId"),
       };
+      
       let res;
       if (supportServiceDetail?.id) {
         payload.id = supportServiceDetail?.id;
@@ -156,7 +146,7 @@ const SupportServiceDetailForm = ({
           <TextField
             id="support-service-name"
             error={Boolean(
-              touched?.supportServiceName && errors?.supportServiceName
+              touched?.supportServiceName && errors?.supportServiceName,
             )}
             fullWidth
             helperText={
@@ -193,6 +183,7 @@ const SupportServiceDetailForm = ({
             onChange={(phone) => setFieldValue(`phone`, phone)}
             required
             onBlur={handleBlur}
+            phoneRef={phoneRef}
           />
           <TextField
             id="email"
@@ -225,7 +216,7 @@ const SupportServiceDetailForm = ({
                   id="checkboxes-tags-demo"
                   name="organization_name"
                   options={organizationList.filter((option) =>
-                    ["FOSTER_SHARE", "BOTH"].includes(option.accessType)
+                    ["FOSTER_SHARE", "BOTH"].includes(option.accessType),
                   )}
                   disableClearable
                   getOptionLabel={(option) => option?.accountName || ""}

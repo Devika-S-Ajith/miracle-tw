@@ -270,10 +270,10 @@ const getFieldTouched = (name) => get(touched, name, false);
                                     fieldProps?.onChange?.(newValue); // Call any custom onChange provided in fieldProps
                                 }
                             }}
-                            // onClose={() => {
-                            //     // Trigger blur event when date picker closes
-                            //     handleBlur({ target: { name: fullFieldName, value: currentValueRef.current } });
-                            // }}
+                             onClose={() => {
+                                 // Trigger blur event when date picker closes
+                                handleBlur?.({ target: { name: fullFieldName, value: currentValueRef.current } });
+                            }}
                             maxDate={dayjs().endOf('day')}
                             slots={{
                                 openPickerIcon: CalendarIcon,
@@ -403,6 +403,7 @@ const getFieldTouched = (name) => get(touched, name, false);
                             defaultCountry={locationList?.find((loc) => loc.id == localStorage.getItem("userRegion"))?.iso2Code || 'us'}
                             showAttachedLabel={false}
                             disabled={isDisabled}
+                            required={fieldProps.required} 
                         />
                     </Grid>
                 );

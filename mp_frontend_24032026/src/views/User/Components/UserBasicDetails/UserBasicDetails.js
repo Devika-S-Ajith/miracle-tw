@@ -118,6 +118,7 @@ const UserBasicDetails = (props) => {
     cognitoId,
     selectedCountry,
     permission,
+    getUsers,
     ...other
   } = props;
   const [anchorEl, setAnchorEl] = useState(null);
@@ -198,8 +199,10 @@ const UserBasicDetails = (props) => {
 
       await APIS.ChangeUserStatus(payload).then((res) => {
         if (res.data.message === "User Deleted Successfully!") {
+          getUsers();
           toast.success("User deactivated successfully");
         } else if (res.data.Message === "Status Changed Successfully") {
+          getUsers();
         } else {
           toast.error(t("common:common.Something went wrong"));
         }
@@ -218,84 +221,39 @@ const UserBasicDetails = (props) => {
     ref
   ) => {
     try {
-      const payloadRoleCheck = {
-        TWUserId: id,
-        TWAccountId: accountID,
-        HTRoleFrom: HTRole,
-        country: countryNameList[countryName.toLowerCase()].label,
-      };
       if ([SUPER_ADMIN].includes(signedinUserRoleHT) || [SUPER_ADMIN].includes(signedinUserRoleFS)) {
         deactivateUserAfterValidation(id, ref);
       } else {
-        if (HTRole !== "9") {
-          await APIS.ValidateUserDeactivationTS(payloadRoleCheck).then((res) => {
+        if (HTRole !== "9" ||
+          FSRole !== "9") {
+          const payloadRoleCheck = {
+            TWUserId: id,
+            TWAccountId: accountID,
+            htuserRole: HTRole,
+            fsuserRole: FSRole,
+          };
+          APIS.ValidateUserDeactivation(payloadRoleCheck).then((res) => {
             if (res?.data?.message === "NOT OK") {
               ModalService.open(({ close }) => <></>, {
                 modalTitle: "Deactivate user",
                 width: "30%",
-                modalDescription: t(`common:common.${res?.data?.data}`),
+                modalDescription: t(`common:common.${res?.data?.data.replace(/\.$/, '')}`, res?.data?.data.replace(/\.$/, '')),
                 cancelButtonText: "Ok",
                 hideActionButton: true,
               });
             } else if (res?.data?.message === "OK") {
-              if (FSRole !== "9") {
-                const payloadRoleCheckFS = {
-                  FSUserId: id,
-                  TWAccountId: accountID,
-                  FSRoleFrom: FSRole,
-                  country: countryNameList[countryName.toLowerCase()].label,
-                };
-                APIS.ValidateUserDeactivationFS(payloadRoleCheckFS).then((res) => {
-                  if (res?.data?.message === "NOT OK") {
-                    ModalService.open(({ close }) => <></>, {
-                      modalTitle: "Deactivate user",
-                      width: "30%",
-                      modalDescription: t(`common:common.${res?.data?.data.replace(/\.$/, '')}`,res?.data?.data.replace(/\.$/, '')),
-                      cancelButtonText: "Ok",
-                      hideActionButton: true,
-                    });
-                  } else if (res?.data?.message === "OK") {
-                    deactivateUserAfterValidation(id, ref);
-                  } else {
-                    toast.error(t("common:common.Something went wrong"));
-                  }
-                });
-              }else{
-                deactivateUserAfterValidation(id, ref);
-              } 
+              deactivateUserAfterValidation(id, ref);
             } else {
               toast.error(t("common:common.Something went wrong"));
             }
           });
         } else {
-          if (FSRole !== "9") {
-            const payloadRoleCheckFS = {
-              FSUserId: id,
-              TWAccountId: accountID,
-              FSRoleFrom: FSRole,
-              country: countryNameList[countryName.toLowerCase()].label,
-            };
-            APIS.ValidateUserDeactivationFS(payloadRoleCheckFS).then((res) => {
-              if (res?.data?.message === "NOT OK") {
-                ModalService.open(({ close }) => <></>, {
-                  modalTitle: "Deactivate user",
-                  width: "30%",
-                  modalDescription: t(`common:common.${res?.data?.data.replace(/\.$/, '')}`,res?.data?.data.replace(/\.$/, '')),
-                  cancelButtonText: "Ok",
-                  hideActionButton: true,
-                });
-              } else if (res?.data?.message === "OK") {
-                deactivateUserAfterValidation(id, ref);
-              } else {
-                toast.error(t("common:common.Something went wrong"));
-              }
-            });
-          }
+          deactivateUserAfterValidation(id, ref);
         }
       }
+      
     } catch (err) {
       toast.error(t("common:common.Something went wrong"));
-      // toast.error(ErrorMessage);
     }
   };
 
@@ -310,6 +268,7 @@ const UserBasicDetails = (props) => {
 
       await APIS.EditUser(payload).then((res) => {
         if (res.data.message === "User Details Updated Successfully!") {
+          getUsers()
           toast.success("User reactivated successfully");
           //getRefreshedUserList();
           //toast.error(t("common:organization.Inactive Reassign"));

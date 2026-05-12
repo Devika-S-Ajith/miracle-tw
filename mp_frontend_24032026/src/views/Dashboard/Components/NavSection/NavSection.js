@@ -136,6 +136,16 @@ const NavSection = (props) => {
     }
   }, [currentSection]);
 
+    const [showBox, setShowBox] = useState(false);
+      useEffect(() => {
+        let timer;
+        if (isOpenDrawer) {
+          timer = setTimeout(() => setShowBox(true), 100);
+        } else {
+          setShowBox(false);
+        }
+        return () => clearTimeout(timer);
+      }, [isOpenDrawer]);
   return (
     ((title == FosterShare && signedinUserRoleFS !== UNASSIGNED) ||
       (title == ThriveScale && signedinUserRoleHT !== UNASSIGNED) ||
@@ -162,7 +172,7 @@ const NavSection = (props) => {
               {isOpenDrawer ? t(`common:common.${title}`) : titleShortName}
             </span> */}
             <span>
-              {isOpenDrawer 
+              {isOpenDrawer && showBox
                 ? (title === FosterShare ? title : t(`common:common.${title}`, title)) 
                 : titleShortName}
             </span>
