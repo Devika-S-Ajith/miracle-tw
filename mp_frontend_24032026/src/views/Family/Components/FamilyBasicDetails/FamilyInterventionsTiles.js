@@ -5,7 +5,7 @@ import CommonCard from "../../../../components/CommonCard/CommonCard";
 import { InterventionsIconBlack } from "../../../../assets/icons/SideBarIcons";
 import APIS from "../../../../common/hooks/UseApiCalls";
 
-const FamilyInterventionsTiles = ({ familyId }) => {
+const FamilyInterventionsTiles = ({ familyId, t }) => {
   const [interventions, setInterventions] = useState({
     active_interventions: 0,
     completed_interventions: 0,
@@ -34,7 +34,7 @@ const FamilyInterventionsTiles = ({ familyId }) => {
   }, [familyId]);
 
   return (
-    <CommonCard title="Interventions summary">
+    <CommonCard title= {t("common:family.Interventions summary")}>
       <Grid container spacing={2}>
         <Grid item xs={6}>
           {loading ? (
@@ -47,7 +47,7 @@ const FamilyInterventionsTiles = ({ familyId }) => {
                   <InterventionsIconBlack />
                 </Box>
               }
-              description="Active interventions"
+              description= {t("common:common.Active interventions", "Active interventions")}
               bgcolor="#F3F6FA"
               height={1}
             />
@@ -64,7 +64,7 @@ const FamilyInterventionsTiles = ({ familyId }) => {
                   <InterventionsIconBlack />
                 </Box>
               }
-              description="Resolved interventions"
+              description= {t("common:common.Resolved interventions", "Resolved interventions")}
               bgcolor="#F3F7E2"
               height={1}
             />

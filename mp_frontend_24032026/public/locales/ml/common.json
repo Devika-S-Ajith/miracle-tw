@@ -1037,7 +1037,23 @@
     "Contact information": "കോൺടാക്റ്റ് ഇൻഫർമേഷൻ",
     "Family status": "കുടുംബ സ്റ്റേറ്റസ്",
     "Cannot delete family with active children": "സജീവമായ കുട്ടികളുള്ള കുടുംബം ഡിലീറ്റ് ചെയ്യാനാവില്ല",
-    "Goal is required": "ലക്ഷ്യം ആവശ്യമാണ്"
+    "Goal is required": "ലക്ഷ്യം ആവശ്യമാണ്",
+    "Additional information": "കൂടുതൽ വിവരങ്ങൾ",
+    "todo_title":"ചെയ്യേണ്ടത്",
+    "todo_subtitle":"എല്ലാ പ്രവർത്തനങ്ങളും മൊബൈൽ ആപ്പിൽ പൂർത്തിയാക്കണം",
+    "most_recent_assessment_summary": "ഏറ്റവും പുതിയ വിലയിരുത്തൽ സംഗ്രഹം",
+    "Interventions summary": "ഇടപെടലുകളുടെ സംഗ്രഹം",
+    "Family members and caregivers": "കുടുംബാംഗങ്ങളും പരിചാരകരും ({{count}})",
+    "no_assessment_done_yet": "ഇനിയും വിലയിരുത്തൽ നടത്തിയിട്ടില്ല",
+    "assessment_results": "ആദ്യ വിലയിരുത്തൽ പൂർത്തിയായാൽ ഫലങ്ങൾ ഇവിടെ കാണും",
+    "View assessment": "വിലയിരുത്തൽ കാണുക",
+    "Domains":"ഡൊമെയിനുകൾ",
+    "since_assessment_1":"മൂല്യനിർണ്ണയം #1 മുതൽ",
+    "assessment_number": "മൂല്യനിർണ്ണയം  #{{number}}",
+    "Add another family member": "മറ്റൊരു കുടുംബാംഗത്തെ ചേർക്കുക",
+    "Family contact information": "കുടുംബ ബന്ധപ്പെടാനുള്ള വിവരങ്ങൾ",
+    "Family type": "കുടുംബ തരം",
+    "Date the family first started serving as a foster family": "കുടുംബം ഫോസ്റ്റർ കുടുംബമായി സേവനം ആരംഭിച്ച തീയതി"
   },
   "form": {
     "formList": "പത്രികാ പട്ടിക",
@@ -1214,7 +1230,14 @@
     "Children served count max value is 9999": "സേവനം ലഭിച്ച കുട്ടികളുടെ എണ്ണം പരമാവധി 9999 ആയിരിക്കണം",
     "Children served count is required": "സേവനം ലഭിച്ച കുട്ടികളുടെ എണ്ണം ആവശ്യമാണ്",
     "Family served count max value is 9999": "സേവനം ലഭിച്ച കുടുംബങ്ങളുടെ എണ്ണം പരമാവധി 9999 ആയിരിക്കണം",
-    "Family served count is required": "സേവനം ലഭിച്ച കുടുംബങ്ങളുടെ എണ്ണം ആവശ്യമാണ്"
+    "Family served count is required": "സേവനം ലഭിച്ച കുടുംബങ്ങളുടെ എണ്ണം ആവശ്യമാണ്",
+    "Families served count is required": "സേവനം ലഭിച്ച കുടുംബങ്ങളുടെ എണ്ണം ആവശ്യമാണ്",
+    "Family Name is required": "കുടുംബ നാമം ആവശ്യമാണ്",
+    "DOB is required": "ജനന തീയതി ആവശ്യമാണ്",
+    "Summary is required": "സംഗ്രഹം ആവശ്യമാണ്",
+    "Article link is required": "ലേഖന ലിങ്ക് ആവശ്യമാണ്",
+    "Image link is required": "ചിത്ര ലിങ്ക് ആവശ്യമാണ്"
+
   },
   "message": {
     "Title": "ശീർഷകം",

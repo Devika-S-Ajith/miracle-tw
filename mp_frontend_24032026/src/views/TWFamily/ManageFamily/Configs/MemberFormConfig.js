@@ -3,7 +3,7 @@ export const InlineMemberCreationConfig = [
     {
         type: 'text',
         name: 'firstName',
-        placeholder: 'First name',
+        placeholder: 'common:common.First name',
         size: 'small',
         color:"#FFFFFF",
         required: true,
@@ -14,7 +14,7 @@ export const InlineMemberCreationConfig = [
     {
         type: 'text',
         name: 'lastName',
-        placeholder: 'Last name',
+        placeholder: 'common:common.Last name',
         size: 'small',
         color:"#FFFFFF",
         required: true,
@@ -25,7 +25,7 @@ export const InlineMemberCreationConfig = [
     {
         type: 'CheckboxWithLabel',
         name: 'isMajor',
-        label: 'Over age consent',
+        label: 'common:common.Over age consent',
         required: false,
         variant: 'outlined',
         gridProps: { md: 4, xs: 12 }
@@ -68,7 +68,7 @@ export const InlineChildCreationConfig = [
     {
         type: 'dropdown',
         name: 'gender',
-        placeholder: 'Gender',
+        placeholder: 'common:common.Gender',
         translateLabels: true,
         size: 'small',
         color:"#FFFFFF",
@@ -81,7 +81,7 @@ export const InlineChildCreationConfig = [
      {
         type: 'DatePicker',
         name: 'dateOfBirth',
-        placeholder: 'Date of Birth',
+        placeholder: 'common:common.Date of Birth',
         size: 'small',
         color:"#FFFFFF",
         required: false,
@@ -137,14 +137,15 @@ export const modalMemberBasicFormConfig = [
 
 ];
 
-export const modalMemberPersonalFormConfig = [{
+export const modalMemberPersonalFormConfig = ({phoneRef}) => [{
         type: 'PhoneNumber',
         name: 'phoneNumber',
         label: 'common:common.Phone Number',
         fullWidth: true,
         required: true,
         variant: 'outlined',
-        gridProps: { md: 12, xs: 12 }
+        gridProps: { md: 12, xs: 12 },
+        phoneRef: phoneRef
     },
     {
         type: 'text',

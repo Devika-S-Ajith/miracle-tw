@@ -157,7 +157,7 @@ const ChildDetails = () => {
       case "Documents":
         return <Documents childId={children.id} active={children?.isActive} />;
       case "History":
-        return <ChildHistory id={children.id} caseId={children.HTCaseId} />;
+        return <ChildHistory id={children.id} caseId={children.TWCaseId} />;
       case "Thrive scale score trend":
         return <RadarGraph childId={children.id} />;
       case "ProgressReport":
@@ -204,7 +204,7 @@ const ChildDetails = () => {
           <ManageChildForm
             handleChildModalOpen={handleChildModalOpen}
             id={id}
-            // refreshTable={getTableData} // Refresh data after re-opening case
+            // refreshData={getChildren}
             setHideChildModal={setHideChildModal}
           />
         </Box>

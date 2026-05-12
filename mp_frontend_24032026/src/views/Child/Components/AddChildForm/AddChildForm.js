@@ -79,6 +79,7 @@ const AddChildForm = (props) => {
     childEducationList,
     signedinOrgType,
     signedinUserRoleHT,
+    signedinUserRoleFS,
     htLanguagesList,
     familyList: contextFamilyList,
     getTsChildListData
@@ -292,7 +293,7 @@ const AddChildForm = (props) => {
     },
   ];
 
-  useAuthorization(signedinUserRoleHT, null, signedinOrgType, "AddChild", true);
+  useAuthorization(signedinUserRoleHT, signedinUserRoleFS, signedinOrgType, "AddChild", true);
 
   const stringToDate = (dateString) => {
     const [day, month, year] = dateString.split("/");

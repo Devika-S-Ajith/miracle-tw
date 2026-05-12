@@ -12,34 +12,35 @@ export const ChildBasicDetails = ({
   values,
   uniqueCheckHandler,
   setFieldError,
-  validateForm
+  validateForm,
+  t,
 }) => [
   {
     type: "text",
     name: "firstName",
-    label: "Child’s first name",
+    label: t("common:common.Child’s first name", "Child’s first name"),
     required: true,
     showTooltip: false,
     fullWidth: true,
     variant: "outlined",
     gridProps: { xs: 12 },
-    onChange: ()=>uniqueCheckHandler({values, setFieldError, validateForm})
+    onChange: () => uniqueCheckHandler({ values, setFieldError, validateForm }),
   },
   {
     type: "text",
     name: "lastName",
-    label: "Child’s last name",
+    label: t(`common:common.Child’s last name`, `Child’s last name`),
     required: false,
     showTooltip: false,
     fullWidth: true,
     variant: "outlined",
     gridProps: { xs: 12 },
-    onChange: ()=>uniqueCheckHandler({values, setFieldError, validateForm})
+    onChange: () => uniqueCheckHandler({ values, setFieldError, validateForm }),
   },
   {
     type: "dropdown",
     name: "gender",
-    label: "Gender",
+    label: t("common:common.Gender", "Gender"),
     translateLabels: true,
     size: "medium",
     color: "#FFFFFF",
@@ -48,13 +49,13 @@ export const ChildBasicDetails = ({
     options: GenderListOptions,
     // value: values.gender,
     gridProps: { xs: 12 },
-    onChange: ()=>uniqueCheckHandler({values, setFieldError, validateForm})
+    onChange: () => uniqueCheckHandler({ values, setFieldError, validateForm }),
   },
   {
     type: "DatePicker",
     name: "dateOfBirth",
-    label: "Date of birth",
-    placeholder: "Date of birth",
+    label: t("common:common.Date of birth", "Date of birth"),
+    placeholder: t("common:common.Date of birth", "Date of birth"),
     validateOnChange: true,
     size: "medium",
     color: "#FFFFFF",
@@ -132,11 +133,12 @@ export const ChildContactDetails = ({
   handleFamilyChange,
   values,
   setFieldValue,
+  t,
 }) => [
   {
     type: "text",
     name: "contactInformation.addressLine1",
-    label: "Address 1",
+    label: t("common:common.Address 1", "Address 1"),
     required: false,
     showTooltip: false,
     fullWidth: true,
@@ -146,7 +148,7 @@ export const ChildContactDetails = ({
   {
     type: "text",
     name: "contactInformation.addressLine2",
-    label: "Address 2",
+    label: t("common:common.Address 2", "Address 2"),
     required: false,
     showTooltip: false,
     fullWidth: true,
@@ -157,7 +159,7 @@ export const ChildContactDetails = ({
   {
     type: "text",
     name: "contactInformation.city",
-    label: "City",
+    label: t("common:common.City", "City"),
     required: false,
     showTooltip: false,
     fullWidth: true,
@@ -167,7 +169,7 @@ export const ChildContactDetails = ({
   {
     type: "dropdown",
     name: "contactInformation.TWStateId",
-    label: "State",
+    label: t("common:common.State", "State"),
     translateLabels: true,
     required: false,
     validateOnChange: true,
@@ -201,7 +203,7 @@ export const ChildAdditionalDetails = ({
       fullWidth: true,
       variant: "outlined",
       gridProps: { md: 12, xs: 12 },
-      phoneRef: phoneRef
+      phoneRef: phoneRef,
     },
     {
       type: "text",
@@ -339,7 +341,7 @@ export const CaseManagementDetails = (childDropdownLists) => [
     gridProps: { xs: 12 },
     // gridProps: { md: 6.5, xs: 6.5 }
   },
-   {
+  {
     type: "text",
     name: "caseManagementInformation.previousPlacementsCount",
     label: "# of previous placements (US logs only)",
@@ -352,49 +354,51 @@ export const CaseManagementDetails = (childDropdownLists) => [
   },
 ];
 
-export const CaseCloseDetails = [
+export const CaseCloseDetails = ({
+  associationOptions,
+  deactivationDeletionReason,
+  values,
+  t,
+}) => [
   {
     type: "DatePicker",
     name: "dateCaseClosed",
     label: "Date case was closed",
-    required: false,
-    showTooltip: false,
-    fullWidth: true,
+   validateOnChange: true,
     size: "medium",
-    variant: "outlined",
-    multiline: true,
-    gridProps: { xs: 12 },
-    // gridProps: { md: 6.5, xs: 6.5 }
-  },
-];
-
-export const FamilyChangeDetails = ({familyChangeValues, familyChangeReasons}) => [
-  {
-    type: "DatePicker",
-    name: "familyChangeDetails.childDischargedDate",
-    label: "Date case was closed",
-    required: false,
-    showTooltip: false,
-    fullWidth: true,
-    size: "medium",
-    variant: "outlined",
-    multiline: true,
-    gridProps: { xs: 12 },
-    // gridProps: { md: 6.5, xs: 6.5 }
-  },
-  {
-    type: "MultipleCheckBoxWithLabel",
-    name: "familyChangeDetails.childDischargeReason",
-    label: "Why is this child being assigned to a different family?",
-    options:familyChangeReasons || [],
-    translateLabels: true,
+    color: "#FFFFFF",
     required: true,
-    gridProps: { xs: 12 },
+    fullWidth: true,
+    variant: "outlined",
+    gridProps: { xs: 12, md: 12 },
   },
-  ...(familyChangeValues?.familyChangeDetails?.childDischargeReason?.some((item) => item === "OTHER")
+  {
+    type: "radioGroup",
+    name: "association",
+    required: true,
+    label: t(
+      "common:family.Child/family association",
+      "Child/family association",
+    ),
+    options: associationOptions,
+  },
+  {
+    type: "radioGroup",
+    name: "deactivationReason",
+    required: true,
+    label: t(
+      "common:family.Why is this person being deactivated?",
+      "Why is this person being deactivated?",
+    ),
+    options: deactivationDeletionReason.map((reason) => ({
+      id: reason.id,
+      label: reason.value
+    })),
+  },
+  ...(values?.deactivationReason == "37"
     ? [{
         type: "text",
-        name: "familyChangeDetails.otherReason",
+        name: "otherReason",
         label: "Please specify other reason",
         required: true,
         fullWidth: true,
@@ -403,4 +407,37 @@ export const FamilyChangeDetails = ({familyChangeValues, familyChangeReasons}) =
         gridProps: { xs: 12 },
       }]
     : []),
-]
+
+];
+
+export const FamilyChangeDetails = ({
+  familyChangeValues,
+  familyChangeReasons,
+}) => {
+  const reasons = familyChangeValues?.familyChangeDetails?.childDischargeReason;
+  const showOther = Array.isArray(reasons) && reasons.includes("OTHER");
+  return [
+    {
+      type: "DatePicker",
+      name: "familyChangeDetails.childDischargedDate",
+      label: "Date case was closed",
+      required: false,
+      showTooltip: false,
+      fullWidth: true,
+      size: "medium",
+      variant: "outlined",
+      multiline: true,
+      gridProps: { xs: 12 },
+      // gridProps: { md: 6.5, xs: 6.5 }
+    },
+    {
+      type: "MultipleCheckBoxWithLabel",
+      name: "familyChangeDetails.childDischargeReason",
+      label: "Why is this child being assigned to a different family?",
+      options: familyChangeReasons || [],
+      translateLabels: true,
+      required: true,
+      gridProps: { xs: 12 },
+    },
+  ];
+};

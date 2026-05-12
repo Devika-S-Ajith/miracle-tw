@@ -33,7 +33,7 @@ import NoLogImage from "../../../../assets/images/woman-and-pc-screens.svg";
 import SearchIcon from "../../../../assets/icons/Search";
 import ListPaging from "../../../../components/UserComponents/ListPaging";
 import Loader from "../../../../components/UserComponents/Loader";
-import { CASEMANAGER } from "../../../../helpers/constant";
+import { CASEWORKER } from "../../../../helpers/constant";
 import { CommonDataContext } from "../../../../common/contexts/CommonDataContext";
 import { LoadingButton } from "@mui/lab";
 import { PrintAsPDF } from "../../../../components/UserComponents/ReportGenerator";
@@ -161,7 +161,7 @@ const LogOverviewList = ({ module, listData }) => {
       } else if (module === "families") {
         payload.familyId = id;
       } else if (module === "dashboard") {
-        if ([CASEMANAGER].includes(signedinUserRoleFS)) {
+        if ([CASEWORKER].includes(signedinUserRoleFS)) {
           payload.caseManagerId = localStorage.getItem("username");
         } else {
           payload.accountId = localStorage.getItem("orgId");
@@ -206,7 +206,7 @@ const LogOverviewList = ({ module, listData }) => {
         } else if (module === "families") {
           payload.familyId = id;
         } else if (module === "dashboard") {
-          if ([CASEMANAGER].includes(signedinUserRoleFS)) {
+          if ([CASEWORKER].includes(signedinUserRoleFS)) {
             payload.caseManagerId = localStorage.getItem("username");
           } else {
             payload.accountId = localStorage.getItem("orgId");

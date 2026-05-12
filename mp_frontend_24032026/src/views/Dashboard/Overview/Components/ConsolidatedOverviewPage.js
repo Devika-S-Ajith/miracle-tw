@@ -18,8 +18,6 @@ import {
   PRIVATE_CCI,
   SUPER_ADMIN,
   VIEW_ONLY,
-  CASEMANAGER,
-  ADMIN_CASEMANAGER,
 } from "../../../../helpers/constant";
 import { useContext, useState, useEffect } from "react";
 import { CommonDataContext } from "../../../../common/contexts/CommonDataContext";
@@ -35,7 +33,11 @@ const ConsolidatedOverviewPage = () => {
   const [filteredItems, setFilteredItems] = useState([]);
   const [tileData, setTileData] = useState({});
   const [loading, setLoading] = useState(false);
-  const isSuperAdmin = (signedinUserRoleHT === SUPER_ADMIN || signedinUserRoleFS === SUPER_ADMIN) || false;
+
+  // Always calculate isSuperAdmin safely at the top level
+  const isSuperAdmin = Boolean(
+    (signedinUserRoleHT === SUPER_ADMIN || signedinUserRoleFS === SUPER_ADMIN)
+  );
 
   const items = [
     {
@@ -44,7 +46,7 @@ const ConsolidatedOverviewPage = () => {
       sequence: 0,
       column: "left",
       Allowed_Roles_HT: [SUPER_ADMIN, ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY],
-      Allowed_Roles_FS: [SUPER_ADMIN, ADMIN, CASEMANAGER, ADMIN_CASEMANAGER, VIEW_ONLY],
+      Allowed_Roles_FS: [SUPER_ADMIN, ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY],
       Allowed_Acc_Type: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
       component: () => <OrganizationalOverview isGeneralDashboard={true} isSuperAdmin={isSuperAdmin} />,
     },
@@ -54,7 +56,7 @@ const ConsolidatedOverviewPage = () => {
       sequence: 1,
       column: "left",
       Allowed_Roles_HT: [ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY],
-      Allowed_Roles_FS: [ADMIN, CASEMANAGER, ADMIN_CASEMANAGER, VIEW_ONLY],
+      Allowed_Roles_FS: [ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY],
       Allowed_Acc_Type: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
       component: (data) => (
         <ReportsPieChart
@@ -72,7 +74,7 @@ const ConsolidatedOverviewPage = () => {
       sequence: 2,
       column: "left",
       Allowed_Roles_HT: [ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY],
-      Allowed_Roles_FS: [ADMIN, CASEMANAGER, ADMIN_CASEMANAGER, VIEW_ONLY],
+      Allowed_Roles_FS: [ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY],
       Allowed_Acc_Type: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
       component: (data) => (
         <ReportsPieChart
@@ -118,7 +120,7 @@ const ConsolidatedOverviewPage = () => {
       sequence: 5,
       column: "left",
       Allowed_Roles_HT: [ADMIN, CASEWORKER, ADMIN_CASEWORKER],
-      Allowed_Roles_FS: [ADMIN, CASEMANAGER, ADMIN_CASEMANAGER],
+      Allowed_Roles_FS: [ADMIN, CASEWORKER, ADMIN_CASEWORKER],
       Allowed_Acc_Type: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
       component: (data) => (
         <ReportsPieChart
@@ -136,7 +138,7 @@ const ConsolidatedOverviewPage = () => {
       sequence: 6,
       column: "right",
       Allowed_Roles_HT: [],
-      Allowed_Roles_FS: [ADMIN, CASEMANAGER, ADMIN_CASEMANAGER, VIEW_ONLY],
+      Allowed_Roles_FS: [ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY],
       Allowed_Acc_Type: [],
       component: () => (
         <Card>
@@ -168,6 +170,8 @@ const ConsolidatedOverviewPage = () => {
     },
   ];
 
+
+  // Always call hooks at the top level, never conditionally
   useEffect(() => {
     const filtered = items.filter(
       (item) =>

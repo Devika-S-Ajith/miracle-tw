@@ -100,7 +100,7 @@ const getFieldTouched = (name) => get(touched, name, false);
                             fullWidth={fieldProps.fullWidth}
                             error={Boolean(fieldTouched && fieldError)}
                             helperText={fieldTouched && fieldError}
-                            placeholder={fieldProps.placeholder}
+                            placeholder={t(fieldProps.placeholder)}
                             value={fieldValue || ''} // Use helper function
                             onChange={(e) => {handleChange(e); fieldProps?.onChange?.(e);}} // Call Formik's handleChange and any custom onChange
                             onBlur={handleBlur}
@@ -156,13 +156,13 @@ const getFieldTouched = (name) => get(touched, name, false);
                             required={fieldProps.required}
                             validateOnChange={fieldProps.validateOnChange}
                             labelKey={fieldProps.labelKey || "value"}
-                            placeholder={fieldProps.placeholder}
+                            placeholder={t(fieldProps.placeholder)}
                             extraLabel={fieldProps.extraLabel}
                             grouped={fieldProps.grouped || false}
                             groupBy={fieldProps.groupBy}
                             color={fieldProps.color}
                             textFieldProps={{
-                                label: fieldProps.label,
+                                label: t(fieldProps.label),
                                 disabled: isDisabled || fieldProps.disabled,
                                 variant: "outlined",
                                 sx: {
@@ -189,7 +189,7 @@ const getFieldTouched = (name) => get(touched, name, false);
                         <SearchableTextField
                             name={fullFieldName} // Use full scoped name
                             id={`${fullFieldName}`}
-                            placeholder={fieldProps.placeholder}
+                            placeholder={t(fieldProps.placeholder)}
                             initialTextValue={initialTextValue}
                             searchFunction={searchFunction}
                             onClose={(e, reason, value) => {
@@ -288,7 +288,7 @@ const getFieldTouched = (name) => get(touched, name, false);
                                             backgroundColor: 'white',
                                         },
                                     },
-                                    placeholder: fieldProps.placeholder,
+                                    placeholder: t(fieldProps.placeholder),
                                     error: fieldTouched && Boolean(fieldError),
                                     helperText: fieldTouched && fieldError,
                                 },

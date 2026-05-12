@@ -51,10 +51,8 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import {
   SUPER_ADMIN,
   ADMIN,
-  ADMIN_CASEMANAGER,
   ADMIN_CASEWORKER,
   CASEWORKER,
-  CASEMANAGER,
   VIEW_ONLY,
   MIRACLE,
   GOVT_CCI,
@@ -101,8 +99,8 @@ const DashboardSidebar = (props) => {
            FS_Allowed_Roles: [
             SUPER_ADMIN,
             ADMIN,
-            CASEMANAGER,
-            ADMIN_CASEMANAGER,
+            CASEWORKER,
+            ADMIN_CASEWORKER,
             VIEW_ONLY,
           ],
           Allowed_Acc_Type: [
@@ -193,8 +191,8 @@ const DashboardSidebar = (props) => {
           orangeIcon: <FamilyIconActive fontSize="small" />,
           FS_Allowed_Roles: [
             ADMIN,
-            CASEMANAGER,
-            ADMIN_CASEMANAGER,
+            CASEWORKER,
+            ADMIN_CASEWORKER,
             VIEW_ONLY,
           ],
           HT_Allowed_Roles: [ADMIN, CASEWORKER, ADMIN_CASEWORKER,VIEW_ONLY],
@@ -207,8 +205,8 @@ const DashboardSidebar = (props) => {
           orangeIcon: <ChildIconActive fontSize="small" />,
           FS_Allowed_Roles: [
             ADMIN,
-            CASEMANAGER,
-            ADMIN_CASEMANAGER,
+            CASEWORKER,
+            ADMIN_CASEWORKER,
             VIEW_ONLY,
           ],
           HT_Allowed_Roles: [ADMIN, CASEWORKER, ADMIN_CASEWORKER],
@@ -265,8 +263,8 @@ const DashboardSidebar = (props) => {
           orangeIcon: <CalendarIconActive fontSize="small" />,
           FS_Allowed_Roles: [
             ADMIN,
-            CASEMANAGER,
-            ADMIN_CASEMANAGER,
+            CASEWORKER,
+            ADMIN_CASEWORKER,
           ],
           style: {alignItems: "start"}
         },
@@ -275,14 +273,14 @@ const DashboardSidebar = (props) => {
           path: "/fostershare/messages",
           icon: <MessagesIcon fontSize="small" />,
           orangeIcon: <MessagesIconActive fontSize="small" />,
-          FS_Allowed_Roles: [ADMIN, CASEMANAGER, ADMIN_CASEMANAGER],
+          FS_Allowed_Roles: [ADMIN, CASEWORKER, ADMIN_CASEWORKER ],
         },
         {
           title: "Support Services",
           path: "/admin/support-services",
           icon: <SupportServicesIcon fontSize="small" />,
           orangeIcon: <SupportServicesIconActive fontSize="small" />,
-          FS_Allowed_Roles: [SUPER_ADMIN, ADMIN, ADMIN_CASEMANAGER],
+          FS_Allowed_Roles: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER],
         },
         {
           title: "Resources",
@@ -325,8 +323,8 @@ const DashboardSidebar = (props) => {
           FS_Allowed_Roles: [
             SUPER_ADMIN,
             ADMIN,
-            ADMIN_CASEMANAGER,
-            CASEMANAGER,
+            ADMIN_CASEWORKER,
+            CASEWORKER ,
           ],
           HT_Allowed_Roles: [
             SUPER_ADMIN,
@@ -352,8 +350,8 @@ const DashboardSidebar = (props) => {
           FS_Allowed_Roles: [
             SUPER_ADMIN,
             ADMIN,
-            ADMIN_CASEMANAGER,
-            CASEMANAGER,
+            ADMIN_CASEWORKER,
+            CASEWORKER,
           ],
           HT_Allowed_Roles: [
             SUPER_ADMIN,

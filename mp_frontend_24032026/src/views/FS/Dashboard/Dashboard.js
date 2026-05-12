@@ -11,8 +11,8 @@ import APIS from "../../../common/hooks/UseApiCalls";
 import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
 import {
   ADMIN,
-  ADMIN_CASEMANAGER,
-  CASEMANAGER,
+  ADMIN_CASEWORKER,
+  CASEWORKER,
   SUPER_ADMIN,
 } from "../../../helpers/constant";
 import ChevronRightIcon from "../../../assets/icons/ChevronRight";
@@ -134,7 +134,7 @@ const Dashboard = () => {
                   container
                   spacing={2}
                 >
-                  {[ADMIN_CASEMANAGER, ADMIN].includes(signedinUserRoleFS) && (
+                  {[ADMIN_CASEWORKER, ADMIN].includes(signedinUserRoleFS) && (
                     <Grid item xl={4} lg={4} md={6} xs={12} sm={12} spacing={2}>
                       <CountWidgets
                         icon="/static/icons/user-no-size.svg"
@@ -144,7 +144,7 @@ const Dashboard = () => {
                       />
                     </Grid>
                   )}
-                  {[ADMIN_CASEMANAGER, ADMIN, SUPER_ADMIN].includes(
+                  {[ADMIN_CASEWORKER, ADMIN, SUPER_ADMIN].includes(
                     signedinUserRoleFS
                   ) && (
                     <>
@@ -221,7 +221,7 @@ const Dashboard = () => {
                     spacing={2}
                   >
                     <Grid item xl={6} lg={6} md={6} xs={12} sm={12} spacing={2}>
-                      {[ADMIN_CASEMANAGER, CASEMANAGER].includes(
+                      {[ADMIN_CASEWORKER, CASEWORKER].includes(
                         signedinUserRoleFS
                       ) && (
                         <Grid
@@ -251,13 +251,7 @@ const Dashboard = () => {
                       </Grid>
                     </Grid>
                     <Grid item xl={6} lg={6} md={8} xs={12} sm={12} spacing={2}>
-                      <Card
-                      // sx={{
-                      //   mt: [CASEMANAGER].includes(signedinUserRoleFS)
-                      //     ? 0
-                      //     : 2,
-                      // }}
-                      >
+                      <Card>
                         <CardContent>
                           <LogOverviewList module="dashboard" listData={null} />
                         </CardContent>

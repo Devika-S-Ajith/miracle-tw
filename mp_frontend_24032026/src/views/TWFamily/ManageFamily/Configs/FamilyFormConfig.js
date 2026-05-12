@@ -14,7 +14,7 @@ export const familyBasicDetails = [
     {
         type: 'dropdown',
         name: 'caseWorker',
-        label: 'Case worker',
+        label: 'common:common.Case worker',
         translateLabels: true,
         required: true,
         validateOnChange: true,
@@ -29,7 +29,7 @@ export const familyAdditionalDetails = [
     {
         type: 'dropdown',
         name: 'family_situation',
-        label: 'Family Situation',
+        label: 'common:family.Family Situation',
         required: false,
         validateOnChange: true,
         labelKey: 'value',
@@ -39,7 +39,7 @@ export const familyAdditionalDetails = [
     {
         type: 'dropdown',
         name: 'family_type',
-        label: 'Family type',
+        label: 'common:family.Family type',
         required: false,
         validateOnChange: true,
         labelKey: 'type',
@@ -49,7 +49,7 @@ export const familyAdditionalDetails = [
     {
         type: 'dropdown',
         name: 'goal',
-        label: 'Goal',
+        label: 'common:family.Goal',
         required: false,
         validateOnChange: true,
         labelKey: 'value',
@@ -65,7 +65,7 @@ export const familyAdditionalDetails = [
         type: 'dropdown',
         name: 'language',
         translateLabels: true,
-        label: 'Primary Language',
+        label: 'common:common.Primary Language',
         optionsSource: 'languages',
         accessKey: 'language',
         labelKey: 'language',
@@ -80,7 +80,7 @@ export const familyAdditionalDetails = [
     {
         type: 'text',
         name: 'licenceNumber',
-        label: 'Licence number',
+        label: 'common:common.Licence number',
         showTooltip: false,
         autoFocus: false,
         gridProps: { md: 6.5, xs: 12 }
@@ -127,7 +127,7 @@ export const familyAddressDetails = [
         type: 'dropdown',
         name: 'state',
         translateLabels: true,
-        label: 'State/Region',
+        label: 'common:common.State/Region',
         required: false,
         optionsSource: 'state',
         accessKey: 'stateName',
@@ -148,7 +148,7 @@ export const familyAddressDetails = [
         type: 'dropdown',
         name: 'district',
         translateLabels: true,
-        label: 'District/County',
+        label: 'common:common.District/County',
         required: false,
         optionsSource: 'district',
         accessKey: 'districtName',
@@ -200,7 +200,7 @@ export const familyAddressDetails = [
     {
         type: 'MonthYearPicker',
         name: 'DateStartedasFP',
-        label: 'Date the family first started serving as a foster family',
+        label: 'common:family.Date the family first started serving as a foster family',
         showTooltip: false,
         fullWidth: true,
         variant: 'outlined',

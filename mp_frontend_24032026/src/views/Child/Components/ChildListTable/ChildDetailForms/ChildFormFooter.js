@@ -15,6 +15,7 @@ const ChildFormFooter = ({
   onSubmit,
   deleteChildClickHandler,
   reOpenCaseHandler,
+  hideChildModal
 }) => {
   const { t } = useTranslation(["common"]);
 
@@ -32,14 +33,11 @@ const ChildFormFooter = ({
         />
       ),
       {
-        modalTitle: t(
-          "common:common.Close this child’s case?",
-          "Close this child’s case?",
-        ),
+       
         width: "30%",
         hideModalFooter: true,
-        enableClose: true,
-        maxHeight: "90%",
+        enableClose: false,
+        height: "95%",
       },
     );
   };
@@ -72,7 +70,7 @@ const ChildFormFooter = ({
             /> */}
             <SecondaryButton
               label={t("common:common.Close case", "Close case")}
-              sx={{ visibility: childId ? "visible" : "hidden" }}
+              sx={{ visibility: childId && !hideChildModal ? "visible" : "hidden" }}
               onClick={closeCaseHandler}
             />
           </Stack>

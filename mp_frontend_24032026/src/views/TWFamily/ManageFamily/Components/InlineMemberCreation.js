@@ -11,7 +11,8 @@ import {
     Menu,
     CircularProgress,
     Skeleton,
-    MenuItem
+    MenuItem,
+    Modal
 } from '@mui/material';
 import { Stack } from '@mui/system';
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -62,8 +63,12 @@ const InlineMemberCreation = ({
     const [isAdding, setIsAdding] = useState(false);
     const [menuState, setMenuState] = useState({ anchorEl: null, member: null });
     const open = Boolean(menuState.anchorEl);
-
-
+    const [childToEdit, setChildToEdit] = useState(null);
+    const [childModalOpen, setChildModalOpen] = useState(false);
+    const [hideChildModal, setHideChildModal] = useState(false);
+    const handleChildModalOpen = () => {
+        setChildModalOpen(!childModalOpen);
+    };
     const getMemberDetailsRef = useRef(null);
     getMemberDetailsRef.current = (member) => {
         formik?.setValues(prev => {

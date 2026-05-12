@@ -1,4 +1,4 @@
-import { Grid } from "@mui/material";
+import { Grid, Stack } from "@mui/material";
 import React, { useContext, useState } from "react";
 import DynamicForm from "../../../../TWFamily/ManageFamily/Components/DynamicForm";
 import { useFormik } from "formik";
@@ -11,8 +11,17 @@ import SubHeading from "../../../../../components/SubHeading/SubHeading";
 import { Box } from "@mui/system";
 import { CommonDataContext } from "../../../../../common/contexts/CommonDataContext";
 import APIS from "../../../../../common/hooks/UseApiCalls";
+import * as Yup from "yup"; // Added Yup import
+import Heading from "../../../../../components/Heading";
+import CloseIcon from "@mui/icons-material/Close";
 
-const CloseCaseForm = ({ close, setHideChildModal, handleChildModalOpen, onCaseClose, childId }) => {
+const CloseCaseForm = ({
+  close,
+  setHideChildModal,
+  handleChildModalOpen,
+  onCaseClose,
+  childId,
+}) => {
   const { t } = useTranslation(["common"]);
   const { childDropdownLists } = useContext(CommonDataContext);
 
@@ -28,11 +37,6 @@ const CloseCaseForm = ({ close, setHideChildModal, handleChildModalOpen, onCaseC
       label: "Leave child associated with this family",
     },
   ];
-
-  const { values, errors, touched, handleChange, handleBlur, setFieldValue } =
-    useFormik({
-      initialValues: {},
-    });
   const caseCloseHandler = async () => {
     try {
       const payload = {
@@ -122,11 +126,30 @@ const CloseCaseForm = ({ close, setHideChildModal, handleChildModalOpen, onCaseC
     close();
     // handleChildModalOpen();
     setHideChildModal(false);
-  }
+  };
   return (
     <>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={2}
+      >
+        <Stack direction="row" justifyContent="flex-start" spacing={1}>
+          <Heading
+            heading={t(
+              "common:common.Close this child’s case?",
+              "Close this child’s case?",
+            )}
+          />
+        </Stack>
+        <CloseIcon
+          style={{ color: "#000", cursor: "pointer" }}
+          onClick={cancelHandler}
+        />
+      </Stack>
       <Box mx={-2}>
-        <Box sx={{ maxHeight: "70vh", overflowY: "auto", px: 2 }}>
+        <Box sx={{ maxHeight: "70vh", overflowY: "auto", px: 2, mb: 2 }}>
           <Grid container spacing={2}>
             <DynamicForm
               values={values}
@@ -136,43 +159,13 @@ const CloseCaseForm = ({ close, setHideChildModal, handleChildModalOpen, onCaseC
               handleChange={handleChange}
               handleBlur={handleBlur}
               setFieldValue={setFieldValue}
-              config={CaseCloseDetails}
+              config={CaseCloseDetails({
+                associationOptions,
+                deactivationDeletionReason,
+                t,
+                values,
+              })}
             />
-            <Box sx={{ p: 2, borderRadius: 1, mb: 1 }}>
-              <BodyText
-                value={t(
-                  "common:family.Child/family association",
-                  "Child/family association",
-                )}
-              />
-              <RadioGroupList
-                name="association"
-                options={associationOptions}
-                value={values.association}
-                onChange={(e) => setFieldValue("association", e.target.value)}
-                renderPrimary={(option) => <BodyText value={option.label} />}
-              />
-            </Box>
-            {/* <Box sx={{ p: 2, borderRadius: 1, mb: 1 }}>
-              <FamilyAccessDays value={days} onChange={setDays} />
-            </Box> */}
-            <Box sx={{ p: 2, borderRadius: 1, mb: 2 }}>
-              <BodyText
-                value={t(
-                  "common:family. Why is this person being deactivated?",
-                  "Why is this person being deactivated?",
-                )}
-              />
-              <RadioGroupList
-                name="deactivationReason"
-                options={deactivationDeletionReason}
-                value={values.deactivationReason}
-                onChange={(e) =>
-                  setFieldValue("deactivationReason", e.target.value)
-                }
-                renderPrimary={(option) => <BodyText value={option.value} />}
-              />
-            </Box>
           </Grid>
         </Box>
       </Box>
@@ -189,7 +182,7 @@ const CloseCaseForm = ({ close, setHideChildModal, handleChildModalOpen, onCaseC
           <PrimaryButton
             label={t("common:common.Yes, close case", "Yes, close case")}
             fullWidth
-            onClick={caseCloseHandler}
+            onClick={handleSubmit}
           />
         </Grid>
       </Grid>

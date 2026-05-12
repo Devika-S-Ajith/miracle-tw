@@ -11,6 +11,7 @@ import { ModalService } from "../../../../components/Modal";
 import { ArrowRight } from "@mui/icons-material";
 import PlusIcon from "../../../../assets/icons/Plus";
 import { dateFormatter } from "../../../../constants";
+import { useTranslation } from "react-i18next";
 
 const ResourcesList = () => {
 
@@ -23,13 +24,13 @@ const ResourcesList = () => {
   const columns = [
     {
       field: "title",
-      headerName: "Title",
+      headerName: t("common:resources.Title", "Title"),
       minWidth: 200,
       flex: 1,
     },
     {
       field: "categories",
-      headerName: "Categories",
+      headerName: t("common:resources.Categories", "Categories"),
       minWidth: 250,
       flex: 1,
       renderCell: (params) => (
@@ -48,23 +49,23 @@ const ResourcesList = () => {
     },
     {
       field: "createdAt",
-      headerName: "Created at",
+      headerName: t("common:resources.Created at", "Created at"),
       minWidth: 100,
     },
     {
       field: "createdBy",
-      headerName: "Created by",
+      headerName: t("common:resources.Created by", "Created by"),
       minWidth: 200,
     },
     {
       field: "published",
-      headerName: "Published",
+      headerName: t("common:resources.Published", "Published"),
       minWidth: 100,
       renderCell: (params) => (params?.row?.published ? t("common:resources.Published", "Published") : t("common:resources.Draft", "Draft")),
     },
     {
       field: "updatedAt",
-      headerName: "Updated at",
+      headerName: t("common:resources.Updated at", "Updated at"),
       minWidth: 100,
     },
     {
@@ -156,7 +157,7 @@ const ResourcesList = () => {
           );
         }}
       >
-        Add resource
+        {t("common:resources.Add resource", "Add resource")}
       </Button>
     </Box>
   );

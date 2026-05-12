@@ -7,46 +7,49 @@ import { ModalService } from "../../../components/Modal";
 import MessageDetailForm from "../Components/MessageDetailForm/MessageDetailForm";
 import { dateFormatter, formatText, timeFormatter } from "../../../constants";
 import Heading from "../../../components/Heading/Heading";
+import { useTranslation } from "react-i18next";
 
 const ScheduledMessagesList = ({
   scheduledMessagesGridRef,
   sentMessagesGridRef,
 }) => {
+    const { t } = useTranslation(["common"]);
+
   const columns = [
     // { field: "id", headerName: "ID", width: 90 },
     {
       field: "title",
-      headerName: "Title",
+      headerName: t("common:message.Title", "Title"),
       minWidth: 150,
       flex: 1,
     },
     {
       field: "body",
-      headerName: "Description",
+      headerName: t("common:message.Description", "Description"),
       minWidth: 350,
       flex: 1,
     },
     {
       field: "recipientName",
-      headerName: "Recipient",
+      headerName: t("common:message.Recipient", "Recipient"),
       flex: 1,
       minWidth: 150,
       sortable: false,
     },
     {
       field: "sendAt",
-      headerName: "Scheduled at",
+      headerName: t("common:message.ScheduledAt", "Scheduled at"),
       minWidth: 110
     },
     {
       field: "time",
-      headerName: "Time",
+      headerName: t("common:message.Time", "Time"),
       minWidth: 110,
       sortable: false,
     },
     {
       field: "frequency",
-      headerName: "Frequency",
+      headerName: t("common:message.Frequency", "Frequency"),
       minWidth: 110,
       flex: 1,
       sortable: false,
@@ -134,7 +137,7 @@ const ScheduledMessagesList = ({
               />
             ),
             {
-              modalTitle: "New Message",
+              modalTitle: t("common:message.New Message", "New Message"),
               width: "35%",
               height: "95%",
               hideModalFooter: true,
@@ -142,7 +145,7 @@ const ScheduledMessagesList = ({
           );
         }}
       >
-        Create
+        {t("common:common.Create", "Create")}
       </Button>
     </Box>
   );
@@ -195,7 +198,7 @@ const ScheduledMessagesList = ({
     <Box>
       <Heading
         id="family-table-label"
-        heading={"Scheduled messages"}
+        heading={t("common:message.Scheduled messages", "Scheduled messages")}
         p={2}
         pb={0}
       />

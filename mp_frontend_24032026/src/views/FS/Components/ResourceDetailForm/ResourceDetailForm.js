@@ -18,8 +18,10 @@ import { SUPER_ADMIN } from "../../../../helpers/constant";
 import { CommonDataContext } from "../../../../common/contexts/CommonDataContext";
 import CloseIcon from "@mui/icons-material/Close";
 import { ModalService } from "../../../../components/Modal";
+import { useTranslation } from "react-i18next";
 
 const ResourceDetailForm = ({ close, onSuccess, ResourceDetail = null }) => {
+  const { t } = useTranslation(["common"]);
   const [loading, setLoading] = useState(false);
   const [resourceList, setResourceList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -123,17 +125,19 @@ const validationSchema = Yup.object().shape({
       }
     } catch (err) {
       setLoading(false);
-      toast.error("Something went wrong");
+      toast.error(t("common:common.Something went wrong", "Something went wrong"));
     }
   };
 
   const cancelClickHandler = () => {
     ModalService.open(() => <></>, {
-      modalTitle: "Unsaved Changes",
+      modalTitle: t("common:common.Unsaved Changes", "Unsaved Changes"),
       width: "30%",
-      modalDescription:
-        "If you leave this page, any changes you have made will be lost",
-      actionButtonText: "Leave page",
+      modalDescription: t(
+        "common:common.If you leave this page, any changes you have made will be lost",
+        "If you leave this page, any changes you have made will be lost"
+      ),
+      actionButtonText: t("common:common.Leave page", "Leave page"),
       onClick: () => close(),
     });
   };
@@ -158,7 +162,7 @@ const validationSchema = Yup.object().shape({
             error={Boolean(touched?.title && errors?.title)}
             fullWidth
             helperText={touched?.title && errors?.title}
-            label="Title"
+            label={t("common:resources.Title", "Title")}
             name="title"
             onBlur={handleBlur}
             onChange={handleChange}
@@ -187,7 +191,7 @@ const validationSchema = Yup.object().shape({
             fullWidth
             required
             helperText={touched?.articleLink && errors?.articleLink}
-            label="Attach link"
+            label={t("common:common.Attach link", "Attach link")}
             name="articleLink"
             onBlur={handleBlur}
             onChange={handleChange}
@@ -200,7 +204,7 @@ const validationSchema = Yup.object().shape({
             fullWidth
             required
             helperText={touched?.imageLink && errors?.imageLink}
-            label="Image link"
+            label={t("common:common.Image link", "Image link")}
             name="imageLink"
             onBlur={handleBlur}
             onChange={handleChange}
@@ -242,7 +246,7 @@ const validationSchema = Yup.object().shape({
                 return (
                   <TextField
                     {...params}
-                    label={"Categories"}
+                    label={t("common:resources.Categories", "Categories")}
                     sx={{
                       width: 1,
                       // ml: 1,
@@ -257,7 +261,7 @@ const validationSchema = Yup.object().shape({
                       margin: "normal",
                       variant: "outlined",
                       label: "",
-                      placeholder: "Select categories",
+                      placeholder: t("common:common.Select categories", "Select categories"),
                     }}
                     placeholder={selectedCount < 1 && t("common:common.Select categories", "Select categories")}
                     variant="outlined"
@@ -321,7 +325,7 @@ const validationSchema = Yup.object().shape({
                     return (
                       <TextField
                         {...params}
-                        label={"Organization"}
+                        label={t("common:common.Organization", "Organization")}
                         sx={{
                           width: 1,
                           "& .MuiOutlinedInput-root": {
@@ -343,7 +347,7 @@ const validationSchema = Yup.object().shape({
                           margin: "normal",
                           variant: "outlined",
                           label: "",
-                          placeholder: "Select an account",
+                          placeholder: t("common:common.Select an account", "Select an account"),
                         }}
                         placeholder={
                           selectedCount < 1 && t("common:common.Select an organization", "Select an organization") + "*"
@@ -379,7 +383,7 @@ const validationSchema = Yup.object().shape({
             variant="outlined"
             onClick={cancelClickHandler}
           >
-            {"Cancel"}
+            {t("common:common.Cancel", "Cancel")}
           </Button>
           <Button
             sx={{ borderRadius: "4px" }}
@@ -387,7 +391,7 @@ const validationSchema = Yup.object().shape({
             onClick={handleSubmit}
             disabled={loading}
           >
-            Submit
+            {t("common:assessment.Submit", "Submit")}
           </Button>
         </Box>
       </Box>

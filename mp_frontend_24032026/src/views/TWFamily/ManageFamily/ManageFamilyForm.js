@@ -490,7 +490,7 @@ const ManageFamilyForm = (props) => {
                             .nullable()
                             .max(255)
                             .when('TWFamilyRelationId', (TWFamilyRelationId, schema) => {
-                                return ["3", "9"].includes(TWFamilyRelationId) ? schema.required('Gender is required') : schema;
+                                return ["3", "9"].includes(TWFamilyRelationId) ? schema.required(t("common:warnings.Gender is required","Gender is required")) : schema;
                             }),
                         isMajor: Yup.boolean(),
                         isChild: Yup.boolean(),
@@ -699,7 +699,7 @@ const ManageFamilyForm = (props) => {
                                                                 whiteSpace: 'nowrap'
                                                             }}
                                                         >
-                                                            {!family?.isActive && family?.id ? `${t("common:family.Deactivated", "Deactivated")} ${MonthDayYearFormatter(family?.deactivationDate,"short")}` : t("common:family.Active", "Active")}
+                                                            {!family?.isActive && family?.id ? `${t("common:family.Deactivated", "Deactivated")} ${MonthDayYearFormatter(family?.deactivationDate,"short")}` : t("common:common.Active", "Active")}
                                                         </Typography>
                                                     </Box>
                                                 </FormSectionHeading>

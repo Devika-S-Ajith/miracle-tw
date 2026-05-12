@@ -6,16 +6,13 @@ import { useTranslation } from "react-i18next";
 import { Masonry } from "@mui/lab";
 import FamilyMembersAndCaregivers from "../../../Family/Components/FamilyMembersAndCaregivers";
 
-
 const ChildBasicDetails = ({ child, members }) => {
   const { t } = useTranslation(["common"]);
   const childId = child?.id;
 
-
   return (
     // <Grid container gap={2}>
     //   <Grid item xs={12} md={6}>
-
 
     //     <ChildSummary child={child} />
     //     <ToDoWidget t={t}  />

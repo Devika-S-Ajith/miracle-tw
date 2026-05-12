@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import React, { useState, useEffect, useContext, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router";
 import PropTypes from "prop-types";
@@ -32,6 +32,7 @@ import {
   getSelectedCountryDetails,
   getStateList,
   handleCloseFormsWarning,
+  validatePhoneNumber,
 } from "../../../../helpers/helperFunction";
 import NumberFormat from "react-number-format";
 import "react-international-phone/style.css";
@@ -39,7 +40,6 @@ import { useTranslation } from "react-i18next";
 import AutoCompleteDropdown from "../../../../components/UserComponents/AutoCompleteDropdown";
 import {
   ADMIN,
-  ADMIN_CASEMANAGER,
   ADMIN_CASEWORKER,
   CASEWORKER,
   COUNTRY_ID_INDIA,
@@ -97,6 +97,7 @@ const ManageUserForm = (props) => {
   const [initialCountry, setInitialCountry] = useState("");
   const signedinOrgId = localStorage.getItem("orgId");
   const signedInUserID = localStorage.getItem("username");
+  const phoneRef = useRef({});
 
   useAuthorization(signedinUserRoleHT, signedinUserRoleFS,signedinOrgType, "ManageUser", [ADMIN,CASEWORKER,ADMIN_CASEWORKER,SUPER_ADMIN,VIEW_ONLY].includes(signedinUserRoleHT));
 
@@ -243,17 +244,11 @@ const ManageUserForm = (props) => {
         country: countryName[user?.countryInfo.toLowerCase()].label,
       };
 
-      if (name == "HTRole") {
         payload.TWUserId = user?.id;
         payload.TWAccountId = user?.TWAccountId;
-        payload.HTRoleFrom = oldRole;
-        payload.HTRoleTo = newRole;
-      } else {
-        payload.FSUserId = user?.id;
-        payload.TWAccountId = user?.TWAccountId;
-        payload.FSRoleFrom = oldRole;
-        payload.FSRoleTo = newRole;
-      }
+        payload.TWRoleFrom = oldRole;
+        payload.TWRoleTo = newRole;
+      
 
       await APIS.validateRoleChange(payload, name).then((res) => {
         if (res.status == 200) {
@@ -472,9 +467,9 @@ const ManageUserForm = (props) => {
           phoneNumber: values.phone.trim(),
           email: values.email.trim(),
           TWAccountId: values.organizationName,
-          HTCountryId: values.country,
-          HTDistrictId: values.district ? values.district : null,
-          HTStateId: values.state,
+          TWCountryId: values.country,
+          TWDistrictId: values.district ? values.district : null,
+          TWStateId: values.state,
           city: values.city.trim(),
           MPLanguageId: "1",
           accessType: getAccessType(),
@@ -482,6 +477,13 @@ const ManageUserForm = (props) => {
           FSUserRoleId: values.FSRole,
           dbRegion: INDIA_DB.includes(values.country) ? INDIA : USA,
         };
+        if (
+          payload?.phoneNumber &&
+          "+" + phoneRef.current.dialCode ===
+            payload?.phoneNumber
+        ) {
+          payload.phoneNumber = null;
+        }
         try {
           isAddForm
             ? await APIS.AddUser(payload).then((res) => {
@@ -836,6 +838,7 @@ const ManageUserForm = (props) => {
                       error={Boolean(touched?.phone && errors?.phone)}
                       helperText={touched?.phone && errors?.phone}
                       value={values.phone}
+                      phoneRef={phoneRef}
                       onChange={(phone) => setFieldValue("phone", phone)}
                       defaultCountry={
                         locationList?.find(
@@ -928,7 +931,7 @@ const ManageUserForm = (props) => {
                             name="FSRole"
                             id="FSRole"
                             disabled={
-                              ![SUPER_ADMIN, ADMIN, ADMIN_CASEMANAGER].includes(
+                              ![SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER].includes(
                                 signedinUserRoleFS
                               ) ||
                               user.id == signedInUserID

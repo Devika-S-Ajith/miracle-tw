@@ -6,12 +6,15 @@ import { useNavigate } from "react-router";
 import ChevronRightIcon from "../../../assets/icons/ChevronRight";
 import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
 import useAuthorization from "../../../components/UserComponents/useAuthorization";
+import { useTranslation } from "react-i18next";
 
 const Messages = () => {
   useEffect(() => {
     document.title = "Messages | ThriveWell";
   }, []);
 
+  const { t } = useTranslation(["common"]);
+ 
   const navigate = useNavigate();
   const scheduledMessagesGridRef = useRef(null);
   const sentMessagesGridRef = useRef(null);
@@ -28,24 +31,8 @@ const Messages = () => {
   return (
     <Box m={2}>
       <Grid item sx={{ display: "flex", flexDirection: "row" }} my={3}>
-        <Typography
-          color="textPrimary"
-          variant="h5"
-          sx={{ cursor: "pointer" }}
-          onClick={() => navigate("/fostershare/dashboard")}
-        >
-          FosterShare
-        </Typography>
-        <Box
-          sx={{
-            m: 0.75,
-          }}
-          style={{ cursor: "text" }}
-        >
-          <ChevronRightIcon color="disabled" fontSize="small" />
-        </Box>
         <Typography id="family-table-label" color="textPrimary" variant="h5">
-          Messages
+          {t("common:common.Messages", "Messages")}
         </Typography>
       </Grid>
       <Box sx={{ flexGrow: 1, height: "100%" }}>

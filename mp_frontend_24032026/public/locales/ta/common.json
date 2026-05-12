@@ -187,7 +187,7 @@
     "Case Worker": "வழக்குப் பணியாளர்",
     "Caseworker Name": "வழக்குப் பணியாளர் பெயர்",
     "Language": "மொழி",
-    "Primary Language": "Primary Language",
+    "Primary Language": "முதன்மை மொழி",
     "Male": "ஆண்",
     "Govt Organization": "அரசு நிறுவனம்",
     "Govt CCI": "அரசு குழந்தை பராமரிப்பு இல்லம்",
@@ -1238,7 +1238,12 @@
     "Children served count max value is 9999": "சேவை வழங்கப்பட்ட குழந்தைகளின் எண்ணிக்கையின் அதிகபட்ச மதிப்பு 9999",
     "Children served count is required": "சேவை வழங்கப்பட்ட குழந்தைகளின் எண்ணிக்கை தேவை",
     "Families served count max value is 9999": "சேவை வழங்கப்பட்ட குடும்பங்களின் எண்ணிக்கையின் அதிகபட்ச மதிப்பு 9999",
-    "Families served count is required": "சேவை வழங்கப்பட்ட குடும்பங்களின் எண்ணிக்கை தேவை"
+    "Families served count is required": "சேவை வழங்கப்பட்ட குடும்பங்களின் எண்ணிக்கை தேவை",
+    "Family Name is required": "குடும்ப பெயர் தேவை",
+    "DOB is required": "பிறந்த தேதி அவசியம்",
+    "Summary is required": "சுருக்கம் அவசியம்",
+    "Article link is required": "கட்டுரை இணைப்பு அவசியம்",
+    "Image link is required": "பட இணைப்பு அவசியம்"
   },
   "message": {
     "Title": "Title",

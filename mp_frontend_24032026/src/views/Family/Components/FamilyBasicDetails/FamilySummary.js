@@ -50,7 +50,7 @@ const FamilySummary = ({ t, family, mostRecentAssesmentSummary }) => {
 
 
   return (
- <CommonCard
+    <CommonCard
       title={t(`common:infoCard.${"Family summary"}`, "Family summary")}
       apiError={false}
       onReload={() => {}}
@@ -59,7 +59,7 @@ const FamilySummary = ({ t, family, mostRecentAssesmentSummary }) => {
       <Grid container direction="row" spacing={1}>
         <Grid item xs={6}>
           <LabelValue
-            label="Family name"
+            label={t("common:common.Family name", "Family name")}
             value={familyName}
             labelColor="#535F66"
             fontWeight={700}
@@ -67,18 +67,20 @@ const FamilySummary = ({ t, family, mostRecentAssesmentSummary }) => {
         </Grid>
         <Grid item xs={6}>
           <LabelValue
-            label="Status"
-            valueComponent={
+            label={t("common:common.Status", "Status")}
+            value={
               <Chip
-                label={
-                  isActive
-                    ? t("common:common.Active", "Active")
-                    : t("common:common.Case closed", "Case closed")
-                }
+                label={statusLabel}
                 size="small"
                 sx={{
-                  backgroundColor: "#b8e6e1",
-                  color: "black",
+                  backgroundColor:
+                    statusLabel === "Active"
+                      ? "#3DAA1D"
+                      : statusLabel === "Case closed" ||
+                          statusLabel === "Case Closed"
+                        ? "#D6DBDE"
+                        : "#b8e6e1",
+                  color: statusLabel === "Active" ? "white" : "black",
                   fontSize: "0.75rem",
                   fontWeight: 600,
                   borderRadius: "20px",
@@ -91,44 +93,30 @@ const FamilySummary = ({ t, family, mostRecentAssesmentSummary }) => {
         </Grid>
         <Grid item xs={6}>
           <LabelValue
-            label="Address"
-            value={(() => {
-              const parts = [
-                addressLine1,
-                addressLine2,
-                city,
-                TWDistrictId
-                  ? getDistrictList(locationList, TWCountryId, TWStateId)?.find(
-                    (item) => item.id == TWDistrictId
-                  )?.districtName
-                  : null,
-                TWStateId
-                  ? getStateList(locationList, TWCountryId)?.find(
-                    (item) => item.id == TWStateId
-                  )?.stateName
-                  : null,
-                TWCountryId
-                  ? getSelectedCountryDetails(locationList, TWCountryId)?.countryName
-                  : null,
-              ];
-
-              return parts.filter(Boolean).join(", ");
-            })()}
+            label={t("common:common.Address", "Address")}
+            value={
+              family?.contactInformation
+                ? formatAddressFromContactInfo(
+                    family?.contactInformation,
+                    locationList,
+                  )
+                : "-"
+            }
             labelColor="#535F66"
             fontWeight={700}
           />
         </Grid>
         <Grid item xs={6}>
           <LabelValue
-            label="Phone number"
-            value={phoneNumber}
+            label={t("common:common.Phone number", "Phone number")}
+            value={phoneNumber?.trim().length ? phoneNumber : "-"}
             labelColor="#535F66"
             fontWeight={700}
           />
         </Grid>
         <Grid item xs={6}>
           <LabelValue
-            label="Primary language"
+            label={t("common:common.Primary language", "Primary language")}
             value={
               TWLanguageId &&
               `  ${
@@ -142,9 +130,8 @@ const FamilySummary = ({ t, family, mostRecentAssesmentSummary }) => {
         </Grid>
         <Grid item xs={6}>
           <LabelValue
-            label="First fostered"
-            // check living situation
-            value={dateFormatter(DateStartedasFP, "short") || "-"}
+            label={t("common:common.First fostered", "First fostered")}
+            value={DateStartedasFP || "-"}
             labelColor="#535F66"
             fontWeight={700}
           />
@@ -156,8 +143,8 @@ const FamilySummary = ({ t, family, mostRecentAssesmentSummary }) => {
 
         <Grid item xs={6}>
           <LabelValue
-            label="Case worker"
-            value={caseworker || "-"}
+            label= {t("common:common.Case worker","Case worker")}
+            value={caseworker?.trim().length ? caseworker : "-"}
             labelColor="#535F66"
             fontWeight={700}
           />
@@ -196,9 +183,6 @@ const FamilySummary = ({ t, family, mostRecentAssesmentSummary }) => {
         </Stack>}
       </Stack>}
     </CommonCard>
-
-
-
   );
 };
 

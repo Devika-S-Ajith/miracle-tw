@@ -1035,7 +1035,22 @@
     "specifyReason":"স্টেটাস পরিবর্তনের কারণ ব্যাখ্যা করুন।",
     "Contact information": "কনট্যাক্ট ইনফরমেশন",
     "Family status": "পরিবারের স্টেটাস",
-    "Cannot delete family with active children": "সক্রিয় শিশু সহ পরিবার মুছে ফেলা যাবে না"
+    "Cannot delete family with active children": "সক্রিয় শিশু সহ পরিবার মুছে ফেলা যাবে না",
+    "todo_title":"করনীয়",
+    "todo_subtitle":"সমস্ত কাজ মোবাইল অ্যাপে সম্পন্ন করতে হবে",
+    "most_recent_assessment_summary": "সর্বশেষ মূল্যায়নের সারাংশ",
+    "Interventions summary": "হস্তক্ষেপের সারাংশ",
+    "Family members and caregivers": "পরিবারের সদস্য ও পরিচর্যাকারীরা ({{count}})",
+    "No assessment done yet": "এখনও কোনো মূল্যায়ন করা হয়নি",
+    "assessment_results": "প্রথম মূল্যায়ন সম্পন্ন হলে ফলাফল এখানে প্রদর্শিত হবে",
+    "View Assessment": " মূল্যায়ন দেখুন ",
+    "Domains":"ডোমেইনসমূহ",
+    "since_assessment_1":"মূল্যায়ন #১ থেকে",
+    "assessment_number": "মূল্যায়ন #{{number}}",
+    "Add another family member": "আরেকজন পরিবার সদস্য যোগ করুন",
+    "Family contact information": "পরিবারের যোগাযোগের তথ্য",
+    "Family type": "পরিবারের ধরন",
+    "Date the family first started serving as a foster family": "পরিবারটি প্রথম কবে লালন পরিবার হিসেবে শুরু করেছে"
   },
   "form": {
     "formList": " ফর্মের তালিকা ",

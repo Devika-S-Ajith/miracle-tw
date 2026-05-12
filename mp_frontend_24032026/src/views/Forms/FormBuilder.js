@@ -277,12 +277,11 @@ const FormBuilder = (props) => {
   };
 
   useEffect(() => {
-    console.log("form id ", form)
     getDomains();
     if (currentQuestionData?.length > 0) {
       getCurrentFormDetails();
     } else {
-      getForms(form?.TWFormId);
+      getForms(form?.id);
     }
   }, []);
 
@@ -456,7 +455,6 @@ const FormBuilder = (props) => {
   };
 
   const PublishForm = async () => {
-    console.log("selectedDomainQuestions", selectedDomainQuestions, isSaved);
     setLoading(true);
     try {
       if (isSaved) {
@@ -464,7 +462,6 @@ const FormBuilder = (props) => {
           //console.log("res >>", finalQuestionList)
           if (res && res.data && res.status === 200) {
             toast.success("Form Published Successfully");
-            console.log("navigating...");
             setLoading(false);
             navigate(`/dashboard/forms`, {
               state: {
@@ -579,7 +576,6 @@ const FormBuilder = (props) => {
       if (localStorage.getItem("isCreateForm")) {
         delete payload.formId;
         await APIS.CreateForm(payload).then((res) => {
-          console.log("res >>", updatedList);
           if (res && res.data && res.status === 200) {
             toast.success("Form saved Successfully");
             setLoading(false);
@@ -591,7 +587,6 @@ const FormBuilder = (props) => {
               APIS.PublishForm({ formId: res?.data?.formId }).then((res) => {
                 if (res && res.data && res.status === 200) {
                   toast.success("Form Published Successfully");
-                  console.log("navigating...");
                   setLoading(false);
                   navigate(`/dashboard/forms`, {
                     state: {
@@ -653,18 +648,16 @@ const FormBuilder = (props) => {
 
     let payload = {
       action: "UNPUBLISH",
-      formIdActive: `${defaultForm.TWFormId}`,
+      formIdActive: `${defaultForm.HTFormId}`,
       formIdInactive: `${formDetails.id}`,
     };
 
     try {
       await APIS.UpdateFormStatus(payload).then(async (res) => {
-        //console.log("res >>", finalQuestionList)
         if (res && res.data && res.status === 200) {
           // toast.success('Questions Added Successfully');
           await getFormsList();
           setCurrentQuestionData([]);
-          console.log("navigating...");
           setLoading(false);
         } else {
           toast.error("Something went wrong!");
@@ -707,7 +700,6 @@ const FormBuilder = (props) => {
         //console.log("res >>", finalQuestionList)
         if (res && res.data && res.status === 200) {
           // toast.success('Questions Added Successfully');
-          console.log("navigating...");
           setCurrentQuestionData([]);
           setLoading(false);
           navigate(`/dashboard/forms`, {
@@ -757,7 +749,7 @@ const FormBuilder = (props) => {
         formName: formName,
         isSaved: isSaved,
         isPublished: isCreateForm ? false : formDetails.isPublished,
-        defaultId: defaultForm?.TWFormId,
+        defaultId: defaultForm?.HTFormId,
         isCreateForm: localStorage.getItem("isCreateForm"),
         selectedDomainQuestions: selectedDomainQuestions,
         globalDefault: formDetails.globalDefault,
@@ -767,7 +759,7 @@ const FormBuilder = (props) => {
 
   const handlePreviewFormFromTheTable = (form) => {
     console.log("handlePreviewFormFromTheTable", form);
-    navigate(`/dashboard/forms/${form.TWFormId}/preview`, {
+    navigate(`/dashboard/forms/${form.HTFormId}/preview`, {
       state: {
         formName: form.formName,
         isSaved: true,
@@ -980,7 +972,6 @@ const FormBuilder = (props) => {
                           ) : !formDetails.isPublished ? (
                             <Button
                               onClick={handlePublishFormModal}
-                              disabled={formDetails?.isActive && (formDetails?.globalDefault || formDetails?.assessmentStat)}
                               sx={{ borderRadius: "4px" }}
                               variant="contained"
                             >
@@ -989,7 +980,7 @@ const FormBuilder = (props) => {
                           ) : (
                             <Button
                               onClick={handlePublishFormModal}
-                              disabled={formDetails?.globalDefault || formDetails?.assessmentStat}
+                              disabled={formDetails?.globalDefault}
                               sx={{ borderRadius: "4px" }}
                               variant="contained"
                             >

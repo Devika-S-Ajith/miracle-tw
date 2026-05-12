@@ -1292,7 +1292,12 @@
     "Children served count is required":"Children served count is required",
     "Families served count max value is 9999":"Families served count max value is 9999",
     "Families served count is required":"Families served count is required",
-    "Default assessment language is required": "Default assessment language is required"
+    "Default assessment language is required": "Default assessment language is required",
+    "Family Name is required": "Family Name is required",
+    "DOB is required": "DOB is required",
+    "Summary is required": "Summary is required",
+    "Article link is required": "Article link is required",
+    "Image link is required": "Image link is required"
   },
   "message": {
     "Title": "Title",

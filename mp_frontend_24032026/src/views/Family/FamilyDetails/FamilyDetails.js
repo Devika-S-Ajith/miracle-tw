@@ -86,13 +86,13 @@ const FamilyDetails = () => {
     return () => {};
   }, []);
 
-  useAuthorization(
-    signedinUserRoleHT,
-    signedinUserRoleFS,
-    signedinOrgType,
-    "ManageFamily",
-    true
-  );
+  // useAuthorization(
+  //   signedinUserRoleHT,
+  //   signedinUserRoleFS,
+  //   signedinOrgType,
+  //   "ManageFamily",
+  //   true
+  // );
 
   const getFamilyDetails = useCallback(async () => {
     setLoading(true);
@@ -169,7 +169,6 @@ const FamilyDetails = () => {
               <Grid item>
                 <PageBreadcrumbs
                   data={[
-                    BreadcrumbsLinkThriveScale(t, navigate),
                     {
                       label: t("common:family.Families"),
                       onClick: () => navigate("/dashboard/families"),

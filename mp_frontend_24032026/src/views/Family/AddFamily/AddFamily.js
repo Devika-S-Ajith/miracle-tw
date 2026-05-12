@@ -7,15 +7,16 @@ import { useTranslation } from 'react-i18next';
 import { CommonDataContext } from '../../../common/contexts/CommonDataContext';
 import useAuthorization from '../../../components/UserComponents/useAuthorization';
 import ManageFamilyForm from '../../TWFamily/ManageFamily/ManageFamilyForm';
+import PageBreadcrumbs from '../../../components/PageBreadcrumbs/PageBreadcrumbs';
 
 
 const AddFamily = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(['common']);
-  const { signedinUserRoleHT, signedinOrgType } = useContext(CommonDataContext);
+  const { signedinUserRoleHT, signedinUserRoleFS, signedinOrgType } = useContext(CommonDataContext);
   const { id } = useParams();
 
-  useAuthorization(signedinUserRoleHT, null, signedinOrgType, 'ManageFamily', true)
+  // useAuthorization(signedinUserRoleHT, signedinUserRoleFS, signedinOrgType, 'ManageFamily', true)
 
   return (
     <>
@@ -34,42 +35,15 @@ const AddFamily = () => {
               spacing={3}
             >
               <Grid item sx={{ display: "flex", flexDirection: "row" }}>
-                <Typography
-                  color="textPrimary"
-                  variant="h5"
-                  sx={{ cursor: "pointer" }}
-                  onClick={() => navigate("/dashboard")}
-                >
-                  {t("common:common.Thrive Scale")}
-                </Typography>
-                <Box
-                  sx={{
-                    m: 0.75,
-                  }}
-                  style={{ cursor: 'text' }}
-                >
-                  <ChevronRightIcon color='disabled' fontSize="small" />
-                </Box>
-                <Typography
-                  color="textPrimary"
-                  variant="h5"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => navigate(-1)}
-                >
-                  {t('common:family.Families')}
-                </Typography>
-                <IconButton
-                  color="disabled"
-                  sx={{ mt: - 0.5 }}
-                >
-                  <ChevronRightIcon fontSize="small" />
-                </IconButton>
-                <Typography
-                  color="textPrimary"
-                  variant="h5"
-                >
-                  {t('common:family.Add Family')}
-                </Typography>
+                <PageBreadcrumbs data={[
+                   {
+                    label: t('common:family.Families'),
+                    onClick: () => navigate("/dashboard/families")
+                  },
+                  {
+                    label: t('common:family.Add Family')
+                  }  
+                ]}/>
               </Grid>
             </Grid>
             <Box mt={3}>

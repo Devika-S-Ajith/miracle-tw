@@ -59,7 +59,7 @@ import { getLocationNames } from "../../../../helpers/helperFunction";
 import DeactivateAccount from "../DeactivateAccount";
 import "./OrganizationListTable.css";
 import ListPaging from "../../../../components/UserComponents/ListPaging";
-import { ADMIN, ADMIN_CASEMANAGER, ADMIN_CASEWORKER, SUPER_ADMIN } from "../../../../helpers/constant";
+import { ADMIN, ADMIN_CASEWORKER, SUPER_ADMIN } from "../../../../helpers/constant";
 
 const columnHeaders = [
   { label: "Organization Name", value: "accountName" },

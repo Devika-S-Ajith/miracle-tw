@@ -80,7 +80,7 @@ const NoAssessmentState = ({t}) => (
     </Stack>
 );
 
-const MostRecentAssessmentSummary = ({ apiError, reloadFunc, data, loading }) => {
+const MostRecentAssessmentSummary = ({ apiError, reloadFunc, data, loading, t }) => {
 
     const milestones = (data && data.milestones && typeof data.milestones === 'object') ? data.milestones : {};
 
@@ -116,7 +116,7 @@ const MostRecentAssessmentSummary = ({ apiError, reloadFunc, data, loading }) =>
             {loading ? (
                 <AssessmentSkeleton />
             ) : !hasData ? (
-                <NoAssessmentState />
+                <NoAssessmentState t={t} />
             ) : (
                 <>
                     <Stack alignItems="center" spacing={1} sx={{ py: 1 }}>
@@ -250,7 +250,7 @@ const MostRecentAssessmentSummary = ({ apiError, reloadFunc, data, loading }) =>
                             },
                         }}
                     >
-                        View assessment
+                        {t("common:family.View assessment", "View assessment")}
                     </Button>
                 </>
             )}

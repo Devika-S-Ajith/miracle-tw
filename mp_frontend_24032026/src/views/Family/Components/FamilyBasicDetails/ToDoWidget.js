@@ -135,7 +135,7 @@ const ToDoWidget = ({ t, TWFamilyId, TWChildId }) => {
     return (
             <ReusableTrendTable
                 columns={columnDefinition}
-                title={t(`common:family.To-do (${todoData?.length}) (all actions must be completed in the mobile app)`,`To-do (${todoData?.length}) (all actions must be completed in the mobile app)`)}
+                title={`${t("common:family.todo_title", "To-do")} (${todoData?.length}) (${t("common:family.todo_subtitle", "all actions must be completed in the mobile app")})`}
                 subheader={null}
                 tableData={todoData}
                 loading={loadingTodoList}

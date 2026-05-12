@@ -1037,7 +1037,23 @@
     "specifyReason":"સ્ટેટસમાં બદલાવનો કારણ જણાવો.",
     "Contact information": "કોન્ટેક્ટ માહિતી",
     "Family status": "પરિવારની સ્ટેટસ",
-    "Cannot delete family with active children": "સક્રિય બાળકો ધરાવતા પરિવારને કાઢી નાંખી શકાતો નથી"
+    "Cannot delete family with active children": "સક્રિય બાળકો ધરાવતા પરિવારને કાઢી નાંખી શકાતો નથી",
+    "Additional information": "વધુ માહિતી ",
+    "todo_title":"કરવાનું",
+    "todo_subtitle":"બધી ક્રિયાઓ મોબાઇલ એપમાં પૂર્ણ કરવી જરૂરી છે",
+    "most_recent_assessment_summary": "તાજેતરનું મૂલ્યાંકન સારાંશ",
+    "Interventions summary": "હસ્તક્ષેપ સારાંશ",
+    "Family members and caregivers": "પરિવારના સભ્યો અને સંભાળનારાઓ ({{count}})",
+    "no_assessment_done_yet": "હજુ સુધી કોઈ મૂલ્યાંકન થયું નથી",
+    "assessment_results": "પ્રથમ મૂલ્યાંકન પૂર્ણ થયા પછી પરિણામ અહીં દેખાશે",
+    "View Assessment": "આકારણી જૂઓ ",
+    "Domains":"ડોમેઇન્સ",
+    "since_assessment_1":"મૂલ્યાંકન #1 પછીથી",
+    "assessment_number": "મૂલ્યાંકન  #{{number}}",
+    "Add another family member": "બીજો પરિવાર સભ્ય ઉમેરો",
+    "Family contact information": "પરિવારની સંપર્ક માહિતી",
+    "Family type": "પરિવારનો પ્રકાર",
+    "Date the family first started serving as a foster family": "પરિવારે પ્રથમ ક્યારે ફોસ્ટર પરિવાર તરીકે સેવા શરૂ કરી"
   },
   "form": {
     "formList": "પત્રકની યાદી ",
@@ -1214,7 +1230,12 @@
     "Children served count max value is 9999": "સેવા આપેલા બાળકોની મહત્તમ સંખ્યા ૯૯૯૯ છે",
     "Children served count is required": "સેવા આપેલા બાળકોની સંખ્યા આવશ્યક છે",
     "Families served count max value is 9999": "સેવા આપેલા પરિવારોની મહત્તમ સંખ્યા ૯૯૯૯ છે",
-    "Families served count is required": "સેવા આપેલા પરિવારોની સંખ્યા આવશ્યક છે"
+    "Families served count is required": "સેવા આપેલા પરિવારોની સંખ્યા આવશ્યક છે",
+    "Family Name is required": "પરિવારનું નામ જરૂરી છે",
+    "DOB is required": "જન્મ તારીખ જરૂરી છે",
+    "Summary is required": "સારાંશ જરૂરી છે",
+    "Article link is required": "લેખની લિંક જરૂરી છે",
+    "Image link is required": "છબીની લિંક જરૂરી છે"
   },
   "message": {
     "Title": "શીર્ષક ",

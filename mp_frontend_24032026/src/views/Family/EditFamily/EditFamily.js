@@ -72,6 +72,7 @@ const EditFamily = () => {
     memberTypeList,
     childFamilyList,
     signedinUserRoleHT,
+    signedinUserRoleFS,
     signedinOrgType,
     userRegion,
   } = useContext(CommonDataContext);
@@ -101,13 +102,13 @@ const EditFamily = () => {
     setCurrentTab(value);
   };
 
-  useAuthorization(
-    signedinUserRoleHT,
-    null,
-    signedinOrgType,
-    "ManageFamily",
-    true
-  );
+  // useAuthorization(
+  //   signedinUserRoleHT,
+  //   signedinUserRoleFS,
+  //   signedinOrgType,
+  //   "ManageFamily",
+  //   true
+  // );
 
   useEffect(() => {
     if (id) {
@@ -283,22 +284,6 @@ const EditFamily = () => {
           <Grid item xs={12} sx={{ mr: 1 }}>
             <Grid container justifyContent="space-between" spacing={3}>
               <Grid item sx={{ display: "flex", flexDirection: "row" }}>
-                <Typography
-                  color="textPrimary"
-                  variant="h5"
-                  sx={{ cursor: "pointer" }}
-                  onClick={() => navigate("/dashboard")}
-                >
-                  {t("common:common.Thrive Scale")}
-                </Typography>
-                <Box
-                  sx={{
-                    m: 0.75,
-                  }}
-                  style={{ cursor: "text" }}
-                >
-                  <ChevronRightIcon color="disabled" fontSize="small" />
-                </Box>
                 <Typography
                   color="textPrimary"
                   variant="h5"
