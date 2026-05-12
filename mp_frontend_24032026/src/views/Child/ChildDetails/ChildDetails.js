@@ -98,13 +98,10 @@ const ChildDetails = () => {
     setChildren(null)
     try {
       const res = await APIS.GetChildDetails(id);
-      console.log("Child full data ====>", res.data.data);
-      console.log("HTCaseId ====>", res.data.data?.HTCaseId);
       setChildren(res.data.data);
       const familyId = res.data.data?.TWFamilyId;
       getMembersUnderFamily(familyId);
     } catch (err) {
-      console.log("GET CHILD ERROR ====>", err);          // add this
       setChildDetailsLoading(false)
       console.error(err);
     }
@@ -173,7 +170,7 @@ const ChildDetails = () => {
       case "Documents":
         return <Documents childId={children.id} active={children?.isActive} />;
       case "History":
-        return <ChildHistory id={children.id} caseId={children.HTCaseId} />;
+        return <ChildHistory id={children.id} caseId={children.TWCaseId} />;
       case "Thrive scale score trend":
         return <RadarGraph childId={children.id} />;
       case "ProgressReport":
@@ -220,7 +217,7 @@ const ChildDetails = () => {
           <ManageChildForm
             handleChildModalOpen={handleChildModalOpen}
             id={id}
-            // refreshTable={getTableData} // Refresh data after re-opening case
+            // refreshData={getChildren}
             setHideChildModal={setHideChildModal}
           />
         </Box>

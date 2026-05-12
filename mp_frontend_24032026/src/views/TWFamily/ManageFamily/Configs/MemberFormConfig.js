@@ -3,7 +3,7 @@ export const InlineMemberCreationConfig = [
     {
         type: 'text',
         name: 'firstName',
-        placeholder: 'First name',
+        placeholder: 'common:common.First name',
         size: 'small',
         color:"#FFFFFF",
         required: true,
@@ -14,7 +14,7 @@ export const InlineMemberCreationConfig = [
     {
         type: 'text',
         name: 'lastName',
-        placeholder: 'Last name',
+        placeholder: 'common:common.Last name',
         size: 'small',
         color:"#FFFFFF",
         required: false,
@@ -25,7 +25,7 @@ export const InlineMemberCreationConfig = [
     {
         type: 'CheckboxWithLabel',
         name: 'isMajor',
-        label: 'Over age consent',
+        label: 'common:common.Over age consent',
         required: false,
         variant: 'outlined',
         gridProps: { md: 4, xs: 12 }
@@ -45,7 +45,7 @@ export const InlineChildCreationConfig = [
     {
         type: 'SearchableTextField',
         name: 'firstName',
-         placeholder: ('common:common.First name','First name'),
+        placeholder: 'common:common.First name',
         required: true,
         showTooltip: false,
         fullWidth: true,
@@ -57,7 +57,7 @@ export const InlineChildCreationConfig = [
     {
         type: 'text',
         name: 'lastName',
-          placeholder: ('common:common.Last name','Last name'),
+        placeholder: 'common:common.Last name',
         size: 'small',
         color:"#FFFFFF",
         required: false,

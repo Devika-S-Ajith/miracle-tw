@@ -82,7 +82,8 @@ const FamilyBasicDetails = ({ family }) => {
           reloadFunc={getMostRecentAssesmentSummary}
           apiError={apiError}
           data={mostRecentAssesmentSummary}
-          loading={loadingMostRecentAssessmentSummary} />
+          loading={loadingMostRecentAssessmentSummary}
+          t={t} />
       </Box>}
       <Box height="fit-content">
         <FamilyMembersAndCaregivers  members={family?.members} />

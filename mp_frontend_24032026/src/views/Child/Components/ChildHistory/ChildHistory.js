@@ -60,8 +60,8 @@ const ChildHistory = (props) => {
   let getAuditListpayload = {
     rowCount: "10",
     pageNumber: "1",
-    childId: id,    // ← was "1021"
-    caseId: caseId, // ← was "1031"
+    childId: id,
+    caseId: caseId,
   };
 
   const getAuditLog = useCallback(async (pageValue = 1) => {
@@ -78,11 +78,11 @@ const ChildHistory = (props) => {
       console.error(err);
       setLoading(false);
     }
-  }, [id, caseId]);
+  }, []);
 
   useEffect(() => {
     getAuditLog();
-  }, [getAuditLog]);
+  }, []);
 
   const handlePageChange = (event, value) => {
     getAuditLog(value);

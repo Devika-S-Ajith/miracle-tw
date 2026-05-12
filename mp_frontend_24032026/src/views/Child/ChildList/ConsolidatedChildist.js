@@ -119,7 +119,7 @@ const ConsolidatedChildList = (props) => {
       enableSorting: true,
       render: (row) => (
         <Chip
-          label={row.status}
+          label={`${t(`common:common.${row.status}`, row.status)}`}
           sx={{
             backgroundColor: getStatusBackgroundColor(row.status),
             color: row.status === "Active" ? "#FFFFFF" : "#000000",
@@ -152,7 +152,7 @@ const ConsolidatedChildList = (props) => {
             onClose={handleClose}
           >
             <Stack direction="row" spacing={0.5}>
-              <Tooltip title={t("common:common.Edit child", "Edit child")}>
+              <Tooltip title={t("common:child.Edit Child", "Edit child")}>
                 <IconButton
                   onClick={() => {
                     setChildModalOpen(true);
@@ -319,7 +319,7 @@ const ConsolidatedChildList = (props) => {
               style={{ width: 20, height: 20 }}
             />
           }
-          label={t("common:child.Add new child")}
+          label={t("common:tableColumn.Add new child", "Add new child")}
           onClick={() =>
             ModalService.open(
               ({ close }) => (
@@ -394,7 +394,7 @@ const ConsolidatedChildList = (props) => {
       </Box>
       <Box>
         <BodyText
-          value={t("common:infoCard.Case manager", "Case manager")}
+          value={t("common:tableColumn.Case Manager", "Case manager")}
           sx={{ mb: 1 }}
         />
         <Autocomplete
@@ -512,6 +512,7 @@ const ConsolidatedChildList = (props) => {
           }}
         >
           <ManageChildForm
+            hideChildModal={hideChildModal}
             handleChildModalOpen={handleChildModalOpen}
             id={activeChildId}
             refreshTable={getTableData} // Refresh data after re-opening case

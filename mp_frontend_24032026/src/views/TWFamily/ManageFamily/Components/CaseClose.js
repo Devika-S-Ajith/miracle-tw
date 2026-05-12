@@ -97,7 +97,7 @@ const CloseCaseModal = ({ onClose, onSubmit, deactivationReasons = [] }) => {
               {/* ── Closure Date ──────────────────────────────────────── */}
               <Box sx={{ mb: 2 }}>
                 <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 'bold' }}>
-                  {t('common:family.Date case was closed', 'Date case was closed')}
+                  {t('common:common.Date case was closed', 'Date case was closed')}
                 </Typography>
 
                 <DatePicker

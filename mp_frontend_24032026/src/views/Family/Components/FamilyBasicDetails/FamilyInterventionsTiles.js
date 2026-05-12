@@ -34,7 +34,7 @@ const FamilyInterventionsTiles = ({ familyId, t }) => {
   }, [familyId]);
 
   return (
-    <CommonCard title="Interventions summary">
+    <CommonCard title= {t("common:family.Interventions summary")}>
       <Grid container spacing={2}>
         <Grid item xs={6}>
           {loading ? (
@@ -64,7 +64,7 @@ const FamilyInterventionsTiles = ({ familyId, t }) => {
                   <InterventionsIconBlack />
                 </Box>
               }
-              description="Resolved interventions"
+              description= {t("common:common.Resolved interventions", "Resolved interventions")}
               bgcolor="#F3F7E2"
               height={1}
             />

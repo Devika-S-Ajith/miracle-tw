@@ -102,10 +102,10 @@ const ConsolidatedFamilyList = (props) => {
         />
       ),
     },
-    { id: "primaryCaregiver", label: t("common:common.Primary Caregiver"), enableSorting: true },
+    { id: "primaryCaregiver", label: t("common:common.Primary Caregiver", "Primary Caregiver"), enableSorting: true },
     {
       id: "contactInfo",
-      label: "Contact Info",
+      label: t("common:common.Contact Info","Contact Info"),
       render: (row) => (
         <>
           <BodyText
@@ -123,11 +123,11 @@ const ConsolidatedFamilyList = (props) => {
         </>
       ),
     },
-    { id: "noOfMembers", label: t("common:common.No of Caregivers"), enableSorting: true },
-    { id: "noOfChildren", label: t("common:common.No of Children"), enableSorting: true },
+    { id: "noOfMembers", label: t("common:common.No of Caregivers", "No of Caregivers"), enableSorting: true },
+    { id: "noOfChildren", label: t("common:common.No of Children", "No of Children"), enableSorting: true },
     {
       id: "location",
-      label: t("common:common.Location"),
+      label: t("common:common.Location", "Location"),
       render: (row) => (
         <>
           <BodyText
@@ -153,7 +153,7 @@ const ConsolidatedFamilyList = (props) => {
     },
     {
       id: "status",
-      label: t("common:common.Status"),
+      label: t("common:common.Status", "Status"),
       render: (row) => (
         <Chip
           label={row.status}

@@ -18,21 +18,24 @@ import { SUPER_ADMIN } from "../../../../helpers/constant";
 import { CommonDataContext } from "../../../../common/contexts/CommonDataContext";
 import CloseIcon from "@mui/icons-material/Close";
 import { ModalService } from "../../../../components/Modal";
+import { useTranslation } from "react-i18next";
 
 const ResourceDetailForm = ({ close, onSuccess, ResourceDetail = null }) => {
+  const { t } = useTranslation(["common"]);
   const [loading, setLoading] = useState(false);
   const [resourceList, setResourceList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { signedinUserRoleFS, organizationList } =
-    useContext(CommonDataContext);
+  const { signedinUserRoleFS, organizationList } = useContext(CommonDataContext);
+
   const agencyList = [
     { id: null, accountName: "All", accessType: "FOSTER_SHARE" },
     ...organizationList,
   ];
   const [typeFilter, setTypeFilter] = useState(agencyList[0]);
+
   const actionList = [
-    { id: true, value: "Published" },
-    { id: false, value: "Draft" },
+    { id: true, value: t("common:common.Published", "Published") },
+    { id: false, value: t("common:common.Draft", "Draft") },
   ];
 
   const initialValues = {
@@ -65,10 +68,10 @@ const ResourceDetailForm = ({ close, onSuccess, ResourceDetail = null }) => {
   }, []);
 
   const validationSchema = Yup.object().shape({
-    title: Yup.string().max(255).required("Title is required"),
-    summary: Yup.string().required("Summary is required"),
-    articleLink: Yup.string().required("Article link is required"),
-    imageLink: Yup.string().required("Image link is required"),
+    title: Yup.string().max(255).required(t("common:warnings.Title is required", "Title is required")),
+    summary: Yup.string().required(t("common:warnings.This is a required field", "Summary is required")),
+    articleLink: Yup.string().required(t("common:warnings.URL is required", "Article link is required")),
+    imageLink: Yup.string().required(t("common:warnings.This is a required field", "Image link is required")),
   });
 
   const formik = useFormik({
@@ -123,17 +126,19 @@ const ResourceDetailForm = ({ close, onSuccess, ResourceDetail = null }) => {
       }
     } catch (err) {
       setLoading(false);
-      toast.error("Something went wrong");
+      toast.error(t("common:common.Something went wrong", "Something went wrong"));
     }
   };
 
   const cancelClickHandler = () => {
     ModalService.open(() => <></>, {
-      modalTitle: "Unsaved Changes",
+      modalTitle: t("common:common.Unsaved Changes", "Unsaved Changes"),
       width: "30%",
-      modalDescription:
-        "If you leave this page, any changes you have made will be lost",
-      actionButtonText: "Leave page",
+      modalDescription: t(
+        "common:common.If you leave this page, any changes you have made will be lost",
+        "If you leave this page, any changes you have made will be lost"
+      ),
+      actionButtonText: t("common:common.Leave page", "Leave page"),
       onClick: () => close(),
     });
   };
@@ -148,8 +153,8 @@ const ResourceDetailForm = ({ close, onSuccess, ResourceDetail = null }) => {
             display: "flex",
             flexDirection: "column",
             gap: 1.5,
-            overflowY: "auto", // 'auto' will add a scrollbar when needed
-            maxHeight: "70vh", // Set a maximum height to limit the scrollable area
+            overflowY: "auto",
+            maxHeight: "70vh",
           }}
           p={2}
         >
@@ -158,7 +163,7 @@ const ResourceDetailForm = ({ close, onSuccess, ResourceDetail = null }) => {
             error={Boolean(touched?.title && errors?.title)}
             fullWidth
             helperText={touched?.title && errors?.title}
-            label="Title"
+            label={t("common:resources.Title", "Title")}
             name="title"
             onBlur={handleBlur}
             onChange={handleChange}
@@ -171,7 +176,7 @@ const ResourceDetailForm = ({ close, onSuccess, ResourceDetail = null }) => {
             error={Boolean(touched?.summary && errors?.summary)}
             fullWidth
             helperText={touched?.summary && errors?.summary}
-            label="Summary"
+            label={t("common:assessment.Summary", "Summary")}
             name="summary"
             onBlur={handleBlur}
             onChange={handleChange}
@@ -187,7 +192,7 @@ const ResourceDetailForm = ({ close, onSuccess, ResourceDetail = null }) => {
             fullWidth
             required
             helperText={touched?.articleLink && errors?.articleLink}
-            label="Attach link"
+            label={t("common:common.Attach link", "Attach link")}
             name="articleLink"
             onBlur={handleBlur}
             onChange={handleChange}
@@ -200,7 +205,7 @@ const ResourceDetailForm = ({ close, onSuccess, ResourceDetail = null }) => {
             fullWidth
             required
             helperText={touched?.imageLink && errors?.imageLink}
-            label="Image link"
+            label={t("common:common.Image link", "Image link")}
             name="imageLink"
             onBlur={handleBlur}
             onChange={handleChange}
@@ -235,21 +240,14 @@ const ResourceDetailForm = ({ close, onSuccess, ResourceDetail = null }) => {
               )}
               renderInput={(params) => {
                 const selectedCount = values?.categories?.length;
-                const inputProps = {
-                  ...params.InputProps,
-                };
-
+                const inputProps = { ...params.InputProps };
                 return (
                   <TextField
                     {...params}
-                    label={"Categories"}
+                    label={t("common:resources.Categories", "Categories")}
                     sx={{
                       width: 1,
-                      // ml: 1,
-
-                      "& .MuiOutlinedInput-root": {
-                        borderRadius: "0px",
-                      },
+                      "& .MuiOutlinedInput-root": { borderRadius: "0px" },
                     }}
                     textFieldProps={{
                       fullWidth: true,
@@ -257,9 +255,9 @@ const ResourceDetailForm = ({ close, onSuccess, ResourceDetail = null }) => {
                       margin: "normal",
                       variant: "outlined",
                       label: "",
-                      placeholder: "Select categories",
+                      placeholder: t("common:common.Select categories", "Select categories"),
                     }}
-                    placeholder={selectedCount < 1 && "Select categories"}
+                    placeholder={selectedCount < 1 && t("common:common.Select categories","Select categories")}
                     variant="outlined"
                     InputProps={inputProps}
                   />
@@ -292,10 +290,7 @@ const ResourceDetailForm = ({ close, onSuccess, ResourceDetail = null }) => {
                         key={value}
                         label={
                           value?.length < 2
-                            ? value
-                                .slice(0, 1)
-                                .map((option) => option?.accountName)
-                                .join(", ")
+                            ? value.slice(0, 1).map((option) => option?.accountName).join(", ")
                             : numTags > 1 && `${numTags}`
                         }
                         size="medium"
@@ -315,13 +310,11 @@ const ResourceDetailForm = ({ close, onSuccess, ResourceDetail = null }) => {
                   )}
                   renderInput={(params) => {
                     const selectedCount = typeFilter?.length;
-                    const inputProps = {
-                      ...params.InputProps,
-                    };
+                    const inputProps = { ...params.InputProps };
                     return (
                       <TextField
                         {...params}
-                        label={"Organization"}
+                        label={t("common:common.Organization", "Organization")}
                         sx={{
                           width: 1,
                           "& .MuiOutlinedInput-root": {
@@ -329,24 +322,19 @@ const ResourceDetailForm = ({ close, onSuccess, ResourceDetail = null }) => {
                             backgroundColor: "white",
                           },
                         }}
-                        error={
-                          touched?.organization_name &&
-                          Boolean(errors?.organization_name)
-                        }
-                        helperText={
-                          touched?.organization_name &&
-                          errors?.organization_name
-                        }
+                        error={touched?.organization_name && Boolean(errors?.organization_name)}
+                        helperText={touched?.organization_name && errors?.organization_name}
                         textFieldProps={{
                           fullWidth: true,
                           borderRadius: "3px",
                           margin: "normal",
                           variant: "outlined",
                           label: "",
-                          placeholder: "Select an account",
+                          placeholder: t("common:common.Select an account", "Select an account"),
                         }}
                         placeholder={
-                          selectedCount < 1 && "Select an organization" + "*"
+                          selectedCount < 1 &&
+                          t("common:common.Select an organization", "Select an organization") + "*"
                         }
                         variant="outlined"
                         InputProps={inputProps}
@@ -364,12 +352,14 @@ const ResourceDetailForm = ({ close, onSuccess, ResourceDetail = null }) => {
             value={values?.action}
             options={actionList}
             getOptionLabel={(option) => option.value}
-            isOptionEqualToValue={(option, value) => {
-              return Object.is(JSON.stringify(option), JSON.stringify(value));
-            }}
+            isOptionEqualToValue={(option, value) =>
+              Object.is(JSON.stringify(option), JSON.stringify(value))
+            }
             sx={{ width: 1 }}
             onChange={(_, newValue) => setFieldValue("action", newValue)}
-            renderInput={(params) => <TextField {...params} label={"Action"} />}
+            renderInput={(params) => (
+              <TextField {...params} label={t("common:common.Action", "Action")} />
+            )}
           />
         </Box>
         <Box mt sx={{ display: "flex", justifyContent: "end", gap: 2 }}>
@@ -378,7 +368,7 @@ const ResourceDetailForm = ({ close, onSuccess, ResourceDetail = null }) => {
             variant="outlined"
             onClick={cancelClickHandler}
           >
-            {"Cancel"}
+            {t("common:common.Cancel", "Cancel")}
           </Button>
           <Button
             sx={{ borderRadius: "4px" }}
@@ -386,7 +376,7 @@ const ResourceDetailForm = ({ close, onSuccess, ResourceDetail = null }) => {
             onClick={handleSubmit}
             disabled={loading}
           >
-            Submit
+            {t("common:assessment.Submit", "Submit")}
           </Button>
         </Box>
       </Box>

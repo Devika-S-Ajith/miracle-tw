@@ -471,7 +471,7 @@ const ManageFamilyForm = (props) => {
                             .nullable()
                             .max(255)
                             .when('TWFamilyRelationId', (TWFamilyRelationId, schema) => {
-                                return TWFamilyRelationId ? schema.required('First Name is required') : schema;
+                                return TWFamilyRelationId ? schema.required(t('common:warnings.First Name is required')) : schema;
                             }),
                         lastName: Yup.string()
                             .nullable()
@@ -479,7 +479,7 @@ const ManageFamilyForm = (props) => {
                         dateOfBirth: Yup.date()
                             .nullable()
                             .when('TWFamilyRelationId', (TWFamilyRelationId, schema) => {
-                                return ["3", "9"].includes(TWFamilyRelationId) ? schema.required('DOB is required') : schema;
+                                return ["3", "9"].includes(TWFamilyRelationId) ? schema.required(t('common:warnings.DOB is required')) : schema;
                             }),
                         gender: Yup.string()
                             .nullable()
@@ -694,7 +694,7 @@ const ManageFamilyForm = (props) => {
                                                                 whiteSpace: 'nowrap'
                                                             }}
                                                         >
-                                                            {!family?.isActive && family?.id ? `${t("common:family.Deactivated", "Deactivated")} ${MonthDayYearFormatter(family?.deactivationDate,"short")}` : t("common:family.Active", "Active")}
+                                                            {!family?.isActive && family?.id ? `${t("common:family.Deactivated", "Deactivated")} ${MonthDayYearFormatter(family?.deactivationDate,"short")}` : t("common:common.Active", "Active")}
                                                         </Typography>
                                                     </Box>
                                                 </FormSectionHeading>
@@ -826,7 +826,7 @@ const ManageFamilyForm = (props) => {
                                                         />
                                                     ),
                                                     {
-                                                        modalTitle: t("common:family.Close case", "Close case"),
+                                                        modalTitle: t("common:common.Close case", "Close case"),
                                                         width: '30%',
                                                         hideModalFooter: true,
                                                         enableClose: true,

@@ -138,7 +138,8 @@ const FamilyMembersTable = ({ members }) => {
   return (
     <ReusableTrendTable
       columns={columnDefinition}
-      title={`Family members and caregivers (${members?.length || 0})`}
+      // title={`Family members and caregivers (${members?.length || 0})`}
+      title={t("common:family.Family members and caregivers", "Family members and caregivers ({{count}})", { count: members?.length || 0 })}
       subheader=""
       tableData={members || []}
       loading={false}

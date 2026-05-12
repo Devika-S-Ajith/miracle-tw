@@ -25,6 +25,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import CheckIcon from "@mui/icons-material/Check";
 import { styled } from "@mui/material/styles";
 import Loader from "../../../../components/UserComponents/Loader";
+import { useTranslation } from "react-i18next";
 
 const IconContainer = styled(Box)({
   position: "relative",
@@ -53,6 +54,8 @@ const ResourceDetails = () => {
   const [action, setAction] = useState(null);
   const [updateLoading, setUpdateLoading] = useState(false);
   const [showTick, setShowTick] = useState(false);
+  const { t } = useTranslation(["common"]);
+
 
   useAuthorization(null, signedinUserRoleFS, null, "Resource", false);
 
@@ -134,7 +137,7 @@ const ResourceDetails = () => {
                 fontWeight={700}
                 fontSize="1.25rem"
               >
-                {"Article details"}
+                {t("common:resources.Article details", "Article details")}
               </Typography>
               <EditIcon
                 sx={{ cursor: "pointer" }}
@@ -160,19 +163,19 @@ const ResourceDetails = () => {
             <Grid container spacing={1.5} my>
               <Grid item xs={12}>
                 <LabelValue
-                  label="Published by"
+                  label= {t("common:resources.Published by", "Published by")}
                   value={resourceDetail?.createdBy}
                 />
               </Grid>
               <Grid item xs={6}>
                 <LabelValue
-                  label="Published on"
+                  label= {t("common:resources.Published on", "Published on")}
                   value={utcToLocalDate(resourceDetail?.createdAt)}
                 />
               </Grid>
               <Grid item xs={6}>
                 <LabelValue
-                  label="Updated on"
+                  label= {t("common:resources.Updated on", "Updated on")}
                   value={utcToLocalDate(resourceDetail?.updatedAt)}
                 />
               </Grid>
@@ -181,7 +184,7 @@ const ResourceDetails = () => {
               </Grid>
               <Grid item xs={12}>
                 <LabelValue
-                  label="Categories"
+                  label= {t("common:resources.Categories", "Categories")}
                   value={
                     <Box
                       my
@@ -205,13 +208,13 @@ const ResourceDetails = () => {
               </Grid>
               <Grid item xs={8}>
                 <LabelValue
-                  label="Agency"
+                  label= {t("common:resources.Agency", "Agency")}
                   value={
                     resourceDetail?.TWAccountId
                       ? organizationList.find(
                           (org) => org.id === resourceDetail?.TWAccountId
                         )?.accountName
-                      : "All"
+                      : t("common:common.All", "All")
                   }
                 />
               </Grid>
@@ -234,7 +237,7 @@ const ResourceDetails = () => {
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      label={"Status"}
+                      label={t("common:common.Status", "Status")}
                       InputProps={{
                         ...params.InputProps,
                         endAdornment: (
@@ -271,7 +274,7 @@ const ResourceDetails = () => {
                     window.open(resourceDetail?.url, "_blank");
                   }}
                 >
-                  Preview
+                  {t("common:resources.Preview", "Preview")}
                 </Button>
               </Grid>
             </Grid>
@@ -293,7 +296,7 @@ const ResourceDetails = () => {
             {/* Family Details */}
             <Grid container spacing={1.5} my>
               <Grid item xs={12}>
-                <LabelValue label="Summary" value={resourceDetail?.summary} />
+                <LabelValue label= {t("common:infoCard.Summary", "Summary")} value={resourceDetail?.summary} />
               </Grid>
               <Grid item xs={12}>
                 <img

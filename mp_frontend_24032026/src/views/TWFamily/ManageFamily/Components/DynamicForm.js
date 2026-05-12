@@ -100,7 +100,7 @@ const getFieldTouched = (name) => get(touched, name, false);
                             fullWidth={fieldProps.fullWidth}
                             error={Boolean(fieldTouched && fieldError)}
                             helperText={fieldTouched && fieldError}
-                            placeholder={fieldProps.placeholder}
+                            placeholder={t(fieldProps.placeholder)}
                             value={fieldValue || ''} // Use helper function
                             onChange={(e) => {handleChange(e); fieldProps?.onChange?.(e);}} // Call Formik's handleChange and any custom onChange
                             onBlur={handleBlur}
@@ -189,7 +189,7 @@ const getFieldTouched = (name) => get(touched, name, false);
                         <SearchableTextField
                             name={fullFieldName} // Use full scoped name
                             id={`${fullFieldName}`}
-                            placeholder={fieldProps.placeholder}
+                            placeholder={t(fieldProps.placeholder)}
                             initialTextValue={initialTextValue}
                             searchFunction={searchFunction}
                             onClose={(e, reason, value) => {
