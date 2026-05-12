@@ -169,7 +169,7 @@ const FamilyDetails = () => {
               <Grid item>
                 <PageBreadcrumbs
                   data={[
-                    BreadcrumbsLinkThriveScale(t, navigate),
+                    // BreadcrumbsLinkThriveScale(t, navigate),
                     {
                       label: t("common:family.Families"),
                       onClick: () => navigate("/dashboard/families"),

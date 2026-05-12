@@ -156,13 +156,13 @@ const getFieldTouched = (name) => get(touched, name, false);
                             required={fieldProps.required}
                             validateOnChange={fieldProps.validateOnChange}
                             labelKey={fieldProps.labelKey || "value"}
-                            placeholder={fieldProps.placeholder}
+                            placeholder={t(fieldProps.placeholder)}
                             extraLabel={fieldProps.extraLabel}
                             grouped={fieldProps.grouped || false}
                             groupBy={fieldProps.groupBy}
                             color={fieldProps.color}
                             textFieldProps={{
-                                label: fieldProps.label,
+                                label: t(fieldProps.label),
                                 disabled: isDisabled || fieldProps.disabled,
                                 variant: "outlined",
                                 sx: {
@@ -288,7 +288,7 @@ const getFieldTouched = (name) => get(touched, name, false);
                                             backgroundColor: 'white',
                                         },
                                     },
-                                    placeholder: fieldProps.placeholder,
+                                    placeholder: t(fieldProps.placeholder),
                                     error: fieldTouched && Boolean(fieldError),
                                     helperText: fieldTouched && fieldError,
                                 },

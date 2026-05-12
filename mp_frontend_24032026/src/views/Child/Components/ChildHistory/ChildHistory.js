@@ -53,14 +53,14 @@ const ChildHistory = (props) => {
   const [page, setPage] = useState(1);
   const [pageCount, setPageCount] = useState(1);
   const { id, caseId, ...other } = props;
-  const [auditList, setAuditList] = useState(tempData);
+  const [auditList, setAuditList] = useState([]);
   const [loading, setLoading] = useState(false);
 
   let getAuditListpayload = {
     rowCount: "10",
     pageNumber: "1",
-    childId: "1021",
-    caseId: "1031",
+    childId: id,    // ← was "1021"
+    caseId: caseId, // ← was "1031"
   };
 
   const getAuditLog = useCallback(async (pageValue = 1) => {
@@ -77,11 +77,11 @@ const ChildHistory = (props) => {
       console.error(err);
       setLoading(false);
     }
-  }, []);
+  }, [id, caseId]);
 
   useEffect(() => {
     getAuditLog();
-  }, []);
+  }, [getAuditLog]);
 
   const handlePageChange = (event, value) => {
     getAuditLog(value);

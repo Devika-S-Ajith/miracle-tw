@@ -68,7 +68,7 @@ export const InlineChildCreationConfig = [
     {
         type: 'dropdown',
         name: 'gender',
-        placeholder: 'Gender',
+        placeholder: 'common:common.Gender',
         translateLabels: true,
         size: 'small',
         color:"#FFFFFF",
@@ -81,7 +81,7 @@ export const InlineChildCreationConfig = [
      {
         type: 'DatePicker',
         name: 'dateOfBirth',
-        placeholder: 'Date of Birth',
+        placeholder: 'common:common.Date of Birth',
         size: 'small',
         color:"#FFFFFF",
         required: false,

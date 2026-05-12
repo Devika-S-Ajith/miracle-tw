@@ -95,7 +95,7 @@ const ConsolidatedFamilyList = (props) => {
   const columnDefinition = [
     {
       id: "familyName",
-      label: "Family Name",
+      label: t("common:common.Family Name","Family Name"),
       enableSorting: true,
       render: (row) => (
         <BodyText
@@ -110,7 +110,7 @@ const ConsolidatedFamilyList = (props) => {
         />
       ),
     },
-    { id: "primaryCaregiver", label: "Primary Caregiver", enableSorting: true },
+    { id: "primaryCaregiver", label: t("common:common.Primary Caregiver"), enableSorting: true },
     {
       id: "contactInfo",
       label: "Contact Info",
@@ -131,11 +131,11 @@ const ConsolidatedFamilyList = (props) => {
         </>
       ),
     },
-    { id: "noOfMembers", label: "No of caregivers", enableSorting: true },
-    { id: "noOfChildren", label: "No of children", enableSorting: true },
+    { id: "noOfMembers", label: t("common:common.No of Caregivers"), enableSorting: true },
+    { id: "noOfChildren", label: t("common:common.No of Children"), enableSorting: true },
     {
       id: "location",
-      label: "Location",
+      label: t("common:common.Location"),
       render: (row) => (
         <>
           <BodyText
@@ -161,7 +161,7 @@ const ConsolidatedFamilyList = (props) => {
     },
     {
       id: "status",
-      label: "Status",
+      label: t("common:common.Status"),
       render: (row) => (
         <Chip
           label={row.status}
