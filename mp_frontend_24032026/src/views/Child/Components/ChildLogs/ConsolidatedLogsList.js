@@ -33,6 +33,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import BehaviorLogDetails from "./BehaviorLogDetails/BehaviorLogDetails";
 import MedLogDetailsModal from "./MedLogDetails/MedLogDetailsModal";
 import RecreationalLogDetails from "./RecreationalLogDetails/RecreationalLogDetails";
+import GenericLogDetails from "./GenericLogDetails/GenericLogDetails";
 
 const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
   const [tableData, setTableData] = useState({});
@@ -384,16 +385,16 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
   const openGenericLogDetailModal = (genericLogId, formName) => {
     ModalService.open(
       ({ close }) => (
-        // <GenericLogDetails
-        //   moduleName={module}
-        //   moduleId={id}
-        //   behavioralLogId={genericLogId}
-        //   close={close}
-        //   logName={formName}
-        // />
-        <></>
+        <GenericLogDetails
+          moduleName={module === "family" ? "families" : "children"}
+          moduleId={id}
+          behavioralLogId={genericLogId}
+          close={close}
+          logName={formName}
+        />
       ),
       {
+        height: "95%",
         width: "40%",
         hideModalFooter: true,
       },

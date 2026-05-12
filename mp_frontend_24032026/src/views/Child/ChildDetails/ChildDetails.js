@@ -174,7 +174,7 @@ const ChildDetails = () => {
           return <ChildMilestones familyMembers={memberList}  familyName={children?.familyName}/>;
       case "interventions":
         return <ChildInterventions childId={children?.id} memberList={memberList} />;
-      case "childLogs":
+      case "ConsolidatedLog":
         return <ChildLogs module="children" />;
       default:
         return null;

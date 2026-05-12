@@ -191,7 +191,7 @@ const MedicationChangesLog = ({ childId }) => {
                 sx={{ pointerEvents: "none" }}
                 mb
               >
-                Medication change logs
+                Medication change log
               </Typography>
             </Grid>
             <Grid item md={3}>

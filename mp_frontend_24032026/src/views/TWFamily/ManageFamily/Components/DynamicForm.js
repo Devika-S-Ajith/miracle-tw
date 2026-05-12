@@ -102,7 +102,7 @@ const getFieldTouched = (name) => get(touched, name, false);
                             helperText={fieldTouched && fieldError}
                             placeholder={t(fieldProps.placeholder)}
                             value={fieldValue || ''} // Use helper function
-                            onChange={(e) => {handleChange(e); fieldProps?.onChange?.(e);}} // Call Formik's handleChange and any custom onChange
+                            onChange={(e) => {handleChange(e); fieldProps?.onChange?.(e?.target?.value);}} // Call Formik's handleChange and any custom onChange
                             onBlur={handleBlur}
                             autoFocus={fieldProps.autoFocus}
                             size={fieldProps.size}

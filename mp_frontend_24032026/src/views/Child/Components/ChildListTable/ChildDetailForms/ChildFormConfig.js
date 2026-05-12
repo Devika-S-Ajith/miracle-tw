@@ -24,7 +24,7 @@ export const ChildBasicDetails = ({
     fullWidth: true,
     variant: "outlined",
     gridProps: { xs: 12 },
-    onChange: () => uniqueCheckHandler({ values, setFieldError, validateForm }),
+    onChange: (e) => uniqueCheckHandler({ key: "firstName", e }),
   },
   {
     type: "text",
@@ -35,7 +35,7 @@ export const ChildBasicDetails = ({
     fullWidth: true,
     variant: "outlined",
     gridProps: { xs: 12 },
-    onChange: () => uniqueCheckHandler({ values, setFieldError, validateForm }),
+    onChange: (e) => uniqueCheckHandler({ key: "lastName", e }),
   },
   {
     type: "dropdown",

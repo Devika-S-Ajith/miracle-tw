@@ -50,6 +50,8 @@ const CloseCaseForm = ({
       if (res?.status === 200) {
         close();
         onCaseClose();
+        handleChildModalOpen()
+        setHideChildModal(false);
         ModalService.open(() => null, {
           width: "30%",
           modalDescription: (

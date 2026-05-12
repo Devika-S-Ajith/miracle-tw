@@ -73,27 +73,27 @@ const MedLogDetails = ({ medLogDetail }) => {
               label="Child"
               value={medLogDetail?.childName}
               onClick={() =>
-                navigate(`/fostershare/children/${medLogDetail?.FSChildId}`)
+                navigate(`/dashboard/children/${medLogDetail?.TWChildId}/view`)
               }
             />
           </Grid>
           <Grid item xs={6}>
             <LabelValue
               label="Gender"
-              value={convertUnderscoreToText(medLogDetail?.childDetail?.gender)}
+              value={convertUnderscoreToText(medLogDetail?.TW_child?.gender)}
             />
           </Grid>
           <Grid item xs={6}>
             <LabelValue
               label="Family"
               value={
-                medLogDetail?.familyDetail?.firstName +
+                medLogDetail?.TW_child?.firstName +
                 " " +
-                medLogDetail?.familyDetail?.lastName
+                medLogDetail?.TW_child?.lastName
               }
               onClick={() =>
                 navigate(
-                  `/fostershare/families/${medLogDetail?.familyDetail?.id}`
+                  `/dashboard/families/${medLogDetail?.TW_child?.TW_family?.id}/view`
                 )
               }
             />
@@ -105,9 +105,9 @@ const MedLogDetails = ({ medLogDetail }) => {
             <LabelValue
               label="Allergies"
               value={
-                medLogDetail?.childDetail?.allergy == "no"
+                medLogDetail?.TW_child?.allergy == "no"
                   ? "No known allergies"
-                  : medLogDetail?.childDetail?.allergy
+                  : medLogDetail?.TW_child?.allergy
               }
             />
           </Grid>

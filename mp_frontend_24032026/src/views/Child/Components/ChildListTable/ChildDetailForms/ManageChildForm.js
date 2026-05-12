@@ -279,15 +279,23 @@ const ManageChildForm = ({
   };
 
   const uniqueCheckHandler = useDebouncedCallback(
-    async ({ values, setFieldError, validateForm }) => {
+    async ({ key, value, values, setFieldError }) => {
       // Only check if all required fields are present
       if (values?.firstName && values.gender && values.dateOfBirth) {
         try {
+          // Handle key logic for all relevant fields
+          let firstName = values.firstName;
+          let lastName = values.lastName;
+          let birthDate = values.dateOfBirth;
+          if (key === "firstName") firstName = value;
+          else if (key === "lastName") lastName = value;
+          else if (key === "dateOfBirth") birthDate = value;
+
           const res = await APIS.CheckUniqueChild({
             id: id || null,
-            firstName: values.firstName,
-            lastName: values.lastName,
-            birthDate: values.dateOfBirth,
+            firstName,
+            lastName,
+            birthDate,
           });
           const isUnique = res.data?.data?.isUnique;
           if (!isUnique) {
