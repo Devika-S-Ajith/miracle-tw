@@ -1428,7 +1428,8 @@
       "Email": "ईमेल",
       "URL": "यूआरएल",
       "Go to URL": "यूआरएल पर जाएँ",
-      "Support service information": "सहायता सेवा जानकारी"
+      "Support service information": "सहायता सेवा जानकारी",
+    "Case Status": "मामले की स्थिति"
 },
 "tableColumn":{
   "Organization name": "संगठन का नाम",

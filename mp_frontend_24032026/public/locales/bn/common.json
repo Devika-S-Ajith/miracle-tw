@@ -1410,7 +1410,8 @@
     "Email": "ইমেইল",
     "URL": "ইউআরএল",
     "Go to URL": "ইউআরএলে যান",
-    "Support service information": "সহায়তা পরিষেবা তথ্য"   
+    "Support service information": "সহায়তা পরিষেবা তথ্য"   ,
+    "Case Status": " কেসের অবস্থা "
     
   },
   "tableColumn":{

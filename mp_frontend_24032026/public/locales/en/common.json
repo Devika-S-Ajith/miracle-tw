@@ -1500,7 +1500,8 @@
     "Email": "Email",
     "URL": "URL",
     "Go to URL": "Go to URL",
-    "Support service information": "Support service information"
+    "Support service information": "Support service information",
+    "Case Status": "Case Status"
 
  },
  "tableColumn": {

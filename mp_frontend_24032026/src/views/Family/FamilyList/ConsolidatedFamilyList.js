@@ -38,13 +38,15 @@ const ConsolidatedFamilyList = (props) => {
   const [tableData, setTableData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
-  const [filterValues, setFilterValues] = useState(fromDashboard ? location.state.filters : {});
-  const [appliedFiltersChipArray, setAppliedFiltersChipArray] = useState([]);
+  const [filterValues, setFilterValues] = useState(fromDashboard ? location.state.filters : { caseStatus: [], caseworkerId: [] });
+  const [appliedFiltersChipArray, setAppliedFiltersChipArray] = useState({ caseStatus: [], caseworkerId: [] });
   const [query, setQuery] = useState("");
-  const { signedinUserRoleHT, signedinUserRoleFS } = useContext(CommonDataContext);
+  const { signedinUserRoleHT, signedinUserRoleFS, signedinOrgId } = useContext(CommonDataContext);
+  const [users, setUsers] = useState([]);
+
   const { htLanguagesList, signedInOrgName, userIdData } =
     useContext(CommonDataContext);
-  const { IS_EDIT_ALLOWED,CAN_DELETE } = useCRUDPermissions(); 
+  const { IS_EDIT_ALLOWED,CAN_DELETE } = useCRUDPermissions();
   const statusOptions = [
     {
       label: t("common:common.All"),
@@ -296,9 +298,11 @@ const ConsolidatedFamilyList = (props) => {
       pageNumber: page || 1,
       rowCount: rowCount || 10, // Default row count if not provided
       TWAccountId: localStorage.getItem("orgId"),
-      caseWorker: "",
       listType: "LARGE",
-      filters: filter
+      filters: {
+        caseStatus: filter.caseStatus?.map((item) => item.value) || [],
+        caseworkerId: filter.caseworkerId?.map((item) => item.value) || [],
+      }
 
     };
     try {
@@ -318,6 +322,39 @@ const ConsolidatedFamilyList = (props) => {
 
   useEffect(() => {
     getTableData();
+  }, []);
+
+  const getUserList = useCallback(async () => {
+    try {
+      const payload = {
+        rowCount: "10000",
+        pageNumber: "1",
+        orderByField: [["firstName", "ASC"]],
+        globalSearchQuery: "",
+        accountId: [signedinOrgId],
+        HTUserRoleId: ["4", "5"],
+        FSUserRoleId:["4", "5"],
+        HTCountryId: localStorage.getItem("userRegion"),
+      };
+      payload.HTCountryId = localStorage.getItem("userRegion");
+      const data = await APIS.ListUsers(payload);
+      setUsers(
+        data &&
+          data.data &&
+          data.data.data?.map((user) => ({
+            label: `${user.firstName} ${user.lastName}`,
+            value: user.id,
+            key: "Case Worker",
+          })),
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  }, []);
+
+  useEffect(() => {
+    getTableData();
+    getUserList();
   }, []);
 
   const tableExtraButtons = (
@@ -361,27 +398,23 @@ const ConsolidatedFamilyList = (props) => {
     <>
       <Box>
         <BodyText
-          value={t("common:infoCard.Status", "Status")}
+          value={t("common:infoCard.Case Status", "Case Status")}
           sx={{ mb: 1 }}
         />
         <Autocomplete
           disablePortal
           options={[
-            { label: "Active", value: "Active", key: "Status" },
-            { label: "Inactive", value: "Inactive", key: "Status" },
-            { label: "Pending", value: "Pending", key: "Status" },
+            { label: "Active", value: "Open", key: "Case Status" },
+            { label: "Inactive", value: "Closed", key: "Case Status" },
           ]}
           multiple
-          value={filterValues?.status}
+          value={filterValues?.caseStatus}
           getOptionLabel={(option) =>
             t(`common:infoCard.${option.label}`, option.label)
           }
           isOptionEqualToValue={(option, value) => option.value === value.value}
           onChange={(event, newValue) => {
-            setFilterValues((prev) => ({
-              ...prev,
-              status: newValue.map((item) => item.value),
-            }));
+            setFilterValues((prev) => ({ ...prev, caseStatus: newValue }));
           }}
           sx={{ width: 300 }}
           renderInput={(params) => <TextField {...params} />}
@@ -395,14 +428,14 @@ const ConsolidatedFamilyList = (props) => {
                   deleteIcon={
                     <CloseIcon style={{ color: "#fff", fontSize: "16px" }} />
                   }
-                  onDelete={() =>
+                  onDelete={() => {
                     setFilterValues((prev) => ({
                       ...prev,
-                      status: prev.status.filter(
-                        (item) => item.value !== option.value,
-                      ),
-                    }))
-                  }
+                      caseStatus: Array.isArray(prev.caseStatus)
+                        ? prev.caseStatus.filter((item) => item.value !== option.value)
+                        : [],
+                    }));
+                  }}
                 />
               ))}
             </Stack>
@@ -416,18 +449,15 @@ const ConsolidatedFamilyList = (props) => {
         />
         <Autocomplete
           disablePortal
-          options={[]}
+          options={users}
           getOptionLabel={(option) =>
             t(`common:infoCard.${option.label}`, option.label)
           }
           multiple
-          value={filterValues?.caseManager}
+          value={filterValues?.caseworkerId}
           isOptionEqualToValue={(option, value) => option.value === value.value}
           onChange={(event, newValue) => {
-            setFilterValues((prev) => ({
-              ...prev,
-              caseManager: newValue.map((item) => item.value),
-            }));
+            setFilterValues((prev) => ({ ...prev, caseworkerId: newValue }));
           }}
           sx={{ width: 300 }}
           renderInput={(params) => <TextField {...params} />}
@@ -436,7 +466,7 @@ const ConsolidatedFamilyList = (props) => {
               {value.map((option, index) => (
                 <Chip
                   key={option.value}
-                  label={`${t(`common:infoCard.${option.label}`)}`}
+                  label={option.label}
                   sx={{ mb: 1, backgroundColor: "#34475D", color: "#fff" }}
                   deleteIcon={
                     <CloseIcon style={{ color: "#fff", fontSize: "16px" }} />
@@ -444,9 +474,9 @@ const ConsolidatedFamilyList = (props) => {
                   onDelete={() =>
                     setFilterValues((prev) => ({
                       ...prev,
-                      caseManager: prev.caseManager.filter(
-                        (item) => item.value !== option.value,
-                      ),
+                      caseworkerId: Array.isArray(prev.caseworkerId)
+                        ? prev.caseworkerId.filter((item) => item.value !== option.value)
+                        : [],
                     }))
                   }
                 />

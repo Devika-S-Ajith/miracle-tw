@@ -1414,7 +1414,8 @@
     "Email": "ईमेल",
     "URL": "URL",
     "Go to URL": "URL ला जा",
-    "Support service information": "समर्थन सेवा माहिती"
+    "Support service information": "समर्थन सेवा माहिती",
+    "Case Status": "केसची स्थिती"
     
 },
 "tableColumn":{
