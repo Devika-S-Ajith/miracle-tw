@@ -123,17 +123,10 @@ const CommonDataContextProvider = (props) => {
   const navigate = useNavigate();
   const { logout } = useAuth();
 
-  // ---------------------------------------------------------------------------
-  // Effects
-  // ---------------------------------------------------------------------------
-
-  useEffect(() => {
-  
-  }, []);
-
   // Re-check login state whenever roles are resolved
   useEffect(() => {
     getUserDetails();
+    //getInitialUserData()
     getSignedinUserRole();
     getSignedinUserOrgType();
     getSignedinUserId();
@@ -269,17 +262,32 @@ const CommonDataContextProvider = (props) => {
         }))
       );
       setSignedInOrgName(org.accountName);
-
-      const typeRes = await APIS.OrgTypeDetails(org.MPAccountTypeId);
-      if (typeRes.status === 200) {
-        const typeId = typeRes.data?.data[0].id;
-        localStorage.setItem("signedinOrgType", typeId);
-        setSignedinOrgType(typeId);
-      }
+      localStorage.setItem("signedinOrgType", org.MPAccountTypeId);
+        setSignedinOrgType(org.MPAccountTypeId);
+      // const typeRes = await APIS.OrgTypeDetails(org.MPAccountTypeId);
+      // if (typeRes.status === 200) {
+      //   const typeId = typeRes.data?.data[0].id;
+        
+      // }
     } catch (err) {
       console.error(err);
     }
   }, []);
+
+  const getInitialUserData = async () => {
+    const payload = {
+      "TWUserId": localStorage.getItem("username"),
+      "limit": 1,
+      "start": 0,
+      "name": "",
+      "todolistOnly": false
+    }
+    try {
+      const res = await APIS.GetInitializeUserData(payload);
+    } catch (err) {
+      console.error("Error fetching user region:", err);
+    }
+  }
 
   const getUserRegion = async () => {
     try {

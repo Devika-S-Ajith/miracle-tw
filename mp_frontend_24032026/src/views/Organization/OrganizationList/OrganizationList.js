@@ -8,6 +8,9 @@ import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
 import { useTranslation } from "react-i18next";
 import { SUPER_ADMIN } from "../../../helpers/constant";
 import { getLocationNames } from "../../../helpers/helperFunction";
+import PageLoader from "../../../components/UserComponents/PageLoader";
+import { a } from "aws-amplify";
+import useAuthorization from "../../../components/UserComponents/useAuthorization";
 
 const DEFAULT_PAYLOAD = {
   rowCount: "10",
@@ -55,6 +58,12 @@ const OrganizationList = () => {
   }, []);
 
   const saveCurrentPage = useCallback(() => {}, []);
+  const { authStatus, checkAuth } = useAuthorization("ListAccount");
+  
+  useEffect(() => {
+      document.title = "Accounts | Thrivewell";;
+      checkAuth();
+    }, []);
 
   // ── Stable fetcher ───────────────────────────────────────────────────────
   // Uses refs for role/locationList so the function identity never changes
@@ -106,9 +115,8 @@ const OrganizationList = () => {
   );
 
   useEffect(() => {
-    document.title = "Organizations | ThriveWell";
+   if(authStatus === 'authorized') {
     getUserTokens();
-
     const stored = localStorage.getItem("orgPageData");
     if (stored === null) {
       getOrganizations();
@@ -123,8 +131,17 @@ const OrganizationList = () => {
         accountTypeFilter: local.typeFilter ?? "",
       });
     }
+  }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [authStatus]);
+
+  if (authStatus === 'loading' || authStatus === 'idle') {
+      return <PageLoader />;
+    }
+  
+    if (authStatus === 'unauthorized') {
+      return null; // Or a custom message
+    }
 
   return (
     <Box sx={{ backgroundColor: "background.default", minHeight: "100%", pt: 2 }}>

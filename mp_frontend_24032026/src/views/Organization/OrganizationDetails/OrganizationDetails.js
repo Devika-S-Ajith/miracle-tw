@@ -20,6 +20,8 @@ import FosterShareDetailsCard from "./FosterShareDetailsCard";
 import ThriveScaleDetailsCard from "./ThriveScaleDetailsCard";
 import { UNASSIGNED } from "../../../helpers/constant";
 import OrganizationalOverview from "../../Dashboard/GovtDashboardOverview/OrganizationalOverview";
+import useAuthorization from "../../../components/UserComponents/useAuthorization";
+import PageLoader from "../../../components/UserComponents/PageLoader";
 
 const OrganizationDetails = () => {
   const { t } = useTranslation(["common"]);
@@ -32,6 +34,12 @@ const OrganizationDetails = () => {
   const [refresh, setRefresh] = useState(false);
   const { locationList } = useContext(CommonDataContext);
   const [selectedCountry, setSelectedCountry] = useState(null);
+   const { authStatus, checkAuth } = useAuthorization("ListAccount");
+  
+  useEffect(() => {
+      document.title = "Accounts | Thrivewell";;
+      checkAuth();
+    }, []);
 
   useEffect(() => {
     if (locationList.length) {
@@ -47,7 +55,6 @@ const OrganizationDetails = () => {
 
   const getOrganisation = useCallback(async () => {
     setLoading(true);
-    document.title = "Organizations | Details | ThriveWell";
     try {
       const data = await APIS.OrganisationDetails(id);
       if (mounted.current) {
@@ -61,9 +68,10 @@ const OrganizationDetails = () => {
   }, []);
 
   useEffect(() => {
-    getOrganisation();
-    return () => { };
-  }, []);
+    if(authStatus === 'authorized') {
+      getOrganisation();
+    }
+  }, [authStatus]);
 
   const handleRefresh = () => {
     setRefresh(true);
@@ -74,6 +82,14 @@ const OrganizationDetails = () => {
       getOrganisation();
     }
   }, [refresh]);
+
+  if (authStatus === 'loading' || authStatus === 'idle') {
+    return <PageLoader />;
+  }
+
+  if (authStatus === 'unauthorized') {
+    return null; // Or a custom message
+  }
 
 
   return (

@@ -8,50 +8,25 @@ import AccountForm from "../Components/AccountForm";
 import ChevronRightIcon from "../../../assets/icons/ChevronRight";
 import useAuthorization from "../../../components/UserComponents/useAuthorization";
 import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
+import PageLoader from "../../../components/UserComponents/PageLoader";
 
 const AddOrganization = () => {
   const { t } = useTranslation(["common"]);
   const navigate = useNavigate();
-  const mounted = useMounted();
-  const [customer, setCustomer] = useState(null);
-  const { signedinOrgType, signedinUserRoleHT, signedinUserRoleFS } = useContext(CommonDataContext);
-
-  const getCustomer = useCallback(async () => {
-    try {
-      const data = await customerApi.getCustomer();
-
-      if (mounted.current) {
-        setCustomer(data);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }, [mounted]);
-
+   const { authStatus, checkAuth } = useAuthorization("AddAccount");
+  
   useEffect(() => {
-    getCustomer();
-    return () => {};
-  }, [getCustomer]);
-
-
-  useAuthorization(signedinUserRoleHT, signedinUserRoleFS,signedinOrgType, "AddAccount", true);
-
-  //TO DO
-  // useEffect(() => {
-  //   if (signedinOrgType !== null && (signedinUserRoleHT !== null || signedinUserRoleFS !== null)) {
-  //     if (signedinOrgType == 1 && (signedinUserRoleHT === 'superadmin' ||signedinUserRoleFS === 'superadmin')) {
-  //       // has access
-  //     } else {
-  //       navigate("/Unauthorized");
-  //     }
-  //   }
-  //   return () => {
-  //   }
-  // }, [signedinOrgType, signedinUserRoleHT,signedinUserRoleFS])
-
-  if (!customer) {
-    return null;
-  }
+      document.title = "Accounts | Thrivewell";;
+      checkAuth();
+    }, []);
+  
+    if (authStatus === 'loading' || authStatus === 'idle') {
+      return <PageLoader />;
+    }
+  
+    if (authStatus === 'unauthorized') {
+      return null; // Or a custom message
+    }
 
   return (
     <>

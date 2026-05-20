@@ -10,6 +10,8 @@ import { useNavigate } from 'react-router';
 import SecondaryButton from '../../components/SecondaryButton/SecondaryButton';
 import PageBreadcrumbs from '../../components/PageBreadcrumbs/PageBreadcrumbs';
 import { ArrowRight } from "@mui/icons-material";
+import useAuthorization from '../../components/UserComponents/useAuthorization';
+import PageLoader from '../../components/UserComponents/PageLoader';
 
 // import useAuthorization from '../../components/UserComponents/useAuthorization';
 const SupportServicesList = () => {
@@ -27,11 +29,21 @@ const SupportServicesList = () => {
     pageCount:1,
     totalCount:0,
   });
+  const { authStatus, checkAuth } = useAuthorization("SupportService");
+  
+  useEffect(() => {
+      document.title = "Support Services | Thrivewell";;
+      checkAuth();
+    }, []);
+  
+ 
  
 
   useEffect(()=> {
-    getTableData();
-  },[]);
+    if(authStatus === 'authorized') {
+      getTableData();
+    }
+  },[authStatus]);
 
   const columnDefinition = [
     {
@@ -157,6 +169,14 @@ const SupportServicesList = () => {
         </Stack>
       </>
     );
+
+     if (authStatus === 'loading' || authStatus === 'idle') {
+      return <PageLoader />;
+    }
+  
+    if (authStatus === 'unauthorized') {
+      return null; // Or a custom message
+    }
   
   return (
     <>

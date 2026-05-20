@@ -7,6 +7,7 @@ import ChevronRightIcon from "../../../assets/icons/ChevronRight";
 import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
 import useAuthorization from "../../../components/UserComponents/useAuthorization";
 import { useTranslation } from "react-i18next";
+import PageLoader from "../../../components/UserComponents/PageLoader";
 
 const Messages = () => {
   useEffect(() => {
@@ -14,19 +15,23 @@ const Messages = () => {
   }, []);
 
   const { t } = useTranslation(["common"]);
- 
-  const navigate = useNavigate();
   const scheduledMessagesGridRef = useRef(null);
   const sentMessagesGridRef = useRef(null);
-  const { signedinUserRoleFS } = useContext(CommonDataContext)
-
-  useAuthorization(
-    null,
-    signedinUserRoleFS,
-    null,
-    "Message",
-    false
-  );
+   const { authStatus, checkAuth } = useAuthorization("Messages");
+  
+  useEffect(() => {
+      document.title = "Message | Thrivewell";;
+      checkAuth();
+    }, []);
+  
+  if (authStatus === 'loading' || authStatus === 'idle') {
+      return <PageLoader />;
+    }
+  
+    if (authStatus === 'unauthorized') {
+      return null; // Or a custom message
+    }
+  
 
   return (
     <Box m={2}>

@@ -1,22 +1,31 @@
-import { useContext } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Box, Grid, Typography, IconButton } from '@mui/material';
-import AddFamilyForm from '../Components/AddFamilyForm';
-import ChevronRightIcon from '../../../assets/icons/ChevronRight';
+import { Box, Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { CommonDataContext } from '../../../common/contexts/CommonDataContext';
 import useAuthorization from '../../../components/UserComponents/useAuthorization';
 import ManageFamilyForm from '../../TWFamily/ManageFamily/ManageFamilyForm';
 import PageBreadcrumbs from '../../../components/PageBreadcrumbs/PageBreadcrumbs';
+import PageLoader from '../../../components/UserComponents/PageLoader';
 
 
 const AddFamily = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(['common']);
-  const { signedinUserRoleHT, signedinUserRoleFS, signedinOrgType } = useContext(CommonDataContext);
   const { id } = useParams();
+  const { authStatus, checkAuth } = useAuthorization("ManageFamily");
 
-  // useAuthorization(signedinUserRoleHT, signedinUserRoleFS, signedinOrgType, 'ManageFamily', true)
+   useEffect(() => {
+      document.title = "Add Family | ThriveWell";
+      checkAuth();
+    }, []);
+  
+    if (authStatus === 'loading' || authStatus === 'idle') {
+      return <PageLoader />;
+    }
+  
+    if (authStatus === 'unauthorized') {
+      return null; // Or a custom message
+    }
 
   return (
     <>

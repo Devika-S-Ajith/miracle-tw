@@ -10,25 +10,25 @@ import useAuthorization from "../../../components/UserComponents/useAuthorizatio
 import ConsolidatedAssessmentProgressReport from "../../../components/ConsolidatedAssessmentProgressReport";
 import PageBreadcrumbs from "../../../components/PageBreadcrumbs/PageBreadcrumbs";
 import { BreadcrumbsLinkThriveScale } from "../../../constants";
+import PageLoader from "../../../components/UserComponents/PageLoader";
 
 const AssessmentList = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation(["common"])
-  
-  const { signedinUserRoleHT, signedinOrgType } =
-    useContext(CommonDataContext);
-      
-  useAuthorization(
-    signedinUserRoleHT,
-    null,
-    signedinOrgType,
-    "ManageFamily",
-    true
-  );
+  const { t } = useTranslation(["common"])   
+  const { authStatus, checkAuth } = useAuthorization("Assessment");
 
-  useEffect(() => {
+   useEffect(() => {
     document.title = "Assessments | ThriveWell";
-  }, []);
+    checkAuth();
+  }, []); // Only runs once on mount, or based on your specific logic
+
+  if (authStatus === 'loading' || authStatus === 'idle') {
+    return <PageLoader />;
+  }
+
+  if (authStatus === 'unauthorized') {
+    return null; // Or a custom message
+  }
 
   return (
     <>

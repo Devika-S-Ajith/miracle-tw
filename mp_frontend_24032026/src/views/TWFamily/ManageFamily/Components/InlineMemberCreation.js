@@ -150,16 +150,22 @@ const InlineMemberCreation = ({
         "&:hover": { color: "midhnightblue" },
     };
 
-    const handleRadioChange = (e, member) => {
-        const memberKey = member.id || member._rowKey;
+    const handleRadioChange = useCallback((e, member) => {
+    const memberKey = member.id || member._rowKey;
+    
+    // Avoid re-render if same caregiver selected
+    if (selectedCareGiver === memberKey) return;
+    
+    setSelectedCareGiver(memberKey);
 
-        memberList.forEach((m, index) => {
-            const isPrimary = (m.id || m._rowKey) === memberKey;
-            formik?.setFieldValue(`members.${index}.isPrimaryCaregiver`, isPrimary);
-        });
+    // Batch all field updates in a single setValues call
+    const updatedMembers = memberList.map((m, index) => ({
+        ...formik.values.members[index],
+        isPrimaryCaregiver: (m.id || m._rowKey) === memberKey,
+    }));
 
-        setSelectedCareGiver(memberKey);
-    };
+    formik?.setFieldValue('members', updatedMembers, false); // false = skip validation on change
+}, [selectedCareGiver, memberList, formik]);
 
     const mergedChildAndFamilyInfo = (childInfo, familyInfo) => {
 

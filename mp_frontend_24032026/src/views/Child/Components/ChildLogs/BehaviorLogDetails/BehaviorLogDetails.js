@@ -26,6 +26,8 @@ import {
   renderCommentsColumn,
 } from "../../../../FS/Components/helperFunction";
 import LabelValue from "../../../../../components/LabelValue";
+import { useTranslation } from "react-i18next";
+import { convertUnderscoreToText } from "../../../../../constants";
 
 const BehaviorLogDetails = ({
   moduleName,
@@ -34,7 +36,7 @@ const BehaviorLogDetails = ({
   close,
 }) => {
   const navigate = useNavigate();
-
+  const { t } = useTranslation(["common"]);
   const [behaviorLogDetail, setBehaviorLogDetail] = useState([]);
   const [loading, setLoading] = useState(false);
   const [imageList, setImageList] = useState([]);
@@ -127,7 +129,7 @@ const BehaviorLogDetails = ({
               color="textPrimary"
               variant="h5"
             >
-              Behavior Logs Details
+              {t("common:infoCard.Behavior Logs Details", "Behavior Logs Details")}
             </Typography>
             <Typography color="textPrimary" variant="h6" sx={{ mt: 1 }}>
               {behaviorLogDetail?.childName}
@@ -173,7 +175,7 @@ const BehaviorLogDetails = ({
                         variant="subtitle1"
                         sx={{ color: "text.secondary" }}
                       >
-                        Question
+                        {t("common:common.Question", "Question")}
                       </Typography>
                     </TableCell>
                     <TableCell>
@@ -182,7 +184,7 @@ const BehaviorLogDetails = ({
                         variant="subtitle1"
                         sx={{ color: "text.secondary" }}
                       >
-                        Answer
+                        {t("common:infoCard.Answer", "Answer")}
                       </Typography>
                     </TableCell>
                     <TableCell>
@@ -191,7 +193,7 @@ const BehaviorLogDetails = ({
                         variant="subtitle1"
                         sx={{ color: "text.secondary" }}
                       >
-                        Comments
+                        {t("common:infoCard.Comments", "Comments")}
                       </Typography>
                     </TableCell>
                   </TableRow>
@@ -230,7 +232,7 @@ const BehaviorLogDetails = ({
             <Grid item xs={8}>
               <Box id="notes">
                 <Typography color="textPrimary" variant="h6" mb>
-                  Notes
+                  {t("common:common.Notes", "Notes")}
                 </Typography>
                 <Box
                   border={2}
@@ -274,11 +276,11 @@ const BehaviorLogDetails = ({
                                 fontWeight={700}
                                 fontSize="1rem"
                               >
-                                Added by:{" "}
+                                {t("common:infoCard.Added by", "Added by")}:{" "}
                                 {note?.addedBy
                                   ? note.addedBy
                                   : behaviorLogDetail?.submittedBy?.trim() ||
-                                    "Unknown"}
+                                   convertUnderscoreToText(t("common:common.UNKNOWN", "Unknown"))}
                               </Typography>
                               <Typography
                                 color="textPrimary"
@@ -314,7 +316,7 @@ const BehaviorLogDetails = ({
                           pt: 2,
                         }}
                       >
-                        There are no notes
+                        {t("common:infoCard.There are no notes", "There are no notes")}
                       </Typography>
                     </>
                   )}
@@ -324,7 +326,7 @@ const BehaviorLogDetails = ({
             <Grid item xs={4}>
               <Box id="images" sx={{ mr: 2 }}>
                 <Typography color="textPrimary" variant="h6" mb>
-                  Images
+                  {t("common:infoCard.Images", "Images")}
                 </Typography>
                 <Box
                   border={2}
@@ -386,7 +388,7 @@ const BehaviorLogDetails = ({
                           pt: 2,
                         }}
                       >
-                        There are no images
+                        {t("common:infoCard.There are no images", "There are no images")}
                       </Typography>
                     </>
                   )}
@@ -433,7 +435,7 @@ const BehaviorLogDetails = ({
                       color="primary"
                       onClick={handleClose}
                     >
-                      Close
+                      {t("common:common.Close", "Close")}
                     </Button>
                     <Button
                       variant="contained"
@@ -443,7 +445,7 @@ const BehaviorLogDetails = ({
                       download
                       target="_blank"
                     >
-                      Download
+                      {t("common:infoCard.Download", "Download")}
                     </Button>
                   </Box>
                 </>
@@ -452,7 +454,7 @@ const BehaviorLogDetails = ({
           </Modal>
         </Box>
         <LabelValue
-          label="Submitted by"
+          label={t("common:tableColumn.Submitted by", "Submitted by")}
           value={behaviorLogDetail?.submittedBy}
         />
       </Box>
@@ -465,7 +467,7 @@ const BehaviorLogDetails = ({
             resetRouter();
           }}
         >
-          Close
+          {t("common:common.Close", "Close")}
         </Button>
       </Box>
     </>

@@ -12,6 +12,7 @@ import React, { useEffect, useState } from "react";
 import { formatDate, utcToLocalDate } from "../../../../../helpers/helperFunction";
 import Loader from "../../../../../components/UserComponents/Loader";
 import APIS from "../../../../../common/hooks/UseApiCalls";
+import { useTranslation } from "react-i18next";
 
 const MedLogDetailsModal = ({
   propData,
@@ -22,6 +23,7 @@ const MedLogDetailsModal = ({
   recursiveItemId,
   refetchData,
 }) => {
+    const { t } = useTranslation(["common"]);
   // State: use null for objects, array for previewData
   const [data, setData] = useState(null);
   const [childData, setChildData] = useState(null);
@@ -79,7 +81,7 @@ const MedLogDetailsModal = ({
           <TableRow hover>
             <TableCell>
               <Typography variant="subtitle2" fontWeight="bold">
-                Name of Medication
+                {t("common:common.Name of Medication", "Name of Medication")}
               </Typography>
             </TableCell>
             <TableCell>
@@ -91,7 +93,7 @@ const MedLogDetailsModal = ({
           <TableRow hover>
             <TableCell>
               <Typography variant="subtitle2" fontWeight="bold">
-                Dosage
+                {t("common:common.Dosage", "Dosage")}
               </Typography>
             </TableCell>
             <TableCell>
@@ -103,7 +105,7 @@ const MedLogDetailsModal = ({
           <TableRow hover>
             <TableCell>
               <Typography variant="subtitle2" fontWeight="bold">
-                Strength
+                {t("common:common.Strength", "Strength")}
               </Typography>
             </TableCell>
             <TableCell>
@@ -115,7 +117,7 @@ const MedLogDetailsModal = ({
           <TableRow hover>
             <TableCell>
               <Typography variant="subtitle2" fontWeight="bold">
-                Administered Time
+                {t("common:common.Administered Time", "Administered Time")}
               </Typography>
             </TableCell>
             <TableCell>
@@ -127,7 +129,7 @@ const MedLogDetailsModal = ({
           <TableRow hover>
             <TableCell>
               <Typography variant="subtitle2" fontWeight="bold">
-                Logged time
+                {t("common:common.Logged time", "Logged time")}
               </Typography>
             </TableCell>
             <TableCell>
@@ -139,7 +141,7 @@ const MedLogDetailsModal = ({
           <TableRow hover>
             <TableCell>
               <Typography variant="subtitle2" fontWeight="bold">
-                Administered By
+                {t("common:common.Administered By", "Administered By")}
               </Typography>
             </TableCell>
             <TableCell>
@@ -151,7 +153,7 @@ const MedLogDetailsModal = ({
           <TableRow hover>
             <TableCell>
               <Typography variant="subtitle2" fontWeight="bold">
-                Administered To
+                {t("common:common.Administered To", "Administered To")}
               </Typography>
             </TableCell>
             <TableCell>
@@ -168,7 +170,7 @@ const MedLogDetailsModal = ({
           <TableRow hover>
             <TableCell>
               <Typography variant="subtitle2" fontWeight="bold">
-                Name of Medication
+                {t("common:common.Name of Medication", "Name of Medication")}
               </Typography>
             </TableCell>
             <TableCell>
@@ -180,7 +182,7 @@ const MedLogDetailsModal = ({
           <TableRow hover>
             <TableCell>
               <Typography variant="subtitle2" fontWeight="bold">
-                Dosage
+                {t("common:common.Dosage", "Dosage")}
               </Typography>
             </TableCell>
             <TableCell>
@@ -192,7 +194,7 @@ const MedLogDetailsModal = ({
           <TableRow hover>
             <TableCell>
               <Typography variant="subtitle2" fontWeight="bold">
-                Strength
+                {t("common:common.Strength", "Strength")}
               </Typography>
             </TableCell>
             <TableCell>
@@ -204,7 +206,7 @@ const MedLogDetailsModal = ({
           <TableRow hover>
             <TableCell>
               <Typography variant="subtitle2" fontWeight="bold">
-                Reason Missed
+                {t("common:common.Reason Missed", "Reason Missed")}
               </Typography>
             </TableCell>
             <TableCell>
@@ -216,7 +218,7 @@ const MedLogDetailsModal = ({
           <TableRow hover>
             <TableCell>
               <Typography variant="subtitle2" fontWeight="bold">
-                Date Missed
+                {t("common:common.Date Missed", "Date Missed")}
               </Typography>
             </TableCell>
             <TableCell>
@@ -228,7 +230,7 @@ const MedLogDetailsModal = ({
           <TableRow hover>
             <TableCell>
               <Typography variant="subtitle2" fontWeight="bold">
-                Logged By
+                {t("common:common.Logged By", "Logged By")}
               </Typography>
             </TableCell>
             <TableCell>
@@ -249,7 +251,7 @@ const MedLogDetailsModal = ({
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <Box>
             <Typography id="recreational-log" color="textPrimary" variant="h5">
-              Med Log Details
+              {t("common:common.Med Log Details", "Med log details")}
             </Typography>
             <Typography color="textPrimary" variant="h6" sx={{ mt: 1 }}>
               {childData?.childName}
@@ -291,7 +293,7 @@ const MedLogDetailsModal = ({
                       variant="subtitle1"
                       sx={{ color: "text.secondary" }}
                     >
-                      Field
+                      {t("common:common.Field", "Field")}
                     </Typography>
                   </TableCell>
                   <TableCell>
@@ -300,7 +302,7 @@ const MedLogDetailsModal = ({
                       variant="subtitle1"
                       sx={{ color: "text.secondary" }}
                     >
-                      Answer
+                      {t("common:infoCard.Answer", "Answer")}
                     </Typography>
                   </TableCell>
                 </TableRow>
@@ -311,7 +313,7 @@ const MedLogDetailsModal = ({
                   <TableRow hover key={index}>
                     <TableCell>
                       <Typography variant="subtitle2" fontWeight="bold">
-                        {individualItem?.displayLabel}
+                        {t(`common:common.${individualItem?.displayLabel}`, individualItem?.displayLabel)}
                       </Typography>
                     </TableCell>
                     <TableCell>
@@ -331,7 +333,7 @@ const MedLogDetailsModal = ({
                 fontSize="1rem"
                 m
               >
-                What happened?
+                {t("common:common.What happened", "What happened")}?
               </Typography>
             )}
             <Typography
@@ -352,7 +354,7 @@ const MedLogDetailsModal = ({
           variant="contained"
           onClick={close}
         >
-          Close
+          {t("common:common.Close", "Close")}
         </Button>
       </Box>
     </>

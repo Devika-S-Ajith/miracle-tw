@@ -9,18 +9,25 @@ import { useTranslation } from 'react-i18next';
 import useAuthorization from '../../../components/UserComponents/useAuthorization';
 import { CommonDataContext } from '../../../common/contexts/CommonDataContext';
 import {ADMIN, ADMIN_CASEWORKER, SUPER_ADMIN} from '../../../helpers/constant'
+import PageLoader from '../../../components/UserComponents/PageLoader';
 
 const EditOrganization = () => {
   const { t } = useTranslation(['common']);
   const navigate = useNavigate();
   const mounted = useMounted();
   const [organization, setorganization] = useState(null);
+  const [loading, setLoading] = useState(false);
   let { id } = useParams();
-  const { signedinOrgType, signedinUserRoleHT, signedinUserRoleFS } = useContext(CommonDataContext);
-
-  useAuthorization(signedinUserRoleHT, signedinUserRoleFS,signedinOrgType, "ManageAccount", [ADMIN,ADMIN_CASEWORKER,SUPER_ADMIN].includes(signedinUserRoleHT));
-
+  const { authStatus, checkAuth } = useAuthorization("EditAccount");
+  
+  useEffect(() => {
+      document.title = "Accounts | Thrivewell";;
+      checkAuth();
+    }, []);
+  
+   
   const getOrganization = useCallback(async () => {
+    setLoading(true);
     try {
       const data = await APIS.OrganisationDetails(id);
       if (mounted.current) {
@@ -28,17 +35,23 @@ const EditOrganization = () => {
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);  
     }
   }, []);
 
   useEffect(() => {
-    getOrganization();
-    return () => {
-    }
-  }, [getOrganization]);
+    if(authStatus === 'authorized') {
+      getOrganization();
+    }   
+  }, [getOrganization, authStatus]);
 
-  if (!organization) {
-    return null;
+  if (authStatus === 'loading' || authStatus === 'idle') {
+    return <PageLoader />;
+  }
+
+  if (authStatus === 'unauthorized') {
+    return null; // Or a custom message
   }
 
   return (
@@ -95,7 +108,7 @@ const EditOrganization = () => {
         </Grid>
         {/* New UI */}
         <Box mt={3}>
-          <AccountForm organization={organization} />
+          <AccountForm organization={organization} loading={loading} />
         </Box>
       </Box>
     </>

@@ -13,10 +13,12 @@ import { useNavigate } from "react-router-dom";
 import APIS from "../../../../../common/hooks/UseApiCalls";
 import Loader from "../../../../../components/UserComponents/Loader";
 import { utcToDateFormat } from "../../../../../helpers/helperFunction";
+import { useTranslation } from "react-i18next";
 
 
 const RecreationalLogDetails = ({ moduleName, moduleId, close, recId }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation(["common"]);
   const [recLogDetail, setRecLogDetail] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -106,7 +108,7 @@ const RecreationalLogDetails = ({ moduleName, moduleId, close, recId }) => {
       <Box>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <Typography id="recreational-log" color="textPrimary" variant="h5">
-            Recreation log details
+            {t("common:infoCard.Recreation log details", "Recreation log details")}
           </Typography>
           <Typography
             id="log-overview-table-label"
@@ -137,12 +139,12 @@ const RecreationalLogDetails = ({ moduleName, moduleId, close, recId }) => {
                   <TableRow>
                     <TableCell>
                       <Typography variant="h6" sx={{ color: "text.secondary" }}>
-                        Activity type
+                        {t("common:infoCard.Activity type", "Activity type")}
                       </Typography>
                     </TableCell>
                     <TableCell>
                       <Typography variant="h6" sx={{ color: "text.secondary" }}>
-                        Activities
+                        {t("common:infoCard.Activities", "Activities")}
                       </Typography>
                     </TableCell>
                   </TableRow>
@@ -164,7 +166,7 @@ const RecreationalLogDetails = ({ moduleName, moduleId, close, recId }) => {
             resetRouter();
           }}
         >
-          Close
+          {t("common:common.Close", "Close")}
         </Button>
       </Box>
     </>

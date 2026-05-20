@@ -24,7 +24,7 @@ export const ChildBasicDetails = ({
     fullWidth: true,
     variant: "outlined",
     gridProps: { xs: 12 },
-    onChange: (e) => uniqueCheckHandler({ key: "firstName", e }),
+    onChange: (value) => uniqueCheckHandler({ key: "firstName", value, values, setFieldError }),
   },
   {
     type: "text",
@@ -35,7 +35,7 @@ export const ChildBasicDetails = ({
     fullWidth: true,
     variant: "outlined",
     gridProps: { xs: 12 },
-    onChange: (e) => uniqueCheckHandler({ key: "lastName", e }),
+    onChange: (value) => uniqueCheckHandler({ key: "lastName", value, values, setFieldError }),
   },
   {
     type: "dropdown",
@@ -49,7 +49,7 @@ export const ChildBasicDetails = ({
     options: GenderListOptions,
     // value: values.gender,
     gridProps: { xs: 12 },
-    onChange: () => uniqueCheckHandler({ values, setFieldError, validateForm }),
+    onChange: (value) => uniqueCheckHandler({ value, values, setFieldError, validateForm }),
   },
   {
     type: "DatePicker",
@@ -63,7 +63,7 @@ export const ChildBasicDetails = ({
     fullWidth: true,
     variant: "outlined",
     gridProps: { xs: 12, md: 12 },
-    // onChange: ()=>uniqueCheckHandler({values, setFieldError, validateForm})
+    onChange: (value)=>  uniqueCheckHandler({key: "dateOfBirth", value, values, setFieldError })
   },
     ...(!values?.isNewFamily
       ? [{

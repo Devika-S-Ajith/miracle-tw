@@ -50,6 +50,7 @@ import moment from "moment";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import useAuthorization from "../../components/UserComponents/useAuthorization";
 import BodyText from "../../components/BodyText/BodyText";
+import PageLoader from "../../components/UserComponents/PageLoader";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -201,13 +202,14 @@ const FormBuilder = (props) => {
   const navigate = useNavigate();
   const elementRef = useRef(null);
 
-  useAuthorization(
-    signedinUserRoleHT,
-    null,
-    signedinOrgType,
-    "ManageForm",
-    true
-  );
+  const { authStatus, checkAuth } = useAuthorization("ManageForm");
+
+   useEffect(() => {
+      document.title = "Forms | ThriveWell";
+      checkAuth();
+    }, []);
+  
+    
 
   useEffect(() => {
     const handlePopState = () => {
@@ -277,13 +279,15 @@ const FormBuilder = (props) => {
   };
 
   useEffect(() => {
+    if(authStatus === 'authorized'){
     getDomains();
     if (currentQuestionData?.length > 0) {
       getCurrentFormDetails();
     } else {
       getForms(form?.id);
     }
-  }, []);
+  }
+  }, [authStatus]);
 
   const getCurrentFormDetails = async () => {
     const data = currentQuestionData;
@@ -292,12 +296,7 @@ const FormBuilder = (props) => {
     const newlyAddedQuestion = JSON.parse(
       localStorage.getItem("newlyAddedQuestion")
     );
-    console.log(
-      "getCurrentFormDetails",
-      newlyAddedQuestion,
-      domainData[currentlySelectedDomain - 1].questions
-    );
-
+   
     let questionDetails = [];
     if (newlyAddedQuestion) {
       questionDetails = {
@@ -794,6 +793,14 @@ const FormBuilder = (props) => {
       </IconButton>
     </>
   );
+
+  if (authStatus === 'loading' || authStatus === 'idle') {
+      return <PageLoader />;
+    }
+  
+    if (authStatus === 'unauthorized') {
+      return null; // Or a custom message
+    }
 
   return (
     <>

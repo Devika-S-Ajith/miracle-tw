@@ -4,23 +4,37 @@ import { useNavigate } from "react-router-dom";
 import FormListTable from "../Components/FormListTable";
 import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
 import useAuthorization from "../../../components/UserComponents/useAuthorization";
+import PageLoader from "../../../components/UserComponents/PageLoader";
 
 const FormList = () => {
   const navigate = useNavigate();
   const {
     setCurrentQuestionData,
-    signedinUserRoleHT,
-    signedinOrgType,
     setCurrentlySelectedDomain,
   } = useContext(CommonDataContext);
+  const { authStatus, checkAuth } = useAuthorization("FormList");
 
   useEffect(() => {
-    document.title = "Forms | ThriveWell";
-    setCurrentQuestionData([]);
-    setCurrentlySelectedDomain(1);
-  }, []);
+    if (authStatus === 'authorized') {
+      setCurrentQuestionData([]);
+      setCurrentlySelectedDomain(1);
+    }
+  }, [authStatus]);
 
-  useAuthorization(signedinUserRoleHT, null, signedinOrgType, "FormList", true);
+   useEffect(() => {
+       document.title = "Forms | ThriveWell";
+      checkAuth();
+    }, []);
+  
+    if (authStatus === 'loading' || authStatus === 'idle') {
+      return <PageLoader />;
+    }
+  
+    if (authStatus === 'unauthorized') {
+      return null; // Or a custom message
+    }
+
+
 
   return (
     <>

@@ -27,6 +27,8 @@ import { getNavbarFilterPayload } from "../../../../constants";
 import APIS from "../../../../common/hooks/UseApiCalls";
 
 
+
+
 const ConsolidatedOverviewPage = () => {
   const { t } = useTranslation(["common"]);
   const { signedinUserRoleHT, signedinUserRoleFS, signedinOrgType } = useContext(CommonDataContext);
@@ -61,7 +63,7 @@ const ConsolidatedOverviewPage = () => {
       component: (data) => (
         <ReportsPieChart
           title="Current living condition"
-          res={data?.[0]}
+          res={data}
           loading={loading}
           reportLink="/dashboard/reportsCurrentLivingCondition"
           canViewReport={true}
@@ -79,7 +81,7 @@ const ConsolidatedOverviewPage = () => {
       component: (data) => (
         <ReportsPieChart
           title="Family situation"
-          res={data?.[0]}
+          res={data}
           loading={loading}
           reportLink="/dashboard/reportsFamilySituation"
           canViewReport={false}
@@ -125,7 +127,7 @@ const ConsolidatedOverviewPage = () => {
       component: (data) => (
         <ReportsPieChart
           title="Closed case"
-          res={data?.[0]}
+          res={data}
           loading={loading}
           reportLink="/dashboard/families"
           canViewReport={true}
@@ -185,10 +187,8 @@ const ConsolidatedOverviewPage = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        // let payload = getNavbarFilterPayload() || {};
         let payload = {
-          TWCountryId: localStorage.getItem("userRegion") || "",
-          
+          TWCountryId: localStorage.getItem("userRegion") || "",         
         };
         const response = await APIS.DashboardTileData(payload);
         const familySituationResponse = await APIS.GetFamilySituatiionCounts(payload);
@@ -199,7 +199,7 @@ const ConsolidatedOverviewPage = () => {
           closedCases: closedCasesResponse?.data?.message || [],
           currentLivingCondition: response?.data?.message?.currentLivingCondition || [],
         };
-
+         console.log("familySituationResponse", data.familySituation);
         // if (response && response.status === 200) {
         //   setTileData({ ...response.data.message });
         // }
@@ -223,6 +223,8 @@ const ConsolidatedOverviewPage = () => {
     .filter((item) => item.column === "right")
     .sort((a, b) => a.sequence - b.sequence);
 
+
+
   return (
     <Box sx={{ mt: 2 }}>
       <Box px={2}>
@@ -230,6 +232,7 @@ const ConsolidatedOverviewPage = () => {
           data={[{ label: t("common:common.Overview", "Overview") }]}
         />
       </Box>
+       
 
       {isSuperAdmin && (
         <Box sx={{ px: 2, pt: 2 }}>

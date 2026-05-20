@@ -29,6 +29,8 @@ import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { ADMIN, ADMIN_CASEWORKER, CASEWORKER } from "../../../helpers/constant";
 import useCRUDPermissions from "../../../components/UserComponents/useCRUDPermissions";
 import { fr } from "date-fns/locale";
+import useAuthorization from "../../../components/UserComponents/useAuthorization";
+import PageLoader from "../../../components/UserComponents/PageLoader";
 
 const ConsolidatedFamilyList = (props) => {
   const { t } = useTranslation(["common"]);
@@ -43,24 +45,17 @@ const ConsolidatedFamilyList = (props) => {
   const [query, setQuery] = useState("");
   const { signedinUserRoleHT, signedinUserRoleFS, signedinOrgId } = useContext(CommonDataContext);
   const [users, setUsers] = useState([]);
-
   const { htLanguagesList, signedInOrgName, userIdData } =
     useContext(CommonDataContext);
   const { IS_EDIT_ALLOWED,CAN_DELETE } = useCRUDPermissions();
-  const statusOptions = [
-    {
-      label: t("common:common.All"),
-      id: "All",
-    },
-    {
-      label: t("common:common.Active"),
-      id: "Active",
-    },
-    {
-      label: t("common:common.Inactive"),
-      id: "Inactive",
-    },
-  ];
+
+  
+
+const statusOptions = [
+    { label: "Active", value: "Open", key: "Case Status" },
+    { label: "Inactive", value: "Closed", key: "Case Status" },
+  ]
+
   const langOptions = [
     { id: 0, language: t("common:common.All") },
     ...htLanguagesList,
@@ -74,6 +69,7 @@ const ConsolidatedFamilyList = (props) => {
   //   actions
   const [menuState, setMenuState] = useState({ anchorEl: null, row: null });
   const open = Boolean(menuState.anchorEl);
+  const { authStatus, checkAuth } = useAuthorization("ListFamily");
 
   const handleClick = (event, row) => {
     setMenuState({ anchorEl: event.currentTarget, row });
@@ -82,6 +78,15 @@ const ConsolidatedFamilyList = (props) => {
   const handleClose = () => {
     setMenuState({ anchorEl: null, row: null });
   };
+
+  const getStatusLabel = (status,deactivationReason) => {
+    let statusLabel = status;
+    if (deactivationReason && deactivationReason.trim().length > 0) {
+      statusLabel = `${statusLabel} - ${deactivationReason}`;
+    }
+    return statusLabel;
+
+  }
 
   const getStatusBackgroundColor = (status) => {
     switch (status) {
@@ -166,7 +171,7 @@ const ConsolidatedFamilyList = (props) => {
       label: t("common:common.Status", "Status"),
       render: (row) => (
         <Chip
-          label={row.status}
+          label={getStatusLabel(row.status,row.deactivationReason)}
           sx={{
             backgroundColor: getStatusBackgroundColor(row.status),
             color: row.status === "Active" ? "#FFFFFF" : "#000000",
@@ -298,12 +303,12 @@ const ConsolidatedFamilyList = (props) => {
       pageNumber: page || 1,
       rowCount: rowCount || 10, // Default row count if not provided
       TWAccountId: localStorage.getItem("orgId"),
+      caseWorker: "",
       listType: "LARGE",
       filters: {
         caseStatus: filter.caseStatus?.map((item) => item.value) || [],
         caseworkerId: filter.caseworkerId?.map((item) => item.value) || [],
       }
-
     };
     try {
       const response = await APIS.GetFamilyList(payload);
@@ -319,10 +324,6 @@ const ConsolidatedFamilyList = (props) => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    getTableData();
-  }, []);
 
   const getUserList = useCallback(async () => {
     try {
@@ -352,10 +353,28 @@ const ConsolidatedFamilyList = (props) => {
     }
   }, []);
 
+
   useEffect(() => {
-    getTableData();
-    getUserList();
-  }, []);
+    if(authStatus === 'authorized') {
+      getTableData();
+      getUserList();
+    }
+  }, [authStatus]);
+
+ 
+
+   useEffect(() => {
+    document.title = "Family | ThriveWell";
+    checkAuth();
+  }, []); // Only runs once on mount, or based on your specific logic
+
+  if (authStatus === 'loading' || authStatus === 'idle') {
+    return <PageLoader />;
+  }
+
+  if (authStatus === 'unauthorized') {
+    return null; // Or a custom message
+  }
 
   const tableExtraButtons = (
     <>
@@ -403,18 +422,18 @@ const ConsolidatedFamilyList = (props) => {
         />
         <Autocomplete
           disablePortal
-          options={[
-            { label: "Active", value: "Open", key: "Case Status" },
-            { label: "Inactive", value: "Closed", key: "Case Status" },
-          ]}
+          options={statusOptions}
           multiple
-          value={filterValues?.caseStatus}
+          value={filterValues?.caseStatus || []}
           getOptionLabel={(option) =>
             t(`common:infoCard.${option.label}`, option.label)
           }
           isOptionEqualToValue={(option, value) => option.value === value.value}
           onChange={(event, newValue) => {
-            setFilterValues((prev) => ({ ...prev, caseStatus: newValue }));
+            setFilterValues((prev) => ({
+              ...prev,
+              caseStatus: newValue,
+            }));
           }}
           sx={{ width: 300 }}
           renderInput={(params) => <TextField {...params} />}
@@ -485,52 +504,6 @@ const ConsolidatedFamilyList = (props) => {
           )}
         />
       </Box>
-      {/* <Box>
-        <BodyText
-          value={t("common:infoCard.Language", "Language")}
-          sx={{ mb: 1 }}
-        />
-        <Autocomplete
-          disablePortal
-          options={[]}
-          getOptionLabel={(option) =>
-            t(`common:infoCard.${option.label}`, option.label)
-          }
-          multiple
-          value={filterValues?.language}
-          isOptionEqualToValue={(option, value) => option.value === value.value}
-          onChange={(event, newValue) => {
-            setFilterValues((prev) => ({
-              ...prev,
-              language: newValue,
-            }));
-          }}
-          sx={{ width: 300 }}
-          renderInput={(params) => <TextField {...params} />}
-          renderTags={(value, getTagProps) => (
-            <Stack direction="row" gap={1} flexWrap="wrap">
-              {value.map((option, index) => (
-                <Chip
-                  key={option.value}
-                  label={`${t(`common:infoCard.${option.label}`)}`}
-                  sx={{ mb: 1, backgroundColor: "#34475D", color: "#fff" }}
-                  deleteIcon={
-                    <CloseIcon style={{ color: "#fff", fontSize: "16px" }} />
-                  }
-                  onDelete={() =>
-                    setFilterValues((prev) => ({
-                      ...prev,
-                      language: prev.language.filter(
-                        (item) => item.value !== option.value,
-                      ),
-                    }))
-                  }
-                />
-              ))}
-            </Stack>
-          )}
-        />
-      </Box> */}
     </>
   );
 

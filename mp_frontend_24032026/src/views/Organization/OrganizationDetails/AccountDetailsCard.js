@@ -73,7 +73,7 @@ const handleUserStatusChangeByAccount = async (payload, changeStatusTo) => {
     ...payload,
     changeStatusTo
   };
-  if (changeStatusTo === "DEACTIVATE") {
+  if (changeStatusTo === "DEACTIVATE" && updatedPayload.deactivationInfo) {
     updatedPayload.deactivationInfo.TWAccountId = payload.id;
     delete updatedPayload.deactivationInfo.MPAccountId;
   }
@@ -148,8 +148,9 @@ const handleDeactivateOrReactivate = async (account, ref) => {
       
       if (userDeactivated) {
         // Step 2: Deactivate organization (uses MPAccountId)
-        
-        payload.deactivationInfo.MPAccountId = accountId;
+        if (payload.deactivationInfo) {
+          payload.deactivationInfo.MPAccountId = accountId;
+        }
         const accountDeactivated = await handleAccountDelete(payload);
         return accountDeactivated;
       }

@@ -21,7 +21,7 @@ const ChildSummary = ({ child }) => {
       <Grid container direction="row" spacing={1}>
         <Grid item xs={12} md={6}>
           <LabelValue
-            label="Full name"
+            label={t("common:infoCard.Full name", "Full name")}
             value={`${child?.firstName} ${child?.lastName ? child.lastName : ""}`}
             labelColor="#535F66"
             fontWeight={700}
@@ -29,7 +29,7 @@ const ChildSummary = ({ child }) => {
         </Grid>
         <Grid item xs={12} md={6}>
           <LabelValue
-            label="Status"
+            label={t("common:infoCard.Status", "Status")}
             value={
               <Chip
                 label={child?.status}
@@ -52,7 +52,7 @@ const ChildSummary = ({ child }) => {
         </Grid>
         <Grid item xs={12} md={6}>
           <LabelValue
-            label="Date of Birth / Age"
+            label={t("common:infoCard.Date of Birth / Age", "Date of Birth / Age")}
             value={
               child?.dateOfBirth &&
               `${dateFormatter(child?.dateOfBirth, "short")} (${calculateAge(dateFormatter(child?.dateOfBirth), t)})`
@@ -63,7 +63,7 @@ const ChildSummary = ({ child }) => {
         </Grid>
         <Grid item xs={12} md={6}>
           <LabelValue
-            label="Gender"
+            label={t("common:common.Gender", "Gender")}
             value={` ${convertUnderscoreToText(child?.gender)}`}
             labelColor="#535F66"
             fontWeight={700}
@@ -71,7 +71,7 @@ const ChildSummary = ({ child }) => {
         </Grid>
         <Grid item xs={12} md={6}>
           <LabelValue
-            label="Address"
+            label={t("common:common.Address", "Address")}
             value={
               child?.contactInformation
                 ? formatAddressFromContactInfo(
@@ -86,7 +86,7 @@ const ChildSummary = ({ child }) => {
         </Grid>
         <Grid item xs={12} md={6}>
           <LabelValue
-            label="Phone number"
+            label={t("common:common.Phone number", "Phone number")}
             value={child?.profileInformation?.phoneNumber || "-"}
             labelColor="#535F66"
             fontWeight={700}
@@ -94,7 +94,7 @@ const ChildSummary = ({ child }) => {
         </Grid>
         <Grid item xs={12} md={6}>
           <LabelValue
-            label="Family associated with"
+            label={t("common:infoCard.Family associated with", "Family associated with")}
             value={child?.familyName}
             labelColor="#535F66"
             fontWeight={700}
@@ -102,7 +102,7 @@ const ChildSummary = ({ child }) => {
         </Grid>
         <Grid item xs={12} md={6}>
           <LabelValue
-            label="Living situation"
+            label={t("common:infoCard.Living situation", "Living situation")}
             // check living situation
             value={child?.livingSituation || "-"}
             labelColor="#535F66"
@@ -111,7 +111,7 @@ const ChildSummary = ({ child }) => {
         </Grid>
         <Grid item xs={12} md={6}>
           <LabelValue
-            label="Primary language"
+            label={t("common:common.Primary language", "Primary language")}
             value={
               getLanguageNameFromId(child?.profileInformation?.TWLanguageId) ||
               "-"
@@ -122,7 +122,7 @@ const ChildSummary = ({ child }) => {
         </Grid>
         <Grid item xs={12} md={6}>
           <LabelValue
-            label="Allergies"
+            label={t("common:common.Allergies", "Allergies")}
             value={`${child?.profileInformation?.allergy || "-"}`}
             labelColor="#535F66"
             fontWeight={700}
@@ -135,7 +135,7 @@ const ChildSummary = ({ child }) => {
 
         <Grid item xs={12} md={6}>
           <LabelValue
-            label="Case worker"
+            label={t("common:common.Case worker", "Case worker")}
             value={`${child?.caseWorkerFirstName} ${child?.caseWorkerLastName ? child.caseWorkerLastName : ""}`}
             labelColor="#535F66"
             fontWeight={700}
@@ -143,7 +143,7 @@ const ChildSummary = ({ child }) => {
         </Grid>
         <Grid item xs={12} md={6}>
           <LabelValue
-            label="Case number"
+            label={t("common:common.Case number", "Case number")}
             // check whether case no is placement id
             value={`CHLD-${child?.childCode}`}
             labelColor="#535F66"

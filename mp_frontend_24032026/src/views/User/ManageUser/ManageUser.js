@@ -1,17 +1,33 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Box, Grid, Typography } from "@mui/material";
 import ChevronRightIcon from '../../../assets/icons/ChevronRight';
 import { useTranslation } from "react-i18next";
 import ManageUserForm from "../Components/ManageUserForm";
 import { isNil } from "lodash";
+import PageLoader from "../../../components/UserComponents/PageLoader";
+import useAuthorization from "../../../components/UserComponents/useAuthorization";
 
 const ManageUser = () => {
   const { t } = useTranslation(["common"]);
   const navigate = useNavigate();
   let { id } = useParams();
-
   const isAddForm = isNil(id);
+  const { authStatus, checkAuth } = useAuthorization(isAddForm ? "AddUser" : "EditUser");
+  
+  useEffect(() => {
+      document.title = "Team | Thrivewell";;
+      checkAuth();
+    }, []);
+  
+    if (authStatus === 'loading' || authStatus === 'idle') {
+      return <PageLoader />;
+    }
+  
+    if (authStatus === 'unauthorized') {
+      return null; // Or a custom message
+    }
+
 
   return (
     <>

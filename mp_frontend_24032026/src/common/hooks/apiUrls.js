@@ -31,7 +31,7 @@ const API_URLS = {
     }),
     root: "/system-messages",
   },
-  reports: createEndpoints("/report", {
+  reports: createEndpoints("/tw-report", {
     exportLegacyAssessmentScore: "/legacyDataExport",
   }),
   forms: createEndpoints("", {
@@ -80,6 +80,9 @@ const API_URLS = {
   dashboards: createEndpoints("/tw-report", {
     familySituationCounts: "/family-situation-counts",
     closedCases: "/case-closed-counts",
+  }),
+  common: createEndpoints("/mobile", {
+    initialUserData: "/initialize",
   }),
 };
 

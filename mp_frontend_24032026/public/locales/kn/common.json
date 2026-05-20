@@ -11,6 +11,10 @@
     "Import completed successfully": " ಯಶಸ್ವಿಯಾಗಿ ಆಮದು ಮಾಡಲಾಗಿದೆ, ಇತ್ತೀಚಿಗೆ ಆಮದು ಮಾಡಲಾದ  ಮಾಹಿತಿ ಪ್ರವೇಶಿಸಲು ದಯವಿಟ್ಟು ಪೇಜ್ ರಿಫ್ರೆಶ್ ಮಾಡಿ/ಮರುಭೇಟಿ ಮಾಡಿ",
     "Bad request": " ತಪ್ಪಾದ ಮನವಿ",
     "Import partially completed": "ಆಮದು ಭಾಗಶಃ ಪೂರ್ಣಗೊಂಡಿದೆ, ದಯವಿಟ್ಟು ಇತ್ತೀಚಿಗೆ ಆಮದು ಮಾಡಿದ ಡೇಟಾ ಪ್ರವೇಶಿಸಲು ಪೇಜ್ ರಿಫ್ರೆಶ್ ಮಾಡಿ/ಮರುಭೇಟಿ ಮಾಡಿ",
+    "FosterShare role": "ಫೋಸ್ಟರ್ ಶೇರ್ ಪಾತ್ರ",
+    "Thrive Scale role": "ಥ್ರೈವ್ ಸ್ಕೇಲ್ ಪಾತ್ರ",
+    "# active families": "# ಸಕ್ರಿಯ ಕುಟುಂಬಗಳು",
+    "# active children": "# ಸಕ್ರಿಯ ಮಕ್ಕಳು",
     "Data export started": "ಡೇಟಾ ಎಕ್ಸಪೋರ್ಟ್ ಪ್ರಾರಂಭವಾಗಿದೆ",
     "Export completed successfully": "ಎಕ್ಸಪೋರ್ಟ್ ಯಶಸ್ವಿಯಾಗಿ ಪೂರ್ಣಗೊಂಡಿದೆ",
     "Incorrect CSV": "ತಪ್ಪಾದ CSV",
@@ -608,8 +612,31 @@
     "Image link": "ಚಿತ್ರದ ಲಿಂಕ್",
     "Select categories": "ವರ್ಗಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ",
     "Select an account": "ಖಾತೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ",
-    "Action": "ಕ್ರಿಯೆ"
-
+    "Action": "ಕ್ರಿಯೆ",
+    "What happened": "ಏನು ನಡೆದಿದೆ",
+    "Submitted by": "ಸಲ್ಲಿಸಿದವರು",
+    "Name of Medication": "ಔಷಧಿಯ ಹೆಸರು",
+    "Dosage": "ಮಾತ್ರೆ",
+    "Strength": "ಶಕ್ತಿ",
+    "Administered Time": "ನೀಡಿದ ಸಮಯ",
+    "Logged time": "ಲಾಗ್ ಮಾಡಿದ ಸಮಯ",
+    "Administered By": "ನೀಡಿದವರು",
+    "Administered To": "ನೀಡಲ್ಪಟ್ಟವರು",
+    "Reason Missed": "ತಪ್ಪಿದ ಕಾರಣ",
+    "Date Missed": "ತಪ್ಪಿದ ದಿನಾಂಕ",
+    "Logged By": "ಲಾಗ್ ಮಾಡಿದವರು",
+    "Alternative Administrator": "ಪರ್ಯಾಯ ನಿರ್ವಾಹಕ",
+    "Medication Remaining": "ಉಳಿದ ಔಷಧಿ",
+    "Medication Properly Stored": "ಔಷಧಿಯನ್ನು ಸರಿಯಾಗಿ ಸಂಗ್ರಹಿಸಲಾಗಿದೆ",
+    "When did the incident take place?": "ಘಟನೆ ಯಾವಾಗ ನಡೆದಿದೆ?",
+    "Who was involved?": "ಯಾರು ಒಳಗೊಂಡಿದ್ದರು?",
+    "Please list names and ages of all individuals": "ದಯವಿಟ್ಟು ಎಲ್ಲಾ ವ್ಯಕ್ತಿಗಳ ಹೆಸರುಗಳು ಮತ್ತು ವಯಸ್ಸುಗಳನ್ನು ಪಟ್ಟಿ ಮಾಡಿ",
+    "Where did the incident occur?": "ಘಟನೆ ಎಲ್ಲಿಯಲ್ಲಿ ನಡೆದಿದೆ?",
+    "Describe the incident": "ಘಟನೆಯನ್ನು ವಿವರಿಸಿ",
+    "What was the resolution": "ಪರಿಹಾರ ಏನು?",
+    "Was the incident reported to the proper authorities?": "ಘಟನೆ ಸರಿಯಾದ ಅಧಿಕಾರಿಗಳಿಗೆ ವರದಿ ಮಾಡಲಾಗಿದೆಯೇ?",
+    "To whom was the incident reported?": "ಘಟನೆ ಯಾರಿಗೆ ವರದಿ ಮಾಡಲಾಗಿದೆ?",
+    "Is there anything else to note?": "ಗಮನಿಸಲು ಇನ್ನೇನಾದರೂ ಇದೆಯೇ?"
   },
   "signin": {
     "Sign in to your account": "ನಿಮ್ಮ ಖಾತೆಗೆ ಸೈನ್ ಇನ್ ಮಾಡಿ.",
@@ -1414,8 +1441,7 @@
     "Go to URL": "ಯುಆರ್‌ಎಲ್‌ಗೆ ಹೋಗಿ",
     "Support service information": "ಬೆಂಬಲ ಸೇವೆಯ ಮಾಹಿತಿ",
     "Case Status": "ಪ್ರಕರಣದ ಸ್ಥಿತಿ"
-    
-    
+ 
 },
 "tableColumn":{
   "Organization name": "ಸಂಸ್ಥೆಯ ಹೆಸರು",

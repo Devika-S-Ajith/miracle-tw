@@ -41,12 +41,14 @@ const FamilySummary = ({ t, family, mostRecentAssesmentSummary }) => {
     percentageChangeFromFirst !== null &&
     percentageChangeFromFirst !== undefined;
 
-
-  const statusLabel =
-    family?.status ||
+    let familyStatus = family?.status ||
     (isActive
       ? t("common:common.Active", "Active")
       : t("common:common.Case closed", "Case closed"));
+  let statusLabel = familyStatus;
+  if (family?.deactivationReason && family.deactivationReason.trim().length > 0) {
+    statusLabel = `${statusLabel} - ${family.deactivationReason}`;
+  }
 
 
   return (
@@ -74,13 +76,13 @@ const FamilySummary = ({ t, family, mostRecentAssesmentSummary }) => {
                 size="small"
                 sx={{
                   backgroundColor:
-                    statusLabel === "Active"
+                    familyStatus === "Active"
                       ? "#3DAA1D"
-                      : statusLabel === "Case closed" ||
-                          statusLabel === "Case Closed"
+                      : familyStatus === "Case closed" ||
+                          familyStatus === "Case Closed"
                         ? "#D6DBDE"
                         : "#b8e6e1",
-                  color: statusLabel === "Active" ? "white" : "black",
+                  color: familyStatus === "Active" ? "white" : "black",
                   fontSize: "0.75rem",
                   fontWeight: 600,
                   borderRadius: "20px",

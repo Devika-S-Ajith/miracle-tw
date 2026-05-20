@@ -1,12 +1,30 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import ChevronRightIcon from "../../../../assets/icons/ChevronRight";
+import useAuthorization from "../../../../components/UserComponents/useAuthorization";
+import PageLoader from "../../../../components/UserComponents/PageLoader";
 
 const ReportHeader = ({ reportHeaderText }) => {
   const navigate = useNavigate();
   const { t } = useTranslation(["common"]);
+  const { authStatus, checkAuth } = useAuthorization("Reports");
+  
+     useEffect(() => {
+        checkAuth();
+      }, []);
+    
+      if (authStatus === 'loading' || authStatus === 'idle') {
+        return <PageLoader />;
+      }
+    
+      if (authStatus === 'unauthorized') {
+        return null; // Or a custom message
+      }
+  
+
+
   return (
     <Box sx={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
       <Typography

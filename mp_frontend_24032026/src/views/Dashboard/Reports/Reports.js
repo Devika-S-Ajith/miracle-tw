@@ -28,6 +28,8 @@ import { ModalService } from "../../../components/Modal";
 import AutoCompleteDropdownToFilter from "../../../components/UserComponents/AutoCompleteDropdownToFilter";
 import toast from "react-hot-toast";
 import Loader from "../../../components/UserComponents/Loader";
+import PageLoader from "../../../components/UserComponents/PageLoader";
+import useAuthorization from "../../../components/UserComponents/useAuthorization";
 
 const ReportCollectionList = [
   {
@@ -87,7 +89,7 @@ const ReportCollectionList = [
     isExportOnly: true,
   },
   {
-    Name: "Legacy assessement score",
+    Name: "Legacy assessment score",
     ReportTitle: "reportLegacyAssessementScore",
     id: 24,
     isExportOnly: true,
@@ -180,9 +182,23 @@ const Reports = (props) => {
     }
   }, [signedinOrgType, signedinUserRoleHT]);
 
-  useEffect(() => {
-    document.title = "Reports | ThriveWell";
-  }, []);
+
+
+  const { authStatus, checkAuth } = useAuthorization("Reports");
+
+   useEffect(() => {
+      document.title = "Reports | ThriveWell";
+      checkAuth();
+    }, []);
+  
+    if (authStatus === 'loading' || authStatus === 'idle') {
+      return <PageLoader />;
+    }
+  
+    if (authStatus === 'unauthorized') {
+      return null; // Or a custom message
+    }
+
 
   const handleCountryChange = (value,close) => {
     setSelectedCountry(value);

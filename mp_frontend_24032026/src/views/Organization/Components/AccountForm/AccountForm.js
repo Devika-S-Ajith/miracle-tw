@@ -49,7 +49,7 @@ const AccountForm = (props) => {
   const [loadingActiveForms, setLoadingActiveForms] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation(["common"]);
-  const { organization, ...other } = props;
+  const { organization, loading, ...other } = props;
   const [isFosterShareChecked, setIsFosterShareChecked] = useState(
     Boolean(["BOTH", "FOSTER_SHARE"].includes(props.organization?.accessType))
   );
@@ -162,6 +162,7 @@ const [consentChecked, setConsentChecked] = useState(
 
   return (
     <Formik
+      enableReinitialize
       initialValues={{
         address1: organization?.addressLine1 || "",
         address2: organization?.addressLine2 || "",
@@ -410,7 +411,12 @@ const [consentChecked, setConsentChecked] = useState(
                   let errorMessage = res.body.Error.split(":");
                   toast.error(errorMessage[errorMessage.length - 1]);
                 } else {
-                  toast.error(t("common:common.Something went wrong"));
+                  const apiMessage =
+                    res?.body?.message == 'Account Name already Exist!' ?
+                    t("common:warnings.Organization Name is not unique")
+                    : t("common:common.Something went wrong");
+
+                  toast.error(apiMessage);
                 }
                 setStatus({ success: false });
                 setSubmitting(false);
@@ -449,6 +455,9 @@ const [consentChecked, setConsentChecked] = useState(
         return (
           <form onSubmit={handleSubmit} {...other}>
             <Grid container spacing={3}>
+              {loading && (
+                <CircularProgress sx={{ zIndex: 1000, position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }} color="primary" />
+              )}
               <Grid item md={7} xs={12}>
                 <Card sx={{ width: "100%", borderRadius: "4px", p: 2 }}>
                   {/* Todo - Change the title with translation */}

@@ -1,118 +1,125 @@
+// assets/authorizationConfig.js
 import {
   SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER, CASEWORKER, VIEW_ONLY,
   MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI,
   PARENT_ORGANIZATION
 } from '../helpers/constant';
+import Reports from '../views/Dashboard/Reports/Reports';
 
 export const authorizationConfig = {
-  AddChild: {
-    allowedRoles: [ADMIN, CASEWORKER, ADMIN_CASEWORKER],
-    allowedRolesFS: [ADMIN, CASEWORKER, ADMIN_CASEWORKER],
+
+  // ── Common modules (both TS + FS paths apply) ──────────────────────────
+
+  ManageChild: {
+    allowedRoles:    [ADMIN, CASEWORKER, ADMIN_CASEWORKER],
     allowedOrgTypes: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
-  },
-  EditChild: {
-    allowedRoles: [ADMIN, CASEWORKER, ADMIN_CASEWORKER],
-    allowedRolesFS: [ADMIN, CASEWORKER, ADMIN_CASEWORKER],
-    allowedOrgTypes: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+    allowedRolesFS:  [ADMIN, CASEWORKER, ADMIN_CASEWORKER],
   },
   ListChild: {
-    allowedRoles: [SUPER_ADMIN, ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY],
-    allowedRolesFS: [ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY],
-    allowedOrgTypes: [MIRACLE, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+    allowedRoles:    [SUPER_ADMIN, ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY],
+    allowedOrgTypes: [GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+    allowedRolesFS:  [ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY],
   },
   ManageFamily: {
-    allowedRoles: [ADMIN, CASEWORKER, ADMIN_CASEWORKER],
-    allowedRolesFS: [ADMIN, CASEWORKER, ADMIN_CASEWORKER],
-    allowedOrgTypes: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+    allowedRoles:    [ADMIN, CASEWORKER, ADMIN_CASEWORKER],
+    allowedOrgTypes: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+    allowedRolesFS:  [ADMIN, CASEWORKER, ADMIN_CASEWORKER],
   },
   ListFamily: {
-    allowedRoles: [ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY],
-    allowedRolesFS: [ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY],
-    allowedOrgTypes: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+    allowedRoles:    [ADMIN, CASEWORKER, ADMIN_CASEWORKER, VIEW_ONLY],
+    allowedOrgTypes: [ GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+    allowedRolesFS:  [ADMIN, CASEWORKER, ADMIN_CASEWORKER],
   },
-  ManageUser: {
-    allowedRoles: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER, CASEWORKER, VIEW_ONLY],
-    allowedRolesFS: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER, CASEWORKER],
+  AddUser: {
+    allowedRoles:    [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER],
     allowedOrgTypes: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI, PARENT_ORGANIZATION],
+    allowedRolesFS:  [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER],
+  },
+  EditUser: {
+    allowedRoles:    [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER, CASEWORKER, VIEW_ONLY],
+    allowedOrgTypes: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI, PARENT_ORGANIZATION],
+    allowedRolesFS:  [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER, CASEWORKER],
   },
   ListUser: {
-    allowedRoles: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER, CASEWORKER, VIEW_ONLY],
-    allowedRolesFS: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER, CASEWORKER],
+    allowedRoles:    [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER, CASEWORKER, VIEW_ONLY],
     allowedOrgTypes: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI, PARENT_ORGANIZATION],
+    allowedRolesFS:  [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER, CASEWORKER],
   },
-  UserDetails: {
-    allowedRoles: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER, CASEWORKER, VIEW_ONLY],
-    allowedRolesFS: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER, CASEWORKER],
+  EditAccount: {
+    allowedRoles:    [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER],
     allowedOrgTypes: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI, PARENT_ORGANIZATION],
-  },
-  ManageAccount: {
-    allowedRoles: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER],
-    allowedRolesFS: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER],
-    allowedOrgTypes: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI, PARENT_ORGANIZATION],
+    allowedRolesFS:  [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER],
   },
   AddAccount: {
-    allowedRoles: [SUPER_ADMIN],
-    allowedRolesFS: [SUPER_ADMIN],
+    allowedRoles:    [SUPER_ADMIN],
     allowedOrgTypes: [MIRACLE],
+    allowedRolesFS:  [SUPER_ADMIN],
   },
   ListAccount: {
-    allowedRoles: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER, CASEWORKER, VIEW_ONLY],
-    allowedRolesFS: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER, CASEWORKER],
+    allowedRoles:    [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER, CASEWORKER, VIEW_ONLY],
     allowedOrgTypes: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+    allowedRolesFS:  [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER, CASEWORKER],
   },
   Notification: {
-    allowedRoles: [ADMIN, ADMIN_CASEWORKER, CASEWORKER],
-    allowedRolesFS: [ADMIN, CASEWORKER, ADMIN_CASEWORKER],
+    allowedRoles:    [ADMIN, ADMIN_CASEWORKER, CASEWORKER],
     allowedOrgTypes: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+    allowedRolesFS:  [ADMIN, CASEWORKER, ADMIN_CASEWORKER],
   },
+  DashboardOverview: {
+    allowedRoles:    [SUPER_ADMIN, ADMIN,ADMIN_CASEWORKER, CASEWORKER, VIEW_ONLY],
+    allowedOrgTypes: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
+    allowedRolesFS:  [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER, CASEWORKER],
+  },
+
+  // ── TS-only modules (no allowedRolesFS) ───────────────────────────────
+
   FormList: {
-    allowedRoles: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER],
+    allowedRoles:    [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER],
     allowedOrgTypes: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
   },
   ManageForm: {
-    allowedRoles: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER],
+    allowedRoles:    [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER],
     allowedOrgTypes: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
   },
   Assessment: {
-    allowedRoles: [ADMIN, ADMIN_CASEWORKER, CASEWORKER],
+    allowedRoles:    [ADMIN, ADMIN_CASEWORKER, CASEWORKER],
     allowedOrgTypes: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
   },
-  DashboardOverview: {
-    allowedRolesFS: [SUPER_ADMIN, ADMIN, CASEWORKER, VIEW_ONLY],
-    allowedRoles: [SUPER_ADMIN, ADMIN, CASEWORKER, VIEW_ONLY],
+  Reports: {
+    allowedRoles:    [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER, CASEWORKER, VIEW_ONLY],
     allowedOrgTypes: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
   },
+
+
   GOVTOverview: {
-    allowedRoles: [ADMIN, VIEW_ONLY],
+    allowedRoles:    [ADMIN, VIEW_ONLY],
     allowedOrgTypes: [PARENT_ORGANIZATION],
   },
   GOVTDashboard: {
-    allowedRoles: [ADMIN, VIEW_ONLY],
+    allowedRoles:    [ADMIN, VIEW_ONLY],
     allowedOrgTypes: [PARENT_ORGANIZATION],
   },
   GOVTDashboardInterventions: {
-    allowedRoles: [ADMIN, ADMIN_CASEWORKER, CASEWORKER, VIEW_ONLY],
+    allowedRoles:    [ADMIN, ADMIN_CASEWORKER, CASEWORKER, VIEW_ONLY],
     allowedOrgTypes: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI, PARENT_ORGANIZATION],
   },
   GOVTDashboardMilestones: {
-    allowedRoles: [ADMIN, ADMIN_CASEWORKER, CASEWORKER, VIEW_ONLY],
+    allowedRoles:    [ADMIN, ADMIN_CASEWORKER, CASEWORKER, VIEW_ONLY],
     allowedOrgTypes: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI, PARENT_ORGANIZATION],
   },
-  FSDashboard: {
-    allowedRolesFS: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER, CASEWORKER],
-  },
-  Events: {
+
+// ── FS-only modules (no allowedRolesFS) ───────────────────────────────
+ 
+Events: {
     allowedRolesFS: [ADMIN, ADMIN_CASEWORKER, CASEWORKER],
   },
-  Message: {
+  Messages: {
     allowedRolesFS: [ADMIN, ADMIN_CASEWORKER, CASEWORKER],
-  },
-  SupportService: {
-    allowedRoles: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER],
-    allowedRolesFS: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER],
-    allowedOrgTypes: [MIRACLE, GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
   },
   Resource: {
     allowedRolesFS: [SUPER_ADMIN],
+  },
+  SupportService: {
+    allowedRolesFS:  [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER],
   },
 };

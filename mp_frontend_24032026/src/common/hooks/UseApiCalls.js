@@ -162,7 +162,7 @@ const CaseManagementReportURL = AppConfig.baseURL + "/tw-report/casemanagement";
 const CaseworkerServedURL = AppConfig.baseURL + "/tw-report/caseworkerserved";
 const FamiliesServedURL = AppConfig.baseURL + "/tw-report/familyserved";
 const DashboardOverallURL = AppConfig.baseURL + "/tw-report/dashboardOverall";
-const FSDashboardOverallURL = AppConfig.baseURL + "/fs-reports";
+const FSDashboardOverallURL = AppConfig.baseURL + "/fs-reports/summary";
 const ExportURL = AppConfig.baseURL + "/exportFile";
 
 const AverageThriveURL = AppConfig.baseURL + "/tw-report/averageThrivescale";
@@ -224,7 +224,7 @@ const createScheduleMessageURL = AppConfig.baseURL + "/fs-scheduled-message";
 const createMessageURL = AppConfig.baseURL + "/fs-message";
 const getScheduledMessageListURL = AppConfig.baseURL + "/fs-scheduled-messages";
 const getFamilyPerCaseWorkerURL =
-  AppConfig.baseURL + "/tw-reports/getFamiliesPerUser";
+  AppConfig.baseURL + "/fs-reports/getFamiliesPerUser";
 const getCaseManagerChildPerAccountURL =
   AppConfig.baseURL + "/fs-reports/getCaseManager-Child-PerAccount";
 
@@ -3617,6 +3617,8 @@ const APIS = {
   //Dashboards
   GetFamilySituatiionCounts: (payload) => APIS.makePostRequest(API_URLS.dashboards.familySituationCounts,payload),
   GetFamilyClosedCases: (payload) => APIS.makePostRequest(API_URLS.dashboards.closedCases,payload),
+  GetInitializeUserData: (payload) => APIS.makePostRequest(API_URLS.common.initialUserData, payload),
+  
 };
 
 export default APIS;

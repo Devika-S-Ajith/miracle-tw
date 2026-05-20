@@ -287,15 +287,18 @@ const ManageChildForm = ({
           let firstName = values.firstName;
           let lastName = values.lastName;
           let birthDate = values.dateOfBirth;
+          let gender = values.gender;
           if (key === "firstName") firstName = value;
           else if (key === "lastName") lastName = value;
           else if (key === "dateOfBirth") birthDate = value;
+          // else if (key === "gender") gender = value;
 
           const res = await APIS.CheckUniqueChild({
             id: id || null,
             firstName,
             lastName,
             birthDate,
+            gender
           });
           const isUnique = res.data?.data?.isUnique;
           if (!isUnique) {
@@ -782,7 +785,7 @@ const ManageChildForm = ({
         dirty,
         setFieldError,
         validateForm,
-        setFieldTouched,
+        setFieldTouched
       }) => {
         // Sync refs
         initialValuesRef.current = initialValues;
@@ -836,10 +839,10 @@ const ManageChildForm = ({
                         errors={errors}
                         touched={touched}
                         t={t}
+                        setFieldTouched={setFieldTouched}
                         handleChange={handleChange}
                         handleBlur={handleBlur}
                         setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
                         config={ChildBasicDetails({
                           childDropdownLists,
                           users,
@@ -872,7 +875,6 @@ const ManageChildForm = ({
                             handleChange={handleChange}
                             handleBlur={handleBlur}
                             setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
                             config={ChildAddressConditionalFields({
                               values,
                               handleSameAddressChange,
@@ -893,7 +895,6 @@ const ManageChildForm = ({
                             handleChange={handleChange}
                             handleBlur={handleBlur}
                             setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
                             config={ChildContactDetails({
                               StateList,
                               handleFamilyChange,
@@ -926,7 +927,6 @@ const ManageChildForm = ({
                               handleChange={handleChange}
                               handleBlur={handleBlur}
                               setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
                               locationList={locationList}
                               config={ChildAdditionalDetails({
                                 childDropdownLists,
@@ -958,7 +958,6 @@ const ManageChildForm = ({
                               handleChange={handleChange}
                               handleBlur={handleBlur}
                               setFieldValue={setFieldValue}
-                        setFieldTouched={setFieldTouched}
                               config={CaseManagementDetails(childDropdownLists)}
                               isDisabled={
                                 isSubmitting ||

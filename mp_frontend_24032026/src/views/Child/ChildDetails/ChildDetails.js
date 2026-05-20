@@ -39,20 +39,9 @@ import ChildLogs from "../Components/ChildLogs";
 import ManageChildForm from "../Components/ChildListTable/ChildDetailForms/ManageChildForm";
 import PageBreadcrumbs from "../../../components/PageBreadcrumbs/PageBreadcrumbs";
 import useCRUDPermissions from "../../../components/UserComponents/useCRUDPermissions";
+import useAuthorization from "../../../components/UserComponents/useAuthorization";
+import PageLoader from "../../../components/UserComponents/PageLoader";
                                                                     
-const tabs = [
-  { label: "Details", value: "details" },
-  { label: "Assessments & Progress Reports", value: "assessmentsProgressReports", id: "tab_assessments_progress_reports" },
- // { label: "Milestones", value: "Milestones" },
-  //{ label: "Interventions", value: "interventions", id: "tab_interventions" },
-  { label: "Follow - ups", value: "followUps" },
-  { label: "Thrive scale score trend", value: "Thrive scale score trend" },
-  { label: "History", value: "History" },
-  { label: "Documents", value: "Documents" },
-  { label: "Logs", value: "childLogs" },
-];
-
-
 
 const ChildDetails = () => {
   const navigate = useNavigate();
@@ -67,8 +56,6 @@ const ChildDetails = () => {
   const { t } = useTranslation(["common"]);
   const[memberList, setMemberList] = useState([]);
   const[childDetailsLoading, setChildDetailsLoading] = useState(false);
-  const [isActiveFamily,setIsActiveFamily] = useState(false);
-
   const [childModalOpen, setChildModalOpen] = useState(false);
   const [hideChildModal, setHideChildModal] = useState(false);
   const { 
@@ -77,6 +64,7 @@ const ChildDetails = () => {
     BOTH_FS_HT_ALLOWED, 
     IS_EDIT_ALLOWED 
   } = useCRUDPermissions();
+  const { authStatus, checkAuth } = useAuthorization("ListChild");
 
   const handleChildModalOpen = () => {
     setChildModalOpen(!childModalOpen);
@@ -86,8 +74,8 @@ const ChildDetails = () => {
     { label: "Details", value: "details", id: "details", Permission:BOTH_FS_HT_ALLOWED },
     { label: "Logs", value: "ConsolidatedLog", id: "childLogs", Permission:IS_FS_ALLOWED },
     { label: "Assessments & Progress Reports", value: "assessmentsProgressReports", id: "tab_assessments_progress_reports" , Permission:IS_HT_ALLOWED  },
-    //{ label: "Milestones", value: "milestones" ,id:"tab_milestones" },
-    //{ label: "Interventions", value: "interventions", id: "tab_interventions" },
+    { label: "Milestones", value: "milestones" ,id:"tab_milestones", Permission:IS_HT_ALLOWED },
+    { label: "Interventions", value: "interventions", id: "tab_interventions" , Permission:IS_HT_ALLOWED },
     { label: "Follow - ups", value: "followUps", id: "tab_follow_ups", Permission:IS_HT_ALLOWED },
     {
       label: "Thrive scale score trend",
@@ -134,18 +122,32 @@ const ChildDetails = () => {
     }
   }, [id]);
 
-    useEffect(() => {
+   
+  useEffect(() => {
     document.title = "Child | Details | ThriveWell";
-    getChildren();
-    return () => {};
-  }, [getChildren]);
+    checkAuth();
+  }, []); // Only runs once on mount, or based on your specific logic
+
+  useEffect(() => {
+    if (authStatus === 'authorized') {
+       getChildren();
+    }
+  }, [authStatus]);
+
+  if (authStatus === 'loading' || authStatus === 'idle') {
+    return <PageLoader />;
+  }
+
+  if (authStatus === 'unauthorized') {
+    return null; // Or a custom message
+  }
 
   const handleTabsChange = (event, value) => {
     setCurrentTab(value);
   };
-  // if (!children) {
-  //   return null;
-  // }
+
+
+ 
   const renderTabContent = () => {
     switch (currentTab) {
       case "details":
@@ -202,6 +204,7 @@ const ChildDetails = () => {
           }}
         >
           <ManageChildForm
+            hideChildModal={hideChildModal}
             handleChildModalOpen={handleChildModalOpen}
             id={id}
             // refreshData={getChildren}

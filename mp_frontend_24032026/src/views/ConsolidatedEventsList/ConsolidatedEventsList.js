@@ -9,26 +9,34 @@ import ManageEventsForm from "./EventsForm/ManageEventsForm";
 import PageBreadcrumbs from "../../components/PageBreadcrumbs/PageBreadcrumbs";
 import { ModalService } from "../../components/Modal";
 import ReusableTrendTable from "../Dashboard/GovtDashboardOverview/Components/ReusableTrendTable";
-const ConsolidatedEventsList = () => {
-  useEffect(() => {
-    document.title = "Events | Thrivewell";
-  }, []);
+import useAuthorization from "../../components/UserComponents/useAuthorization";
+import PageLoader from "../../components/UserComponents/PageLoader";
 
-  const navigate = useNavigate();
+const ConsolidatedEventsList = () => {
+  
+  
   const { t } = useTranslation(["common"]);
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
-  const [filterValues, setFilterValues] = useState({});
-  const [appliedFiltersChipArray, setAppliedFiltersChipArray] = useState([]);
   const [tableData, setTableData] = useState({
     data: [],
     pageCount: 1,
     totalCount: 0,
   });
-
+  const { authStatus, checkAuth } = useAuthorization("Events");
+  
   useEffect(() => {
-    getTableData();
-  }, []);
+      document.title = "Events | Thrivewell";;
+      checkAuth();
+    }, []);
+  
+  useEffect(() => {
+    if(authStatus === 'authorized') {
+      getTableData();
+    }
+  }, [authStatus]);
+
+  
 
   const columnDefinition = [
     {
@@ -147,6 +155,14 @@ const ConsolidatedEventsList = () => {
     </>
   );
 
+   if (authStatus === 'loading' || authStatus === 'idle') {
+      return <PageLoader />;
+    }
+  
+    if (authStatus === 'unauthorized') {
+      return null; // Or a custom message
+    }
+
   return (
     <>
       <Box
@@ -166,7 +182,7 @@ const ConsolidatedEventsList = () => {
               ]}
             />
 
-            <Box mt={2} mr>
+            {tableData && <Box mt={2} mr>
               <ReusableTrendTable
                 columns={columnDefinition}
                 searchable
@@ -192,7 +208,7 @@ const ConsolidatedEventsList = () => {
                 defaultSortFieldOrder={"desc"}
                 boldHeaders={false}
               />
-            </Box>
+            </Box>}
           </Grid>
         </Grid>
       </Box>

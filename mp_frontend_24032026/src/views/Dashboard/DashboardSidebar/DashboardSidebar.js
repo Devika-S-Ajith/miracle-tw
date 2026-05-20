@@ -143,8 +143,8 @@ const DashboardSidebar = (props) => {
           icon: <MilestonesIcon fontSize="small" />,
           orangeIcon: <MilestonesIconActive fontSize="small" />,
           HT_Allowed_Roles: [
-           // ADMIN,
-            //VIEW_ONLY,
+           ADMIN,
+           VIEW_ONLY,
           ],
           Allowed_Acc_Type: [
             PARENT_ORGANIZATION
@@ -155,7 +155,7 @@ const DashboardSidebar = (props) => {
           path: "/governmentDashboardMilestones",
           icon: <MilestonesIcon fontSize="small" />,
           orangeIcon: <MilestonesIconActive fontSize="small" />,
-         // HT_Allowed_Roles: [SUPER_ADMIN, ADMIN, CASEWORKER, ADMIN_CASEWORKER],
+          HT_Allowed_Roles: [SUPER_ADMIN, ADMIN, CASEWORKER, ADMIN_CASEWORKER],
           Allowed_Acc_Type: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
         },
         {
@@ -164,12 +164,20 @@ const DashboardSidebar = (props) => {
           icon: <InterventionsIcon fontSize="small" />,
           orangeIcon: <InterventionsIconActive fontSize="small" />,
           HT_Allowed_Roles: [
-            //ADMIN,
-           // VIEW_ONLY,
+            ADMIN,
+            VIEW_ONLY,
           ],
           Allowed_Acc_Type: [
             PARENT_ORGANIZATION
           ],
+        },
+         {
+          title: "Interventions",
+          path: "/governmentDashboardInterventions",
+          icon: <InterventionsIcon fontSize="small" />,
+          orangeIcon: <InterventionsIconActive fontSize="small" />,
+          HT_Allowed_Roles: [SUPER_ADMIN, ADMIN, CASEWORKER, ADMIN_CASEWORKER],
+          Allowed_Acc_Type: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
         },
          {
           title: "Families",
@@ -179,6 +187,19 @@ const DashboardSidebar = (props) => {
           HT_Allowed_Roles: [
             ADMIN,
            VIEW_ONLY,
+          ],
+          Allowed_Acc_Type: [
+            PARENT_ORGANIZATION
+          ],
+        },
+        {
+          title: "Children",
+          path: "/governmentDashboardChildren",
+          icon: <ChildIcon fontSize="small" />,
+          orangeIcon: <ChildIconActive fontSize="small" />,
+          HT_Allowed_Roles: [
+            ADMIN,
+            VIEW_ONLY,
           ],
           Allowed_Acc_Type: [
             PARENT_ORGANIZATION
@@ -241,21 +262,21 @@ const DashboardSidebar = (props) => {
             PRIVATE_CCI,
           ],
         },
-        {
-          title: "Forms",
-          path: "/dashboard/forms",
-          icon: <FormsIcon fontSize="small" />,
-          orangeIcon: <FormsIconActive fontSize="small" />,
-          HT_Allowed_Roles: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER],
-          FS_Allowed_Roles: [],
-          Allowed_Acc_Type: [
-            MIRACLE,
-            GOVT_CCI,
-            GOVT_ORG,
-            NGO_PARTNER,
-            PRIVATE_CCI,
-          ],
-        },
+        // {
+        //   title: "Forms",
+        //   path: "/dashboard/forms",
+        //   icon: <FormsIcon fontSize="small" />,
+        //   orangeIcon: <FormsIconActive fontSize="small" />,
+        //   HT_Allowed_Roles: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER],
+        //   FS_Allowed_Roles: [],
+        //   Allowed_Acc_Type: [
+        //     MIRACLE,
+        //     GOVT_CCI,
+        //     GOVT_ORG,
+        //     NGO_PARTNER,
+        //     PRIVATE_CCI,
+        //   ],
+        // },
         {
           title: "Events",
           path: "/dashboard/events",
@@ -275,13 +296,13 @@ const DashboardSidebar = (props) => {
           orangeIcon: <MessagesIconActive fontSize="small" />,
           FS_Allowed_Roles: [ADMIN, CASEWORKER, ADMIN_CASEWORKER ],
         },
-        {
-          title: "Support Services",
-          path: "/admin/support-services",
-          icon: <SupportServicesIcon fontSize="small" />,
-          orangeIcon: <SupportServicesIconActive fontSize="small" />,
-          FS_Allowed_Roles: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER],
-        },
+        // {
+        //   title: "Support Services",
+        //   path: "/admin/support-services",
+        //   icon: <SupportServicesIcon fontSize="small" />,
+        //   orangeIcon: <SupportServicesIconActive fontSize="small" />,
+        //   FS_Allowed_Roles: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER],
+        // },
         {
           title: "Resources",
           path: "/fostershare/resources",
@@ -369,7 +390,28 @@ const DashboardSidebar = (props) => {
             PARENT_ORGANIZATION
           ],
         },
- 
+        {
+          title: "Forms",
+          path: "/dashboard/forms",
+          icon: <FormsIcon fontSize="small" />,
+          orangeIcon: <FormsIconActive fontSize="small" />,
+          HT_Allowed_Roles: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER],
+          FS_Allowed_Roles: [],
+          Allowed_Acc_Type: [
+            MIRACLE,
+            GOVT_CCI,
+            GOVT_ORG,
+            NGO_PARTNER,
+            PRIVATE_CCI,
+          ],
+        },
+        {
+          title: "Support Services",
+          path: "/admin/support-services",
+          icon: <SupportServicesIcon fontSize="small" />,
+          orangeIcon: <SupportServicesIconActive fontSize="small" />,
+          FS_Allowed_Roles: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER],
+        },
       ],
     },
   ];

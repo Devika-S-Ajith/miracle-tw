@@ -53,7 +53,6 @@ const MedLogDetails = ({ medLogDetail }) => {
     }
   }, []);
 
-  console.log("medLogDetail", medLogDetail);
   return (
     <Card>
       <CardContent>

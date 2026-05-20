@@ -14,6 +14,7 @@ import APIS from "../../../../../common/hooks/UseApiCalls";
 import Loader from "../../../../../components/UserComponents/Loader";
 import { renderAnswerColumn } from "../helperFunction";
 import { utcToDateFormat } from "../../../../../helpers/helperFunction";
+import { useTranslation } from "react-i18next";
 
 const GenericLogDetails = ({
   moduleName,
@@ -22,6 +23,7 @@ const GenericLogDetails = ({
   close,
   logName,
 }) => {
+  const { t } = useTranslation(["common"]);
   const navigate = useNavigate();
   const [genericLogDetail, setGenericLogDetail] = useState([]);
   const [filtertedDecodeTemplate, setFiltertedDecodeTemplate] = useState([]);
@@ -30,10 +32,6 @@ const GenericLogDetails = ({
   const resetRouter = () => {
     navigate(`/dashboard/${moduleName}/${moduleId}/view`)
   };
-
-  useEffect(() => {
-    getGenericLogDetail();
-  }, [behavioralLogId]);
 
   const getGenericLogDetail = useCallback(async () => {
     setLoading(true);
@@ -92,7 +90,11 @@ const GenericLogDetails = ({
       console.error(err);
       setLoading(false);
     }
-  }, []);
+  }, [behavioralLogId]);
+
+  useEffect(() => {
+    getGenericLogDetail();
+  }, [getGenericLogDetail]);
 
   return (
     <>
@@ -111,7 +113,7 @@ const GenericLogDetails = ({
               color="textPrimary"
               variant="h5"
             >
-              {logName} Details
+              {logName} {t("common:common.Details", "Details")}
             </Typography>
             <Typography color="textPrimary" variant="h6">
               {genericLogDetail?.childName}
@@ -133,7 +135,7 @@ const GenericLogDetails = ({
               sx={{ color: "text.secondary" }}
               fontWeight="bold"
             >
-              Submitted by: {genericLogDetail?.submittedBy}
+              {t("common:common.Submitted by", "Submitted by")}: {genericLogDetail?.submittedBy}
             </Typography>
           </Box>
         </Box>
@@ -167,7 +169,7 @@ const GenericLogDetails = ({
                         variant="subtitle1"
                         sx={{ color: "text.secondary" }}
                       >
-                        Question
+                        {t("common:common.Question", "Question")}
                       </Typography>
                     </TableCell>
                     <TableCell>
@@ -176,7 +178,7 @@ const GenericLogDetails = ({
                         variant="subtitle1"
                         sx={{ color: "text.secondary" }}
                       >
-                        Response
+                        {t("common:common.Response", "Response")}
                       </Typography>
                     </TableCell>
                   </TableRow>
@@ -188,7 +190,7 @@ const GenericLogDetails = ({
                         <TableRow hover key={item?.page}>
                           <TableCell>
                             <Typography variant="subtitle2" fontWeight="bold">
-                              {individualItem?.components[index]?.displayLabel}
+                              {t(`common:common.${individualItem?.components[index]?.displayLabel}`, individualItem?.components[index]?.displayLabel)}
                             </Typography>
                           </TableCell>
                           <TableCell>
@@ -216,7 +218,7 @@ const GenericLogDetails = ({
             resetRouter();
           }}
         >
-          Close
+          {t("common:common.Close", "Close")}
         </Button>
       </Box>
     </>

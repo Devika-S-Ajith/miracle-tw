@@ -7,25 +7,23 @@ import useSettings from "../../../common/hooks/UseSettings";
 import APIS from "../../../common/hooks/UseApiCalls";
 import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
 import { useTranslation } from "react-i18next";
+import PageLoader from "../../../components/UserComponents/PageLoader";
+import useAuthorization from "../../../components/UserComponents/useAuthorization";
 
 const UserDetails = () => {
-  const { getUserTokens } = useContext(CommonDataContext);
   const navigate = useNavigate();
-  // const mounted = useMounted();
-  const { settings } = useSettings();
-  // const [customer, setCustomer] = useState(null);
-  // const [loading, setLoading] = useState(false);
   const { t } = useTranslation(["common"]);
-  // const [users, setUsers] = useState(null);
   const [user, setUser] = useState(null);
-  const orgId = localStorage.getItem("orgId");
-  const [currentTab, setCurrentTab] = useState("details");
   let { id } = useParams();
-
   const { locationList } = useContext(CommonDataContext);
-
   const [selectedCountry, setSelectedCountry] = useState(null);
-
+  const { authStatus, checkAuth } = useAuthorization("ListUser");
+    
+    useEffect(() => {
+        document.title = "Team | Thrivewell";;
+        checkAuth();
+      }, []);
+    
   useEffect(() => {
     if (locationList.length) {
       setSelectedCountry(
@@ -34,11 +32,7 @@ const UserDetails = () => {
     }
   }, [locationList]);
 
-  useEffect(() => {
-    //gtm.push({ event: 'page_view' });
-    //getUserTokens();
-  }, []);
-
+ 
   const getUsers = useCallback(async () => {
     try {
       const data = await APIS.UserDetails(id);
@@ -49,14 +43,18 @@ const UserDetails = () => {
   }, []);
 
   useEffect(() => {
-    document.title = "Team | Details | ThriveWell";
-    //getCustomer();
-    getUsers();
-  }, []);
+    if (authStatus === 'authorized') {
+      getUsers();
+    }
+  }, [authStatus]);
 
-  const handleTabsChange = (event, value) => {
-    setCurrentTab(value);
-  };
+  if (authStatus === 'loading' || authStatus === 'idle') {
+    return <PageLoader />;
+  }
+
+  if (authStatus === 'unauthorized') {
+    return null; // Or a custom message
+  }
 
   return (
     <>

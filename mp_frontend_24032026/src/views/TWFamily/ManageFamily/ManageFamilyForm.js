@@ -36,7 +36,7 @@ const ManageFamilyForm = (props) => {
 
     const location = useLocation();
     const mode = location.state?.mode;
-    const { family, careGiver } = props;
+    const { family, careGiver , loading=false } = props;
     const { t } = useTranslation(["common"]);
     const navigate = useNavigate();
     const { locationList, getFamilyList, relationList, htLanguagesList, situationsAndGoals, signedinUserRoleHT, getTsFamilyListData, familyDropdownLists,childDropdownLists } =

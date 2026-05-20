@@ -48,6 +48,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { styled } from "@mui/system";
 import useAuthorization from "../../../components/UserComponents/useAuthorization";
 import OptionsHelperText from "./OptionsHelperText";
+import PageLoader from "../../../components/UserComponents/PageLoader";
 
 const useStyles = makeStyles((theme) => ({
   progress: {
@@ -129,14 +130,18 @@ const PreviewForm = (props) => {
   const [currentquestiondata, setcurrentquestiondata] =
     useState(currentQuestionData);
   const [newFormId, setNewFormId] = useState();
+  const { authStatus, checkAuth } = useAuthorization("FormList");
 
   useEffect(() => {
-    if (id !== null) {
+      document.title = "Forms | ThriveWell";
+      checkAuth();
+    }, []);
+
+  useEffect(() => {
+    if (id !== null && authStatus === "authorized") {
       getFormQuestions(id, selectedLanguageId);
     }
-  }, [id]);
-
-  useAuthorization(signedinUserRoleHT, null, signedinOrgType, "FormList", true);
+  }, [id, authStatus]);
 
   useEffect(() => {
     if (currentDomain) {
@@ -202,7 +207,7 @@ const PreviewForm = (props) => {
       const data = await APIS.FormPreviewQuestions(formId, HTLanguageId);
 
       setFormQuestions(
-        data && data.data && data.data.form.HT_formQuestionMappings
+        data && data.data && data.data.form.TW_formQuestionMappings
       );
       setPrimaryChoices(data && data.data && data.data.primaryChoices);
       const domainData = await APIS.DomainList();
@@ -516,6 +521,15 @@ const PreviewForm = (props) => {
       false
     setNewFormQuestions(updatedFormQuestions);
   };
+
+    if (authStatus === 'loading' || authStatus === 'idle') {
+      return <PageLoader />;
+    }
+  
+    if (authStatus === 'unauthorized') {
+      return null; // Or a custom message
+    }
+
 
   return (
     <>

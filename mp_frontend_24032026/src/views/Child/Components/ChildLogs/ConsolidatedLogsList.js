@@ -461,11 +461,11 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
         mr={2}
       >
         <FormControl size="small" sx={{ minWidth: 140 }}>
-          <InputLabel id="log-type-label">Log Type</InputLabel>
+          <InputLabel id="log-type-label">{t("common:tableColumn.Log type", "Log type")}</InputLabel>
           <Select
             labelId="log-type-label"
             value={logType}
-            label="Log Type"
+            label={t("common:tableColumn.Log type", "Log type")}
             onChange={(e) => setLogType(e.target.value)}
           >
             {logTypes.map((type) => (
@@ -477,7 +477,7 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
         </FormControl>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
-            label="From"
+            label={t("common:tableColumn.From", "From")}
             value={fromDate}
             onChange={(newValue) => setFromDate(newValue)}
             maxDate={toDate}
@@ -499,7 +499,7 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
         </LocalizationProvider>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
-            label="To"
+            label={t("common:tableColumn.To", "To")}
             value={toDate}
             onChange={(newValue) => setToDate(newValue)}
             minDate={fromDate}
@@ -529,7 +529,7 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
           variant="outlined"
           disabled={isExportDisabled()}
         >
-          Export
+          {t("common:common.Export", "Export")}
         </LoadingButton>
       </Stack>
     </>

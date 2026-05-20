@@ -33,8 +33,7 @@ import FamilyInterventions from "./FamilyInterventions";
 import ConsolidatedAssessmentProgressReport from "../../../components/ConsolidatedAssessmentProgressReport";
 import ChildLogs from "../../Child/Components/ChildLogs";
 import useCRUDPermissions from "../../../components/UserComponents/useCRUDPermissions";
-
-
+import PageLoader from "../../../components/UserComponents/PageLoader";
 
 
 
@@ -52,14 +51,15 @@ const FamilyDetails = () => {
     BOTH_FS_HT_ALLOWED, 
     IS_EDIT_ALLOWED 
   } = useCRUDPermissions();
+  const { authStatus, checkAuth } = useAuthorization("ListFamily");
 
 
   const tabs = [
     { label: "Details", value: "details", id: "tab_details", Permission:BOTH_FS_HT_ALLOWED },
     { label: "Logs", value: "ConsolidatedLog", id: "tab_logs", Permission:IS_FS_ALLOWED },
     { label: "Assessments & Progress Reports", value: "assessmentsProgressReports", id: "tab_assessments_progress_reports" , Permission:IS_HT_ALLOWED  },
-    //{ label: "Milestones", value: "milestones" ,id:"tab_milestones" },
-    //{ label: "Interventions", value: "interventions", id: "tab_interventions" },
+    { label: "Milestones", value: "milestones" ,id:"tab_milestones" ,  Permission:IS_HT_ALLOWED },
+    { label: "Interventions", value: "interventions", id: "tab_interventions" , Permission:IS_HT_ALLOWED },
     { label: "Follow - ups", value: "followUps", id: "tab_follow_ups", Permission:IS_HT_ALLOWED },
     {
       label: "Thrive scale score trend",
@@ -71,28 +71,7 @@ const FamilyDetails = () => {
     { label: "Documents", value: "documents", id: "tab_documents", Permission:BOTH_FS_HT_ALLOWED },
   ];
 
-  useEffect(() => {
-    if (locationValues) {
-      setCurrentTab(locationValues.tabvalue);
-    }
-  }, []);
-
   let { id } = useParams();
-
- 
-  useEffect(() => {
-    document.title = "Family | Details | ThriveWell";
-    getFamilyDetails();
-    return () => {};
-  }, []);
-
-  // useAuthorization(
-  //   signedinUserRoleHT,
-  //   signedinUserRoleFS,
-  //   signedinOrgType,
-  //   "ManageFamily",
-  //   true
-  // );
 
   const getFamilyDetails = useCallback(async () => {
     setLoading(true);
@@ -109,6 +88,31 @@ const FamilyDetails = () => {
     }
     setLoading(false);
   }, []);
+
+  useEffect(() => {
+    if (locationValues) {
+      setCurrentTab(locationValues.tabvalue);
+    }
+  }, [locationValues]);
+
+  useEffect(() => {
+    document.title = "Family | Details | ThriveWell";
+    checkAuth();
+  }, []); // Only runs once on mount, or based on your specific logic
+
+  useEffect(() => {
+    if (authStatus === 'authorized') {
+      getFamilyDetails();
+    }
+  }, [authStatus]);
+
+  if (authStatus === 'loading' || authStatus === 'idle') {
+    return <PageLoader />;
+  }
+
+  if (authStatus === 'unauthorized') {
+    return null; // Or a custom message
+  }
 
   const handleTabsChange = (event, value) => {
     setCurrentTab(value);

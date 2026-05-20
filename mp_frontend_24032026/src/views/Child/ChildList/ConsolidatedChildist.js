@@ -27,6 +27,8 @@ import ManageChildForm from "../Components/ChildListTable/ChildDetailForms/Manag
 import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
 import CloseIcon from "@mui/icons-material/Close";
 import { GenerateFileName } from "../../../helpers/helperFunction";
+import useAuthorization from "../../../components/UserComponents/useAuthorization";
+import PageLoader from "../../../components/UserComponents/PageLoader";
 
 const statusOptions = [
   { label: "Active", value: "Active", key: "Status" },
@@ -50,12 +52,14 @@ const ConsolidatedChildList = (props) => {
   const open = Boolean(menuState?.anchorEl);
   const [childModalOpen, setChildModalOpen] = useState(false);
   const [hideChildModal, setHideChildModal] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const handleChildModalOpen = () => {
     setChildModalOpen(!childModalOpen);
   };
   const handleClick = (event, row) => {
     setMenuState({ anchorEl: event.currentTarget, row });
   };
+   const { authStatus, checkAuth } = useAuthorization("ListChild");
 
   const handleClose = () => {
     setMenuState({ anchorEl: null, row: null });
@@ -217,7 +221,7 @@ const ConsolidatedChildList = (props) => {
     setApiError(null);
     const {
       sort = "childName",
-      order = "desc",
+      order = "asc",
       page,
       rowCount,
       search = "",
@@ -279,12 +283,30 @@ const ConsolidatedChildList = (props) => {
     }
   }, []);
 
-  useEffect(() => {
-    getTableData();
-    getUserList();
-  }, []);
+ 
+   
 
-    const tableExtraButtons = ({ query, appliedFiltersChipArray }) => {
+  useEffect(() => {
+    if (authStatus === 'authorized') {
+      getTableData();
+      getUserList();
+    }
+  }, [authStatus]);
+
+   useEffect(() => {
+    document.title = "Child | ThriveWell";
+    checkAuth();
+  }, []); // Only runs once on mount, or based on your specific logic
+
+  if (authStatus === 'loading' || authStatus === 'idle') {
+    return <PageLoader />;
+  }
+
+  if (authStatus === 'unauthorized') {
+    return null; // Or a custom message
+  }
+
+  const tableExtraButtons = ({ query, appliedFiltersChipArray }) => {
     const selectedStatuses =
       (appliedFiltersChipArray?.status || []).map((s) => s.value) || [];
     const derivedStatusFilter =
@@ -344,7 +366,6 @@ const ConsolidatedChildList = (props) => {
       </>
     );
   };
-
 
   const filterComponent = (
     <>
@@ -465,7 +486,6 @@ const ConsolidatedChildList = (props) => {
     setFilterValues(clearedFilters);
   };
 
-   const [isExporting, setIsExporting] = useState(false);
   const exportChildren = async ({ query, statusFilter } = {}) => {
     setIsExporting(true);
     try {

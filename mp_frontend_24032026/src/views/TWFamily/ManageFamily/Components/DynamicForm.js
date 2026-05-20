@@ -30,7 +30,6 @@ const DynamicForm = ({
     handleChange,
     handleBlur,
     setFieldValue,
-    setFieldTouched,
     situationsAndGoals,
     locationList,
     htLanguagesList,
@@ -47,7 +46,8 @@ const DynamicForm = ({
     initialTextValue = '',
     phoneRef = null,
     isDisabled = false,
-    key=null
+    key=null,
+    setFieldTouched
 }) => {
 
     const currentValueRef = useRef(''); // Ref to keep track of current value for onClose events
@@ -266,10 +266,12 @@ const getFieldTouched = (name) => get(touched, name, false);
                                         ? dayjs(newValue).toISOString()
                                         : null;
 
+
                                 if (handleDateChange) {
                                     handleDateChange(isoValue, fullFieldName);
                                     return;
                                 }
+
 
                                 Promise.resolve(
                                     setFieldValue(fullFieldName, isoValue, true),

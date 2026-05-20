@@ -12,22 +12,28 @@ import AddFamilyMemberModal from '../../../TWFamily/ManageFamily/Components/AddF
 import FamilyMemberCard from '../../../TWFamily/ManageFamily/Components/FamilyMemberCard';
 import { useNavigate } from 'react-router';
 
+
+
+
+
 const FamilyMembersTable = ({ members, refreshData }) => {
   const { t } = useTranslation(['common']);
   const {familyDropdownLists} = useContext(CommonDataContext);
   const [hideChildModal, setHideChildModal] = useState(false);
-  const [childModalOpen, setChildModalOpen] = useState(false);
-  const [activeChildId, setActiveChildId] = useState(null);
-  const navigate = useNavigate();
-
-  const handleChildModalOpen = () => {
-    setChildModalOpen(!childModalOpen);
-  };
+   const navigate = useNavigate();
   const getRoleBackgroundColor = (roleType) => {
     if (roleType === 'child') return '#F29D64';
     return '#6BC4CE';
   };
-
+  const [childModalOpen, setChildModalOpen] = useState(false);
+  const [activeChildId, setActiveChildId] = useState(null);
+  	 const handleChildModalOpen = () => {
+    setChildModalOpen(!childModalOpen);
+  };
+  const handleChildEdit = (child) => {
+    setActiveChildId(child?.id || null);
+    setChildModalOpen(true);
+  };
 
   const getRoleTextColor = (roleType) => {
     if (roleType === 'child') return '#000000';
@@ -54,16 +60,12 @@ const FamilyMembersTable = ({ members, refreshData }) => {
   }
 
 
-  const handleChildEdit = (child) => {
-    setActiveChildId(child?.id || null);
-    setChildModalOpen(true);
-  };
-
-  const handleEditMember = (member) => {
+const handleEditMember = (member) => {
     if (["3", "9"].includes(member.TWFamilyRelationId)) {
       handleChildEdit(member);
       return;
     }
+
 
     const updatedConfig = {
       width: '30%',
@@ -75,6 +77,7 @@ const FamilyMembersTable = ({ members, refreshData }) => {
         : ` ${t('common:common.Deactivated')} ${member?.deactivatedDate ?? ''}`,
       enableClose: true,
     };
+
 
     ModalService.open(
       ({ close }) => (
@@ -205,7 +208,7 @@ const FamilyMembersTable = ({ members, refreshData }) => {
 
   return (
     <>
-      <Modal
+     <Modal
         open={childModalOpen}
         onClose={handleChildModalOpen}
         sx={{ visibility: hideChildModal ? "hidden" : "visible" }}
@@ -231,20 +234,20 @@ const FamilyMembersTable = ({ members, refreshData }) => {
           />
         </Box>
       </Modal>
-      <ReusableTrendTable
-        columns={columnDefinition}
-        title={t("common:family.Family members and caregivers", "Family members and caregivers ({{count}})", { count: members?.length || 0 })}
-        subheader=""
-        tableData={members || []}
-        loading={false}
-        skeltonRowcount={5}
-        apiError={false}
-        searchable={false}
-        enablePagination={false}
-        onReload={() => {}}
-        t={t}
-        boldHeaders={false}
-      />
+    <ReusableTrendTable
+      columns={columnDefinition}
+      title={t("common:family.Family members and caregivers", "Family members and caregivers ({{count}})", { count: members?.length || 0 })}
+      subheader=""
+      tableData={members || []}
+      loading={false}
+      skeltonRowcount={5}
+      apiError={false}
+      searchable={false}
+      enablePagination={false}
+      onReload={() => {}}
+      t={t}
+      boldHeaders={false}
+    />
     </>
   );
 };

@@ -11,6 +11,8 @@ import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import ChevronRightIcon from "../../../assets/icons/ChevronRight";
 import { SUPER_ADMIN } from "../../../helpers/constant";
+import useAuthorization from "../../../components/UserComponents/useAuthorization";
+import PageLoader from "../../../components/UserComponents/PageLoader";
 
 const UserList = () => {
   const { signedinUserRoleHT } =
@@ -35,6 +37,15 @@ const UserList = () => {
   });
   const [isExportDisabled, setIsExportDisabled] = useState(true);
   const loggedInUserOrgId = localStorage.getItem("orgId");
+  const { authStatus, checkAuth } = useAuthorization("ListUser");
+  
+  useEffect(() => {
+      document.title = "Team | Thrivewell";;
+      checkAuth();
+    }, []);
+  
+   
+
 
   const getUserListpayloadConstant = {
     rowCount: "10",
@@ -47,7 +58,7 @@ const UserList = () => {
   };
 
   useEffect(() => {
-    document.title = "Team | ThriveWell";
+    if (authStatus === 'authorized') {
     setLoading(true);
     getOrgList();
     if (localStorage.getItem("userPageData") === null) {
@@ -64,7 +75,8 @@ const UserList = () => {
       setPageData({ ...localPageData });
       getUserList(pageObject);
     }
-  }, []);
+  }
+  }, [authStatus]);
 
   const handleAddOrg = () => {
     navigate("/dashboard/team/add");
@@ -187,6 +199,14 @@ const UserList = () => {
       console.error(err);
     }
   }, [mounted]);
+
+   if (authStatus === 'loading' || authStatus === 'idle') {
+      return <PageLoader />;
+    }
+  
+    if (authStatus === 'unauthorized') {
+      return null; // Or a custom message
+    }
 
   return (
     <>
