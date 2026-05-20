@@ -1,5 +1,5 @@
 import React, { useContext, useMemo, useState } from 'react';
-import { Typography, Box, IconButton, Stack } from '@mui/material';
+import { Typography, Box, IconButton, Stack, Modal } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import ReusableTrendTable from '../../../Dashboard/GovtDashboardOverview/Components/ReusableTrendTable';
@@ -10,18 +10,19 @@ import { ModalService } from '../../../../components/Modal';
 import ManageChildForm from '../../../Child/Components/ChildListTable/ChildDetailForms/ManageChildForm';
 import AddFamilyMemberModal from '../../../TWFamily/ManageFamily/Components/AddFamilyMemberModal';
 import FamilyMemberCard from '../../../TWFamily/ManageFamily/Components/FamilyMemberCard';
-import { nav } from 'aws-amplify';
 import { useNavigate } from 'react-router';
 
-
-
-
-
-const FamilyMembersTable = ({ members }) => {
+const FamilyMembersTable = ({ members, refreshData }) => {
   const { t } = useTranslation(['common']);
   const {familyDropdownLists} = useContext(CommonDataContext);
   const [hideChildModal, setHideChildModal] = useState(false);
-   const navigate = useNavigate();
+  const [childModalOpen, setChildModalOpen] = useState(false);
+  const [activeChildId, setActiveChildId] = useState(null);
+  const navigate = useNavigate();
+
+  const handleChildModalOpen = () => {
+    setChildModalOpen(!childModalOpen);
+  };
   const getRoleBackgroundColor = (roleType) => {
     if (roleType === 'child') return '#F29D64';
     return '#6BC4CE';
@@ -53,53 +54,43 @@ const FamilyMembersTable = ({ members }) => {
   }
 
 
+  const handleChildEdit = (child) => {
+    setActiveChildId(child?.id || null);
+    setChildModalOpen(true);
+  };
+
   const handleEditMember = (member) => {
-    const modalConfig = {
+    if (["3", "9"].includes(member.TWFamilyRelationId)) {
+      handleChildEdit(member);
+      return;
+    }
+
+    const updatedConfig = {
       width: '30%',
       hideModalFooter: true,
       maxHeight: "90%",
-      
+      modalTitle: t('common:family.Family member or caregiver', 'Family member or caregiver'),
+      modalExtraTitle: member.isActive
+        ? ` ${t('common:common.Active')}`
+        : ` ${t('common:common.Deactivated')} ${member?.deactivatedDate ?? ''}`,
+      enableClose: true,
     };
 
-    const updatedConfig = !member.isChild
-      ? {
-        ...modalConfig,
-        modalTitle: t('common:family.Family member or caregiver', 'Family member or caregiver'),
-        modalExtraTitle: member.isActive
-          ? ` ${t('common:common.Active')}`
-          : ` ${t('common:common.Deactivated')} ${member?.deactivatedDate ?? ''}`,
-        enableClose: true,
-      }
-      : modalConfig;
-
-
-    ["3", "9"].includes(member.TWFamilyRelationId)
-      ? ModalService.open(
-        ({ close }) => (
-          <ManageChildForm
-            hideChildModal={hideChildModal}
-            childInfo={member}
-            id={member?.id || null}
-            setHideChildModal={setHideChildModal}
-          />
-        ),
-        updatedConfig,
-      )
-      : ModalService.open(
-        ({ close }) => (
-          <AddFamilyMemberModal
-            onClose={close}
-            member={member}
-            isMemberActive={member?.isActive}
-            dropdownValues={{
-              familyRelations: familyDropdownLists?.familyRelations.filter(
-                (relation) => relation.groupValue !== "Child",
-              ),
-            }}
-          />
-        ),
-        updatedConfig,
-      );
+    ModalService.open(
+      ({ close }) => (
+        <AddFamilyMemberModal
+          onClose={close}
+          member={member}
+          isMemberActive={member?.isActive}
+          dropdownValues={{
+            familyRelations: familyDropdownLists?.familyRelations.filter(
+              (relation) => relation.groupValue !== "Child",
+            ),
+          }}
+        />
+      ),
+      updatedConfig,
+    );
   };
 
   const columnDefinition = useMemo(
@@ -213,20 +204,48 @@ const FamilyMembersTable = ({ members }) => {
 
 
   return (
-    <ReusableTrendTable
-      columns={columnDefinition}
-      title={t("common:family.Family members and caregivers", "Family members and caregivers ({{count}})", { count: members?.length || 0 })}
-      subheader=""
-      tableData={members || []}
-      loading={false}
-      skeltonRowcount={5}
-      apiError={false}
-      searchable={false}
-      enablePagination={false}
-      onReload={() => {}}
-      t={t}
-      boldHeaders={false}
-    />
+    <>
+      <Modal
+        open={childModalOpen}
+        onClose={handleChildModalOpen}
+        sx={{ visibility: hideChildModal ? "hidden" : "visible" }}
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: { xs: "90%", sm: 500, md: 600, lg: 700 },
+            bgcolor: "background.paper",
+            p: 3,
+            boxShadow: 24,
+          }}
+        >
+          <ManageChildForm
+            hideChildModal={hideChildModal}
+            handleChildModalOpen={handleChildModalOpen}
+            id={activeChildId}
+            setHideChildModal={setHideChildModal}
+            refreshData={refreshData}
+          />
+        </Box>
+      </Modal>
+      <ReusableTrendTable
+        columns={columnDefinition}
+        title={t("common:family.Family members and caregivers", "Family members and caregivers ({{count}})", { count: members?.length || 0 })}
+        subheader=""
+        tableData={members || []}
+        loading={false}
+        skeltonRowcount={5}
+        apiError={false}
+        searchable={false}
+        enablePagination={false}
+        onReload={() => {}}
+        t={t}
+        boldHeaders={false}
+      />
+    </>
   );
 };
 

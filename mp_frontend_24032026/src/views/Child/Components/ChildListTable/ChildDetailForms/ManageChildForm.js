@@ -782,6 +782,7 @@ const ManageChildForm = ({
         dirty,
         setFieldError,
         validateForm,
+        setFieldTouched,
       }) => {
         // Sync refs
         initialValuesRef.current = initialValues;
@@ -838,6 +839,7 @@ const ManageChildForm = ({
                         handleChange={handleChange}
                         handleBlur={handleBlur}
                         setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
                         config={ChildBasicDetails({
                           childDropdownLists,
                           users,
@@ -870,6 +872,7 @@ const ManageChildForm = ({
                             handleChange={handleChange}
                             handleBlur={handleBlur}
                             setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
                             config={ChildAddressConditionalFields({
                               values,
                               handleSameAddressChange,
@@ -890,6 +893,7 @@ const ManageChildForm = ({
                             handleChange={handleChange}
                             handleBlur={handleBlur}
                             setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
                             config={ChildContactDetails({
                               StateList,
                               handleFamilyChange,
@@ -922,6 +926,7 @@ const ManageChildForm = ({
                               handleChange={handleChange}
                               handleBlur={handleBlur}
                               setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
                               locationList={locationList}
                               config={ChildAdditionalDetails({
                                 childDropdownLists,
@@ -953,6 +958,7 @@ const ManageChildForm = ({
                               handleChange={handleChange}
                               handleBlur={handleBlur}
                               setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
                               config={CaseManagementDetails(childDropdownLists)}
                               isDisabled={
                                 isSubmitting ||

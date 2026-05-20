@@ -30,6 +30,7 @@ const DynamicForm = ({
     handleChange,
     handleBlur,
     setFieldValue,
+    setFieldTouched,
     situationsAndGoals,
     locationList,
     htLanguagesList,
@@ -260,19 +261,28 @@ const getFieldTouched = (name) => get(touched, name, false);
                             id={`${fullFieldName}`}
                             disabled={isDisabled}
                             onChange={(newValue) => {
-                                // If custom handleDateChange is provided, use it
-                                currentValueRef.current = newValue ? newValue : '';
+                                const isoValue =
+                                    newValue && dayjs(newValue).isValid()
+                                        ? dayjs(newValue).toISOString()
+                                        : null;
+
                                 if (handleDateChange) {
-                                    handleDateChange(new Date(newValue).toISOString(), fullFieldName);
-                                } else {
-                                    // Otherwise, just set the field value
-                                    setFieldValue(fullFieldName, new Date(newValue).toISOString());
-                                    fieldProps?.onChange?.(newValue); // Call any custom onChange provided in fieldProps
+                                    handleDateChange(isoValue, fullFieldName);
+                                    return;
                                 }
+
+                                Promise.resolve(
+                                    setFieldValue(fullFieldName, isoValue, true),
+                                ).then(() => {
+                                    setFieldTouched?.(fullFieldName, true, false);
+                                });
+                                fieldProps?.onChange?.(newValue);
                             }}
-                             onClose={() => {
-                                 // Trigger blur event when date picker closes
-                                handleBlur?.({ target: { name: fullFieldName, value: currentValueRef.current } });
+                            onClose={() => {
+                                // Defer blur so Formik state updates before validation runs
+                                requestAnimationFrame(() => {
+                                    handleBlur?.({ target: { name: fullFieldName } });
+                                });
                             }}
                             maxDate={dayjs().endOf('day')}
                             slots={{

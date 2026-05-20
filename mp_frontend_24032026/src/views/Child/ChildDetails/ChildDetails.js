@@ -150,7 +150,7 @@ const ChildDetails = () => {
     switch (currentTab) {
       case "details":
         return (
-          <ChildBasicDetails child={children} members={memberList} />
+          <ChildBasicDetails child={children} members={memberList} refreshData={getChildren} />
         );
       case "Assessments":
         return <Assessments childId={children.id} />;

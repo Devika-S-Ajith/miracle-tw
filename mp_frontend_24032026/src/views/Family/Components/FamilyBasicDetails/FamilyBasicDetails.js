@@ -20,7 +20,7 @@ import { ChildOverviewList } from "../../../Child/Components/ChildBasicDetails/C
 import FamilyMembersAndCaregivers from "../FamilyMembersAndCaregivers";
 import useCRUDPermissions from "../../../../components/UserComponents/useCRUDPermissions";
 
-const FamilyBasicDetails = ({ family }) => {
+const FamilyBasicDetails = ({ family, refreshData }) => {
   const { signedinUserRoleHT, signedinUserRoleFS } = useContext(CommonDataContext);
   const { t } = useTranslation(["common"]);
   const [mostRecentAssesmentSummary, setMostRecentAssesmentSummary] = useState({});
@@ -62,7 +62,7 @@ const FamilyBasicDetails = ({ family }) => {
 
   const MembersWidget = BOTH_FS_HT_ALLOWED && (
     <Box sx={{ height: "fit-content", width: "100%" }}>
-      <FamilyMembersAndCaregivers members={family?.members} />
+      <FamilyMembersAndCaregivers members={family?.members} refreshData={refreshData} />
     </Box>
   );
 

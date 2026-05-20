@@ -124,6 +124,7 @@ const FamilyDetails = () => {
               {family && (
                 <FamilyBasicDetails
                   family={family}
+                  refreshData={getFamilyDetails}
                 />
               )}
             </Grid>

@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Masonry } from "@mui/lab";
 import FamilyMembersAndCaregivers from "../../../Family/Components/FamilyMembersAndCaregivers";
 
-const ChildBasicDetails = ({ child, members }) => {
+const ChildBasicDetails = ({ child, members, refreshData }) => {
   const { t } = useTranslation(["common"]);
   const childId = child?.id;
 
@@ -38,7 +38,7 @@ const ChildBasicDetails = ({ child, members }) => {
         <MostReccentAssessmentSummary />
       </Box> */}
       <Box height="fit-content">
-        <FamilyMembersAndCaregivers members={members} />
+        <FamilyMembersAndCaregivers members={members} refreshData={refreshData} />
       </Box>
     </Masonry>
   );
