@@ -99,6 +99,7 @@
     "Organization": "సంస్థ",
     "OrganizationId": "సంస్థ గుర్తింపు ",
     "Child ID": "పిల్లల గుర్తింపు ",
+    "Yes, Remove member": "అవును, సభ్యుడిని తీసివేయండి",
     "Family ID": "కుటుంబ గుర్తింపు ",
     "FirstName": "మొదటి పేరు",
     "LastName": "ఇంటిపేరు",
@@ -1261,7 +1262,8 @@
     "DOB is required": "జనన తేదీ అవసరం",
     "Summary is required": "సారాంశం అవసరం",
     "Article link is required": "వ్యాస లింక్ అవసరం",
-    "Image link is required": "చిత్ర లింక్ అవసరం"
+    "Image link is required": "చిత్ర లింక్ అవసరం",
+    "Date of birth cannot be in the future": "పుట్టిన తేదీ భవిష్యత్తులో ఉండకూడదు"
   },
   "message": {
     "Title": "శీర్షిక",

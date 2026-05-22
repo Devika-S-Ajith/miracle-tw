@@ -233,8 +233,7 @@ const BehaviorLogDetails = ({
                   borderColor="#DBE2E7"
                   borderRadius={1}
                   p={1.5}
-                  minHeight="10%"
-                  maxHeight={200}
+                  height={100}
                   overflow="scroll"
                   sx={{
                     display: "flex",
@@ -325,8 +324,7 @@ const BehaviorLogDetails = ({
                   border={2}
                   borderColor="#DBE2E7"
                   borderRadius={1}
-                  minHeight="10%"
-                  maxHeight={150}
+                  height={100}
                   overflow="scroll"
                   sx={{
                     display: "flex",

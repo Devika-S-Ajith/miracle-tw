@@ -247,7 +247,7 @@ const LogOverviewList = ({ module, listData }) => {
       >
         Recently submitted behavior logs
       </Typography> */}
-      <SmallText value="Recently submitted behavior logs" fontWeight={600} />
+      {/* <SmallText value="Recently submitted behavior logs" fontWeight={600} /> */}
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <Grid container spacing={2} my alignItems="center">
           {(module !== "children") && (

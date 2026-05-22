@@ -193,7 +193,7 @@ export const ChildContactDetails = ({
 export const ChildAdditionalDetails = ({
   phoneRef,
   childDropdownLists,
-  allLanguagesList,
+  languagesList,
 }) => {
   return [
     {
@@ -223,7 +223,7 @@ export const ChildAdditionalDetails = ({
       required: false,
       validateOnChange: true,
       options:
-        allLanguagesList.map((language) => ({
+        languagesList.map((language) => ({
           id: language.id,
           value: language.language,
         })) || [],

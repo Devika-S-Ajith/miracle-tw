@@ -98,6 +98,7 @@
     "Child ID": "Child ID",
     "Family ID": "Family ID",
     "FirstName": "First name",
+    "Yes, Remove member": "Yes, Remove member",
     "LastName": "Last name",
     "Family Name": "Family Name",
     "Id": "ID",
@@ -1325,7 +1326,8 @@
     "DOB is required": "DOB is required",
     "Summary is required": "Summary is required",
     "Article link is required": "Article link is required",
-    "Image link is required": "Image link is required"
+    "Image link is required": "Image link is required",
+    "Date of birth cannot be in the future": "Date of birth cannot be in the future"
   },
   "message": {
     "Title": "Title",

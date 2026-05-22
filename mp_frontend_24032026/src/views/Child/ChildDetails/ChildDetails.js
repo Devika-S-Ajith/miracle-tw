@@ -156,9 +156,9 @@ const ChildDetails = () => {
         );
       case "Assessments":
         return <Assessments childId={children.id} />;
-      case "Documents":
+      case "documents":
         return <Documents childId={children.id} active={children?.isActive} />;
-      case "History":
+      case "history":
         return <ChildHistory id={children.id} caseId={children.TWCaseId} />;
       case "Thrive scale score trend":
         return <RadarGraph childId={children.id} />;
@@ -172,7 +172,7 @@ const ChildDetails = () => {
             <ConsolidatedAssessmentProgressReport id={children.id} pageType="CHILD" />;
           </Box>
         );
-        case "Milestones":
+        case "milestones":
           return <ChildMilestones familyMembers={memberList}  familyName={children?.familyName}/>;
       case "interventions":
         return <ChildInterventions childId={children?.id} memberList={memberList} />;

@@ -27,7 +27,7 @@ const CustomDialogModal = ({ progressReportData, progressReportModal, assessment
 		try {
 			setLoading(true)
 			let payload = {
-				"HTAssessmentId": assessmentIdForReport
+				"TWAssessmentId": assessmentIdForReport
 			}
 			let fileName = `ProgressReport_${progressReportData?.type=="FAMILY"?progressReportData?.familyName:progressReportData?.childName}_${progressReportData?.followUpCompletedOn}.pdf`
 			const data = await APIS.generateFollowUpProgressPdf(payload);

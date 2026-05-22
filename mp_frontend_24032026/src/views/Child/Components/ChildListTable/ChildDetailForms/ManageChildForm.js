@@ -66,7 +66,7 @@ const ManageChildForm = ({
   const initialValuesRef = useRef({});
   const valuesRef = useRef({});
   const isFormDirtyRef = useRef(false);
-  const { childDropdownLists, locationList, allLanguagesList } =
+  const { childDropdownLists, locationList, htLanguagesList, fsLanguagesList } =
     useContext(CommonDataContext);
   const [users, setUsers] = useState([]);
   const [familyList, setFamilyList] = useState([]);
@@ -482,7 +482,7 @@ const ManageChildForm = ({
           dateOfCWSEntry:
             childDetails?.caseManagementInformation?.dateOfCWSEntry || null, // From commented Date of CWS entry
           TWChildPlacementStatusId:
-            childDetails?.TWChildPlacementStatusId || null, // From commented dropdown
+            childDetails?.caseManagementInformation?.TWChildPlacementStatusId || null, // From commented dropdown
           level: childDetails?.caseManagementInformation?.level || null,
           medicaidNumber:
             childDetails?.caseManagementInformation?.medicaidNumber || null,
@@ -523,6 +523,17 @@ const ManageChildForm = ({
             ),
           )
           .typeError("Invalid date")
+          .test(
+            "is-not-future-date",
+            t(
+              "common:warnings.Date of birth cannot be in the future",
+              "Date of birth cannot be in the future"
+            ),
+            (value) => {
+              if (!value) return true; // Allow empty values to be handled by required
+              return dayjs(value).isBefore(dayjs(), "day");
+            }
+          )
           .nullable(),
         TWFamilyId: Yup.string().nullable(),
         caseWorkerId: Yup.string()
@@ -930,7 +941,7 @@ const ManageChildForm = ({
                               locationList={locationList}
                               config={ChildAdditionalDetails({
                                 childDropdownLists,
-                                allLanguagesList,
+                                languagesList: localStorage.getItem("userRegion") == "1" ? htLanguagesList : fsLanguagesList,
                                 phoneRef,
                               })}
                               isDisabled={

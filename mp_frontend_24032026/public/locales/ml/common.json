@@ -99,6 +99,7 @@
     "Organization": "സ്ഥാപനം",
     "OrganizationId": "സ്ഥാപന ഐഡി",
     "Child ID": "കുട്ടിയുടെ ഐഡി",
+    "Yes, Remove member": "അതെ, അംഗത്തെ നീക്കം ചെയ്യുക",
     "Family ID": "കുടുംബത്തിന്റെ ഐഡി",
     "FirstName": "പ്രഥമ നാമം",
     "LastName": "ഒടുവിലത്തെ നാമം",
@@ -1264,8 +1265,8 @@
     "DOB is required": "ജനന തീയതി ആവശ്യമാണ്",
     "Summary is required": "സംഗ്രഹം ആവശ്യമാണ്",
     "Article link is required": "ലേഖന ലിങ്ക് ആവശ്യമാണ്",
-    "Image link is required": "ചിത്ര ലിങ്ക് ആവശ്യമാണ്"
-
+    "Image link is required": "ചിത്ര ലിങ്ക് ആവശ്യമാണ്",
+    "Date of birth cannot be in the future": "ജനന തീയതി ഭാവിയിൽ ആയിരിക്കരുത്"
   },
   "message": {
     "Title": "ശീർഷകം",

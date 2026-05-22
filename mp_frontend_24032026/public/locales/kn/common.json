@@ -99,6 +99,7 @@
     "Organization": "ಸಂಸ್ಥೆ",
     "OrganizationId": "ಸಂಸ್ಥೆಯ ಐಡಿ",
     "Child ID": "ಮಕ್ಕಳ ಐಡಿ",
+    "Yes, Remove member": "ಹೌದು, ಸದಸ್ಯರನ್ನು ತೆಗೆದುಹಾಕಿ",
     "Family ID": "ಕುಟುಂಬದ ಐಡಿ",
     "FirstName": "ಮೊದಲ ಹೆಸರು",
     "LastName": "ಕೊನೆಯ ಹೆಸರು",
@@ -1261,7 +1262,8 @@
     "DOB is required": "ಜನ್ಮ ದಿನಾಂಕ ಅಗತ್ಯವಿದೆ",
     "Summary is required": "ಸಾರಾಂಶ ಅಗತ್ಯವಿದೆ",
     "Article link is required": "ಲೇಖದ ಲಿಂಕ್ ಅಗತ್ಯವಿದೆ",
-    "Image link is required": "ಚಿತ್ರದ ಲಿಂಕ್ ಅಗತ್ಯವಿದೆ"
+    "Image link is required": "ಚಿತ್ರದ ಲಿಂಕ್ ಅಗತ್ಯವಿದೆ",
+    "Date of birth cannot be in the future": "ಹುಟ್ಟಿದ ದಿನಾಂಕ ಭವಿಷ್ಯದಲ್ಲಿ ಇರಲು ಸಾಧ್ಯವಿಲ್ಲ"
   },
   "message": {
     "Title": "ಶೀರ್ಷಿಕೆ",

@@ -92,7 +92,7 @@ const FamilyProgressReport = (props) => {
     try {
       setLoading(true);
       let payload = {
-        HTAssessmentId: assessmentId,
+        TWAssessmentId: assessmentId,
       };
       const data = await APIS.viewFollowUpProgress(payload);
       setProgressReportModal(true);

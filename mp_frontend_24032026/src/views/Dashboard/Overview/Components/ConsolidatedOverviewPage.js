@@ -65,8 +65,7 @@ const ConsolidatedOverviewPage = () => {
           title="Current living condition"
           res={data}
           loading={loading}
-          reportLink="/dashboard/reportsCurrentLivingCondition"
-          canViewReport={true}
+          canViewReport={false}
         />
       ),
     },
@@ -194,15 +193,11 @@ const ConsolidatedOverviewPage = () => {
         const familySituationResponse = await APIS.GetFamilySituatiionCounts(payload);
         const closedCasesResponse = await APIS.GetFamilyClosedCases(payload);
         let data = {
-          overallOverdue: response?.data?.message?.overallOverdue || 0,
+          overallOverdue: response?.data?.message?.data?.overallOverdue || 0,
           familySituation: familySituationResponse?.data?.message || [],
           closedCases: closedCasesResponse?.data?.message || [],
-          currentLivingCondition: response?.data?.message?.currentLivingCondition || [],
+          currentLivingCondition: response?.data?.message?.data?.childPlacement?.[0] || [],
         };
-         console.log("familySituationResponse", data.familySituation);
-        // if (response && response.status === 200) {
-        //   setTileData({ ...response.data.message });
-        // }
         setTileData({ ...data });
       } catch (err) {
         console.error(err);

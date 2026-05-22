@@ -95,6 +95,7 @@
     "Organization": " সংস্থা",
     "OrganizationId": " সংস্থার আইডি",
     "Child ID": " শিশুর আইডি",
+    "Yes, Remove member": "হ্যাঁ, সদস্য সরান",
     "Family ID": " পরিবারের আইডি",
     "FirstName": " প্রথম নাম",
     "LastName": " শেষ নাম",
@@ -1256,7 +1257,8 @@
     "DOB is required": "জন্ম তারিখ প্রয়োজন",
     "Summary is required": "সারাংশ প্রয়োজন",
     "Article link is required": "প্রবন্ধের লিংক প্রয়োজন",
-    "Image link is required": "ছবির লিংক প্রয়োজন"
+    "Image link is required": "ছবির লিংক প্রয়োজন",
+    "Date of birth cannot be in the future": "জন্ম তারিখ ভবিষ্যতে হতে পারে না"
   },
   "message": {
     "Title": " শিরোনাম ",

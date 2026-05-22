@@ -473,7 +473,7 @@ const InlineMemberCreation = ({
                             close();
                         }}
                     >
-                        {t('common:common.Yes,Remove member')}
+                        {t('common:common.Yes, Remove member', 'Yes, Remove member')}
                     </Button>
                 </Box>
             </Box>

@@ -326,7 +326,7 @@ const AddFamilyMemberModal = ({ onClose, getMemberDetails,familyId, member, isFa
                                             dropdownValues={dropdownValues}
                                             t={t}
                                         />
-                                        <AccordionSection title={t("common:family.Profile information", "Profile information")}>
+                                        <AccordionSection title={t("common:family.Profile information", "Profile information")} defaultExpanded={true}>
                                             <Grid container spacing={1}>
                                                 <DynamicForm
                                                     config={modalMemberPersonalFormConfig({phoneRef})}

@@ -162,6 +162,7 @@ const OrganizationalOverview = ({ isGeneralDashboard = false , isSuperAdmin = fa
        <OrganizationOverviewCard
         data={data.filter((item) => item.allowInSuperAdminOverview)}
         title="Organizational Overview"
+        loading={loading}
         apiError={apiError}
         onReload={fetchData}
         colSize={3}   

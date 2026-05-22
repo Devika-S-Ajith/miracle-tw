@@ -117,7 +117,7 @@ function ProgressReport() {
           style={{ borderRadius: 4 }}
           variant="contained"
           size="small"
-          onClick={() => handleViewProgressReport(item.HTAssessmentId)}
+          onClick={() => handleViewProgressReport(item?.TWAssessmentId)}
         >
           View
         </Button>
@@ -171,7 +171,7 @@ function ProgressReport() {
     try {
       setLoading(true);
       let payload = {
-        HTAssessmentId: assessmentId,
+        TWAssessmentId: assessmentId,
       };
       const data = await APIS.viewFollowUpProgress(payload);
       setProgressReportModal(true);

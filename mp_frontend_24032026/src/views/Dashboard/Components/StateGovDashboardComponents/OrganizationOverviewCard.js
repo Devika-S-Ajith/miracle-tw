@@ -42,7 +42,7 @@ const OrganizationOverviewCard = ({
           </Box>
         </Grid>
       ) : loading ? (
-        Array.from({ length: data?.length || 3 }).map((_, idx) => (
+        Array.from({ length: data?.length || 4 }).map((_, idx) => (
           <Grid item xs={12} sm={6} md={3} key={idx}>
             <Skeleton
               variant="rectangular"

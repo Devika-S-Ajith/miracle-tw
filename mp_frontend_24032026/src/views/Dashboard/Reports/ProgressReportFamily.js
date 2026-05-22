@@ -116,7 +116,7 @@ function ProgressReportFamily() {
           style={{ borderRadius: 4 }}
           variant="contained"
           size="small"
-          onClick={() => handleViewProgressReport(item.HTAssessmentId)}
+          onClick={() => handleViewProgressReport(item.TWAssessmentId)}
         >
           View
         </Button>
@@ -163,7 +163,7 @@ function ProgressReportFamily() {
 const getProgressReportData = useCallback(async (assessmentId) => {
   try {
     setLoading(true);
-    const payload = { HTAssessmentId: assessmentId };
+    const payload = { TWAssessmentId: assessmentId };
     const data = await APIS.viewFollowUpProgress(payload);
     
     if (data?.data?.data) {
@@ -319,7 +319,10 @@ useEffect(() => {
         fromDate: startdateformat,
         toDate: enddateformat,
         type: "list",
-        listType:"FAMILY"
+        listType:"FAMILY",
+        TWCountryId: countryFilter || "",
+        stateFilter: stateFilter || "",
+        districtFilter: districtFilter || "",
       };
       const data = await APIS.generarateProgressReportList(payload);
       if (data?.data) {

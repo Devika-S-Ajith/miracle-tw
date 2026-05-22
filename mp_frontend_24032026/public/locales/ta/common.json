@@ -99,6 +99,7 @@
     "Organization": "நிறுவனம்",
     "OrganizationId": "நிறுவன எண்",
     "Child ID": "குழந்தை எண்",
+      "Yes, Remove member": "ஆம், உறுப்பினரை நீக்கு",
     "Family ID": "குடும்ப எண்",
     "FirstName": "முதல் பெயர்",
     "LastName": "கடைசி பெயர்",
@@ -1271,7 +1272,8 @@
     "DOB is required": "பிறந்த தேதி அவசியம்",
     "Summary is required": "சுருக்கம் அவசியம்",
     "Article link is required": "கட்டுரை இணைப்பு அவசியம்",
-    "Image link is required": "பட இணைப்பு அவசியம்"
+    "Image link is required": "பட இணைப்பு அவசியம்",
+    "Date of birth cannot be in the future": "பிறந்த தேதி எதிர்காலத்தில் இருக்க முடியாது"
   },
   "message": {
     "Title": "Title",

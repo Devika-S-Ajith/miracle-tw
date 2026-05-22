@@ -98,6 +98,7 @@
     "Organization": "संस्था",
     "OrganizationId": "संस्था आईडी",
     "Child ID": "बच्चे की आईडी",
+    "Yes, Remove member": "हाँ, सदस्य को हटाएं",
     "Family ID": "परिवार आईडी",
     "FirstName": "पहला नाम",
     "LastName": "अंतिम नाम",
@@ -1249,7 +1250,8 @@
     "DOB is required": "जन्म तिथि आवश्यक है",
     "Summary is required": "सारांश आवश्यक है",
     "Article link is required": "लेख लिंक आवश्यक है",
-    "Image link is required": "छवि लिंक आवश्यक है"
+    "Image link is required": "छवि लिंक आवश्यक है",
+    "Date of birth cannot be in the future": "जन्म तिथि भविष्य में नहीं हो सकती"
   },
   "message": {
     "Title": "Title",

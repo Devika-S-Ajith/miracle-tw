@@ -85,7 +85,6 @@ const ReportsPieChart = (props) => {
             navigate(reportLink, {
               state: {
                 fromDashboard: true,
-                filters: { status:['Inactive']}
               },
             })
           }

@@ -2037,8 +2037,8 @@ const APIS = {
   ScoreForEachChild({childId, familyId}) {
     let prerequest = this.PreRequestCall();
     return axios.all([prerequest]).then((res) => {
-      const CompleteScoreURL = ScoreURL + (childId ? `?TWChildId=${childId}` :`?TWFamilyId=${familyId}`);
-      return axios
+        const CompleteScoreURL = ScoreURL + (childId ? `?TWChildId=${childId}` :`?TWFamilyId=${familyId}`);
+        return axios
         .get(CompleteScoreURL)
         .then((response) => {
           return response;
@@ -2543,29 +2543,7 @@ const APIS = {
         });
     });
   },
-  CloseCase(payload) {
-    let prerequest = this.PreRequestCall();
-    return axios.all([prerequest]).then((res) => {
-      return axios
-        .patch(CloseCaseURL, payload)
-        .then((response) => {
-          return response;
-        })
-        .catch((error) => {
-          console.log(error);
-          let errorObject = {
-            status: "",
-            body: {},
-          };
-          if (error.request) {
-            errorObject.status = error.request.status;
-            errorObject.body = JSON.parse(error.request.response);
-            return errorObject;
-          }
-          console.log("error", error);
-        });
-    });
-  },
+ 
   DisruptionCases(payload) {
     let prerequest = this.PreRequestCall();
     return axios.all([prerequest]).then((res) => {

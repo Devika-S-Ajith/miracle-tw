@@ -32,6 +32,7 @@ import { fr } from "date-fns/locale";
 import useAuthorization from "../../../components/UserComponents/useAuthorization";
 import PageLoader from "../../../components/UserComponents/PageLoader";
 
+
 const ConsolidatedFamilyList = (props) => {
   const { t } = useTranslation(["common"]);
   const navigate = useNavigate();
@@ -40,18 +41,16 @@ const ConsolidatedFamilyList = (props) => {
   const [tableData, setTableData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
-  const [filterValues, setFilterValues] = useState(fromDashboard ? location.state.filters : { caseStatus: [], caseworkerId: [] });
-  const [appliedFiltersChipArray, setAppliedFiltersChipArray] = useState({ caseStatus: [], caseworkerId: [] });
+  const [filterValues, setFilterValues] = useState(fromDashboard ? {caseStatus:  [{ label: "Inactive", value: "Closed", key: "Case Status" }], caseworkerId: [] } : { caseStatus: [], caseworkerId: [] });
+  const [appliedFiltersChipArray, setAppliedFiltersChipArray] = useState(fromDashboard ? {caseStatus:  [{ label: "Inactive", value: "Closed", key: "Case Status" }], caseworkerId: [] } : { caseStatus: [], caseworkerId: [] });
   const [query, setQuery] = useState("");
   const { signedinUserRoleHT, signedinUserRoleFS, signedinOrgId } = useContext(CommonDataContext);
   const [users, setUsers] = useState([]);
   const { htLanguagesList, signedInOrgName, userIdData } =
     useContext(CommonDataContext);
-  const { IS_EDIT_ALLOWED,CAN_DELETE } = useCRUDPermissions();
+  const { IS_EDIT_ALLOWED } = useCRUDPermissions();
 
-  
-
-const statusOptions = [
+  const statusOptions = [
     { label: "Active", value: "Open", key: "Case Status" },
     { label: "Inactive", value: "Closed", key: "Case Status" },
   ]
@@ -138,8 +137,7 @@ const statusOptions = [
         </>
       ),
     },
-    { id: "caseworker", label: t("common:infoCard.Case manager", "Case manager"), enableSorting: true },
-
+    { id: "caseworker", label: t("common:infoCard.Case manager", "Case Manager"), enableSorting: true },
     { id: "noOfMembers", label: t("common:common.No of Caregivers", "No of Caregivers"), enableSorting: true },
     { id: "noOfChildren", label: t("common:common.No of Children", "No of Children"), enableSorting: true },
     {

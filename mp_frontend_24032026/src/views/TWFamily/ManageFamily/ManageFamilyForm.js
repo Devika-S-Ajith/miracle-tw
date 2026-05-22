@@ -399,6 +399,7 @@ const ManageFamilyForm = (props) => {
                 familyName: Yup.string()
                     .max(255)
                     .nullable()
+                    .test('not-empty', t("common:warnings.Family Name is required", "Family Name is required"), value => !value || value.trim().length > 0)
                     .required(t("common:warnings.Family Name is required", "Family Name is required")),
                 address1: Yup.string()
                     .nullable()
@@ -471,13 +472,14 @@ const ManageFamilyForm = (props) => {
                         firstName: Yup.string()
                             .nullable()
                             .max(255)
+                            .test('not-empty', t('common:warnings.First Name is required', 'First Name is required'), value => !value || value.trim().length > 0)
                             .when('TWFamilyRelationId', (TWFamilyRelationId, schema) => {
                                return TWFamilyRelationId ? schema.required(t('common:warnings.First Name is required', 'First Name is required')) : schema;
-
                             }),
                         lastName: Yup.string()
                             .nullable()
                             .max(255)
+                            .test('not-empty', 'Last Name is required', value => !value || value.trim().length > 0)
                             .when('TWFamilyRelationId', (TWFamilyRelationId, schema) => {
                                 return TWFamilyRelationId && !['3','9'].includes(TWFamilyRelationId) ? schema.required('Last Name is required') : schema;
                             }),
@@ -485,7 +487,18 @@ const ManageFamilyForm = (props) => {
                             .nullable()
                             .when('TWFamilyRelationId', (TWFamilyRelationId, schema) => {
                                 return ["3", "9"].includes(TWFamilyRelationId) ? schema.required(t('common:warnings.DOB is required', 'DOB is required')) : schema;
-                            }),
+                            })
+                            .test(
+                                "is-not-future-date",
+                                t(
+                                    "common:warnings.Date of birth cannot be in the future",
+                                    "Date of birth cannot be in the future"
+                                ),
+                                (value) => {
+                                    if (!value) return true; // Allow empty values to be handled by required
+                                    return dayjs(value).isBefore(dayjs(), "day");
+                                }
+                            ),
                         gender: Yup.string()
                             .nullable()
                             .max(255)
