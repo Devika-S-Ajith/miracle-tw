@@ -46,7 +46,7 @@ const API_URLS = {
     ChangeUserStatusByOrgId: "/changeUserStatusByOrg",
   }),
 
-  consentForm: createEndpoints("/tw-consent-new", {
+  consentForm: createEndpoints("/tw-consent", {
     familyChildConsent: "/familyChildConsent",
     generateConsentPDF: "/generateConsentPdf",
   }),

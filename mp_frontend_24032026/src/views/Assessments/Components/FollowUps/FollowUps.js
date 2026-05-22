@@ -335,8 +335,8 @@ const FollowUps = ({ id, type }) => {
         limit: rowCount || 10,
         fromDate: values?.from ? formatDateOnly(values?.from) + " 00:00:00" : null,
         toDate: values?.to ? formatDateOnly(values?.to) + " 23:59:59" : null,
-        HTChildId: type === "CHILD" ? id : null,
-        HTFamilyId: type === "FAMILY" ? id : null,
+        TWChildId: type === "CHILD" ? id : null,
+        TWFamilyId: type === "FAMILY" ? id : null,
       };
       if (payload.countryFilter === null) {
         return;
@@ -369,8 +369,8 @@ const FollowUps = ({ id, type }) => {
       const res = await APIS.ExportFollowUps({
         fromDate: values?.from ? formatDateOnly(values?.from) + " 00:00:00" : null,
         toDate: values?.to ? formatDateOnly(values?.to) + " 23:59:59" : null,
-        HTChildId: type === "CHILD" ? id : null,
-        HTFamilyId: type === "FAMILY" ? id : null,
+        TWChildId: type === "CHILD" ? id : null,
+        TWFamilyId: type === "FAMILY" ? id : null,
       });
       const linkSource = `data:application/xlsx;base64,${res.data}`;
       const downloadLink = document.createElement("a");

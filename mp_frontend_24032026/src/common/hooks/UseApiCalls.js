@@ -95,7 +95,7 @@ const CaseListURL = AppConfig.baseURL + "/tw-case/list";
 const AddCaseURL = AppConfig.baseURL + "/tw-case";
 const CaseDetailsPartialURL = AppConfig.baseURL + "/tw-case?case_id=";
 const CloseCaseURL = AppConfig.baseURL + "/case/close";
-const ConsentURL = AppConfig.baseURL + "/tw-consent-new/listChildFamilyConsent";
+const ConsentURL = AppConfig.baseURL + "/tw-consent/listChildFamilyConsent";
 const FormListURL = AppConfig.baseURL + "/tw-form";
 const DomainListURL = AppConfig.baseURL + "/tw-question/domain";
 const AddFormQuetionsURL = AppConfig.baseURL + "/form/questions";
@@ -136,7 +136,7 @@ const ListFormQuestionsURL =
 const GetAssessmentDetailsURL =
   AppConfig.baseURL + "/tw-assessment/getassessmentdetails?assessmentId=";
 const CalculateScoreURL = AppConfig.baseURL + "/tw-score/calculate";
-const ScoreURL = AppConfig.baseURL + "/tw-score";
+const ScoreURL = AppConfig.baseURL + "/tw-score/getScoreTrend";
 
 const UploadURL = AppConfig.baseURL + "/fileUploads/";
 const UploadedFilesURL = AppConfig.baseURL + "/fileUploads";
@@ -2037,7 +2037,7 @@ const APIS = {
   ScoreForEachChild({childId, familyId}) {
     let prerequest = this.PreRequestCall();
     return axios.all([prerequest]).then((res) => {
-      const CompleteScoreURL = ScoreURL + (childId ? `?childId=${childId}` :`?familyId=${familyId}`);
+      const CompleteScoreURL = ScoreURL + (childId ? `?TWChildId=${childId}` :`?TWFamilyId=${familyId}`);
       return axios
         .get(CompleteScoreURL)
         .then((response) => {
