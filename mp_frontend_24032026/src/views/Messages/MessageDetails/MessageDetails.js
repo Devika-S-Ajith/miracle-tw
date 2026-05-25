@@ -28,28 +28,7 @@ import SubHeading from "../../../components/SubHeading";
 import BodyText from "../../../components/BodyText/BodyText";
 import PrimaryButton from "../../../components/PrimaryButton/PrimaryButton";
 
-const MessageTypes = [
-  {
-    id: "1",
-    type: "Popup dialog",
-    label:
-      "A message is sent in a popup window, requiring users to confirm receipt by manually closing the window. These messages are ideal for longer messages that expire on a certain date.",
-  },
-  // {
-  //   id: "2",
-  //   type: "Bell notification",
 
-  //   label:
-  //     "Send users a message through the app’s notification system.They will receive an indicator on the bell in the top right corner. Ideal for longer messages that do not expire.",
-  // },
-  {
-    id: "3",
-    type: "Banner message",
-
-    label:
-      "Short messages displayed at the top of the page. Use this type sparingly, as they will be visible across multiple pages.",
-  },
-];
 
 const MessageDetails = ({
   setActiveStepperIndex,
@@ -60,17 +39,37 @@ const MessageDetails = ({
   setMessageDetailsForEditing,
 }) => {
   const { id } = useParams();
-  const { t } = useTranslation(["common"]);
   const navigate = useNavigate();
+  const { t } = useTranslation(["common"]);
+  const MessageTypes = [
+    {
+      id: "1",
+      type: t("common:system messages.Popup dialog"),
+      label:t("common:system messages.Popup dialog description")
+      },
+    // {
+    //   id: "2",
+    //   type: t("common:system messages.Bell notification"),
+
+    //   label:
+    //     "Send users a message through the app’s notification system.They will receive an indicator on the bell in the top right corner. Ideal for longer messages that do not expire.",
+    // },
+    {
+      id: "3",
+      type: t("common:system messages.Banner message"),
+      label:t("common:system messages.Banner message description")
+      },
+  ];
+
   const validationSchema = Yup.object().shape({
     messageSubject: Yup.string()
       .required(t("common:warnings.Message subject is required"))
       .when("messageType", {
         is: "3",
-        then: Yup.string().max(25, "Content must be at most 25 characters"),
+        then: Yup.string().max(25, t("common:warnings.Content must be at most 25 characters")),
         otherwise: Yup.string().max(
           50,
-          "Content must be at most 50 characters"
+          t("common:warnings.Content must be at most 50 characters")
         ),
       }),
     messageContent: Yup.string().when("messageType", {
@@ -78,7 +77,7 @@ const MessageDetails = ({
       then: Yup.string()
         .test(
           "max-characters",
-          "Content must be at most 250 characters",
+          t("common:warnings.Content must be at most 250 characters"),
           (value) => {
             const plainText = value
               ? value
@@ -102,7 +101,7 @@ const MessageDetails = ({
       otherwise: Yup.string()
         .test(
           "max-characters",
-          "Content must be at most 500 characters",
+          t("common:warnings.Content must be at most 500 characters"),
           (value) => {
             const plainText = value
               ? value
@@ -125,7 +124,7 @@ const MessageDetails = ({
         ),
     }),
     buttonLabel: Yup.string()
-      .max(20, "Label must be at most 20 characters")
+      .max(20, t("common:warnings.Label must be at most 20 characters"))
       .when("addActionEnabled", {
         is: (val) => val,
         then: (schema) => schema.required(t("common:warnings.Required")),
@@ -150,7 +149,7 @@ const MessageDetails = ({
         },
         then: Yup.date().typeError(t("common:warnings.Starts at is required")).test(
           "is-future",
-          t("Past dates are not allowed"),
+          t("common:warnings.Past dates are not allowed"),
           (date) => {
             const selectedDate = new Date(date)?.getTime();
             const now = new Date().getTime();
@@ -160,7 +159,7 @@ const MessageDetails = ({
         otherwise: Yup.date().typeError(t("common:warnings.Starts at is required")), // No additional test if status is 'draft'
       }),
     endsAt: Yup.date()
-      .required(t("common:Ends at is required"))
+      .required(t("common:warnings.Ends at is required"))
       .typeError(t("common:warnings.Ends at is required"))
       .nullable()
       .when("startsAt", (startsAt, schema) => {
@@ -279,13 +278,13 @@ const MessageDetails = ({
 
   return (
     <>
-      <Heading heading="Details about this message" my={3} />
-      <SubHeading value="What type of message do you want to publish?" mb />
+      <Heading heading={t("common:system messages.Details about this message")} my={3} />
+      <SubHeading value={t("common:system messages.What type of message do you want to publish?")} mb />
 
       <FormControl component="fieldset">
         <FormLabel id="message-type">
           <BodyText
-            value="How do I choose a message type?"
+            value={t("common:system messages.How do I choose a message type?")}
             color="#F37123"
             mb
           />
@@ -321,7 +320,7 @@ const MessageDetails = ({
 
       <Divider variant="middle" sx={{ my: 3, mx: 0 }} />
 
-      <SubHeading value="What should this message say?" mb />
+      <SubHeading value={t(`common:system messages.What should this message say?`)} mb />
 
       <Box display="flex" flexDirection="column" gap={3}>
         <TextField

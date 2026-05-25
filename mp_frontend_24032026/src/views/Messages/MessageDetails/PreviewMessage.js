@@ -118,8 +118,8 @@ const PreviewMessage = ({
                 ?.join(", ");
         } else {
             return key === "countryName"
-                ? "Any location"
-                : "Send to all organizations";
+                ? t("common:system messages.Any location")
+                : t("common:system messages.Send to all organizations");
         }
     };
 
@@ -156,14 +156,14 @@ const PreviewMessage = ({
 
         }
         if (!roleArray?.HTUserRoleId?.length && !roleArray?.FSUserRoleId?.length)
-            return "Any user role";
+            return t("common:system messages.Any user role");
     };
 
     return (
         <>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <Typography fontWeight={700} lineHeight="25px" fontSize="20px" mt={6} mb={3}>
-                    Message Preview
+                    {t("common:system messages.Message Preview")}
                 </Typography>
                 <Box sx={{ bgcolor: "background.paper", width: "100%" }}>
                     <AppBar position="static" sx={{ overflow: "hidden" }}>
@@ -175,8 +175,8 @@ const PreviewMessage = ({
                             variant="fullWidth"
                             aria-label="full width tabs example"
                         >
-                            {(["WEB", "WEB_AND_MOBILE"].includes(messageData?.receipientMatchingConditions?.viewingFrom) || !messageData?.receipientMatchingConditions?.viewingFrom?.length) && <CustomTab label="Web" {...a11yProps(0)} />}
-                            {(["MOBILE", "WEB_AND_MOBILE"].includes(messageData?.receipientMatchingConditions?.viewingFrom) || !messageData?.receipientMatchingConditions?.viewingFrom?.length) && <CustomTab label="Mobile" {...a11yProps(1)} />}
+                            {([t("common:system messages.WEB"), t("common:system messages.WEB_AND_MOBILE")].includes(messageData?.receipientMatchingConditions?.viewingFrom) || !messageData?.receipientMatchingConditions?.viewingFrom?.length) && <CustomTab label={t("common:system messages.WEB")} {...a11yProps(0)} />}
+                            {([t("common:system messages.MOBILE"), t("common:system messages.WEB_AND_MOBILE")].includes(messageData?.receipientMatchingConditions?.viewingFrom) || !messageData?.receipientMatchingConditions?.viewingFrom?.length) && <CustomTab label={t("common:system messages.MOBILE")} {...a11yProps(1)} />}
                         </Tabs>
                     </AppBar>
                     <SwipeableViews
@@ -416,17 +416,16 @@ const PreviewMessage = ({
                     <Box>
                         <hr style={{ margin: 0 }}></hr>
                         <Typography py={3} variant="h6">
-                            Schedule:
+                            {t("common:system messages.Schedule")}
                         </Typography>
                         <Typography variant="subtitle1">
-                            Message will be shown:
+                            {t("common:system messages.Message will be shown")}
                         </Typography>
                         <Typography pt={3} variant="subtitle1">
-                            Start:{DateTimeFormatStringNumaric(messageData?.startsAt)} Local
-                            time
+                            {t("common:system messages.Start")} {DateTimeFormatStringNumaric(messageData?.startsAt)} {t("common:system messages.Local time")}
                         </Typography>
                         <Typography pt={3} variant="subtitle1">
-                            End:{DateTimeFormatStringNumaric(messageData?.endsAt)} Local time
+                            {t("common:system messages.End")} {DateTimeFormatStringNumaric(messageData?.endsAt)} {t("common:system messages.Local time")}
                         </Typography>
                         {messageData?.messageFrequency == "ON_CERTAIN_DAYS" && (
                             <Typography pt={3} variant="subtitle1">
@@ -437,23 +436,23 @@ const PreviewMessage = ({
                             </Typography>
                         )}
                         <Typography pt={3} variant="h6">
-                            Recipient(s):
+                            {t("common:system messages.Recipients")}
                         </Typography>
                         <Typography pt={3} variant="subtitle1">
                             {messageData?.receipientType == "CUSTOM"
-                                ? "Custom:"
-                                : "All users from all organization"}
+                                ? t("common:system messages.Custom")
+                                : t("common:system messages.All users from all organization")}
                         </Typography>
                         {messageData?.receipientType == "CUSTOM" && (
                             <>
                                 <Typography pt={3} variant="subtitle1">
-                                    Organization's location{" "}
+                                    {t("common:system messages.Organization location")}{" "}
                                     {Object.keys(
                                         messageData?.receipientMatchingConditions?.accountCountry ||
                                         {}
                                     ) == "is"
-                                        ? "is"
-                                        : "is not"}
+                                        ? t("common:system messages.is")
+                                        : t("common:system messages.is not")}
                                     :
                                     {RenderList(
                                         locationList,
@@ -467,12 +466,12 @@ const PreviewMessage = ({
                                     )}
                                 </Typography>
                                 <Typography pt={3} variant="subtitle1">
-                                    Organization name{" "}
+                                    {t("common:system messages.Organization name")}{" "}
                                     {Object.keys(
                                         messageData?.receipientMatchingConditions?.account || {}
                                     ) == "is"
-                                        ? "is"
-                                        : "is not"}
+                                        ? t("common:system messages.is")
+                                        : t("common:system messages.is not")}
                                     :
                                     {RenderList(
                                         organizationList,
@@ -485,18 +484,18 @@ const PreviewMessage = ({
                                     )}
                                 </Typography>
                                 <Typography pt={3} variant="subtitle1">
-                                    User is viewing from:
+                                    {t("common:system messages.User is viewing from")}:{" "}
                                     {toSentenceCase(
                                         messageData?.receipientMatchingConditions?.viewingFrom
                                     )}
                                 </Typography>
                                 <Typography pt={3} variant="subtitle1">
-                                    User role{" "}
+                                    {t("common:system messages.User role")}{" "}
                                     {Object.keys(
                                         messageData?.receipientMatchingConditions?.userRole || {}
                                     ) == "is"
-                                        ? "is"
-                                        : "is not"}
+                                        ? t("common:system messages.is")
+                                        : t("common:system messages.is not")}
                                     :
                                     {RenderRoleList(
                                         roleListHT, roleListFS,
@@ -561,7 +560,7 @@ const PreviewMessage = ({
                                 onSubmit("ACTIVE");
                             }}
                         >
-                            {id || draftId ? "Update message" : "Create message"}
+                            {id || draftId ? t("common:system messages.Update message") : t("common:system messages.Create message")}
                         </Button>
                     </Box>
                 </Box>

@@ -222,7 +222,6 @@ const AllMilestones = () => {
       enablePagination={true}
       totalPageCount={tableData?.pageCount}
       totalItems={tableData?.total || 0}
-      filterable={true}
     />
   );
 };

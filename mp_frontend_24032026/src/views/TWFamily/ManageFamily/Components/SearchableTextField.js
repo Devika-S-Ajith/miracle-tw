@@ -26,6 +26,7 @@ const SearchableTextField = ({
   noOptionsText,
   size = 'medium',
   onClose,
+  enableInlineError = false,
   ...otherProps
 }) => {
   const [field, meta] = useField(name);
@@ -137,10 +138,10 @@ const SearchableTextField = ({
         renderInput={(params) => (
           <TextField
             {...params}
-            placeholder={placeholder}
+            placeholder={enableInlineError && meta.touched && meta.error ? meta.error : placeholder}
             required={required}
-            error={meta.touched && Boolean(meta.error)}
-            helperText={meta.touched && meta.error}
+            error={ meta.touched && Boolean(meta.error)}
+            helperText={!enableInlineError && meta.touched && meta.error}
             InputProps={{
               ...params.InputProps,
               endAdornment: (
@@ -159,6 +160,10 @@ const SearchableTextField = ({
             mt: '2px',
             ml: '2px',
             fontSize: '0.75rem',
+          },
+          '& .MuiInputBase-input::placeholder': {
+            color: enableInlineError && meta.touched && meta.error ? '#d32f2f' : 'rgba(0, 0, 0, 0.6)',
+            opacity: 1,
           },
           ...textFieldProps.sx,
         }}

@@ -153,12 +153,12 @@ const ChildHistory = (props) => {
                             : "Unavailable"}
                         </TableCell>
                         <TableCell>
-                          {!auditItem?.oldValue
+                          {!auditItem?.oldValue?.length 
                             ? "-"
                             : auditItem.oldValue}
                         </TableCell>
                         <TableCell>
-                          {!auditItem?.newValue
+                          {!auditItem?.newValue?.length
                             ? "-"
                             : auditItem.newValue}
                         </TableCell>

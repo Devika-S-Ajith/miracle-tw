@@ -33,6 +33,7 @@ import ErrorWithReload from "./ErrorWithReload";
 import NoDataFoundText from "./NoDataFoundText";
 import ListPaging from "../../../../components/UserComponents/ListPaging";
 import CloseIcon from "@mui/icons-material/Close";
+import { useTranslation } from "react-i18next";
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import ViewColumnIcon from "@mui/icons-material/ViewColumn";
 import BodyText from "../../../../components/BodyText/BodyText";
@@ -313,6 +314,8 @@ const PaginationSection = memo(
     // Calculate start and end item numbers
     const start = totalItems === 0 ? 0 : rowCount * (page - 1) + 1;
     const end = Math.min(page * rowCount, totalItems);
+    const { t } = useTranslation(["common"]);
+    
 
     return (
       <Box
@@ -327,7 +330,7 @@ const PaginationSection = memo(
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <Typography variant="body2" sx={{ mr: 1 }}>
-            Rows per page:
+            {t("common:common.Rows per page:")}
           </Typography>
           <ListPaging
             rowCount={rowCount}

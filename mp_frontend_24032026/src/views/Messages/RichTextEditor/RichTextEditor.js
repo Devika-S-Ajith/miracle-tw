@@ -2,8 +2,10 @@ import React from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // Import styles
 import './RichTextEditor.css'; // Import custom styles
+import { useTranslation } from "react-i18next";
 
 const RichTextEditor = ({ value, onChange, error, id, name, helperText, handleBlur, maxLength }) => {
+    const { t } = useTranslation(["common"]);
     const handleChange = (content, delta, source, editor) => {
         onChange(content); // Pass the rich text content to Formik
     };
@@ -22,7 +24,7 @@ const RichTextEditor = ({ value, onChange, error, id, name, helperText, handleBl
                 formats={RichTextEditor.formats}
                 style={{ height: '300px' }}
                 onBlur={handleEditorBlur}
-                placeholder="Type your content here..."
+                placeholder={t("common:system messages.Type your content here")}
                 className={characterCount > maxLength || helperText ? 'over-limit-editor' : ''}
             />
             {helperText && (

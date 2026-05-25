@@ -34,6 +34,36 @@ import { MonthDayYearFormatter } from "../../../constants";
 
 const ManageFamilyForm = (props) => {
 
+    const buildTouchedTree = (value) => {
+        if (Array.isArray(value)) {
+            return value.map((item) => buildTouchedTree(item));
+        }
+        if (value !== null && typeof value === "object") {
+            return Object.keys(value).reduce((acc, key) => {
+                acc[key] = buildTouchedTree(value[key]);
+                return acc;
+            }, {});
+        }
+        return true;
+    };
+
+    const buildSubmitTouchedTree = (value) => {
+        const touchedTree = buildTouchedTree(value);
+
+        if (Array.isArray(value?.members)) {
+            touchedTree.members = value.members.map((member) => ({
+                ...(member && typeof member === "object" ? buildTouchedTree(member) : {}),
+                TWFamilyRelationId: true,
+                firstName: true,
+                lastName: true,
+                gender: true,
+                dateOfBirth: true,
+            }));
+        }
+
+        return touchedTree;
+    };
+
     const location = useLocation();
     const mode = location.state?.mode;
     const { family, careGiver , loading=false } = props;
@@ -481,7 +511,10 @@ const ManageFamilyForm = (props) => {
                             .max(255)
                             .test('not-empty', 'Last Name is required', value => !value || value.trim().length > 0)
                             .when('TWFamilyRelationId', (TWFamilyRelationId, schema) => {
-                                return TWFamilyRelationId && !['3','9'].includes(TWFamilyRelationId) ? schema.required('Last Name is required') : schema;
+                                const relationId = String(Array.isArray(TWFamilyRelationId) ? TWFamilyRelationId[0] : TWFamilyRelationId);
+                                return relationId && !['3', '9'].includes(relationId)
+                                    ? schema.required('Last Name is required')
+                                    : schema;
                             }),
                         dateOfBirth: Yup.date()
                             .nullable()
@@ -503,7 +536,10 @@ const ManageFamilyForm = (props) => {
                             .nullable()
                             .max(255)
                             .when('TWFamilyRelationId', (TWFamilyRelationId, schema) => {
-                                return ["3", "9"].includes(TWFamilyRelationId) ? schema.required(t("common:warnings.Gender is required","Gender is required")) : schema;
+                                const relationId = String(Array.isArray(TWFamilyRelationId) ? TWFamilyRelationId[0] : TWFamilyRelationId);
+                                return ['3', '9'].includes(relationId)
+                                    ? schema.required(t('common:warnings.Gender is required', 'Gender is required'))
+                                    : schema;
                             }),
                         isMajor: Yup.boolean(),
                         isChild: Yup.boolean(),
@@ -539,6 +575,10 @@ const ManageFamilyForm = (props) => {
                                 ...(values.goal && { "TWFamilyGoalId": values.goal }),
                                 ...(values.licenceNumber && { "licenceNumber": values.licenceNumber?.trim() }),
                                 ...(values.DateStartedasFP && { "DateStartedasFP": values.DateStartedasFP }),
+                                ...{
+                                    AcctActivatedDate: values.members
+                                        .filter(member => !member.id && !!member.TWFamilyRelationId && !member.isDeleted).length ? dayjs() : null
+                                },
                             },
                             "newFamilyMembers": values.members
                                 .filter(member => !member.id && !!member.TWFamilyRelationId && !member.isDeleted)
@@ -567,13 +607,13 @@ const ManageFamilyForm = (props) => {
                         });
                     } else {
                         const changedValues = getChangedValues(values, initialValuesRef.current);
-                        console.log("changedValues", changedValues);
                         if (Object.keys(changedValues).length === 0) {
                             setIsLoading(false);
+                            navigate("/dashboard/families");
                             return;
                         }
 
-                        const stripMemberMeta = ({ isChild, isActive, isExistingChild,isMajor, ...rest }) => rest;
+                        const stripMemberMeta = ({ isChild, isActive, isExistingChild,isMajor, _rowKey,profileInformation, ...rest }) => rest;
 
                         const members = changedValues.members ?? [];
                         const caseWorkerChanged = !!changedValues.caseWorker;
@@ -893,9 +933,7 @@ const ManageFamilyForm = (props) => {
                                                     type="submit"
                                                     variant="contained"
                                                     onClick={async () => {
-                                                        await setTouched(
-                                                            Object.keys(values).reduce((acc, key) => ({ ...acc, [key]: true }), {})
-                                                        );
+                                                        await setTouched(buildSubmitTouchedTree(values));
                                                         const formErrors = await validateForm();
                                                         if (Object.keys(formErrors).length === 0) {
                                                             handleSubmit();

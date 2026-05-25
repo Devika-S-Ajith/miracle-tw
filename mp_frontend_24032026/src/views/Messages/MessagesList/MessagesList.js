@@ -77,9 +77,9 @@ const MessagesList = () => {
 
   const messageType = (value) => {
     if (value === 'Popup dialog ') {
-      return 'Popup';
+      return t("common:system messages.Popup");
     } else if (value === 'Banner message ') {
-      return 'Banner';
+      return t("common:system messages.Banner");
     }
     return '';
   };
@@ -88,7 +88,7 @@ const MessagesList = () => {
     // { field: "id", headerName: "ID", width: 90 },
     {
       field: "status",
-      headerName: "Status",
+      headerName: t("common:system messages.Status"),
       minWidth: 170,
       // flex: 1,
       sortable: false,
@@ -105,9 +105,13 @@ const MessagesList = () => {
             ></Box>
 
             <Box>
-              <Typography fontWeight={600}>{formattedValue}</Typography>
+              <Typography fontWeight={600}>
+                {/* {formattedValue} */}
+                {t(`common:system messages.status.${formattedValue}`)}
+              </Typography>
               <Typography color="#778791" fontSize="0.75rem">
-                {convertUnderscoreToText(row?.messageFrequency)}
+                {/* {convertUnderscoreToText(row?.messageFrequency)} */}
+                {t(`common:system messages.frequency.${row?.messageFrequency}`)}
               </Typography>
             </Box>
           </Box>
@@ -116,7 +120,7 @@ const MessagesList = () => {
     },
     {
       field: "systemMessageTypeName",
-      headerName: "Message type",
+      headerName: t("common:system messages.Message type"),
       minWidth: 170,
       // flex: 1,
       sortable: false,
@@ -138,14 +142,15 @@ const MessagesList = () => {
     },
     {
       field: "receipientType",
-      headerName: "Recipient(s)",
+      headerName: t("common:system messages.Recipients"),
       // flex: 1,
       minWidth: 170,
       sortable: false,
       renderCell: ({ formattedValue, row }) => (
         <Box display="flex" flexDirection="column">
           <Typography fontWeight={600}>
-            {convertUnderscoreToText(formattedValue) || "-"}
+            {/* {convertUnderscoreToText(formattedValue) || "-"} */}
+            {t(`common:system messages.recipients.${formattedValue}`) || "-"}
           </Typography>
 
           {/* <Typography color="#778791" fontSize="0.75rem">
@@ -156,7 +161,7 @@ const MessagesList = () => {
     },
     {
       field: "subject",
-      headerName: "Message",
+      headerName: t("common:system messages.Message"),
       flex: 1,
       minWidth: 150,
       sortable: false,
@@ -264,7 +269,7 @@ const MessagesList = () => {
                   marginRight: "8px",
                 }}
               />
-              Copy
+              {t("common:system messages.Copy")}
             </MenuItem>
             {currentRow &&
               !["Sent", "Canceled"].includes(currentRow?.status) && (
@@ -380,19 +385,19 @@ const MessagesList = () => {
           navigate("/admin/messages/message-details");
         }}
       >
-        {t("New message")}
+        {t("common:system messages.New message")}
       </Button>
     </Box>
   );
 
   const cancelClickHandler = () => {
     ModalService.open(() => <></>, {
-      modalTitle: "Are you sure you want to cancel this message?",
+      modalTitle: t("common:system messages.Are you sure you want to cancel this message?"),
       width: "40%",
       modalDescription:
-        "If this message is currently active, users will no longer be able to see it.",
-      actionButtonText: "Cancel message",
-      cancelButtonText: "Do not cancel message",
+        t("common:system messages.Cancel message modal description"),
+      actionButtonText: t("common:system messages.Cancel message"),
+      cancelButtonText: t("common:system messages.Do not cancel message"),
       onClick: async () => {
         setIsLoading(true);
         try {
@@ -403,7 +408,7 @@ const MessagesList = () => {
           }
         } catch (error) {
           console.error("Failed to cancel the message:", error);
-          toast.error("Failed to cancel the message. Please try again.");
+          toast.error(t("common:system messages.Failed to cancel the message"));
         }
         setIsLoading(false);
       },

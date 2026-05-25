@@ -105,6 +105,7 @@ const getFieldTouched = (name) => get(touched, name, false);
                             value={fieldValue || ''} // Use helper function
                             onChange={(e) => {handleChange(e); fieldProps?.onChange?.(e?.target?.value);}} // Call Formik's handleChange and any custom onChange
                             onBlur={handleBlur}
+                            enableInlineError={fieldProps.enableInlineError}
                             autoFocus={fieldProps.autoFocus}
                             size={fieldProps.size}
                             color={fieldProps.color}
@@ -156,6 +157,7 @@ const getFieldTouched = (name) => get(touched, name, false);
                             disabled={isDisabled || fieldProps.disabled}
                             required={fieldProps.required}
                             validateOnChange={fieldProps.validateOnChange}
+                            enableInlineError={fieldProps.enableInlineError}
                             labelKey={fieldProps.labelKey || "value"}
                             placeholder={t(fieldProps.placeholder)}
                             extraLabel={fieldProps.extraLabel}
@@ -207,6 +209,7 @@ const getFieldTouched = (name) => get(touched, name, false);
                             minSearchLength={2}
                             debounceDelay={300}
                             freeSolo={true}
+                            enableInlineError={fieldProps.enableInlineError}
                             textFieldProps={{
                                 label: fieldProps.label,
                                 variant: "outlined",
@@ -239,6 +242,7 @@ const getFieldTouched = (name) => get(touched, name, false);
                             onChange={(value) => setFieldValue(fullFieldName, value)} // Use full scoped name
                             error={fieldTouched && Boolean(fieldError)}
                             helperText={fieldTouched && fieldError}
+                            enableInlineError={fieldProps.enableInlineError || false}
                             disabled={isDisabled}
                              slots={{
                                 openPickerIcon: CalendarIcon,
@@ -265,14 +269,10 @@ const getFieldTouched = (name) => get(touched, name, false);
                                     newValue && dayjs(newValue).isValid()
                                         ? dayjs(newValue).toISOString()
                                         : null;
-
-
                                 if (handleDateChange) {
                                     handleDateChange(isoValue, fullFieldName);
                                     return;
                                 }
-
-
                                 Promise.resolve(
                                     setFieldValue(fullFieldName, isoValue, true),
                                 ).then(() => {
@@ -299,10 +299,14 @@ const getFieldTouched = (name) => get(touched, name, false);
                                         '& .MuiInputBase-root': {
                                             backgroundColor: 'white',
                                         },
+                                        '& .MuiInputBase-input::placeholder': {
+                                            color: fieldTouched && fieldError ? '#d32f2f' : 'rgba(0, 0, 0, 0.6)',
+                                            opacity: 1,
+                                        },
                                     },
-                                    placeholder: t(fieldProps.placeholder),
+                                    placeholder: fieldProps.enableInlineError && fieldTouched && fieldError ? t(fieldError) : "",
                                     error: fieldTouched && Boolean(fieldError),
-                                    helperText: fieldTouched && fieldError,
+                                    helperText: !fieldProps.enableInlineError && fieldTouched && fieldError,
                                 },
                             }}
                         />

@@ -26,7 +26,7 @@ import BodyText from "../../../components/BodyText/BodyText";
 import useAuthorization from "../../../components/UserComponents/useAuthorization";
 import { styled } from "@mui/styles";
 
-const steps = ["Message details", "Recipient(s)", "Preview"];
+// const steps = ["Message details", "Recipient(s)", "Preview"];
 
 const MessageDetailsContainer = () => {
   const { t } = useTranslation(["common"]);
@@ -36,6 +36,11 @@ const MessageDetailsContainer = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
+  const steps = [
+    t("common:system messages.Message details"),
+    t("common:system messages.Recipients"),
+    t("common:system messages.Preview"),
+  ];
   const {
     getSystemMessages,
     signedinOrgType,
@@ -136,8 +141,8 @@ const MessageDetailsContainer = () => {
 
       if (res?.status === 200) {
         id || draftId
-          ? toast.success("Message updated successfully")
-          : toast.success("Message created successfully");
+          ? toast.success(t("common:system messages.Message updated successfully"))
+          : toast.success(t("common:system messages.Message created successfully"));
         getSystemMessages();
         if (mode !== "DRAFT") navigate("/admin/messages");
       }
@@ -261,8 +266,8 @@ const MessageDetailsContainer = () => {
           </Box>
           <Typography id="family-table-label" color="textPrimary" variant="h5">
             {id
-              ? t("common:common.Edit message")
-              : t("common:common.Create a new message")}
+              ? t("common:system messages.Edit message")
+              : t("common:system messages.Create a new message")}
           </Typography>
         </Grid>
         <Card sx={{ width: { xs: "100%", lg: "50vw" } }}>

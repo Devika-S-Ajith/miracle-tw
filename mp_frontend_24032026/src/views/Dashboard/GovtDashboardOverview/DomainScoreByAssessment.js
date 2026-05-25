@@ -4,7 +4,6 @@ import {
 import TrendingUp from '../../../assets/icons/TrendingUp';
 import TrendingDown from '../../../assets/icons/TrendingDown';
 import TrendingStraight from '../../../assets/icons/TrendingStraight';
-import TrendLineChart from './Components/TrendLineChart';
 import ReusableTrendTable from './Components/ReusableTrendTable';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { CommonDataContext } from '../../../common/contexts/CommonDataContext';
@@ -37,7 +36,6 @@ const TableWithTrendLines = ({ isGeneralDashboard = false }) => {
             }
             setLoading(true);
             await APIS.DomainScoresAssessment(payload).then((resp) => {
-                console.log("Domain scores by assessment response", resp);
                 if (resp?.data?.data) {
                     setTableData(resp?.data?.data || []);
                     setLoading(false);
@@ -92,14 +90,6 @@ const TableWithTrendLines = ({ isGeneralDashboard = false }) => {
                 <Typography variant="body2" fontWeight="medium">
                     {row.averageStartingScore}%
                 </Typography>
-            )
-        },
-        {
-            label: "Trend over assessments",
-            id: "trendoverassessments",
-            enableSorting: false,
-            render: (row) => (
-                <TrendLineChart data={row.trend} />
             )
         },
         {

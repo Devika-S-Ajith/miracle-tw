@@ -29,19 +29,6 @@ import Heading from "../../../components/Heading/Heading";
 import BodyText from "../../../components/BodyText/BodyText";
 import SubHeading from "../../../components/SubHeading";
 import { ModalService } from "../../../components/Modal";
-const RecipientsTypes = [
-  {
-    id: "ALL",
-    type: "All users in all organizations",
-    label: "Every user will see this message.",
-  },
-  {
-    id: "CUSTOM",
-    type: "Custom",
-
-    label: "Define what user(s) should see this message.",
-  },
-];
 
 const Recipients = ({
   setActiveStepperIndex,
@@ -57,15 +44,19 @@ const Recipients = ({
   const [locations, setLocations] = useState([]);
   const [organizations, setOrganizations] = useState([]);
   const [roles, setRoles] = useState([]);
+  const RecipientsTypes = [
+  {
+    id: "ALL",
+    type: t("common:system messages.All users in all organizations"),
+    label: t("common:system messages.Every user will see this message"),
+  },
+  {
+    id: "CUSTOM",
+    type: t("common:system messages.Custom"),
+    label: t("common:system messages.Define what user should see this message"),
+  },
+];
 
-  console.log(
-    "setMessageDetailsForEditing",
-    initialValuesForEditing?.receipientMatchingConditions?.userRole[
-      Object.keys(
-        initialValuesForEditing?.receipientMatchingConditions?.userRole
-      )
-    ]?.HTUserRoleId?.length
-  );
   const initialValues = {
     recipientsType: initialValuesForEditing?.receipientType ?? "ALL",
     org_location_condition:
@@ -195,8 +186,8 @@ const Recipients = ({
     platform:
       initialValuesForEditing?.receipientType === "CUSTOM"
         ? initialValuesForEditing?.receipientMatchingConditions?.viewingFrom ??
-          "WEB_AND_MOBILE"
-        : "WEB_AND_MOBILE",
+          t("common:system messages.WEB_AND_MOBILE")
+        : t("common:system messages.WEB_AND_MOBILE"),
     user_role_condition: initialValuesForEditing?.receipientMatchingConditions
       ? initialValuesForEditing?.receipientMatchingConditions?.userRole
         ? initialValuesForEditing?.receipientMatchingConditions?.userRole?.is
@@ -230,7 +221,7 @@ const Recipients = ({
                 ?.map((obj) => ({
                   id: obj?.id + "HT",
                   id2: obj?.id,
-                  label: t(`common:common.${obj.role}`) + " (Thrive Scale)",
+                  label: t(`common:common.${obj.role}`) + " (t(common:common.Thrive Scale))",
                   module: "THRIVE_SCALE",
                 }))
             : roleListHT
@@ -238,7 +229,7 @@ const Recipients = ({
                 ?.map((obj) => ({
                   id: obj?.id + "HT",
                   id2: obj?.id,
-                  label: t(`common:common.${obj.role}`) + " (Thrive Scale)",
+                  label: `${t(`common:common.${obj.role}`)} (${t("common:common.Thrive Scale")})`,                  
                   module: "THRIVE_SCALE",
                 }))),
 
@@ -267,7 +258,7 @@ const Recipients = ({
                 ?.map((obj) => ({
                   id: obj?.id + "FS",
                   id2: obj?.id,
-                  label: t(`common:common.${obj.role}`) + " (FosterShare)",
+                  label: `${t(`common:common.${obj.role}`)} (${t("common:common.FosterShare")})`,
                   module: "FOSTER_SHARE",
                 }))
             : Object?.keys(
@@ -292,7 +283,7 @@ const Recipients = ({
                   ?.map((obj) => ({
                     id: obj?.id + "FS",
                     id2: obj?.id,
-                    label: t(`common:common.${obj.role}`) + " (FosterShare)",
+                    label: `${t(`common:common.${obj.role}`)} (${t("common:common.FosterShare")})`,
                     module: "FOSTER_SHARE",
                   }))
               : []
@@ -307,7 +298,7 @@ const Recipients = ({
                 ?.map((obj) => ({
                   id: obj?.id + "FS",
                   id2: obj?.id,
-                  label: t(`common:common.${obj.role}`) + " (FosterShare)",
+                  label: `${t(`common:common.${obj.role}`)} (${t("common:common.FosterShare")})`,
                   module: "FOSTER_SHARE",
                 }))
             : []),
@@ -318,7 +309,7 @@ const Recipients = ({
             ?.map((obj) => ({
               id: obj?.id + "HT",
               id2: obj?.id,
-              label: t(`common:common.${obj.role}`) + " (Thrive Scale)",
+              label: `${t(`common:common.${obj.role}`)} (${t("common:common.Thrive Scale")})`,
               module: "THRIVE_SCALE",
             })),
           ...roleListFS
@@ -326,7 +317,7 @@ const Recipients = ({
             ?.map((obj) => ({
               id: obj?.id + "FS",
               id2: obj?.id,
-              label: t(`common:common.${obj.role}`) + " (FosterShare)",
+              label: `${t(`common:common.${obj.role}`)} (${t("common:common.FosterShare")})`,
               module: "FOSTER_SHARE",
             })),
         ],
@@ -349,22 +340,22 @@ const Recipients = ({
   const validationSchema = Yup.object().shape({
     org_location: Yup.array().when("recipientsType", {
       is: (recipientsType) => recipientsType && recipientsType === "CUSTOM",
-      then: Yup.array().min(1, "At least one location is required"),
+      then: Yup.array().min(1, t("common:system messages.At least one location is required")),
       otherwise: Yup.array(),
     }),
     org_name: Yup.array().when("recipientsType", {
       is: (recipientsType) => recipientsType && recipientsType === "CUSTOM",
-      then: Yup.array().min(1, "At least one organization is required"),
+      then: Yup.array().min(1, t("common:system messages.At least one organization is required")),
       otherwise: Yup.array(),
     }),
     user_role: Yup.array().when("recipientsType", {
       is: (recipientsType) => recipientsType && recipientsType === "CUSTOM",
-      then: Yup.array().min(1, "At least one user role is required"),
+      then: Yup.array().min(1, t("common:system messages.At least one user role is required")),
       otherwise: Yup.array(),
     }),
     platform: Yup.string().when("recipientsType", {
       is: (recipientsType) => recipientsType && recipientsType === "CUSTOM",
-      then: Yup.string().required("Platform type is required").nullable(),
+      then: Yup.string().required(t("common:system messages.Platform type is required")).nullable(),
       otherwise: Yup.string().notRequired().nullable(),
     }),
   });
@@ -394,8 +385,8 @@ const Recipients = ({
     if (locationList?.length)
       setLocations([
         // OrganizationIcon
-        { id: -1, label: <Box p>Select all locations</Box> },
-        { id: -2, label: <Box p>Deselect all locations</Box> },
+        { id: -1, label: <Box p>{t("common:system messages.Select all locations")}</Box> },
+        { id: -2, label: <Box p>{t("common:system messages.Deselect all locations")}</Box> },
         ...locationList.map((obj) => ({
           id: obj.id,
           label: obj.countryName,
@@ -415,7 +406,7 @@ const Recipients = ({
             >
               <OrganizationIconGrey />
               <Box sx={{ display: "flex", flexDirection: "column" }}>
-                <Typography>Select all organizations</Typography>
+                <Typography>{t("common:system messages.Select all organizations")}</Typography>
                 <Typography variant="caption">
                   {organizationList.filter((org) => org?.isActive)?.length}{" "}
                   Organizations
@@ -426,7 +417,7 @@ const Recipients = ({
         },
         {
           id: -2,
-          label: <Box p>Deselect all organizations</Box>,
+          label: <Box p>{t("common:system messages.Deselect all organizations")}</Box>,
         },
         ...organizationList
           .filter((org) => org?.isActive)
@@ -446,16 +437,16 @@ const Recipients = ({
       setRoles([
         {
           id: -1,
-          label: <Box p>Select all roles</Box>,
+          label: <Box p>{t("common:system messages.Select all roles")}</Box>,
         },
-        { id: -2, label: <Box p>Deselect all roles</Box> },
+        { id: -2, label: <Box p>{t("common:system messages.Deselect all roles")}</Box> },
 
         ...roleListHT
           .filter((item) => item.id != 9)
           .map((obj) => ({
             id: obj?.id + "HT",
             id2: obj?.id,
-            label: t(`common:common.${obj.role}`) + " (Thrive Scale)",
+            label: `${t(`common:common.${obj.role}`)} (${t("common:common.Thrive Scale")})`,
             module: "THRIVE_SCALE",
           })),
 
@@ -464,7 +455,7 @@ const Recipients = ({
           .map((obj) => ({
             id: obj?.id + "FS",
             id2: obj?.id,
-            label: t(`common:common.${obj.role}`) + " (FosterShare)",
+            label: `${t(`common:common.${obj.role}`)} (${t("common:common.FosterShare")})`,
             module: "FOSTER_SHARE",
           })),
       ]);
@@ -527,7 +518,7 @@ const Recipients = ({
               >
                 <OrganizationIconGrey />
                 <Box sx={{ display: "flex", flexDirection: "column" }}>
-                  <Typography>Select all organizations</Typography>
+                  <Typography>{t("common:system messages.Select all organizations")}</Typography>
                   <Typography variant="caption">
                     {
                       organizationList?.filter(
@@ -546,7 +537,7 @@ const Recipients = ({
           },
           {
             id: -2,
-            label: <Box p>Deselect all organizations</Box>,
+            label: <Box p>{t("common:system messages.Deselect all organizations")}</Box>,
           },
           ...organizationList
             ?.filter(
@@ -604,7 +595,7 @@ const Recipients = ({
               >
                 <OrganizationIconGrey />
                 <Box sx={{ display: "flex", flexDirection: "column" }}>
-                  <Typography>Select all organizations</Typography>
+                  <Typography>{t("common:system messages.Select all organizations")}</Typography>
                   <Typography variant="caption">
                     {
                       organizationList?.filter(
@@ -623,7 +614,7 @@ const Recipients = ({
           },
           {
             id: -2,
-            label: <Box p>Deselect all organizations</Box>,
+            label: <Box p>{t("common:system messages.Deselect all organizations")}</Box>,
           },
           ...organizationList
             ?.filter(
@@ -683,7 +674,7 @@ const Recipients = ({
             >
               <OrganizationIconGrey />
               <Box sx={{ display: "flex", flexDirection: "column" }}>
-                <Typography>Select all organizations</Typography>
+                <Typography>{t("common:system messages.Select all organizations")}</Typography>
                 <Typography variant="caption">
                   {organizationList.filter((org) => org?.isActive)?.length}{" "}
                   Organizations
@@ -694,7 +685,7 @@ const Recipients = ({
         },
         {
           id: -2,
-          label: <Box p>Deselect all organizations</Box>,
+          label: <Box p>{t("common:system messages.Deselect all organizations")}</Box>,
         },
         ...organizationList
           .filter((org) => org?.isActive)
@@ -729,16 +720,16 @@ const Recipients = ({
         setRoles([
           {
             id: -1,
-            label: <Box p>Select all roles</Box>,
+            label: <Box p>{t("common:system messages.Select all roles")}</Box>,
           },
-          { id: -2, label: <Box p>Deselect all roles</Box> },
+          { id: -2, label: <Box p>{t("common:system messages.Deselect all roles")}</Box> },
 
           ...roleListHT
             .filter((item) => item.id != 9)
             .map((obj) => ({
               id: obj?.id + "HT",
               id2: obj?.id,
-              label: `${t(`common:common.${obj.role}`)} (Thrive Scale)`,
+              label: `${t(`common:common.${obj.role}`)} (${t("common:common.Thrive Scale")})`,
               module: "THRIVE_SCALE",
             })),
 
@@ -748,7 +739,7 @@ const Recipients = ({
                 .map((obj) => ({
                   id: obj?.id + "FS",
                   id2: obj?.id,
-                  label: t(`common:common.${obj.role}`) + " (FosterShare)",
+                  label: `${t(`common:common.${obj.role}`)} (${t("common:common.FosterShare")})`,
                   module: "FOSTER_SHARE",
                 }))
             : []),
@@ -768,7 +759,7 @@ const Recipients = ({
               .map((obj) => ({
                 id: obj?.id + "HT",
                 id2: obj?.id,
-                label: `${t(`common:common.${obj.role}`)} (Thrive Scale)`,
+                label: `${t(`common:common.${obj.role}`)} (${t("common:common.Thrive Scale")})`,
                 module: "THRIVE_SCALE",
               })),
             ...(hasFosterShare
@@ -777,7 +768,7 @@ const Recipients = ({
                   .map((obj) => ({
                     id: obj?.id + "FS",
                     id2: obj?.id,
-                    label: t(`common:common.${obj.role}`) + " (FosterShare)",
+                    label: `${t(`common:common.${obj.role}`)} (${t("common:common.FosterShare")})`,
                     module: "FOSTER_SHARE",
                   }))
               : []),
@@ -787,9 +778,9 @@ const Recipients = ({
         setRoles([
           {
             id: -1,
-            label: <Box p>Select all roles</Box>,
+            label: <Box p>{t("common:system messages.Select all roles")}</Box>,
           },
-          { id: -2, label: <Box p>Deselect all roles</Box> },
+          { id: -2, label: <Box p>{t("common:system messages.Deselect all roles")}</Box> },
 
           // Conditionally include roles from roleListHT
           ...roleListHT
@@ -797,7 +788,7 @@ const Recipients = ({
             .map((obj) => ({
               id: obj?.id + "HT",
               id2: obj?.id,
-              label: `${t(`common:common.${obj.role}`)} (Thrive Scale)`,
+              label: `${t(`common:common.${obj.role}`)} (${t("common:common.Thrive Scale")})`,
               module: "THRIVE_SCALE",
             })),
           ...(!hasFosterShare
@@ -806,7 +797,7 @@ const Recipients = ({
                 .map((obj) => ({
                   id: obj?.id + "FS",
                   id2: obj?.id,
-                  label: t(`common:common.${obj.role}`) + " (FosterShare)",
+                  label: `${t(`common:common.${obj.role}`)} (${t("common:common.FosterShare")})`,
                   module: "FOSTER_SHARE",
                 }))
             : []),
@@ -824,7 +815,7 @@ const Recipients = ({
               .map((obj) => ({
                 id: obj?.id + "HT",
                 id2: obj?.id,
-                label: `${t(`common:common.${obj.role}`)} (Thrive Scale)`,
+                label: `${t(`common:common.${obj.role}`)} (${t("common:common.Thrive Scale")})`,
                 module: "THRIVE_SCALE",
               })),
             ...(!hasFosterShare
@@ -833,7 +824,7 @@ const Recipients = ({
                   .map((obj) => ({
                     id: obj?.id + "FS",
                     id2: obj?.id,
-                    label: t(`common:common.${obj.role}`) + " (FosterShare)",
+                    label: `${t(`common:common.${obj.role}`)} (${t("common:common.FosterShare")})`,
                     module: "FOSTER_SHARE",
                   }))
               : []),
@@ -844,16 +835,16 @@ const Recipients = ({
       setRoles([
         {
           id: -1,
-          label: <Box p>Select all roles</Box>,
+          label: <Box p>{t("common:system messages.Select all roles")}</Box>,
         },
-        { id: -2, label: <Box p>Deselect all roles</Box> },
+        { id: -2, label: <Box p>{t("common:system messages.Deselect all roles")}</Box> },
 
         ...roleListHT
           .filter((item) => item.id != 9)
           .map((obj) => ({
             id: obj?.id + "HT",
             id2: obj?.id,
-            label: t(`common:common.${obj.role}`) + " (Thrive Scale)",
+            label: `${t(`common:common.${obj.role}`)} (${t("common:common.Thrive Scale")})`,
             module: "THRIVE_SCALE",
           })),
 
@@ -862,7 +853,7 @@ const Recipients = ({
           .map((obj) => ({
             id: obj?.id + "FS",
             id2: obj?.id,
-            label: t(`common:common.${obj.role}`) + " (FosterShare)",
+            label: `${t(`common:common.${obj.role}`)} (${t("common:common.FosterShare")})`,
             module: "FOSTER_SHARE",
           })),
       ]);
@@ -873,7 +864,7 @@ const Recipients = ({
             .map((obj) => ({
               id: obj?.id + "HT",
               id2: obj?.id,
-              label: `${t(`common:common.${obj.role}`)} (Thrive Scale)`,
+              label: `${t(`common:common.${obj.role}`)} (${t("common:common.Thrive Scale")})`,
               module: "THRIVE_SCALE",
             })),
           ...roleListFS
@@ -881,7 +872,7 @@ const Recipients = ({
             .map((obj) => ({
               id: obj?.id + "FS",
               id2: obj?.id,
-              label: t(`common:common.${obj.role}`) + " (FosterShare)",
+              label: `${t(`common:common.${obj.role}`)} (${t("common:common.FosterShare")})`,             
               module: "FOSTER_SHARE",
             })),
         ]);
@@ -1008,7 +999,7 @@ const Recipients = ({
               color="#F37123"
               mb
             /> */}
-            <SubHeading value="Who should receive this message?" my />
+            <SubHeading value={t("common:system messages.Who should receive this message?")} my />
           </FormLabel>
           <RadioGroup
             aria-labelledby="message-type"
@@ -1047,7 +1038,7 @@ const Recipients = ({
           <>
             <Divider variant="middle" sx={{ my: 3, mx: 0 }} />
 
-            <SubHeading value="Show message where:" mb />
+            <SubHeading value={t("common:system messages.Show message where:")} mb />
             <Box display="flex" flexDirection="column" gap={3}>
               {/* <CustomRecipientCondition
               label={"Organization’s location"}
@@ -1057,10 +1048,10 @@ const Recipients = ({
 
               <CustomRecipientCondition
                 id="org_location"
-                label={"Organization’s location"}
+                label={t("common:system messages.Organization location")}
                 options={locations}
-                subLabel="Select location"
-                allSelectShowText="Any location"
+                subLabel={t("common:system messages.Select location")}
+                allSelectShowText={t("common:system messages.Any location")}
                 onConditionChange={(value) =>
                   setFieldValue(`org_location_condition`, value)
                 }
@@ -1072,10 +1063,10 @@ const Recipients = ({
               />
               <CustomRecipientCondition
                 id="org_name"
-                label={"Organization name"}
+                label={t("common:system messages.Organization name")}
                 options={organizations}
-                subLabel="Select organizations"
-                allSelectShowText="Send to all organizations"
+                subLabel={t("common:system messages.Select organizations")}
+                allSelectShowText={t("common:system messages.Send to all organizations")}
                 onConditionChange={(value) =>
                   setFieldValue(`org_name_condition`, value)
                 }
@@ -1088,7 +1079,7 @@ const Recipients = ({
 
               <Box display="flex" alignItems="center" gap={2}>
                 <Typography variant="subtitle1">
-                  User is viewing from
+                  {t("common:system messages.User is viewing from")}
                 </Typography>
                 <Autocomplete
                   id="platform"
@@ -1096,10 +1087,10 @@ const Recipients = ({
                   disableClearable
                   sx={{ width: 500 }}
                   // required={true}
-                  options={["WEB", "MOBILE", "WEB_AND_MOBILE"]}
+                  options={[t("common:system messages.WEB"), t("common:system messages.MOBILE"), t("common:system messages.BOTH web and mobile application")]}
                   getOptionLabel={(option) =>
-                    option === "WEB_AND_MOBILE"
-                      ? "Both web and mobile application"
+                    option === t("common:system messages.BOTH web and mobile application")
+                      ? t("common:system messages.BOTH web and mobile application")
                       : convertUnderscoreToText(option)
                   }
                   isOptionEqualToValue={(option, value) => {
@@ -1114,7 +1105,7 @@ const Recipients = ({
                   renderInput={(params) => (
                     <TextField
                       {...params}
-                      label="Select platform"
+                      label={t("common:system messages.Select platform")}
                       required
                       error={touched?.platform && Boolean(errors?.platform)}
                       helperText={touched?.platform && errors?.platform}
@@ -1147,10 +1138,10 @@ const Recipients = ({
 
               <CustomRecipientCondition
                 id="user_role"
-                label={"User role"}
+                label={t("common:system messages.User role")}
                 options={roles}
-                subLabel="Select user role"
-                allSelectShowText="Any user role"
+                subLabel={t("common:system messages.Select user role")}
+                allSelectShowText={t("common:system messages.Any user role")}
                 onConditionChange={(value) =>
                   setFieldValue(`user_role_condition`, value)
                 }
@@ -1218,7 +1209,7 @@ const Recipients = ({
                 handleSubmit();
               }}
             >
-              Next: Preview
+              {t("common:system messages.Next Preview")}
             </Button>
           </Box>
         </Box>

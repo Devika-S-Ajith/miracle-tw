@@ -26,6 +26,7 @@ const DropdownWithExternalLabel = ({
   grouped = false, // NEW: Enable grouped display
   groupBy = "group", // NEW: Key for grouping
   size = "medium",
+  enableInlineError = false,
   ...props
 }) => {
   const { t } = useTranslation([translationNamespace]);
@@ -234,9 +235,9 @@ const DropdownWithExternalLabel = ({
             {...inputProps}
             {...textFieldProps}
             label=""
-            placeholder={placeholder}
+            placeholder={enableInlineError && error ? t(helperText) : placeholder}
             onKeyDown={handleKeyDown}
-            helperText={helperText}
+            helperText={!enableInlineError && helperText}
             error={error}
             margin="none" // ADD THIS
             sx={{
@@ -251,6 +252,10 @@ const DropdownWithExternalLabel = ({
               },
               '& .MuiInputBase-root': {
                 margin: 0, // Remove any margin from input
+              },
+              '& .MuiInputBase-input::placeholder': {
+                color: enableInlineError && error ? '#d32f2f' : 'rgba(0, 0, 0, 0.6)',
+                opacity: 1,
               },
               ...textFieldProps.sx
             }}

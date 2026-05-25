@@ -451,7 +451,7 @@ const handleDeactivateOrReactivate = async (account, ref) => {
               [ADMIN, ADMIN_CASEWORKER].includes(signedinUserRoleFS)) &&
             <Grid item xs={12} md={6}>
               {/* Case Managers Section */}
-              {account?.caseManagerCount && (
+              {account?.caseManagerCount != null && (
                 <Box sx={{ mb: 2 }}>
                   <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
                     {t("common:common.Case managers", "Case managers")}
@@ -463,7 +463,7 @@ const handleDeactivateOrReactivate = async (account, ref) => {
               )}
 
               {/* Families Served Section */}
-              {account?.familyCount && (
+              {account?.familyCount != null && (
                 <Box sx={{ mb: 2 }}>
                   <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
                     {t("common:common.Families Served", "Families Served")}
@@ -475,7 +475,7 @@ const handleDeactivateOrReactivate = async (account, ref) => {
               )}
 
               {/* Children Served Section */}
-              {account?.childCount && (
+              {account?.childCount != null && (
                 <Box sx={{ mb: 2 }}>
                   <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
                     {t("common:common.Children Served", "Children Served")}

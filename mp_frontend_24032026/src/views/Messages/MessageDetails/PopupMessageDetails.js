@@ -132,7 +132,7 @@ const PopupMessageDetails = ({ form }) => {
               label={
                 <Box display="flex" flexDirection="column" mt gap={1}>
                   <Typography variant="subtitle1">
-                    {convertUnderscoreToText(msg)}
+                    {t(`common:system messages.${msg}`)}
                   </Typography>
                   {values?.messageFrequency === msg && (
                     <DateTimeRangePicker

@@ -1,4 +1,4 @@
-import { useCallback, useState, useRef, useEffect } from 'react';
+import { useCallback, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
     Box,
@@ -19,7 +19,6 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Field, FieldArray, useFormikContext } from 'formik';
 import { v4 as uuidv4 } from 'uuid';
 import { ModalService } from '../../../../components/Modal';
-import CustomMockApi from './CustoMockApi';
 import APIS from '../../../../common/hooks/UseApiCalls';
 import toast from 'react-hot-toast';
 import DropdownWithExternalLabel from './DropdownWithExternalLabel';

@@ -52,7 +52,8 @@ const ConsolidatedFamilyList = (props) => {
 
   const statusOptions = [
     { label: "Active", value: "Open", key: "Case Status" },
-    { label: "Inactive", value: "Closed", key: "Case Status" },
+    { label: "Case closed", value: "Closed", key: "Case Status" },
+    { label: "Pending", value: "Pending", key: "Case Status" },
   ]
 
   const langOptions = [
@@ -93,6 +94,8 @@ const ConsolidatedFamilyList = (props) => {
         return "#3DAA1D";
       case "Inactive":
         return "#D6DBDE";
+        case "Pending":
+          return "#eba309";
       default:
         return "#D6DBDE";
     }
@@ -171,10 +174,10 @@ const ConsolidatedFamilyList = (props) => {
       label: t("common:common.Status", "Status"),
       render: (row) => (
         <Chip
-          label={getStatusLabel(row.status,row.deactivationReason)}
+          label={getStatusLabel(row.familyStatus,row.deactivationReason)}
           sx={{
-            backgroundColor: getStatusBackgroundColor(row.status),
-            color: row.status === "Active" ? "#FFFFFF" : "#000000",
+            backgroundColor: getStatusBackgroundColor(row.familyStatus),
+            color: row.familyStatus === "Active" || row.familyStatus === "Pending" ? "#FFFFFF" : "#000000",
           }}
         />
       ),
@@ -306,7 +309,7 @@ const ConsolidatedFamilyList = (props) => {
       caseWorker: "",
       listType: "LARGE",
       filters: {
-        caseStatus: filter.caseStatus?.map((item) => item.value) || [],
+        familyStatus: filter.caseStatus?.map((item) => item.value) || [],
         caseworkerId: filter.caseworkerId?.map((item) => item.value) || [],
       }
     };
