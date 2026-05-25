@@ -6,7 +6,7 @@ const ChildInterventions = ({childId}) => {
     return await APIS.GetChildInterventionList({...payload, viewClosedIntervention: true});
   };
   return (
-     <IndividualInterventions id={{HTChildId: childId}} getTableData={getChildInterventions} />
+     <IndividualInterventions id={{TWChildId: childId}} getTableData={getChildInterventions} />
   );
 };
 export default ChildInterventions;
