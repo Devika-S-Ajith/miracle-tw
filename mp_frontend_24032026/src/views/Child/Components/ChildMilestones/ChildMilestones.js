@@ -13,7 +13,7 @@ const ChildMilestones = ({familyMembers, familyName}) => {
   // Wrapper function for getting child milestones
   const getChildMilestones = async (page, rowCount) => {
     return await APIS.GetChildMilestoneList({ 
-      HTChildId: id, 
+      TWChildId: id, 
       limit: rowCount, 
       pageNumber: page
     });
@@ -22,7 +22,7 @@ const ChildMilestones = ({familyMembers, familyName}) => {
   // Wrapper function for getting interventions for a child milestone
   const getChildInterventions = async (milestoneName) => {
     return await APIS.GetInterventionForMilestoneListChild({ 
-      HTChildId: id, 
+      TWChildId: id, 
       milestoneName: milestoneName 
     });
   };
