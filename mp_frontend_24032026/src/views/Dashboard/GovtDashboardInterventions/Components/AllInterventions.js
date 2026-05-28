@@ -117,11 +117,11 @@ const AllInterventions = () => {
           }
           sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}
         >
-          <span
-            style={{ display: "flex", alignItems: "center", marginRight: 1 }}
-          >
-            <InCrisisFlag sx={{ mr: 1 }} />
-          </span>
+          {row?.redFlag && (
+            <span style={{ display: "flex", alignItems: "center", marginRight: 1 }}>
+              <InCrisisFlag sx={{ mr: 1 }} />
+            </span>
+          )}
           <span style={{ wordBreak: "break-word", whiteSpace: "normal" }}>
             {row?.milestone_name?.trim()}
           </span>

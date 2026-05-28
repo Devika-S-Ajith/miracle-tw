@@ -173,7 +173,7 @@ const AllMilestones = () => {
     const payload = {
       ...getNavbarFilterPayload(navbarFilterValues, linkedAccounts),
       ...(signedinOrgType !== "6" ? { accountFilter: [localStorage.getItem("orgId")] } : {}),
-      orderByField: [[sort, order.toUpperCase()]],
+      ...(sort && order ? { orderByField: [[sort, order.toUpperCase()]] } : {}),
       pageNumber: page || 1,
       rowCount: rowCount || 10, // Default row count if not provided
     };

@@ -11,6 +11,7 @@ import ManageChildForm from '../../../Child/Components/ChildListTable/ChildDetai
 import AddFamilyMemberModal from '../../../TWFamily/ManageFamily/Components/AddFamilyMemberModal';
 import FamilyMemberCard from '../../../TWFamily/ManageFamily/Components/FamilyMemberCard';
 import { useNavigate } from 'react-router';
+import { convertUnderscoreToText } from '../../../../constants';
 
 
 
@@ -21,9 +22,16 @@ const FamilyMembersTable = ({ members, refreshData }) => {
   const {familyDropdownLists} = useContext(CommonDataContext);
   const [hideChildModal, setHideChildModal] = useState(false);
    const navigate = useNavigate();
-  const getRoleBackgroundColor = (roleType) => {
-    if (roleType === 'child') return '#F29D64';
+
+   const getRoleBackgroundColor = (row) => {
+    if (row?.isChild) return '#F79C65';
     return '#6BC4CE';
+  };
+  
+  const getRoleTextColor = (row) => {
+    if (!row) return '#FFFFFF';
+    if (row.isChild) return '#000000';
+    return '#FFFFFF';
   };
   const [childModalOpen, setChildModalOpen] = useState(false);
   const [activeChildId, setActiveChildId] = useState(null);
@@ -33,11 +41,6 @@ const FamilyMembersTable = ({ members, refreshData }) => {
   const handleChildEdit = (child) => {
     setActiveChildId(child?.id || null);
     setChildModalOpen(true);
-  };
-
-  const getRoleTextColor = (roleType) => {
-    if (roleType === 'child') return '#000000';
-    return '#FFFFFF';
   };
 
   const handleViewMember = (member) => {
@@ -104,21 +107,49 @@ const handleEditMember = (member) => {
         enableSorting: true,
         width: 250,
         minWidth: 250,
-        render: (row) => (
-          <Box>
-            <Typography
-              variant="body1"
-              fontWeight="medium"
-              color="textPrimary">
+        render: (row) => {
+          const relation = familyDropdownLists?.familyRelations?.find(
+            (item) => item.id === row.TWFamilyRelationId
+          )?.value || '';
+        
+          const caregiverLabel = row.isPrimaryCaregiver
+            ? 'Primary caregiver'
+            : row.isChild
+            ? null
+            : 'Caregiver';
+        
+          let subText = '';
+        
+          if (row.isChild) {
+            const age = row.dateOfBirth
+              ? Math.floor((new Date() - new Date(row.dateOfBirth)) / (365.25 * 24 * 60 * 60 * 1000))
+              : null;
+            const dob = row.dateOfBirth
+              ? new Date(row.dateOfBirth).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+              : null;
+            const parts = [
+              age !== null ? `${age}yo` : null,
+              dob ? `(${dob})` : null,
+              convertUnderscoreToText(row.gender || null),
+            ].filter(Boolean);
+            subText = parts.join(' | ');
+          } else {
+            subText = [relation, caregiverLabel].filter(Boolean).join(' | ');
+          }
+        
+          return (
+            <Box>
+              <Typography variant="body1" fontWeight="medium" color="textPrimary">
                 {row.firstName} {row.lastName}
-            </Typography>
-            <Typography
-              variant="body2"
-              color="textSecondary">
-                {row.subText}
-            </Typography>
-          </Box>
-        ),
+              </Typography>
+              {subText && (
+                <Typography variant="body2" color="textSecondary">
+                  {subText}
+                </Typography>
+              )}
+            </Box>
+          );
+        },
       },
       {
         label: 'Role',
@@ -130,8 +161,8 @@ const handleEditMember = (member) => {
           <ChipComponent
             label={familyDropdownLists?.familyRelations?.find(item => item.id === row.TWFamilyRelationId)?.value || row.TWFamilyRelationId}
             sx={{
-              backgroundColor: getRoleBackgroundColor(row.roleType),
-              color: getRoleTextColor(row.roleType),
+              backgroundColor: getRoleBackgroundColor(row),
+              color: getRoleTextColor(row),
               fontWeight: 500,
               width: '100%',
               height: 'auto',
@@ -153,7 +184,7 @@ const handleEditMember = (member) => {
                   lineHeight: 1.2
               },
               '&:hover': {
-                backgroundColor: getRoleBackgroundColor(row.roleType),
+                backgroundColor: getRoleBackgroundColor(row),
               }
             }}
           />
