@@ -47,21 +47,33 @@ const ManageFamilyForm = (props) => {
         return true;
     };
 
-    const buildSubmitTouchedTree = (value) => {
+    const buildSubmitTouchedTree = (value, existingTouched = {}) => {
         const touchedTree = buildTouchedTree(value);
 
         if (Array.isArray(value?.members)) {
-            touchedTree.members = value.members.map((member) => ({
-                ...(member && typeof member === "object" ? buildTouchedTree(member) : {}),
-                TWFamilyRelationId: true,
-                firstName: true,
-                lastName: true,
-                gender: true,
-                dateOfBirth: true,
-            }));
+            touchedTree.members = value.members.map((member, index) => {
+                const existingMemberTouched = existingTouched?.members?.[index] || {};
+
+                if (!member?.TWFamilyRelationId) {
+                    return existingMemberTouched;
+                }
+
+                return {
+                    ...(member && typeof member === "object" ? buildTouchedTree(member) : {}),
+                    ...existingMemberTouched,
+                    TWFamilyRelationId: true,
+                    firstName: true,
+                    lastName: true,
+                    gender: true,
+                    dateOfBirth: true,
+                };
+            });
         }
 
-        return touchedTree;
+        return {
+            ...existingTouched,
+            ...touchedTree,
+        };
     };
 
     const location = useLocation();
@@ -86,7 +98,7 @@ const ManageFamilyForm = (props) => {
     const valuesRef = useRef();
     const isFormDirtyRef = useRef();
     const defaultMember = useRef({
-        TWFamilyRelationId: "",
+        TWFamilyRelationId: null,
         isActive: true,
         isMajor: false,
         isChild: false,
@@ -496,58 +508,65 @@ const ManageFamilyForm = (props) => {
                 
                 members: Yup.array().of(
                     Yup.object().shape({
-                        TWFamilyRelationId: Yup.string()
-                            .nullable()
-                            .max(255),
+                        TWFamilyRelationId: Yup.string().nullable().max(255),
+
                         firstName: Yup.string()
                             .nullable()
                             .max(255)
                             .test('not-empty', t('common:warnings.First Name is required', 'First Name is required'), value => !value || value.trim().length > 0)
                             .when('TWFamilyRelationId', (TWFamilyRelationId, schema) => {
-                               return TWFamilyRelationId ? schema.required(t('common:warnings.First Name is required', 'First Name is required')) : schema;
+                                const relationId = String(Array.isArray(TWFamilyRelationId) ? TWFamilyRelationId[0] : TWFamilyRelationId);
+                                // Only require if relation is selected AND not a child-type relation
+                                return relationId && relationId !== 'null' 
+                                    ? schema.required(t('common:warnings.First Name is required', 'First Name is required'))
+                                    : schema;
                             }),
+
                         lastName: Yup.string()
                             .nullable()
                             .max(255)
-                            .test('not-empty', 'Last Name is required', value => !value || value.trim().length > 0)
+                            .test('not-empty', t('common:warnings.Last Name is required', 'Last Name is required'), value => !value || value.trim().length > 0)
                             .when('TWFamilyRelationId', (TWFamilyRelationId, schema) => {
                                 const relationId = String(Array.isArray(TWFamilyRelationId) ? TWFamilyRelationId[0] : TWFamilyRelationId);
-                                return relationId && !['3', '9'].includes(relationId)
-                                    ? schema.required('Last Name is required')
+                                return relationId && relationId !== 'null' && !['3', '9'].includes(relationId)
+                                    ? schema.required(t('common:warnings.Last Name is required', 'Last Name is required'))
                                     : schema;
                             }),
+
                         dateOfBirth: Yup.date()
                             .nullable()
                             .when('TWFamilyRelationId', (TWFamilyRelationId, schema) => {
-                                return ["3", "9"].includes(TWFamilyRelationId) ? schema.required(t('common:warnings.DOB is required', 'DOB is required')) : schema;
+                                const relationId = String(Array.isArray(TWFamilyRelationId) ? TWFamilyRelationId[0] : TWFamilyRelationId);
+                                // Only require DOB if relation is selected AND not empty/null
+                                return relationId && relationId !== 'null' && ['3', '9'].includes(relationId)
+                                    ? schema.required(t('common:warnings.DOB is required', 'DOB is required'))
+                                    : schema;
                             })
                             .test(
                                 "is-not-future-date",
-                                t(
-                                    "common:warnings.Date of birth cannot be in the future",
-                                    "Date of birth cannot be in the future"
-                                ),
+                                t("common:warnings.Date of birth cannot be in the future", "Date of birth cannot be in the future"),
                                 (value) => {
                                     if (!value) return true; // Allow empty values to be handled by required
-                                    return dayjs(value).isBefore(dayjs(), "day");
+                                    return dayjs(value).isBefore(dayjs().endOf("day"));
                                 }
                             ),
+
                         gender: Yup.string()
                             .nullable()
                             .max(255)
                             .when('TWFamilyRelationId', (TWFamilyRelationId, schema) => {
                                 const relationId = String(Array.isArray(TWFamilyRelationId) ? TWFamilyRelationId[0] : TWFamilyRelationId);
-                                return ['3', '9'].includes(relationId)
+                                return relationId && relationId !== 'null' && ['3', '9'].includes(relationId)
                                     ? schema.required(t('common:warnings.Gender is required', 'Gender is required'))
                                     : schema;
                             }),
+
                         isMajor: Yup.boolean(),
                         isChild: Yup.boolean(),
                         isPrimaryCaregiver: Yup.boolean(),
-                        isActive:Yup.boolean()
+                        isActive: Yup.boolean(),
                     })
                 )
-
             })}
             onSubmit={async (
                 values,
@@ -585,7 +604,7 @@ const ManageFamilyForm = (props) => {
                                 .map(({ isMajor, ...rest }) => ({ ...rest, isMinor: !isMajor })),
                             "existingChildren": values.members
                                 .filter(member => member.isExistingChild && !member.isDeleted)
-                                .map(({ isChild, isMajor, isActive, isExistingChild,_rowKey,profileInformation, ...rest }) => ({ ...rest, isMinor: !rest.isMajor })),
+                                .map(({ isChild, isMajor, isActive, isExistingChild_rowKey,profileInformation, ...rest }) => ({ ...rest, isMinor: !rest.isMajor })),
                         };
 
 
@@ -720,10 +739,10 @@ const ManageFamilyForm = (props) => {
                 valuesRef.current = values;
                 isFormDirtyRef.current = isFormDirty;
 
-                if (isSubmitting) {
-                    const el = document.querySelector(".Mui-error, [data-error]");
-                    (el?.parentElement ?? el)?.scrollIntoView();
-                }
+                // if (isSubmitting) {
+                //     const el = document.querySelector(".Mui-error, [data-error]");
+                //     (el?.parentElement ?? el)?.scrollIntoView();
+                // }
                 return (
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <Form
@@ -802,9 +821,9 @@ const ManageFamilyForm = (props) => {
                                                                     caseWorker={values?.caseWorker}                                                   
                                                                     //isFamilyActive={family?.id ? checked : true}
                                                                     setIsLoading={setIsLoading}
-                                                                    familyRelations={familyDropdownLists.familyRelations || []}
-                                                                    memberDeleteReasons={familyDropdownLists.familyDeleteReason || []}
-                                                                    familyChangeReasons={childDropdownLists.familyChangeReasons || []} 
+                                                                    familyRelations={familyDropdownLists?.familyRelations || []}
+                                                                    memberDeleteReasons={familyDropdownLists?.familyDeleteReason || []}
+                                                                    familyChangeReasons={childDropdownLists?.familyChangeReasons || []} 
                                                                     isFamilyActive={family?.isActive }
                                                                 />
                                                             </>
@@ -848,8 +867,10 @@ const ManageFamilyForm = (props) => {
                                                         situationsAndGoals={situationsAndGoals}
                                                         locationList={locationList}
                                                         htLanguagesList={htLanguagesList}
-                                                        caseWorkerList={caseWorkerList}
-                                                        config={familyAdditionalDetails}
+                                                        caseWorkerList={caseWorkerList}                                                     
+                                                        config={familyAdditionalDetails({
+                                                            values,                                        
+                                                        })}
                                                         dropdownValues={familyDropdownLists}
                                                         isDisabled={family?.isActive === false}
                                                     />
@@ -927,20 +948,26 @@ const ManageFamilyForm = (props) => {
                                                     }
                                                     }
                                                 />
-                                                <Button
-                                                    color="primary"
-                                                    disabled={isSubmitting}
-                                                    type="submit"
-                                                    variant="contained"
-                                                    onClick={async () => {
-                                                        await setTouched(buildSubmitTouchedTree(values));
-                                                        const formErrors = await validateForm();
-                                                        if (Object.keys(formErrors).length === 0) {
-                                                            handleSubmit();
-                                                        }
-                                                    }}
-                                                    id="submit"
-                                                >
+                                                    <Button
+                                                        color="primary"
+                                                        disabled={isSubmitting}
+                                                        type="submit"
+                                                        variant="contained"
+                                                        onClick={() => {
+                                                            // Build your custom touched tree for members explicitly 
+                                                            const touchedTree = buildSubmitTouchedTree(values, touched);
+                                                            setTouched(touchedTree, true);
+
+                                                            // Check for DOM errors right after Formik flushes validation to the UI
+                                                            setTimeout(() => {
+                                                                const el = document.querySelector(".Mui-error, [data-error]");
+                                                                if (el) {
+                                                                    (el?.parentElement ?? el)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                                }
+                                                            }, 150);
+                                                        }}
+                                                        id="submit"
+                                                    >
                                                     {mode === 'add' ? t("common:family.Save Family") : t("common:family.Update Family")}
                                                 </Button>
                                             </Box>

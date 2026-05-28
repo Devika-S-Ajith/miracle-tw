@@ -8,9 +8,13 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import React from "react";
+import SubHeading from "../SubHeading/SubHeading";
+import BodyText from "../BodyText/BodyText";
 
-const AccountTypesTable = ({ typeList = [] }) => {
+const AccountTypesTable = ({ typeList = [], title, description }) => {
   return (
+    <>
+    <SubHeading value={title} />
     <Box my mx={-2}>
       <Box
         sx={{
@@ -19,7 +23,7 @@ const AccountTypesTable = ({ typeList = [] }) => {
         }}
         p={2}
       >
-        {" "}
+        <BodyText value={description} />
         <TableContainer sx={{ borderRadius: 2 / 8, marginY: 2 }}>
           <Table sx={{ border: " 1px solid #C6C4BE" }}>
             <TableBody>
@@ -46,6 +50,7 @@ const AccountTypesTable = ({ typeList = [] }) => {
         </TableContainer>
       </Box>
     </Box>
+    </>
   );
 };
 

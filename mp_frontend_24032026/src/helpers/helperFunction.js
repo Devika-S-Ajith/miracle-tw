@@ -511,6 +511,48 @@ export const validatePhoneNumber = (value, ref, params) => {
   }
 };
 
+export const splitCountryCodeAndPhoneNumber = (phoneValue) => {
+  if (!phoneValue || typeof phoneValue !== "string") {
+    return {
+      countryCode: "",
+      countryCodeDigits: "",
+      phoneNumber: "",
+      e164PhoneNumber: "",
+    };
+  }
+
+  const normalizedValue = phoneValue.trim();
+  if (!normalizedValue) {
+    return {
+      countryCode: "",
+      countryCodeDigits: "",
+      phoneNumber: "",
+      e164PhoneNumber: "",
+    };
+  }
+
+  const phoneUtil = PhoneNumberUtil.getInstance();
+  try {
+    const parsedPhoneNumber = phoneUtil.parseAndKeepRawInput(normalizedValue);
+    const countryCodeDigits = String(parsedPhoneNumber.getCountryCode() || "");
+    const phoneNumber = phoneUtil.getNationalSignificantNumber(parsedPhoneNumber);
+
+    return {
+      countryCode: countryCodeDigits ? `+${countryCodeDigits}` : "",
+      countryCodeDigits,
+      phoneNumber: phoneNumber || "",
+      e164PhoneNumber: normalizedValue,
+    };
+  } catch (error) {
+    return {
+      countryCode: "",
+      countryCodeDigits: "",
+      phoneNumber: normalizedValue.replace(/^\+/, ""),
+      e164PhoneNumber: normalizedValue,
+    };
+  }
+};
+
 export const GenerateFileName = ({signedInOrgName,userIdData,module}) => {  
   const currentDate = new Date();
   const year = currentDate.getFullYear();

@@ -27,7 +27,8 @@ const FamilySummary = ({ t, family, mostRecentAssesmentSummary }) => {
     firstAssessmentDateOfAssessment,
     firstAssessmentThriveScaleScore,
     assessmentDate,
-    percentageChangeFromFirst = null
+    percentageChangeFromFirst = null,
+    assessmentNumber=null
   } = mostRecentAssesmentSummary || {};
   const { TWLanguageId, DateStartedasFP } = additionalInformation || {};
 
@@ -171,18 +172,20 @@ const FamilySummary = ({ t, family, mostRecentAssesmentSummary }) => {
         mt={1}
       >
         <Stack>
-          <BodyText value={firstAssessmentThriveScaleScore} fontWeight={600} />
+          <BodyText value={firstAssessmentThriveScaleScore + "%"} fontWeight={600} />
           <BodyText value={MonthDayYearFormatter(firstAssessmentDateOfAssessment,"short")} />
         </Stack>
-        <img
-          // key={index}
-          src="/static/icons/rightArrow.png"
-          style={{ width: 25, height: 25 }}
-        />
-        {thriveScaleScore &&<Stack>
-          <BodyText value={thriveScaleScore} fontWeight={600} />
-          <BodyText value={MonthDayYearFormatter(assessmentDate,"short")} />
-        </Stack>}
+        {thriveScaleScore && assessmentNumber && assessmentNumber > 1 &&
+          <>
+            <img
+              // key={index}
+              src="/static/icons/rightArrow.png"
+              style={{ width: 25, height: 25 }}
+            />
+            <Stack>
+              <BodyText value={thriveScaleScore + "%"} fontWeight={600} />
+              <BodyText value={MonthDayYearFormatter(assessmentDate, "short")} />
+            </Stack></>}
       </Stack>}
     </CommonCard>
   );

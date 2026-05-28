@@ -220,35 +220,69 @@ const InlineMemberCreation = ({
     const handleAddMember = async (push) => {
         setIsAdding(true);
         await new Promise(res => setTimeout(res, 1));
+
+        const hasPrimaryCaregiver = memberList.some(m => m.isPrimaryCaregiver && !m.isDeleted);
+        const newRowKey = uuidv4();
         push({
             TWFamilyRelationId: "",
             isActive: true,
             isMajor: false,
-            _rowKey: uuidv4(),
+            isPrimaryCaregiver: !hasPrimaryCaregiver,
+            profileInformation: {
+                appAccessEnabled: false,
+            },
+            _rowKey: newRowKey,
         });
+
+        if (!hasPrimaryCaregiver) {
+            setSelectedCareGiver(newRowKey);
+        }
+
         setIsAdding(false);
     };
 
     const handleClearMember = (member) => {
         const currentMembers = formik?.values?.members || [];
-        // Use _rowKey if present, otherwise fallback to id/isChild
         const memberIndex = currentMembers.findIndex(m =>
             member._rowKey
                 ? m._rowKey === member._rowKey
                 : m.id === member.id && m.isChild === member.isChild
         );
-        if (memberIndex !== -1) {
-            // Use FieldArray's remove if available for better Formik integration
-            if (typeof formik?.remove === "function") {
-                formik.remove(memberIndex);
-            } else {
-                // Fallback: manually update the array
-                const updatedMembers = currentMembers.filter((_, idx) => idx !== memberIndex);
-                formik?.setFieldValue('members', updatedMembers);
-            }
-        }
-    };
 
+        if (memberIndex === -1) return;
+
+        const updatedMembers = currentMembers.filter((_, idx) => idx !== memberIndex);
+
+        // If cleared member was primary caregiver, assign new one
+        if (member?.isPrimaryCaregiver && updatedMembers.length > 0) {
+            // Try index + 1 (same index after removal), fallback to index - 1 (last)
+            const newPrimaryIndex = memberIndex < updatedMembers.length
+                ? memberIndex
+                : memberIndex - 1;
+
+            updatedMembers[newPrimaryIndex] = {
+                ...updatedMembers[newPrimaryIndex],
+                isPrimaryCaregiver: true,
+            };
+
+            // Update selectedCareGiver state
+            const newPrimary = updatedMembers[newPrimaryIndex];
+            setSelectedCareGiver(newPrimary.id || newPrimary._rowKey);
+        }
+
+        const currentTouched = formik?.touched?.members || [];
+        const updatedTouched = currentTouched.filter((_, idx) => idx !== memberIndex);
+
+        formik?.setFormikState(prev => ({
+            ...prev,
+            values: { ...prev.values, members: updatedMembers },
+            touched: { ...prev.touched, members: updatedTouched },
+            errors: {
+                ...prev.errors,
+                members: (prev.errors?.members || []).filter((_, idx) => idx !== memberIndex),
+            },
+        }));
+    };
 
     const checkForDuplicateChild = async (index, member, fieldValue = null, fieldName = null) => {
         let { firstName, lastName, gender, dateOfBirth, id } = member;
@@ -438,9 +472,7 @@ const InlineMemberCreation = ({
 
     const handleDateChange = (index, newValue) => {
         formik?.setFieldValue(`members.${index}.dateOfBirth`, newValue);
-
-        const member = memberList?.[index];
-        const updatedMember = { ...member, dateOfBirth: newValue };
+        handleFieldBlur(index, 'dateOfBirth', newValue);
     };
 
     const checkEmptyDataFields = (index) => {
@@ -453,6 +485,7 @@ const InlineMemberCreation = ({
             return !member?.firstName;
         }
     };
+    
 
     const handleDeleteMember = (member) => {
         ModalService.open(({ close }) => (
@@ -655,6 +688,7 @@ const InlineMemberCreation = ({
                                                                 ["3", "9"].includes(newValue) ? true : false
                                                             );
                                                         }}
+                                                        onClear={() => handleClearMember(obj)}
                                                         required={true}
                                                         disabled={!(obj?.isActive && isFamilyActive) || !formik?.values?.caseWorker || !formik?.values?.familyName}
                                                         validateOnChange={true}
@@ -684,7 +718,7 @@ const InlineMemberCreation = ({
                                                     />
 
                                                 </Grid>
-                                                {!formik?.values?.caseWorker || !formik?.values?.familyName ? (
+                                                {(!formik?.values?.caseWorker || !formik?.values?.familyName) && memberList?.length < 1 ? (
                                                     <Grid item md={6} xs={6}>
                                                         <Typography variant="body2" color="textSecondary">
                                                             {t('common:family.Please select case worker and enter family name to add members', 'Please select case worker and enter family name to add members')}
@@ -790,7 +824,7 @@ const InlineMemberCreation = ({
                         ) : (
                             <Button
                                 onClick={() => handleAddMember(push)}
-                                disabled={isAdding || memberList?.length > 20 || checkEmptyDataFields(memberList?.length - 1) || !isFamilyActive || !formik?.values?.caseWorker || !formik?.values?.familyName}
+                                disabled={isAdding ||  checkEmptyDataFields(memberList?.length - 1) || !isFamilyActive || !formik?.values?.caseWorker || !formik?.values?.familyName}
                                 variant={memberList?.length < 1 ? "contained" : "text"}
                                 startIcon={isAdding ? <CircularProgress size={14} /> : null}
                             >

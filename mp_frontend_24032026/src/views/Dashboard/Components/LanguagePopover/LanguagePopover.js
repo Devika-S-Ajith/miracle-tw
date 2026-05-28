@@ -185,7 +185,7 @@ const LanguagePopover = ({
     const userId = localStorage.getItem("username");
     const payload = {
       id: `${userId}`,
-      HTLanguageId : `${langId}`,
+      TWLanguageId : `${langId}`,
     };
     localStorage.setItem("language", currentLanguage);
 

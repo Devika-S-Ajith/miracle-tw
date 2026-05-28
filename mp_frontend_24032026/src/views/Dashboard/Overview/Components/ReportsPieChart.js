@@ -8,32 +8,59 @@ import {
   CardContent,
   CardHeader,
   Typography,
-  CircularProgress
+  CircularProgress,
 } from "@mui/material";
 import ArrowRightIcon from "../../../../assets/icons/ArrowRight";
 import { useTranslation } from "react-i18next";
 import MUIPieChart from "./MUIPieCharts";
-import { filter } from "lodash";
+import ErrorWithReload from "../../GovtDashboardOverview/Components/ErrorWithReload";
 
-const ReportsPieChart = (props) => {
-  const { title, res, loading, labels, reportLink, canViewReport, ...other } = props;
+const ReportsPieChart = ({ title, res, loading, reportLink, canViewReport, hasError ,handleReload = () => {} }) => {
   const { t } = useTranslation(["common"]);
   const navigate = useNavigate();
   const [chartSeries, setChartSeries] = useState([]);
- 
-  const parseApiData = (value) => {
-    let valueArray = [];
-    for (const item in value) {
-        let series = { id: item, value: value[item], label: item };
-        valueArray.push(series);
-    }
-    const hasData = valueArray.some((series) => series.value != 0);
-    setChartSeries(hasData ? valueArray : []);
-};
 
   useEffect(() => {
-    parseApiData(res);
-  }, [res]);
+    if (!res || hasError) {
+      setChartSeries([]);
+      return;
+    }
+
+    const valueArray = Object.entries(res).map(([key, value]) => ({
+      id: key,
+      value,
+      label: key,
+    }));
+
+    const hasData = valueArray.some((series) => series.value !== 0);
+    setChartSeries(hasData ? valueArray : []);
+  }, [res, hasError]);
+
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
+          <CircularProgress color="primary" />
+        </Box>
+      );
+    }
+
+    if (hasError) {
+      return (
+        <ErrorWithReload onReload={handleReload} />
+      );
+    }
+
+    if (!chartSeries.length) {
+      return (
+        <Typography textAlign="center" alignContent="center" justifyContent="center">
+          {t("common:common.No data found", "No data found")}
+        </Typography>
+      );
+    }
+
+    return <MUIPieChart series={chartSeries} />;
+  };
 
   return (
     <Card sx={{ mb: 1 }}>
@@ -53,21 +80,7 @@ const ReportsPieChart = (props) => {
           </Box>
         }
       />
-      <CardContent>
-        {!loading ? (
-          chartSeries.length ?
-            <MUIPieChart
-              series={chartSeries} /> :
-            <Typography
-              alignContent="center"
-              textAlign="center"
-              justifyContent="center">
-              No data found
-            </Typography>
-        ) : (
-          <CircularProgress color="primary" sx={{ mt: 1 }} />
-        )}
-      </CardContent>
+      <CardContent>{renderContent()}</CardContent>
       {canViewReport && chartSeries.length > 0 && (
         <CardActions
           sx={{
@@ -75,23 +88,21 @@ const ReportsPieChart = (props) => {
             py: 1.5,
             backgroundColor: "background.default",
           }}
-      >
-        <Button
-          color="primary"
-          endIcon={<ArrowRightIcon fontSize="small" />}
-          variant="text"
-          disabled={!canViewReport || !chartSeries.length}
-          onClick={() =>
-            navigate(reportLink, {
-              state: {
-                fromDashboard: true,
-              },
-            })
-          }
         >
-             {t("common:common.View Report")}
-        </Button>
-      </CardActions>)}
+          <Button
+            color="primary"
+            endIcon={<ArrowRightIcon fontSize="small" />}
+            variant="text"
+            onClick={() =>
+              navigate(reportLink, {
+                state: { fromDashboard: true },
+              })
+            }
+          >
+            {t("common:common.View Report")}
+          </Button>
+        </CardActions>
+      )}
     </Card>
   );
 };

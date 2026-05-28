@@ -683,7 +683,12 @@
     "Completed": "पूर्ण झाले",
     "Inactive Reassign": "कृपया निष्क्रिय करण्यापूर्वी या संस्थेचे वापरकर्ते आणि बालके  पुन्हा नियुक्त करा",
     "Consent enabled": "बालक संमती फॉर्म",
-    "Organization ID": "संस्थेचे आयडी"
+    "Organization ID": "संस्थेचे आयडी",
+    "Defaults": "डीफॉल्ट्स",
+    "Loading forms": "फॉर्म लोड होत आहेत...",
+    "Default asssesment language": "डीफॉल्ट मूल्यमापन भाषा",
+    "All assessments will appear in this language": "सर्व मूल्यमापने या भाषेत दिसतील"
+    
   },
   "account": {
     "Account ID": "खात्याचे आयडी",
@@ -1053,7 +1058,7 @@
     "Primary caregiver’s first name": "प्राथमिक काळजीवाहकाचे पहिले नाव",
     "Primary caregiver’s last name": "प्राथमिक काळजीवाहकाचे आडनाव",
     "Delete family?": "कुटुंब डिलीट करा?",
-    "Family Situation": "कौटुंबिक प्रकार",
+    "Family Situation": "कुटुंब की स्थिति",
     "Goal": "ध्येय",
     "Add family member": "कुटुंबातील सदस्य जोडा",
     "Edit family member": "कुटुंबातील सदस्य संपादित करा",
@@ -1266,7 +1271,11 @@
     "Summary is required": "सारांश आवश्यक आहे",
     "Article link is required": "लेखाची लिंक आवश्यक आहे",
     "Image link is required": "प्रतिमेची लिंक आवश्यक आहे",
-    "Date of birth cannot be in the future": "जन्मतारीख भविष्य की नहीं हो सकती"
+    "Date of birth cannot be in the future": "जन्मतारीख भविष्य की नहीं हो सकती",
+    "Past dates are not allowed": "मागील तारखा अनुमत नाहीत",
+    "Content must be at most 500 characters": "मजकूर जास्तीत जास्त 500 अक्षरांचा असावा",
+    "Label must be at most 20 characters": "लेबल जास्तीत जास्त 20 अक्षरांचे असावे",
+    "Content must be at most 50 characters": "मजकूर जास्तीत जास्त 50 अक्षरांचा असावा"
   },
   "system messages": {
     "Message subject line": "संदेशाची विषय ओळ",
@@ -1586,7 +1595,26 @@
     "Download": "डाउनलोड",
     "Recreation log details": "मनोरंजन नोंद तपशील",
     "Activity type": "क्रियाकलाप प्रकार",
-    "Activities": "क्रियाकलाप"
+    "Activities": "क्रियाकलाप",
+    "# of active children": "सक्रिय मुलांची संख्या",
+    "Children who have been part of atleast one assessment or log": "किमान एका मूल्यांकनाचा किंवा नोंदीचा भाग असलेली मुले",
+    "# of active families": "सक्रिय कुटुंबांची संख्या",
+    "Families who have been part of atleast one assessment or completed at least one log": "किमान एका मूल्यांकनाचा भाग असलेली किंवा किमान एक नोंद पूर्ण केलेली कुटुंबे",
+    "# of active interventions": "सक्रिय हस्तक्षेपांची संख्या",
+    "All interventions that are not completed": "पूर्ण न झालेले सर्व हस्तक्षेप",
+    "Interventions completed": "पूर्ण झालेले हस्तक्षेप",
+    "All completed interventions, all time": "आतापर्यंतचे सर्व पूर्ण झालेले हस्तक्षेप",
+    "Average active cases per caseworker": "प्रति केसवर्कर सरासरी सक्रिय प्रकरणे",
+    "Average number of active cases across all caseworkers": "सर्व केसवर्कर्समधील सक्रिय प्रकरणांची सरासरी संख्या",
+    "Total active caseworkers": "एकूण सक्रिय केसवर्कर्स",
+    "All active caseworkers in ThriveWell": "ThriveWell मधील सर्व सक्रिय केसवर्कर्स",
+    "New families": "नवीन कुटुंबे",
+    "Families added in the last 30 days": "मागील ३० दिवसांत जोडलेली कुटुंबे",
+    "Children added in last 30 days": "मागील ३० दिवसांत जोडलेली मुले",
+    "Total interventions completed": "एकूण पूर्ण झालेले हस्तक्षेप",
+    "Average # of active cases per case manager": "प्रति केस मॅनेजर सक्रिय प्रकरणांची सरासरी संख्या",
+    "# of active case managers": "सक्रिय केस मॅनेजर्सची संख्या",
+    "Total number of active cases (families + children)": "सक्रिय प्रकरणांची एकूण संख्या (कुटुंबे + मुले)"
 },
 "tableColumn":{
   "Organization name": "संस्थेचे नाव",

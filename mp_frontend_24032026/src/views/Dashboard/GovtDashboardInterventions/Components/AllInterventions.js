@@ -230,7 +230,6 @@ const AllInterventions = () => {
       apiError={apiError}
       enablePagination={true}
       enableSorting={true}
-      filterable={true}
       t={t}
       onReload={handleReload}
       totalPageCount={tableData?.pageCount}

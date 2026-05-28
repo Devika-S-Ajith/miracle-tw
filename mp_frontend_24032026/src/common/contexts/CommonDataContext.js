@@ -500,9 +500,10 @@ const CommonDataContextProvider = (props) => {
 
   const getRolesList = useCallback(async () => {
     try {
+      const langId = getStoredLangId();
       const [dataFS, dataHT] = await Promise.all([
-        APIS.UserRoleListFS(1),
-        APIS.UserRoleListHT(1),
+        APIS.UserRoleListFS(langId),
+        APIS.UserRoleListHT(langId),
       ]);
       if (dataFS?.data?.data) setRoleListFS(dataFS.data.data);
       if (dataHT?.data?.data) setRoleListHT(dataHT.data.data);

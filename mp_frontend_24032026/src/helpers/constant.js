@@ -28,3 +28,6 @@ export const COUNTRY_ID_UGANDA = "3"
 export const Admin = 'Admin'
 export const FosterShare = 'FosterShare'
 export const ThriveScale = 'Thrive Scale'
+
+export const FOSTER_CARE_KINSHIP ='ebe7f77e-713f-44f9-a096-df147d715ce9'
+export const FOSTER_CARE_NON_RELATIVE =  'ebe7f77e-713f-44f9-a096-df147d715ce2'

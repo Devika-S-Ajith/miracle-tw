@@ -151,7 +151,7 @@ const FamilyDetails = () => {
       case "milestones":
         return <FamilyMilestones  familyMembers={memberList}  familyName={family.familyName} />;
       case "assessmentsProgressReports":
-        return <ConsolidatedAssessmentProgressReport id={family?.id} pageType="FAMILY" />;
+        return <ConsolidatedAssessmentProgressReport id={id} pageType="FAMILY" />;
       case "ConsolidatedLog":
         return <ChildLogs module="family" showForChild={true} />;
       default:

@@ -107,13 +107,13 @@ const AutoCompleteDropdown = ({
     if (!option) return "";
 
     return translatableFields.has(name) 
-      ? t(`common:common.${option[key]}`)
+      ? t(`common:common.${option[key]}`, option[key])
       : option[key];
   }, [name, t, translatableFields]);
 
   const selectedOptions = useCallback((item, key) => {
     return translatableFields.has(name) 
-      ? t(`common:common.${item[key]}`)
+      ? t(`common:common.${item[key]}`, item[key])
       : item[key];
   }, [name, t, translatableFields]);
 

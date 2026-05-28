@@ -62,7 +62,7 @@ const FamilyBasicDetails = ({ family, refreshData }) => {
 
   const MembersWidget = BOTH_FS_HT_ALLOWED && (
     <Box sx={{ height: "fit-content", width: "100%" }}>
-      <FamilyMembersAndCaregivers members={family?.members} refreshData={refreshData} />
+      <FamilyMembersAndCaregivers familyId={family?.id} members={family?.members} refreshData={refreshData} />
     </Box>
   );
 

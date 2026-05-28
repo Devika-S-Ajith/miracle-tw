@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import {
+  formatDate,
   monthYearShort,
   toUTCEndOfDay,
   toUTCStartofDay,
@@ -173,7 +174,9 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
           {row.recursiveItemResponse?.medicationName && (
             <Box sx={{ fontSize: "0.85em", mt: 0.5 }}>
               {row.recursiveItemResponse.medicationName}
-              {row.recursiveItemResponse?.strength ? `, ${row.recursiveItemResponse.strength}` : ""}
+              {row.recursiveItemResponse?.strength
+                ? `, ${row.recursiveItemResponse.strength}`
+                : ""}
             </Box>
           )}
         </Box>
@@ -211,18 +214,10 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
       id: "occurrenceTime",
       label: "Occurrence time",
       render: (row) => {
-        if (row.formBehaviorType === "RECURSIVE" && row.Type === "RECURSIVE") {
-          return "-";
+        if (row.Type === "RECURSIVE_ITEM") {
+          return formatDate(row?.formInputdate)?.split(",")[0] || "-";
         } else {
-          return (
-            (row?.formInputdate
-              ? row.formInputdate
-                  .split("T")[1]
-                  ?.split(":")
-                  .slice(0, 2)
-                  .join(":")
-              : "-") || "-"
-          );
+          return "-";
         }
       },
     },
@@ -297,7 +292,10 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
                   state: { module: module, id: row?.id },
                 });
               } else {
-                openMedLogDetailModal(row?.formResponseId, row?.recursiveItemId);
+                openMedLogDetailModal(
+                  row?.formResponseId,
+                  row?.recursiveItemId,
+                );
               }
             } else if (row?.logDetails?.formType === "BEHAVIOR_LOG") {
               openBehaviorLogDetailModal(row?.logDetails?.id);
@@ -368,12 +366,12 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
   const openRecLogDetailModal = (recreationLogId) => {
     ModalService.open(
       ({ close }) => (
-          <RecreationalLogDetails
-            moduleName={module === "family" ? "families" : "children"}
-            moduleId={id}
-            recId={recreationLogId}
-            close={close}
-          />
+        <RecreationalLogDetails
+          moduleName={module === "family" ? "families" : "children"}
+          moduleId={id}
+          recId={recreationLogId}
+          close={close}
+        />
       ),
       {
         width: "40%",
@@ -461,7 +459,9 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
         mr={2}
       >
         <FormControl size="small" sx={{ minWidth: 140 }}>
-          <InputLabel id="log-type-label">{t("common:tableColumn.Log type", "Log type")}</InputLabel>
+          <InputLabel id="log-type-label">
+            {t("common:tableColumn.Log type", "Log type")}
+          </InputLabel>
           <Select
             labelId="log-type-label"
             value={logType}

@@ -2,6 +2,7 @@ import { useCallback, useMemo, useRef } from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import { Paper, TextField } from "@mui/material";
 import { fieldToTextField } from "formik-material-ui";
+import { getIn } from "formik";
 import { useTranslation } from "react-i18next";
 import CustomFieldLabel from "./CustomFieldLabel";
 
@@ -27,6 +28,7 @@ const DropdownWithExternalLabel = ({
   groupBy = "group", // NEW: Key for grouping
   size = "medium",
   enableInlineError = false,
+  disableClearable = false,
   ...props
 }) => {
   const { t } = useTranslation([translationNamespace]);
@@ -38,17 +40,22 @@ const DropdownWithExternalLabel = ({
       setFieldTouched,
       setFieldValue,
       setFieldError,
-      validateField
+      validateField,
+      errors,
+      touched,
+      submitCount,
     } = {},
   } = props;
 
   const { ...field } = fieldToTextField(props);
   const {
     name,
-    error,
-    helperText,
     required,
   } = field;
+
+  const fieldErrorMessage = getIn(errors, name);
+  const fieldTouched = getIn(touched, name);
+  const showFieldError = Boolean(fieldErrorMessage) && (Boolean(fieldTouched) || submitCount > 0);
 
   const { label } = textFieldProps;
   const currentValueRef = useRef(field.value);
@@ -110,48 +117,50 @@ const DropdownWithExternalLabel = ({
   /**
    * Handle field value change
    */
-  const handleChange = useCallback((event, data, reason) => {
+ const handleChange = useCallback((event, data, reason) => {
     const fieldValue = data?.[valueKey] ?? "";
-     currentValueRef.current = fieldValue;
-    // Set the field value
+    currentValueRef.current = fieldValue;
+
     setFieldValue(name, fieldValue, false);
 
-    // Handle validation and errors based on whether value exists
-    if (data && data[valueKey]) {
-      // Valid value selected
-      if (clearErrorOnChange) {
+    if (reason === "clear") {
+        // Only reset touched/error on explicit user clear action
         setFieldTouched(name, false, false);
         setFieldError(name, undefined);
-      }
-    } else {
-      // No value selected (cleared or removed)
-      if (touchOnClear) {
-        setFieldTouched(name, true, false);
-      }
 
-      // Trigger validation after delay if validateOnChange is enabled
-      if (validateOnChange) {
-        setTimeout(() => {
-          validateField(name);
-        }, validationDelay);
-      }
-
-      // Call onClear callback if provided
-      if (onClear && reason === "clear") {
-        onClear(name, fieldValue);
-      }
+        if (onClear) {
+            onClear(name, fieldValue);
+        }
+        if (onChange) {
+            onChange(name, fieldValue, data, reason);
+        }
+        return;
     }
 
-    // Call custom onChange handler if provided
+    if (reason === "selectOption" && data && data[valueKey]) {
+        if (clearErrorOnChange) {
+            setFieldTouched(name, false, false);
+            setFieldError(name, undefined);
+        }
+        if (onChange) {
+            onChange(name, fieldValue, data, reason);
+        }
+        if (customFunction) {
+            customFunction(fieldValue);
+        }
+        return;
+    }
+
+    // For any other reason (reset, blur internal events etc.)
+    // do NOT touch or clear errors — let Formik manage it
     if (onChange) {
-      onChange(name, fieldValue, data, reason);
+        onChange(name, fieldValue, data, reason);
     }
-    
     if (customFunction) {
-      customFunction(fieldValue);
+        customFunction(fieldValue);
     }
 
-  }, [
+}, [
     name,
     valueKey,
     setFieldValue,
@@ -164,7 +173,7 @@ const DropdownWithExternalLabel = ({
     touchOnClear,
     onChange,
     onClear,
-  ]);
+]);
 
   /**
    * Handle field blur
@@ -214,6 +223,7 @@ const DropdownWithExternalLabel = ({
       <Autocomplete
         {...field}
         {...props}
+        disableClearable = {disableClearable}
         options={validOptions}
         onChange={handleChange}
         size={size}
@@ -235,10 +245,10 @@ const DropdownWithExternalLabel = ({
             {...inputProps}
             {...textFieldProps}
             label=""
-            placeholder={enableInlineError && error ? t(helperText) : placeholder}
+            placeholder={enableInlineError && showFieldError ? t(fieldErrorMessage) : placeholder}
             onKeyDown={handleKeyDown}
-            helperText={!enableInlineError && helperText}
-            error={error}
+            helperText={!enableInlineError && showFieldError ? t(fieldErrorMessage) : ""}
+            error={showFieldError}
             margin="none" // ADD THIS
             sx={{
               '& .MuiOutlinedInput-root': {
@@ -254,7 +264,7 @@ const DropdownWithExternalLabel = ({
                 margin: 0, // Remove any margin from input
               },
               '& .MuiInputBase-input::placeholder': {
-                color: enableInlineError && error ? '#d32f2f' : 'rgba(0, 0, 0, 0.6)',
+                color: enableInlineError && showFieldError ? '#d32f2f' : 'rgba(0, 0, 0, 0.6)',
                 opacity: 1,
               },
               ...textFieldProps.sx

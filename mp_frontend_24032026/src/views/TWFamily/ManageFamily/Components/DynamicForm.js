@@ -1,5 +1,5 @@
 import { FormGroup, Grid, Typography } from '@mui/material';
-import { Field } from 'formik';
+import { Field, useFormikContext } from 'formik';
 import TextFieldWithExternalLabel from './TextFieldWithExternalLabel';
 import DropdownWithExternalLabel from './DropdownWithExternalLabel';
 import NumberFormat from 'react-number-format';
@@ -50,6 +50,8 @@ const DynamicForm = ({
     setFieldTouched
 }) => {
 
+    const { submitCount = 0 } = useFormikContext();
+
     const currentValueRef = useRef(''); // Ref to keep track of current value for onClose events
 
     // Helper function to construct the full field name
@@ -99,8 +101,10 @@ const getFieldTouched = (name) => get(touched, name, false);
                             name={`${fullFieldName}`} // Use full scoped name
                             id={`${fullFieldName}`} // Use full scoped name
                             fullWidth={fieldProps.fullWidth}
-                            error={Boolean(fieldTouched && fieldError)}
-                            helperText={fieldTouched && fieldError}
+                            error={Boolean(fieldError)}
+                            helperText={fieldError}
+                            isTouched={Boolean(fieldTouched)}
+                            submitCount={submitCount}
                             placeholder={t(fieldProps.placeholder)}
                             value={fieldValue || ''} // Use helper function
                             onChange={(e) => {handleChange(e); fieldProps?.onChange?.(e?.target?.value);}} // Call Formik's handleChange and any custom onChange
@@ -158,6 +162,7 @@ const getFieldTouched = (name) => get(touched, name, false);
                             required={fieldProps.required}
                             validateOnChange={fieldProps.validateOnChange}
                             enableInlineError={fieldProps.enableInlineError}
+                            disableClearable={fieldProps.disableClearable}
                             labelKey={fieldProps.labelKey || "value"}
                             placeholder={t(fieldProps.placeholder)}
                             extraLabel={fieldProps.extraLabel}
@@ -252,6 +257,7 @@ const getFieldTouched = (name) => get(touched, name, false);
                 );
 
             case "DatePicker":
+                const showDateError = Boolean(fieldError) && (Boolean(fieldTouched) || submitCount > 0);
                 return (
                     <Grid item {...gridProps} key={fullFieldName}>                       
                         {fieldProps.label && (
@@ -280,12 +286,12 @@ const getFieldTouched = (name) => get(touched, name, false);
                                 });
                                 fieldProps?.onChange?.(newValue);
                             }}
-                            onClose={() => {
-                                // Defer blur so Formik state updates before validation runs
-                                requestAnimationFrame(() => {
-                                    handleBlur?.({ target: { name: fullFieldName } });
-                                });
-                            }}
+                            // onClose={() => {
+                            //     // Defer blur so Formik state updates before validation runs
+                            //     requestAnimationFrame(() => {
+                            //         handleBlur?.({ target: { name: fullFieldName } });
+                            //     });
+                            // }}
                             maxDate={dayjs().endOf('day')}
                             slots={{
                                 openPickerIcon: CalendarIcon,
@@ -300,13 +306,13 @@ const getFieldTouched = (name) => get(touched, name, false);
                                             backgroundColor: 'white',
                                         },
                                         '& .MuiInputBase-input::placeholder': {
-                                            color: fieldTouched && fieldError ? '#d32f2f' : 'rgba(0, 0, 0, 0.6)',
+                                            color: showDateError ? '#d32f2f' : 'rgba(0, 0, 0, 0.6)',
                                             opacity: 1,
                                         },
                                     },
-                                    placeholder: fieldProps.enableInlineError && fieldTouched && fieldError ? t(fieldError) : "",
-                                    error: fieldTouched && Boolean(fieldError),
-                                    helperText: !fieldProps.enableInlineError && fieldTouched && fieldError,
+                                    placeholder: fieldProps.enableInlineError && showDateError ? t(fieldError) : t(fieldProps.placeholder),
+                                    error: showDateError,
+                                    helperText: !fieldProps.enableInlineError && showDateError ? t(fieldError) : '',
                                 },
                             }}
                         />

@@ -23,8 +23,13 @@ const TextFieldWithExternalLabel = ({
     size = "medium",
     color = 'inherit',
     multiline = false,
+    enableInlineError = false,
+    isTouched = false,
+    submitCount = 0,
     ...textFieldProps
 }) => {
+
+    const showFieldError = Boolean(error) && (Boolean(isTouched) || submitCount > 0);
 
     return (
         <Box sx={{ width: '100%' }}>
@@ -36,12 +41,12 @@ const TextFieldWithExternalLabel = ({
                 </Box>
             )}
             <TextField
-                error={error}
+                error={showFieldError}
                 size={size}
                 multiline={multiline}
                 fullWidth={fullWidth}
                 autoFocus={autoFocus}
-                helperText={helperText}
+                helperText={!enableInlineError && showFieldError ? helperText : ''}
                 name={name}
                 id={id || name}
                 onBlur={onBlur}
@@ -49,9 +54,15 @@ const TextFieldWithExternalLabel = ({
                 value={value}
                 variant={variant}
                 InputLabelProps={{ shrink: false }}
-                placeholder={placeholder}
+                placeholder={enableInlineError && showFieldError ? helperText : placeholder}
                 InputProps={{
-                    sx: { backgroundColor: color },
+                    sx: {
+                        backgroundColor: color,
+                        '& .MuiInputBase-input::placeholder': {
+                            color: enableInlineError && showFieldError ? '#d32f2f' : 'rgba(0, 0, 0, 0.6)',
+                            opacity: 1,
+                        },
+                    },
                     endAdornment: showTooltip && tooltipText ? (
                         <InputAdornment position="end">
                             <Tooltip title={tooltipText}>

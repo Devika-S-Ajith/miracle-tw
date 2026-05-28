@@ -58,6 +58,7 @@ const ChildDetails = () => {
   const[childDetailsLoading, setChildDetailsLoading] = useState(false);
   const [childModalOpen, setChildModalOpen] = useState(false);
   const [hideChildModal, setHideChildModal] = useState(false);
+  const [familyId, setFamilyId] = useState(null);
   const { 
     IS_HT_ALLOWED, 
     IS_FS_ALLOWED,
@@ -99,6 +100,7 @@ const ChildDetails = () => {
       const payload = { id: familyId, listType: "DETAILED" };
       const data = await APIS.GetFamilyDetails(payload);
       const members = data?.data?.data?.members || [];
+      setFamilyId(familyId);
       const membersWithoutCurrentChild = members.filter(member => member.id !== id);
       setMemberList(membersWithoutCurrentChild);
       setChildDetailsLoading(false);
@@ -152,7 +154,7 @@ const ChildDetails = () => {
     switch (currentTab) {
       case "details":
         return (
-          <ChildBasicDetails child={children} members={memberList} refreshData={getChildren} />
+          <ChildBasicDetails child={children} members={memberList} familyId={familyId} refreshData={getChildren} />
         );
       case "Assessments":
         return <Assessments childId={children.id} />;
@@ -169,7 +171,7 @@ const ChildDetails = () => {
       case "assessmentsProgressReports":
         return (
           <Box mr>
-            <ConsolidatedAssessmentProgressReport id={children.id} pageType="CHILD" />;
+            <ConsolidatedAssessmentProgressReport id={id} pageType="CHILD" />;
           </Box>
         );
         case "milestones":
@@ -207,7 +209,7 @@ const ChildDetails = () => {
             hideChildModal={hideChildModal}
             handleChildModalOpen={handleChildModalOpen}
             id={id}
-            // refreshData={getChildren}
+            refreshData={getChildren}
             setHideChildModal={setHideChildModal}
           />
         </Box>

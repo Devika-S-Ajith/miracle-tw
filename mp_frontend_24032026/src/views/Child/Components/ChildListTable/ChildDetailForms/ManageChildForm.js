@@ -292,11 +292,19 @@ const ManageChildForm = ({
           else if (key === "lastName") lastName = value;
           else if (key === "dateOfBirth") birthDate = value;
           // else if (key === "gender") gender = value;
-
+            if(birthDate){
+              const parsedDob = new Date(birthDate);
+              if (!Number.isNaN(parsedDob.getTime())) {
+                const yyyy = parsedDob.getFullYear();
+                const mm = String(parsedDob.getMonth() + 1).padStart(2, "0");
+                const dd = String(parsedDob.getDate()).padStart(2, "0");
+                birthDate = `${yyyy}-${mm}-${dd}T00:00:00.000Z`;
+              }
+            }
           const res = await APIS.CheckUniqueChild({
             id: id || null,
             firstName,
-            lastName,
+            lastName: lastName?.length > 0 ? lastName : "",
             birthDate,
             gender
           });
@@ -531,7 +539,7 @@ const ManageChildForm = ({
             ),
             (value) => {
               if (!value) return true; // Allow empty values to be handled by required
-              return dayjs(value).isBefore(dayjs(), "day");
+              return dayjs(value).isBefore(dayjs().endOf("day"));
             }
           )
           .nullable(),
@@ -709,7 +717,6 @@ const ManageChildForm = ({
               values.profileInformation.phoneNumber = null;
             }
           if (id) {
-            console.log("Values being submitted for update:", values, initialValuesRef.current);
             let changedValues = getChangedValues(
               values,
               initialValuesRef.current,
@@ -717,6 +724,15 @@ const ManageChildForm = ({
             changedValues.id = id;
             if (changedValues?.TWFamilyId) {
               changedValues.caseWorkerId = values.caseWorkerId;
+            }
+            if(changedValues?.dateOfBirth){
+              const parsedDob = new Date(changedValues.dateOfBirth);
+              if (!Number.isNaN(parsedDob.getTime())) {
+                const yyyy = parsedDob.getFullYear();
+                const mm = String(parsedDob.getMonth() + 1).padStart(2, "0");
+                const dd = String(parsedDob.getDate()).padStart(2, "0");
+                changedValues.dateOfBirth = `${yyyy}-${mm}-${dd}T00:00:00.000Z`;
+              }
             }
             res = await APIS.UpdateChild(changedValues);
             if (isFromFamily) {
@@ -732,7 +748,17 @@ const ManageChildForm = ({
               handleResponse(newPayload);
             }
           } else {
-            res = await APIS.CreateChild(values);
+            let payload = { ...values };
+            if(payload?.dateOfBirth){
+              const parsedDob = new Date(payload.dateOfBirth);
+              if (!Number.isNaN(parsedDob.getTime())) {
+                const yyyy = parsedDob.getFullYear();
+                const mm = String(parsedDob.getMonth() + 1).padStart(2, "0");
+                const dd = String(parsedDob.getDate()).padStart(2, "0");
+                payload.dateOfBirth = `${yyyy}-${mm}-${dd}T00:00:00.000Z`;
+              }
+            }
+            res = await APIS.CreateChild(payload);
             const changedValues = {};
            
            

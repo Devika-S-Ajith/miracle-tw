@@ -102,6 +102,7 @@ export const modalMemberBasicFormConfig = [
         name: 'firstName',
         placeholder: 'common:common.First name',
         required: true,
+        enableInlineError: false,
         autoFocus: true,
         fullWidth: true,
         variant: 'outlined',
@@ -112,6 +113,7 @@ export const modalMemberBasicFormConfig = [
         name: 'lastName',   
         placeholder: 'common:common.Last name',
         required: false,
+        enableInlineError: false,
         fullWidth: true,
         variant: 'outlined',
         gridProps: { md: 12, xs: 12 }

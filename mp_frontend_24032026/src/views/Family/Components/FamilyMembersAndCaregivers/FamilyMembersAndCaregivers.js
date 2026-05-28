@@ -17,22 +17,22 @@ import { convertUnderscoreToText } from '../../../../constants';
 
 
 
-const FamilyMembersTable = ({ members, refreshData }) => {
+const FamilyMembersTable = ({ members,familyId, refreshData }) => {
   const { t } = useTranslation(['common']);
   const {familyDropdownLists} = useContext(CommonDataContext);
   const [hideChildModal, setHideChildModal] = useState(false);
    const navigate = useNavigate();
-
-   const getRoleBackgroundColor = (row) => {
+  const getRoleBackgroundColor = (row) => {
     if (row?.isChild) return '#F79C65';
     return '#6BC4CE';
   };
-  
+ 
   const getRoleTextColor = (row) => {
     if (!row) return '#FFFFFF';
     if (row.isChild) return '#000000';
     return '#FFFFFF';
   };
+
   const [childModalOpen, setChildModalOpen] = useState(false);
   const [activeChildId, setActiveChildId] = useState(null);
   	 const handleChildModalOpen = () => {
@@ -56,20 +56,14 @@ const FamilyMembersTable = ({ members, refreshData }) => {
       ),
       modalConfig,
     );
-   
-    
-   
-
   }
 
 
 const handleEditMember = (member) => {
-    if (["3", "9"].includes(member.TWFamilyRelationId)) {
+    if (["3", "9"].includes(member?.TWFamilyRelationId)) {
       handleChildEdit(member);
       return;
     }
-
-
     const updatedConfig = {
       width: '30%',
       hideModalFooter: true,
@@ -86,6 +80,7 @@ const handleEditMember = (member) => {
       ({ close }) => (
         <AddFamilyMemberModal
           onClose={close}
+          familyId={familyId}
           member={member}
           isMemberActive={member?.isActive}
           dropdownValues={{
@@ -111,15 +106,15 @@ const handleEditMember = (member) => {
           const relation = familyDropdownLists?.familyRelations?.find(
             (item) => item.id === row.TWFamilyRelationId
           )?.value || '';
-        
+       
           const caregiverLabel = row.isPrimaryCaregiver
             ? 'Primary caregiver'
             : row.isChild
             ? null
             : 'Caregiver';
-        
+       
           let subText = '';
-        
+       
           if (row.isChild) {
             const age = row.dateOfBirth
               ? Math.floor((new Date() - new Date(row.dateOfBirth)) / (365.25 * 24 * 60 * 60 * 1000))
@@ -136,7 +131,7 @@ const handleEditMember = (member) => {
           } else {
             subText = [relation, caregiverLabel].filter(Boolean).join(' | ');
           }
-        
+       
           return (
             <Box>
               <Typography variant="body1" fontWeight="medium" color="textPrimary">

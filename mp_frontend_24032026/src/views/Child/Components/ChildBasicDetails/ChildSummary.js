@@ -7,6 +7,7 @@ import {
   getLanguageNameFromId,
   formatAddressFromContactInfo,
   calculateAge,
+  splitCountryCodeAndPhoneNumber,
 } from "../../../../helpers/helperFunction";
 import LabelValue from "../../../../components/LabelValue/LabelValue";
 import { CommonDataContext } from "../../../../common/contexts/CommonDataContext";
@@ -15,7 +16,8 @@ import { useTranslation } from "react-i18next";
 
 const ChildSummary = ({ child }) => {
   const { t } = useTranslation(["common"]); 
-  const { locationList } = useContext(CommonDataContext);
+  const { locationList, childDropdownLists } = useContext(CommonDataContext);
+  const phoneNumber = splitCountryCodeAndPhoneNumber(child?.profileInformation?.phoneNumber)
   return (
     <CommonCard title="Child Summary">
       <Grid container direction="row" spacing={1}>
@@ -88,7 +90,7 @@ const ChildSummary = ({ child }) => {
         <Grid item xs={12} md={6}>
           <LabelValue
             label={t("common:common.Phone number", "Phone number")}
-            value={child?.profileInformation?.phoneNumber || "-"}
+            value={child?.profileInformation?.phoneNumber ? `${phoneNumber.countryCode} ${phoneNumber.phoneNumber}` : "-"}
             labelColor="#535F66"
             fontWeight={700}
           />
@@ -105,7 +107,7 @@ const ChildSummary = ({ child }) => {
           <LabelValue
             label={t("common:infoCard.Living situation", "Living situation")}
             // check living situation
-            value={child?.livingSituation || "-"}
+            value={childDropdownLists?.currentPlacementStatus?.find(status => status.id === child?.TWChildCurrentPlacementStatusId)?.value || "-"}
             labelColor="#535F66"
             fontWeight={700}
           />

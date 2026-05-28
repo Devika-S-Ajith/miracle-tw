@@ -1072,32 +1072,36 @@ const ManageUserForm = (props) => {
                     <Typography paragraph>
                       Provide a short description of the role selection here.
                     </Typography> */}
-
-                      {/* 2 Column Table */}
-                      <TableContainer
-                        component={Paper}
-                        sx={{ borderRadius: "4px", mt: 1 / 4 }}
-                      >
-                        <Table>
-                          <TableBody sx={{ mt: 1 }}>
-                            {/* Map through your roleList to create rows */}
-                            {selectedRoleList
-                              ?.filter(
-                                (obj) => obj.cognitoValue !== "superadmin"
-                              )
-                              ?.map((role) => (
-                                <TableRow key={role.id}>
-                                  <TableCell
-                                    sx={{ borderRight: "1px solid #C6C4BE" }}
-                                  >
-                                    {t(`common:common.${role.role}`)}
-                                  </TableCell>
-                                  <TableCell>{role.description}</TableCell>
-                                </TableRow>
-                              ))}
-                          </TableBody>
-                        </Table>
-                      </TableContainer>
+                      <Box ml={-2}>
+                        <Box sx={{ maxHeight: "70vh", overflowY: "auto", px: 2 }}>
+                        {/* 2 Column Table */}
+                        <TableContainer
+                          component={Paper}
+                          sx={{ borderRadius: "4px", mt: 1 / 4 }}
+                        >
+                          <Table>
+                            <TableBody sx={{ mt: 1 }}>
+                              {/* Map through your roleList to create rows */}
+                              {selectedRoleList
+                                ?.filter(
+                                  (obj) => obj.cognitoValue !== "superadmin"
+                                )
+                                ?.map((role) => (
+                                  <TableRow key={role.id}>
+                                    <TableCell
+                                      sx={{ borderRight: "1px solid #C6C4BE" }}
+                                    >
+                                      {role.role}
+                                      
+                                    </TableCell>
+                                    <TableCell>{role.description}</TableCell>
+                                  </TableRow>
+                                ))}
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+                        </Box>
+                      </Box>
                       <Button
                         variant="contained"
                         id="closeButton"

@@ -684,7 +684,12 @@
     "Completed": "પૂર્ણ થયેલ છે ",
     "Inactive Reassign": "કૃપા કરીને, નિષ્ક્રિય કર્યા પહેલાં આ સંસ્થાના ઉપયોગકર્તાઓ અને બાળકોની પુન:સોંપણી કરો ",
     "Consent enabled": " બાળ સંમતિ પત્રક ",
-    "Organization ID": "સંસ્થાનું આઈ.ડી. "
+    "Organization ID": "સંસ્થાનું આઈ.ડી. ",
+    "Defaults": "ડિફોલ્ટ્સ",
+    "Loading forms": "ફોર્મ્સ લોડ થઈ રહ્યા છે...",
+    "Default asssesment language": "ડિફોલ્ટ મૂલ્યાંકન ભાષા",
+    "All assessments will appear in this language": "બધા મૂલ્યાંકન આ ભાષામાં દેખાશે"
+
   },
   "account": {
     "Account ID": "એકાઉન્ટ આઈ.ડી. ",
@@ -1054,7 +1059,7 @@
     "Primary caregiver’s first name": " પ્રાથમિક સંભાળ લેનારનું પ્રથમ નામ ",
     "Primary caregiver’s last name": "પ્રાથમિક સંભાળ લેનારનું છેલ્લું  નામ (અટક)",
     "Delete family?": "પરિવાર કાઢી નાંખો?",
-    "Family Situation": "કુટુંબ પ્રકાર",
+    "Family Situation": "પરિવારની સ્થિતિ",
     "Goal": "ધ્યેય",
     "Add family member": "પરિવારના સભ્ય ઉમેરો",
     "Edit family member": "પરિવારના સભ્ય સંપાદન",
@@ -1266,7 +1271,11 @@
     "Summary is required": "સારાંશ જરૂરી છે",
     "Article link is required": "લેખની લિંક જરૂરી છે",
     "Image link is required": "છબીની લિંક જરૂરી છે",
-    "Date of birth cannot be in the future": "જન્મ तारीख भविष्य में नहीं हो सकती"
+    "Date of birth cannot be in the future": "જન્મ तारीख भविष्य में नहीं हो सकती",
+    "Past dates are not allowed": "ભૂતકાળની તારીખોને મંજૂરી નથી",
+    "Content must be at most 500 characters": "સામગ્રી વધુમાં વધુ 500 અક્ષરોની હોવી જોઈએ",
+    "Label must be at most 20 characters": "લેબલ વધુમાં વધુ 20 અક્ષરોનું હોવું જોઈએ",
+    "Content must be at most 50 characters": "સામગ્રી વધુમાં વધુ 50 અક્ષરોની હોવી જોઈએ"
   },
   "system messages": {
     "Message subject line": "સંદેશની વિષય રેખા",
@@ -1586,7 +1595,26 @@
     "Download": "ડાઉનલોડ",
     "Recreation log details": "મનોરંજન લોગ વિગતો",
     "Activity type": "પ્રવૃત્તિનો પ્રકાર",
-    "Activities": "પ્રવૃત્તિઓ"
+    "Activities": "પ્રવૃત્તિઓ",
+      "# of active children":"સક્રિય બાળકોની સંખ્યા",
+      "Children who have been part of atleast one assessment or log":"ઓછામાં ઓછા એક મૂલ્યાંકન અથવા લોગનો ભાગ રહેલા બાળકો",
+      "# of active families":"સક્રિય પરિવારોની સંખ્યા",
+      "Families who have been part of atleast one assessment or completed at least one log":"ઓછામાં ઓછા એક મૂલ્યાંકનનો ભાગ રહેલા અથવા ઓછામાં ઓછો એક લોગ પૂર્ણ કરેલા પરિવારો",
+      "# of active interventions":"સક્રિય હસ્તક્ષેપોની સંખ્યા",
+      "All interventions that are not completed":"પૂર્ણ ન થયેલા તમામ હસ્તક્ષેપો",
+      "Interventions completed":"પૂર્ણ થયેલા હસ્તક્ષેપો",
+      "All completed interventions, all time":"અત્યાર સુધીના બધા પૂર્ણ થયેલા હસ્તક્ષેપો",
+      "Average active cases per caseworker":"દર કેસવર્કર દીઠ સરેરાશ સક્રિય કેસો",
+      "Average number of active cases across all caseworkers":"બધા કેસવર્કરોમાં સરેરાશ સક્રિય કેસોની સંખ્યા",
+      "Total active caseworkers": "કુલ સક્રિય કેસવર્કરો",
+      "All active caseworkers in ThriveWell":"ThriveWellમાં તમામ સક્રિય કેસવર્કરો",
+      "New families": "નવા પરિવારો",
+      "Families added in the last 30 days":"છેલ્લા 30 દિવસમાં ઉમેરાયેલા પરિવારો",
+      "Children added in last 30 days": "છેલ્લા 30 દિવસમાં ઉમેરાયેલા બાળકો",
+      "Total interventions completed":"કુલ પૂર્ણ થયેલા હસ્તક્ષેપો",
+      "Average # of active cases per case manager":"દર કેસ મેનેજર દીઠ સરેરાશ # સક્રિય કેસો",
+      "# of active case managers":"સક્રિય કેસ મેનેજરોની સંખ્યા",
+      "Total number of active cases (families + children)":"કુલ સક્રિય કેસોની સંખ્યા (પરિવારો + બાળકો)"
 },
 "tableColumn": {
   "Organization name": "સંસ્થા નામ",

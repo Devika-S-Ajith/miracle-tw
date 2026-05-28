@@ -42,7 +42,7 @@ const ResourcesList = () => {
           }}
         >
           {params?.row?.categories?.map((item) => (
-            <Chip key={item?.id} id={item?.id} label={item?.name} />
+            <Chip key={item?.id} id={item?.id} label={t(`common:resources.${item?.name}`, item?.name)}/>
           ))}
         </div>
       ),

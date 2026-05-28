@@ -29,6 +29,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { GenerateFileName } from "../../../helpers/helperFunction";
 import useAuthorization from "../../../components/UserComponents/useAuthorization";
 import PageLoader from "../../../components/UserComponents/PageLoader";
+import useCRUDPermissions from "../../../components/UserComponents/useCRUDPermissions";
 
 const statusOptions = [
   { label: "Active", value: "Active", key: "Status" },
@@ -53,6 +54,7 @@ const ConsolidatedChildList = (props) => {
   const [childModalOpen, setChildModalOpen] = useState(false);
   const [hideChildModal, setHideChildModal] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const { IS_HT_ALLOWED } = useCRUDPermissions();
   const handleChildModalOpen = () => {
     setChildModalOpen(!childModalOpen);
   };
@@ -169,46 +171,25 @@ const ConsolidatedChildList = (props) => {
                   <PencilAltIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
-              {/* <Tooltip
-                title={
-                  family?.numberOfChildrenActive > 0
-                    ? t(
-                        "common:family.Cannot delete family with active children",
-                        "Cannot delete family with active children",
-                      )
-                    : t("common:family.Delete Family")
-                }
-              >
-                <span>
-                  <IconButton
-                    disabled={family?.numberOfChildrenActive > 0}
-                    onClick={() => handleDelete(family.id)}
-                    id="delete-family"
-                  >
-                    <TrashIcon fontSize="small" />
-                  </IconButton>
-                </span>
-              </Tooltip> */}
-
-              <Tooltip
+              {IS_HT_ALLOWED &&<Tooltip
                 title={t(
                   "common:common.Assessments & Progress Reports",
                   "Assessments & Progress Reports",
                 )}
               >
                 <IconButton
-                //   onClick={() => {
-                //     navigate(
-                //       `/dashboard/families/${family.id}/view`,
-                //       {
-                //         state: { tabvalue: "assessmentsProgressReports" },
-                //       }
-                //     );
-                //   }}
+                  onClick={() => {
+                    navigate(
+                      `/dashboard/children/${menuState?.row?.id}/view`,
+                      {
+                        state: { tabvalue: "assessmentsProgressReports" },
+                      }
+                    );
+                  }}
                 >
                   <AssessmentProgressReportIcon fontSize="small" />
                 </IconButton>
-              </Tooltip>
+              </Tooltip>}
             </Stack>
           </Menu>
         </>

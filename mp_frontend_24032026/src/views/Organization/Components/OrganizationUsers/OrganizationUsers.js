@@ -320,7 +320,7 @@ const OrganizationUsers = ({ selectedCountry }) => {
                     
                     <TableCell sx={{ pb: 0, pl: 2 }}>
                       <Typography variant="subtitle1" fontWeight="bold">
-                        {t("common:common.Thrive Scale role","Thrive Scale role")}
+                        {t("common:common.ThriveScale role","Thrive Scale role")}
                       </Typography>
                     </TableCell>
                     <TableCell sx={{ pb: 0, pl: 2 }}>

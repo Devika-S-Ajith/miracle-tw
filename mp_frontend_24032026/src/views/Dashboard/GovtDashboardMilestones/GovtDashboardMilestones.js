@@ -35,7 +35,6 @@ const GovtDashboardMilestones = () => {
       <Box px>
         <PageBreadcrumbs
           data={[
-          signedinOrgType === "6" ? BreadcrumbsLinkThriveScaleGovtDashboard(t, navigate) : BreadcrumbsLinkThriveScale(t, navigate),
             {
               label: t("common:common.Milestones", "Milestones"),
             },
@@ -43,7 +42,7 @@ const GovtDashboardMilestones = () => {
         />
       </Box>
       <NavbarFilterChipArray />
-      <Box display="flex" flexDirection="column" gap={2} sx={{ p: 2 }}>
+      <Box display="flex" flexDirection="column" gap={2} sx={{ py: 2, px: 1 }}>
         <TopInCrisis />
         <AverageDomainScores />
         <AllMilestones />

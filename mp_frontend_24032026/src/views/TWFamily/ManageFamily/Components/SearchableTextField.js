@@ -30,7 +30,8 @@ const SearchableTextField = ({
   ...otherProps
 }) => {
   const [field, meta] = useField(name);
-  const { setFieldValue, setFieldTouched } = useFormikContext();
+  const { setFieldValue, setFieldTouched, submitCount } = useFormikContext();
+  const showFieldError = Boolean(meta.error) && (Boolean(meta.touched) || submitCount > 0);
 
   const [options, setOptions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -138,10 +139,10 @@ const SearchableTextField = ({
         renderInput={(params) => (
           <TextField
             {...params}
-            placeholder={enableInlineError && meta.touched && meta.error ? meta.error : placeholder}
+            placeholder={enableInlineError && showFieldError ? meta.error : placeholder}
             required={required}
-            error={ meta.touched && Boolean(meta.error)}
-            helperText={!enableInlineError && meta.touched && meta.error}
+            error={showFieldError}
+            helperText={!enableInlineError && showFieldError ? meta.error : ""}
             InputProps={{
               ...params.InputProps,
               endAdornment: (
@@ -162,7 +163,7 @@ const SearchableTextField = ({
             fontSize: '0.75rem',
           },
           '& .MuiInputBase-input::placeholder': {
-            color: enableInlineError && meta.touched && meta.error ? '#d32f2f' : 'rgba(0, 0, 0, 0.6)',
+            color: enableInlineError && showFieldError ? '#d32f2f' : 'rgba(0, 0, 0, 0.6)',
             opacity: 1,
           },
           ...textFieldProps.sx,

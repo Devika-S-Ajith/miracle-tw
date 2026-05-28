@@ -689,7 +689,12 @@
     "Deleted Organization Successfully": "நிறுவனம் வெற்றிகரமாக நீக்கப்பட்டது",
     "Inactive Reassign": "செயலற்றதாக மாற்றுவதற்கு முன், இந்த அமைப்பின் பயனர்களையும் குழந்தைகளையும் வேறு நிறுவனத்திற்கு ஒதுக்கிடு",
     "Completed": "முடிக்கப்பட்டது",
-    "Organization ID": "நிறுவன ஐடி"
+    "Organization ID": "நிறுவன ஐடி",
+    "Defaults": "இயல்புநிலைகள்",
+    "Loading forms": "படிவங்கள் ஏற்றப்படுகின்றன...",
+    "Default asssesment language": "இயல்புநிலை மதிப்பீட்டு மொழி",
+    "All assessments will appear in this language": "அனைத்து மதிப்பீடுகளும் இந்த மொழியில் தோன்றும்"
+    
   },
   "account": {
     "Account ID": "Account ID",
@@ -1055,7 +1060,7 @@
     "Primary caregiver’s first name": "Primary Caregiver’s First Name",
     "Primary caregiver’s last name": "Primary Caregiver’s Last Name",
     "Delete family?": "குடும்பத்தை நீக்கு?",
-    "Family Situation": "குடும்ப வகை",
+    "Family Situation": "குடும்ப நிலை",
     "Goal": "இலக்கு",
     "Add family member": "குடும்ப உறுப்பினரைச் சேர்க்கவும்",
     "Edit family member": "குடும்ப உறுப்பினரைத் திருத்து",
@@ -1273,7 +1278,11 @@
     "Summary is required": "சுருக்கம் அவசியம்",
     "Article link is required": "கட்டுரை இணைப்பு அவசியம்",
     "Image link is required": "பட இணைப்பு அவசியம்",
-    "Date of birth cannot be in the future": "பிறந்த தேதி எதிர்காலத்தில் இருக்க முடியாது"
+    "Date of birth cannot be in the future": "பிறந்த தேதி எதிர்காலத்தில் இருக்க முடியாது",
+    "Past dates are not allowed": "கடந்த தேதிகள் அனுமதிக்கப்படாது",
+    "Content must be at most 500 characters": "உள்ளடக்கம் அதிகபட்சம் 500 எழுத்துகள் மட்டுமே இருக்க வேண்டும்",
+    "Label must be at most 20 characters": "லேபல் அதிகபட்சம் 20 எழுத்துகள் மட்டுமே இருக்க வேண்டும்",
+    "Content must be at most 50 characters": "உள்ளடக்கம் அதிகபட்சம் 50 எழுத்துகள் மட்டுமே இருக்க வேண்டும்"
   },
   "message": {
     "Title": "Title",
@@ -1593,7 +1602,26 @@
     "Download": "பதிவிறக்கவும்",
     "Recreation log details": "பொழுதுபோக்கு பதிவு விவரங்கள்",
     "Activity type": "செயல்பாட்டு வகை",
-    "Activities": "செயல்பாடுகள்"
+    "Activities": "செயல்பாடுகள்",
+    "# of active children": "செயலில் உள்ள குழந்தைகள் எண்ணிக்கை",
+    "Children who have been part of atleast one assessment or log": "குறைந்தது ஒரு மதிப்பீடு அல்லது பதிவில் இடம்பெற்ற குழந்தைகள்",
+    "# of active families": "செயலில் உள்ள குடும்பங்கள் எண்ணிக்கை",
+    "Families who have been part of atleast one assessment or completed at least one log": "குறைந்தது ஒரு மதிப்பீட்டில் இடம்பெற்ற அல்லது குறைந்தது ஒரு பதிவை முடித்த குடும்பங்கள்",
+    "# of active interventions": "செயலில் உள்ள தலையீடுகள் எண்ணிக்கை",
+    "All interventions that are not completed": "முடிக்கப்படாத அனைத்து தலையீடுகள்",
+    "Interventions completed": "முடிக்கப்பட்ட தலையீடுகள்",
+    "All completed interventions, all time": "அனைத்து காலத்திலும் முடிக்கப்பட்ட அனைத்து தலையீடுகள்",
+    "Average active cases per caseworker": "ஒவ்வொரு வழக்குப் பணியாளருக்குமான சராசரி செயலில் உள்ள வழக்குகள்",
+    "Average number of active cases across all caseworkers": "அனைத்து வழக்குப் பணியாளர்களிலும் செயலில் உள்ள வழக்குகளின் சராசரி எண்ணிக்கை",
+    "Total active caseworkers": "மொத்த செயலில் உள்ள வழக்குப் பணியாளர்கள்",
+    "All active caseworkers in ThriveWell": "ThriveWell இல் உள்ள அனைத்து செயலில் உள்ள வழக்குப் பணியாளர்கள்",
+    "New families": "புதிய குடும்பங்கள்",
+    "Families added in the last 30 days": "கடந்த 30 நாட்களில் சேர்க்கப்பட்ட குடும்பங்கள்",
+    "Children added in last 30 days": "கடந்த 30 நாட்களில் சேர்க்கப்பட்ட குழந்தைகள்",
+    "Total interventions completed": "மொத்தமாக முடிக்கப்பட்ட தலையீடுகள்",
+    "Average # of active cases per case manager": "ஒவ்வொரு வழக்கு மேலாளருக்குமான செயலில் உள்ள வழக்குகளின் சராசரி எண்ணிக்கை",
+    "# of active case managers": "செயலில் உள்ள வழக்கு மேலாளர்கள் எண்ணிக்கை",
+    "Total number of active cases (families + children)": "மொத்த செயலில் உள்ள வழக்குகளின் எண்ணிக்கை (குடும்பங்கள் + குழந்தைகள்)"
   },
 "tableColumn":{
   "Organization name": "நிறுவனத்தின் பெயர்",

@@ -45,6 +45,7 @@ const defaultCategories = [
 ];
 
 const MilestoneSummary = ({ summaryMilestones }) => {
+  console.log("summaryMilestones", summaryMilestones);
   const { t } = useTranslation(["common"]);
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
@@ -107,7 +108,7 @@ const MilestoneSummary = ({ summaryMilestones }) => {
   }, [localStorage.getItem("userRegion"), signedinOrgType]);
   const SummaryTitle = (
     <MoodImprovement
-      fromEmoji={summaryMilestones[0]?.mode?.toUpperCase()}
+      fromEmoji={summaryMilestones[0]?.mode?.toUpperCase() || "UNKNOWN"}
       toEmoji={summaryMilestones[1]?.mode?.toUpperCase() || "UNKNOWN"}
     />
   );

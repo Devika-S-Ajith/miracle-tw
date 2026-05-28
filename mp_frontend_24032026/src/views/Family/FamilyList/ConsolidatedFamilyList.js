@@ -48,11 +48,11 @@ const ConsolidatedFamilyList = (props) => {
   const [users, setUsers] = useState([]);
   const { htLanguagesList, signedInOrgName, userIdData } =
     useContext(CommonDataContext);
-  const { IS_EDIT_ALLOWED } = useCRUDPermissions();
+  const { IS_EDIT_ALLOWED,IS_HT_ALLOWED } = useCRUDPermissions();
 
   const statusOptions = [
-    { label: "Active", value: "Open", key: "Case Status" },
-    { label: "Case closed", value: "Closed", key: "Case Status" },
+    { label: "Active", value: "Active", key: "Case Status" },
+    { label: "Case Closed", value: "Case Closed", key: "Case Status" },
     { label: "Pending", value: "Pending", key: "Case Status" },
   ]
 
@@ -216,27 +216,7 @@ const ConsolidatedFamilyList = (props) => {
                   <PencilAltIcon fontSize="small" />
                 </IconButton>
               </Tooltip>}
-              {/* {CAN_DELETE &&<Tooltip
-                title={
-                  menuState.row?.numberOfChildrenActive > 0
-                    ? t(
-                        "common:family.Cannot delete family with active children",
-                        "Cannot delete family with active children",
-                      )
-                    : t("common:family.Delete Family")
-                }
-              >
-                <span>
-                  <IconButton
-                    disabled={menuState.row?.numberOfChildrenActive > 0}
-                    // onClick={() => handleDelete(menuState.row?.id)}
-                    id="delete-family"
-                  >
-                    <TrashIcon fontSize="small" />
-                  </IconButton>
-                </span>
-              </Tooltip>} */}
-              <Tooltip
+              {IS_HT_ALLOWED &&<Tooltip
                 title={t(
                   "common:common.Assessments & Progress Reports",
                   "Assessments & Progress Reports",
@@ -251,7 +231,7 @@ const ConsolidatedFamilyList = (props) => {
                 >
                   <AssessmentProgressReportIcon fontSize="small" />
                 </IconButton>
-              </Tooltip>
+              </Tooltip>}
             </Stack>
           </Menu>
         </>
@@ -476,7 +456,7 @@ const ConsolidatedFamilyList = (props) => {
             t(`common:infoCard.${option.label}`, option.label)
           }
           multiple
-          value={filterValues?.caseworkerId}
+          value={filterValues?.caseworkerId || []}
           isOptionEqualToValue={(option, value) => option.value === value.value}
           onChange={(event, newValue) => {
             setFilterValues((prev) => ({ ...prev, caseworkerId: newValue }));
@@ -530,8 +510,10 @@ const ConsolidatedFamilyList = (props) => {
   };
 
   const clearFiltersHandler = () => {
-    const clearedFilters = {};
+    const clearedFilters = { caseStatus: [], caseworkerId: [] };
     setFilterValues(clearedFilters);
+    setAppliedFiltersChipArray(clearedFilters);
+    getTableData({ filter: clearedFilters });
   };
   return (
     <>

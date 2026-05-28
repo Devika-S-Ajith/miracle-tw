@@ -683,7 +683,12 @@
     "Completed": "പൂർത്തിയായി",
     "Inactive Reassign": "നിഷ്ക്രിയമാക്കുന്നതിനു മുമ്പ് ഈ സ്ഥാപനത്തിന്റെ ഉപയോക്താക്കളെയും കുട്ടികളെയും ദയവായി പുനർനിശ്ചയിക്കുക",
     "Consent enabled": "കുട്ടിയുടെ സമ്മതപത്രം",
-    "Organization ID": "സ്ഥാപനത്തിന്റെ ഐഡി"
+    "Organization ID": "സ്ഥാപനത്തിന്റെ ഐഡി",
+    "Defaults": "ഡിഫോൾട്ടുകൾ",
+    "Loading forms": "ഫോമുകൾ ലോഡ് ചെയ്യുന്നു...",
+    "Default asssesment language": "ഡിഫോൾട്ട് അസസ്‌മെന്റ് ഭാഷ",
+    "All assessments will appear in this language": "എല്ലാ അസസ്‌മെന്റുകളും ഈ ഭാഷയിൽ കാണിക്കും"
+
   },
   "account": {
     "Account ID": "അക്കൗണ്ട് ഐഡി",
@@ -1052,7 +1057,7 @@
     "Primary caregiver’s first name": "പരിചരിക്കുന്ന വ്യക്തിയുടെ പ്രഥമ നാമം",
     "Primary caregiver’s last name": "പരിചരിക്കുന്ന വ്യക്തിയുടെ ഒടുവിലത്തെ നാമം",
     "Delete family?": "കുടുംബം ഡിലീറ്റ് ചെയ്യുക?",
-    "Family Situation": "കുടുംബ തരം",
+    "Family Situation": "കുടുംബത്തിന്റെ സ്ഥിതി",
     "Goal": "ലക്ഷ്യം",
     "Add family member": "കുടുംബാംഗത്തെ ചേർക്കുക",
     "Edit family member": "കുടുംബാംഗം എഡിറ്റുചെയ്യുക",
@@ -1266,7 +1271,11 @@
     "Summary is required": "സംഗ്രഹം ആവശ്യമാണ്",
     "Article link is required": "ലേഖന ലിങ്ക് ആവശ്യമാണ്",
     "Image link is required": "ചിത്ര ലിങ്ക് ആവശ്യമാണ്",
-    "Date of birth cannot be in the future": "ജനന തീയതി ഭാവിയിൽ ആയിരിക്കരുത്"
+    "Date of birth cannot be in the future": "ജനന തീയതി ഭാവിയിൽ ആയിരിക്കരുത്",
+    "Past dates are not allowed": "കഴിഞ്ഞ തീയതികൾ അനുവദനീയമല്ല",
+    "Content must be at most 500 characters": "ഉള്ളടക്കം പരമാവധി 500 അക്ഷരങ്ങൾ ആയിരിക്കണം",
+    "Label must be at most 20 characters": "ലേബൽ പരമാവധി 20 അക്ഷരങ്ങൾ ആയിരിക്കണം",
+    "Content must be at most 50 characters": "ഉള്ളടക്കം പരമാവധി 50 അക്ഷരങ്ങൾ ആയിരിക്കണം"
   },
   "system messages": {
     "Message subject line": "സന്ദേശത്തിന്റെ വിഷയ വരി",
@@ -1586,7 +1595,26 @@
     "Download": "ഡൗൺലോഡ്",
     "Recreation log details": "വിനോദ ലോഗ് വിശദാംശങ്ങൾ",
     "Activity type": "പ്രവർത്തന തരം",
-    "Activities": "പ്രവർത്തനങ്ങൾ"
+    "Activities": "പ്രവർത്തനങ്ങൾ",
+    "# of active children": "സജീവമായ കുട്ടികളുടെ എണ്ണം",
+    "Children who have been part of atleast one assessment or log": "കുറഞ്ഞത് ഒരു വിലയിരുത്തലിലോ ലോഗിലോ ഉൾപ്പെട്ട കുട്ടികൾ",
+    "# of active families": "സജീവമായ കുടുംബങ്ങളുടെ എണ്ണം",
+    "Families who have been part of atleast one assessment or completed at least one log": "കുറഞ്ഞത് ഒരു വിലയിരുത്തലിലോ കുറഞ്ഞത് ഒരു ലോഗ് പൂർത്തിയാക്കിയതിലോ ഉൾപ്പെട്ട കുടുംബങ്ങൾ",
+    "# of active interventions": "സജീവമായ ഇടപെടലുകളുടെ എണ്ണം",
+    "All interventions that are not completed": "പൂർത്തിയാകാത്ത എല്ലാ ഇടപെടലുകളും",
+    "Interventions completed": "പൂർത്തിയായ ഇടപെടലുകൾ",
+    "All completed interventions, all time": "എല്ലാ സമയത്തെയും പൂർത്തിയായ ഇടപെടലുകൾ",
+    "Average active cases per caseworker": "ഓരോ കേസ് വർക്കർക്കുമുള്ള ശരാശരി സജീവ കേസുകൾ",
+    "Average number of active cases across all caseworkers": "എല്ലാ കേസ് വർക്കർമാരിലുമുള്ള ശരാശരി സജീവ കേസുകളുടെ എണ്ണം",
+    "Total active caseworkers": "ആകെ സജീവ കേസ് വർക്കർമാർ",
+    "All active caseworkers in ThriveWell": "ThriveWellയിലെ എല്ലാ സജീവ കേസ് വർക്കർമാരും",
+    "New families": "പുതിയ കുടുംബങ്ങൾ",
+    "Families added in the last 30 days": "കഴിഞ്ഞ 30 ദിവസത്തിൽ ചേർത്ത കുടുംബങ്ങൾ",
+    "Children added in last 30 days": "കഴിഞ്ഞ 30 ദിവസത്തിൽ ചേർത്ത കുട്ടികൾ",
+    "Total interventions completed": "ആകെ പൂർത്തിയായ ഇടപെടലുകൾ",
+    "Average # of active cases per case manager": "ഓരോ കേസ് മാനേജർക്കുമുള്ള ശരാശരി # സജീവ കേസുകൾ",
+    "# of active case managers": "സജീവ കേസ് മാനേജർമാരുടെ എണ്ണം",
+    "Total number of active cases (families + children)": "സജീവ കേസുകളുടെ ആകെ എണ്ണം (കുടുംബങ്ങൾ + കുട്ടികൾ)"
 },
 "tableColumn":{
   "Organization name": "സംഘടനയുടെ പേര്",

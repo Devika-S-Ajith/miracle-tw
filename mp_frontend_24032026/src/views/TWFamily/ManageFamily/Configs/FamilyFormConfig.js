@@ -1,3 +1,4 @@
+import { FOSTER_CARE_KINSHIP, FOSTER_CARE_NON_RELATIVE } from "../../../../helpers/constant";
 import { getDistrictList, getStateList } from "../../../../helpers/helperFunction";
 
 export const familyBasicDetails = [
@@ -18,6 +19,7 @@ export const familyBasicDetails = [
         translateLabels: true,
         required: true,
         validateOnChange: true,
+        disableClearable:true,
         labelKey: 'firstName',
         extraLabel: 'lastName',
         optionsSource: 'caseWorker',
@@ -25,7 +27,9 @@ export const familyBasicDetails = [
     }
 ];
 
-export const familyAdditionalDetails = [
+export const familyAdditionalDetails =({
+  values
+}) =>  [
     {
         type: 'dropdown',
         name: 'family_situation',
@@ -77,6 +81,16 @@ export const familyAdditionalDetails = [
         },
         gridProps: { md: 6.5, xs: 12 }
     },
+      ...([FOSTER_CARE_KINSHIP, FOSTER_CARE_NON_RELATIVE].includes(values?.family_type) ? [
+    {
+        type: 'MonthYearPicker',
+        name: 'DateStartedasFP',
+        label: 'common:family.Date the family first started serving as a foster family',
+        showTooltip: false,
+        fullWidth: true,
+        variant: 'outlined',
+        gridProps: { md: 6.5, xs: 12 }
+    },
     {
         type: 'text',
         name: 'licenceNumber',
@@ -84,8 +98,8 @@ export const familyAdditionalDetails = [
         showTooltip: false,
         autoFocus: false,
         gridProps: { md: 6.5, xs: 12 }
-    },
-];
+    }] : [])
+]
 
 export const familyAddressDetails = [
     // Address Line 1
@@ -197,16 +211,6 @@ export const familyAddressDetails = [
         },
         gridProps: { md: 6.5, xs: 12 }
     },
-    {
-        type: 'MonthYearPicker',
-        name: 'DateStartedasFP',
-        label: 'common:family.Date the family first started serving as a foster family',
-        showTooltip: false,
-        fullWidth: true,
-        variant: 'outlined',
-        gridProps: { md: 6.5, xs: 12 }
-    },
-
 ];
 
 

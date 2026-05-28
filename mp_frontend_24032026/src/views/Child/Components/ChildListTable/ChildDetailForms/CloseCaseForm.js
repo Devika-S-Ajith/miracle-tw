@@ -46,6 +46,9 @@ const CloseCaseForm = ({
         caseCloseDate: values.dateCaseClosed,
         keepFamilyAssociation: values.association, // Assuming true is the option to keep association
       };
+      if(payload.caseCloseReason == "37" ){
+        payload.caseCloseReason = values.otherReason;
+      }
       const res = await APIS.CloseChildCase(payload);
       if (res?.status === 200) {
         close();

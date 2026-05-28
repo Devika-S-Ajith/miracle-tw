@@ -942,18 +942,15 @@ const [consentChecked, setConsentChecked] = useState(
                                     () => (
                                       <AccountTypesTable
                                         typeList={accountTypesList}
+                                        title={t("common:common.ThriveScale account types")}
+                                        description={t("common:common.Please select an Organization type that best describes the organization")}
                                       />
                                     ),
                                     {
-                                      modalTitle: t(
-                                        "common:common.ThriveScale account types"
-                                      ),
-                                      modalDescription: t(
-                                        "common:common.Please select an Organization type that best describes the organization"
-                                      ),
                                       cancelButtonText: t("common:common.Close"),
                                       hideActionButton: true,
                                       width: "40%",
+                                      height: "90%",
                                       hideBackdrop: false,
                                     }
                                   );
@@ -1166,7 +1163,7 @@ const [consentChecked, setConsentChecked] = useState(
                       <>
                         <Grid container item spacing={2} md={12} xs={12}>
                           <CardHeader
-                            title="Defaults"
+                            title={t("common:organization.Defaults", "Defaults")}
                             sx={{ pb: "0px" }}
                           />
                         </Grid>
@@ -1175,7 +1172,7 @@ const [consentChecked, setConsentChecked] = useState(
                           {loadingActiveForms ? (
                             <Box sx={{ display: 'flex', alignItems: 'center', minHeight: 56 }}>
                               <CircularProgress size={24} />
-                              <Typography sx={{ ml: 2 }}>Loading forms...</Typography>
+                              <Typography sx={{ ml: 2 }}>{t("common:organization.Loading forms", "Loading forms...")}</Typography>
                             </Box>
                           ) : (
                             <Field
@@ -1195,7 +1192,7 @@ const [consentChecked, setConsentChecked] = useState(
                                 fullWidth: true,
                                 margin: "normal",
                                 variant: "outlined",
-                                label: "Default assessment language",
+                                label: t("common:organization.Default assessment language", "Default assessment language"),
                               }}
                               disabled={!values.country || !values.organization_type || values.organization_type === "6"}
                               sx={{
@@ -1214,7 +1211,7 @@ const [consentChecked, setConsentChecked] = useState(
                               // mt: 1
                             }}
                           >
-                            All assessments will appear in this language
+                            {t("common:organization.All assessments will appear in this language", "All assessments will appear in this language")}
                           </Typography>
                         </Grid>
                       </>}
