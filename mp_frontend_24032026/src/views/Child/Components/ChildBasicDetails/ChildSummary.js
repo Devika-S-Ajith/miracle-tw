@@ -138,11 +138,11 @@ const ChildSummary = ({ child }) => {
 
         <Grid item xs={12} md={6}>
           <LabelValue
-            label={t("common:common.Case worker", "Case worker")}
-            value={`${child?.caseWorkerFirstName} ${child?.caseWorkerLastName ? child.caseWorkerLastName : ""}`}
-            labelColor="#535F66"
-            fontWeight={700}
-          />
+          label={t("common:common.Case worker", "Case worker")}
+          value={`${child?.caseWorkerFirstName || ""} ${child?.caseWorkerLastName || ""}`.trim() || "-"}
+          labelColor="#535F66"
+          fontWeight={700}
+        />
         </Grid>
         <Grid item xs={12} md={6}>
           <LabelValue

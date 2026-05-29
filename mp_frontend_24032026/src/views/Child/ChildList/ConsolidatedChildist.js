@@ -117,7 +117,7 @@ const ConsolidatedChildList = (props) => {
       id: "caseWorker",
       label: "Case Manager",
       enableSorting: true,
-      render: (row) => `${row.caseWorkerFirstName} ${row.caseWorkerLastName}`,
+      render: (row) => `${row.caseWorkerFirstName || ""} ${row.caseWorkerLastName || ""}`.trim() || "-",
     },
     { id: "childPlacementStatusValue", label: "Current Living Situation", render: (row) => <BodyText value={row?.childPlacementStatusValue ? t(`common:common.${row.childPlacementStatusValue}`, row.childPlacementStatusValue) : "-"} /> },
     {

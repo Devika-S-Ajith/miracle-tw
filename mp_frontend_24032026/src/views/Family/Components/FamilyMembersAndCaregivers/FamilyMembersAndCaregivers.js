@@ -213,6 +213,7 @@ const handleEditMember = (member) => {
         render: (row) => (
           <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
             <Typography variant="body2" color="textPrimary">
+              
               {row.profileInformation?.notes || '-'}
             </Typography>
            

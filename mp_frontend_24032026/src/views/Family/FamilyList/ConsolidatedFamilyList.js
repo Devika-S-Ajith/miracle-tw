@@ -63,9 +63,6 @@ const ConsolidatedFamilyList = (props) => {
   const [langFilter, setLangFilter] = useState(
     langOptions && langOptions[0].id,
   );
-  const [statusFilter, setStatusFilter] = useState(
-    statusOptions && statusOptions[0].value,
-  );
   //   actions
   const [menuState, setMenuState] = useState({ anchorEl: null, row: null });
   const open = Boolean(menuState.anchorEl);
@@ -244,7 +241,10 @@ const ConsolidatedFamilyList = (props) => {
   const exportFamilies = async () => {
     setIsExporting(true);
     try {
-      const res = await APIS.exportFamilies(statusFilter, query);
+      const res = await APIS.exportFamilies(
+      appliedFiltersChipArray?.caseStatus?.map((item) => item.value) || [],
+      query
+    );
       const linkSource = `data:application/xlsx;base64,${res.data.body}`;
       const downloadLink = document.createElement("a");
       const fileName = GenerateFileName({
@@ -510,10 +510,8 @@ const ConsolidatedFamilyList = (props) => {
   };
 
   const clearFiltersHandler = () => {
-    const clearedFilters = { caseStatus: [], caseworkerId: [] };
+    const clearedFilters = {};
     setFilterValues(clearedFilters);
-    setAppliedFiltersChipArray(clearedFilters);
-    getTableData({ filter: clearedFilters });
   };
   return (
     <>
