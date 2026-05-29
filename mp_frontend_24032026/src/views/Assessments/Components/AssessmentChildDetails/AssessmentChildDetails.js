@@ -26,6 +26,9 @@ function AssessmentChildDetails({ caseDetails }) {
         case "id": {
           return caseDetails?.type+"-"+caseDetails?.Id;
         }
+        case "familyCode": {
+          return caseDetails?.type+"-"+caseDetails?.familyCode;
+        }
         case "age": {
           return calculateAge(caseDetails?.childbirthDate,t);
         }
@@ -45,7 +48,7 @@ function AssessmentChildDetails({ caseDetails }) {
           );
         }
         case "HouseholdType": {
-          return caseDetails?.familyType;
+          return caseDetails?.familyType || '-';
         }
         case "HOH": {
           return caseDetails?.primaryContact;
@@ -70,7 +73,7 @@ function AssessmentChildDetails({ caseDetails }) {
                 <Typography color="textPrimary" variant="subtitle2">
                 {isFamily ? t("common:common.Family ID"):t("common:common.Child ID")}
                 </Typography>
-                <Typography variant="h6">{getCaseData("id")}</Typography>
+                <Typography variant="h6">{getCaseData(isFamily ? "familyCode" : "id")}</Typography>
               </Box>
             </Grid>
             <Grid item lg={6} md={6} sm={12} xs={12}>
@@ -114,7 +117,7 @@ function AssessmentChildDetails({ caseDetails }) {
                   sx={{ backgroundColor: "#f0f0f0", borderRadius: 2, padding: 2 }}
                 >
                   <Typography color="textPrimary" variant="subtitle2">
-                    {t("common:family.Family Situation")}
+                    {t("common:family.Family type")}
                   </Typography>
                   <Typography variant="h6">{getCaseData("HouseholdType")}</Typography>
                 </Box>

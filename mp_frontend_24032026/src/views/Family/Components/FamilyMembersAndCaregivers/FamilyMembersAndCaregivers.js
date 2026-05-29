@@ -60,7 +60,7 @@ const FamilyMembersTable = ({ members,familyId, refreshData }) => {
 
 
 const handleEditMember = (member) => {
-    if (["3", "9"].includes(member?.TWFamilyRelationId)) {
+    if (["3", "9"].includes(member.TWFamilyRelationId)) {
       handleChildEdit(member);
       return;
     }
@@ -213,7 +213,6 @@ const handleEditMember = (member) => {
         render: (row) => (
           <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
             <Typography variant="body2" color="textPrimary">
-              
               {row.profileInformation?.notes || '-'}
             </Typography>
            

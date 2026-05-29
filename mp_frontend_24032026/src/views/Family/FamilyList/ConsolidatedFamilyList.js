@@ -63,7 +63,7 @@ const ConsolidatedFamilyList = (props) => {
   const [langFilter, setLangFilter] = useState(
     langOptions && langOptions[0].id,
   );
-  //   actions
+
   const [menuState, setMenuState] = useState({ anchorEl: null, row: null });
   const open = Boolean(menuState.anchorEl);
   const { authStatus, checkAuth } = useAuthorization("ListFamily");
@@ -242,9 +242,9 @@ const ConsolidatedFamilyList = (props) => {
     setIsExporting(true);
     try {
       const res = await APIS.exportFamilies(
-      appliedFiltersChipArray?.caseStatus?.map((item) => item.value) || [],
-      query
-    );
+        appliedFiltersChipArray?.caseStatus?.map((item) => item.value) || [],
+        query
+      );
       const linkSource = `data:application/xlsx;base64,${res.data.body}`;
       const downloadLink = document.createElement("a");
       const fileName = GenerateFileName({
@@ -434,7 +434,7 @@ const ConsolidatedFamilyList = (props) => {
                     setFilterValues((prev) => ({
                       ...prev,
                       caseStatus: Array.isArray(prev.caseStatus)
-                        ? prev.caseStatus.filter((item) => item.value !== option.value)
+                        ? prev.caseStatus?.filter((item) => item.value !== option.value)
                         : [],
                     }));
                   }}
@@ -477,7 +477,7 @@ const ConsolidatedFamilyList = (props) => {
                     setFilterValues((prev) => ({
                       ...prev,
                       caseworkerId: Array.isArray(prev.caseworkerId)
-                        ? prev.caseworkerId.filter((item) => item.value !== option.value)
+                        ? prev.caseworkerId?.filter((item) => item.value !== option.value)
                         : [],
                     }))
                   }
@@ -502,7 +502,7 @@ const ConsolidatedFamilyList = (props) => {
   const handleChipDelete = (key, value, { search, rowCount }) => {
     let updated = {
       ...filterValues,
-      [key]: filterValues[key].filter((item) => item.value !== value),
+      [key]: filterValues[key]?.filter((item) => item.value !== value),
     };
     setFilterValues(updated);
     setAppliedFiltersChipArray(updated);
@@ -513,6 +513,7 @@ const ConsolidatedFamilyList = (props) => {
     const clearedFilters = {};
     setFilterValues(clearedFilters);
   };
+
   return (
     <>
       <Box

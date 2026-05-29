@@ -606,6 +606,7 @@ const ViewAssessment = forwardRef((props, ref) => {
           childGender: assessment?.childGender || null,
           childName: assessment?.childFirstName ? `${assessment?.childFirstName}${assessment?.childLastName ? " " + assessment?.childLastName : ""}` : null,
           familyName: assessment?.familyName || null,
+          familyCode: assessment?.familyCode || null,
           caseworkerName: assessment?.caseworkerfirstName+" "+assessment?.caseworkerlastName,
           membersPresent: memberPresent,
           primaryContact : `${assessment?.memberFirstName || ""}${assessment?.memberLastName ? " " + assessment?.memberLastName : ""}`,

@@ -330,7 +330,7 @@ const PaginationSection = memo(
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <Typography variant="body2" sx={{ mr: 1 }}>
-            {t("common:common.Rows per page:")}
+            {t("common:common.Rows per page")}:
           </Typography>
           <ListPaging
             rowCount={rowCount}

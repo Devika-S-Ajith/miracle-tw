@@ -101,7 +101,7 @@ const DashboardNavbar = (props) => {
         <Box sx={{ ml: 2 }}>
           <Tooltip title={t("common.Online documentation")}>
           <a
-            href="https://thrivewellapp.zendesk.com/hc/en-us"
+            href="https://miraclefoundation.atlassian.net/servicedesk/customer/portals"
             target="_blank"
             rel="noopener noreferrer"
             style={{ display: "flex", alignItems: "center" }}

@@ -391,11 +391,11 @@ export const CaseCloseDetails = ({
       "Why is this person being deactivated?",
     ),
     options: deactivationDeletionReason.map((reason) => ({
-      id: reason.id,
+      id: reason.value,
       label: reason.value
     })),
   },
-  ...(values?.deactivationReason == "37"
+  ...(values?.deactivationReason == "Other"
     ? [{
         type: "text",
         name: "otherReason",

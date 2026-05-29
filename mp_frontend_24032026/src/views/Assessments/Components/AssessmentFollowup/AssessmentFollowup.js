@@ -56,14 +56,14 @@ function AssessmentFollowup({
       formQuestions.length > 0 &&
       formQuestions.map((item) => {
         if (
-          item.HT_question &&
-          item.HT_question.HTQuestionDomainId === value &&
-          !item.HT_question.isRedFlag &&
-          (item.HT_question.HT_responses?.find(
-            (resp) => redFlagOptionIds[0] == resp.HTChoiceId
+          item.TW_question &&
+          item.TW_question.TWQuestionDomainId === value &&
+          !item.TW_question.isRedFlag &&
+          (item.TW_question.TW_responses?.find(
+            (resp) => redFlagOptionIds[0] == resp.TWChoiceId
           ) ||
-            item.HT_question.HT_responses?.find(
-              (resp) => redFlagOptionIds[1] == resp.HTChoiceId
+            item.TW_question.TW_responses?.find(
+              (resp) => redFlagOptionIds[1] == resp.TWChoiceId
             ))
         ) {
           count = count + 1;
@@ -79,12 +79,12 @@ function AssessmentFollowup({
       formQuestions.length > 0 &&
       formQuestions.map((item) => {
         if (
-          item.HT_question &&
-          item.HT_question.HTQuestionDomainId === value &&
-          item.HT_question.isRedFlag &&
+          item.TW_question &&
+          item.TW_question.TWQuestionDomainId === value &&
+          item.TW_question.isRedFlag &&
           ["1", "2"].includes(
-            item.HT_question.HT_responses.find((c) => !c.isInterResp)
-              ?.HTChoiceId
+            item.TW_question.TW_responses.find((c) => !c.isInterResp)
+              ?.TWChoiceId
           )
         ) {
           count = count + 1;
@@ -113,7 +113,7 @@ function AssessmentFollowup({
             {domains?.length > 0 &&
               domains.map((domain) => {
                 const domainData = followUpDomains.find(
-                  (item) => item.HTDomainId === domain.id
+                  (item) => item.TWDomainId == domain.id
                 );
                 const standardCount = getDomainStandardInterventionCount(
                   domain.id

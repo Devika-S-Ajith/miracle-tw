@@ -50,7 +50,8 @@ const DynamicForm = ({
     setFieldTouched
 }) => {
 
-    const { submitCount = 0 } = useFormikContext();
+    const formikContext = useFormikContext();
+    const submitCount = formikContext?.submitCount ?? 0;
 
     const currentValueRef = useRef(''); // Ref to keep track of current value for onClose events
 

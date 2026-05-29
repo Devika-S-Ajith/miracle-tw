@@ -249,23 +249,18 @@ const LogOverviewList = ({ module, listData }) => {
       </Typography> */}
       {/* <SmallText value="Recently submitted behavior logs" fontWeight={600} /> */}
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <Grid container spacing={2} my alignItems="center">
-          {(module !== "children") && (
-            <Grid item md={3}>
+        <Grid container spacing={2} my alignItems="center" flexWrap="nowrap">
+          {module !== "children" && (
+            <Grid item sx={{ flex: 1, minWidth: 0 }}>
               <TextField
+                fullWidth
                 InputProps={{
                   sx: {
                     borderRadius: "0px",
-                    height: 48,
-                    // color: "red"
+                    height: 53,
                   },
                   startAdornment: (
-                    <InputAdornment
-                      position="start"
-                      sx={{
-                        borderRadius: 0,
-                      }}
-                    >
+                    <InputAdornment position="start" sx={{ borderRadius: 0 }}>
                       <SearchIcon fontSize="small" />
                     </InputAdornment>
                   ),
@@ -273,13 +268,7 @@ const LogOverviewList = ({ module, listData }) => {
                     <IconButton
                       color="inherit"
                       onClick={() => {
-                        getBehaviourLogList(
-                          rowCount,
-                          page,
-                          fromDate,
-                          toDate,
-                          ""
-                        );
+                        getBehaviourLogList(rowCount, page, fromDate, toDate, "");
                         setQuery("");
                       }}
                     >
@@ -289,75 +278,63 @@ const LogOverviewList = ({ module, listData }) => {
                 }}
                 onChange={handleSearchChange}
                 onKeyDown={handleKeyPress}
-                placeholder={"Search by child name"}
+                placeholder="Search by child name"
                 value={query}
                 variant="outlined"
               />
             </Grid>
           )}
-          <Grid item md={3}>
+
+          <Grid item sx={{ ml: "auto", display: "flex", gap: 2, alignItems: "center", flexShrink: 0 }}>
             <DatePicker
               id="fromDateBehavior"
               value={fromDate}
               disableFuture
-              slotProps={{ field: { clearable: true } }}
-              onChange={(newValue) => {
-                handleFromDateChange(newValue);
+              slotProps={{
+                field: { clearable: true },
+                textField: { sx: { width: 160 } },
               }}
+              onChange={(newValue) => handleFromDateChange(newValue)}
               format={DateFormatFromRegion()}
               maxDate={toDate}
-              label={"From"}
+              label="From"
               sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: 2 / 8,
-                  height: 48, // Adjust the height here
-                },
-                "& .MuiFormLabel-root": {
-                  top: "-4px",
-                },
+                "& .MuiOutlinedInput-root": { borderRadius: 2 / 8, height: 48 },
+                "& .MuiFormLabel-root": { top: "-4px" },
               }}
             />
-          </Grid>
-          <Grid item md={3}>
+
             <DatePicker
               id="toDateBehavior"
-              label={"To"}
+              label="To"
               disableFuture
-              slotProps={{ field: { clearable: true } }}
-              value={toDate}
-              onChange={(newValue) => {
-                handleToDateChange(newValue);
+              slotProps={{
+                field: { clearable: true },
+                textField: { sx: { width: 160 } },
               }}
-              clearable
+              value={toDate}
+              onChange={(newValue) => handleToDateChange(newValue)}
               format={DateFormatFromRegion()}
               minDate={fromDate}
               sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: 2 / 8,
-                  height: 48, // Adjust the height here
-                },
-                "& .MuiFormLabel-root": {
-                  top: "-4px",
-                },
+                "& .MuiOutlinedInput-root": { borderRadius: 2 / 8, height: 48 },
+                "& .MuiFormLabel-root": { top: "-4px" },
               }}
             />
-          </Grid>
-          <Grid item>
-            <Box display="flex" justifyContent="flex-end" alignItems="center">
-              <LoadingButton
-                size="small"
-                onClick={handleExport}
-                loading={exportLoading}
-                loadingPosition="start"
-                startIcon={<FileUploadIcon />}
-                color="primary"
-                variant="contained"
-                sx={{ height: 48 }}
-                disabled={!behavioralLogList?.length}
-              >
-                {"Export"}
-              </LoadingButton>
-            </Box>
+
+            <LoadingButton
+              size="small"
+              onClick={handleExport}
+              loading={exportLoading}
+              loadingPosition="start"
+              startIcon={<FileUploadIcon />}
+              color="primary"
+              variant="contained"
+              sx={{ height: 53, whiteSpace: "nowrap" }}
+              disabled={!behavioralLogList?.length}
+            >
+              Export
+            </LoadingButton>
           </Grid>
         </Grid>
       </LocalizationProvider>

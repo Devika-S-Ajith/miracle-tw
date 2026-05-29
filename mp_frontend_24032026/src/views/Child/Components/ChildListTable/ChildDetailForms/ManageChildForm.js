@@ -509,6 +509,7 @@ const ManageChildForm = ({
       validationSchema={Yup.object().shape({
         // Basic Details
         firstName: Yup.string()
+          .trim()
           .required(
             t(
               "common:warnings.First Name is required",

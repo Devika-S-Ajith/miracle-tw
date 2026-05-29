@@ -821,9 +821,9 @@ const ManageFamilyForm = (props) => {
                                                                     caseWorker={values?.caseWorker}                                                   
                                                                     //isFamilyActive={family?.id ? checked : true}
                                                                     setIsLoading={setIsLoading}
-                                                                    familyRelations={familyDropdownLists.familyRelations || []}
-                                                                    memberDeleteReasons={familyDropdownLists.familyDeleteReason || []}
-                                                                    familyChangeReasons={childDropdownLists.familyChangeReasons || []} 
+                                                                    familyRelations={familyDropdownLists?.familyRelations || []}
+                                                                    memberDeleteReasons={familyDropdownLists?.familyDeleteReason || []}
+                                                                    familyChangeReasons={childDropdownLists?.familyChangeReasons || []} 
                                                                     isFamilyActive={family?.isActive }
                                                                 />
                                                             </>

@@ -14,6 +14,7 @@ import APIS from "../../../../../common/hooks/UseApiCalls";
 import * as Yup from "yup"; // Added Yup import
 import Heading from "../../../../../components/Heading";
 import CloseIcon from "@mui/icons-material/Close";
+import Loader from "../../../../../components/UserComponents/Loader";
 
 const CloseCaseForm = ({
   close,
@@ -26,7 +27,7 @@ const CloseCaseForm = ({
   const { childDropdownLists } = useContext(CommonDataContext);
 
   const { deactivationDeletionReason } = childDropdownLists || {};
-
+  const [isLoading, setIsLoading] = useState(false);
   const associationOptions = [
     {
       id: false,
@@ -38,6 +39,7 @@ const CloseCaseForm = ({
     },
   ];
   const caseCloseHandler = async () => {
+    setIsLoading(true);
     try {
       const payload = {
         childId: childId,
@@ -46,7 +48,7 @@ const CloseCaseForm = ({
         caseCloseDate: values.dateCaseClosed,
         keepFamilyAssociation: values.association, // Assuming true is the option to keep association
       };
-      if(payload.caseCloseReason == "37" ){
+      if(payload.caseCloseReason == "Other" ){
         payload.caseCloseReason = values.otherReason;
       }
       const res = await APIS.CloseChildCase(payload);
@@ -71,6 +73,8 @@ const CloseCaseForm = ({
       }
     } catch (error) {
       console.error("Error closing case:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -126,7 +130,6 @@ const CloseCaseForm = ({
       }).nullable(),
     }),
   });
-
   const cancelHandler = () => {
     close();
     // handleChildModalOpen();
@@ -134,6 +137,7 @@ const CloseCaseForm = ({
   };
   return (
     <>
+    <Loader loading={isLoading} />
       <Stack
         direction="row"
         justifyContent="space-between"
