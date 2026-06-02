@@ -1,644 +1,434 @@
-import { useEffect, useState, useContext } from "react";
-import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
-import { Skeleton, useMediaQuery } from "@mui/material";
-import PropTypes from "prop-types";
-import { Box, Divider, Drawer } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import IconButton from "@mui/material/IconButton";
-import NavSection from "../Components/NavSection";
-import _ from "lodash";
-import {
-  UserIcon,
-  HomeIcon,
-  ResourcesIcon,
-  ReportsIcon,
-  ChildIcon,
-  OrganizationIcon,
-  SupportServicesIcon,
-  FamilyIcon,
-  FormsIcon,
-  CalendarIcon,
-  MessagesIcon,
-  AssessmentIcon,
-  HomeIconActive,
-  ReportsIconActive,
-  CalendarIconActive,
-  FamilyIconActive,
-  ChildIconActive,
-  FormsIconActive,
-  AssessmentIconActive,
-  MessagesIconActive,
-  ResourcesIconActive,
-  SupportServicesIconActive,
-  OrganizationIconActive,
-  UserIconActive,
-  SystemMessageIcon,
-  SystemMessageIconActive,
-  MilestonesIconActive,
-  MilestonesIcon,
-  InterventionsIcon,
-  InterventionsIconActive,
-} from "../../../assets/icons/SideBarIcons";
-import { useTranslation } from "react-i18next";
-import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
-import useStyles from "./Layout.js";
-import clsx from "clsx";
-import toast from "react-hot-toast";
-import { AppConfig } from "../../../common/config";
-import SettingsIcon from "@mui/icons-material/Settings";
-import {
-  SUPER_ADMIN,
-  ADMIN,
-  ADMIN_CASEWORKER,
-  CASEWORKER,
-  VIEW_ONLY,
-  MIRACLE,
-  GOVT_CCI,
-  GOVT_ORG,
-  NGO_PARTNER,
-  PRIVATE_CCI,
-  UNASSIGNED,
-  PARENT_ORGANIZATION,
-} from "../../../helpers/constant.js";
-import DashboardFilterSection from "../DashboardFilterSection/DashboardFilterSection.js";
-import DashboardSkelton from "./DashboardSkelton.js";
+import { useEffect, useState, useContext,useCallback } from 'react';
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { Avatar, Box, 
+  // Button, 
+  Divider, Drawer, Link, Typography } from '@material-ui/core';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+// import ReceiptIcon from '@material-ui/icons/Receipt';
+// import useAuth from '../../../common/hooks/UseAuth';
+import BriefcaseIcon from '../../../assets/icons/Briefcase';
+import CalendarIcon from '../../../assets/icons/Calendar';
+import ChartPieIcon from '../../../assets/icons/ChartPie';
+import ChartSquareBarIcon from '../../../assets/icons/ChartSquareBar';
+import StorageRoundedIcon from '@mui/icons-material/StorageRounded';
+// import ChatAltIcon from '../../../assets/icons/ChatAlt';
+// import ClipboardListIcon from '../../../assets/icons/ClipboardList';
+// import FolderOpenIcon from '../../../assets/icons/FolderOpen';
+// import MailIcon from '../../../assets/icons/Mail';
+// import ShareIcon from '../../../assets/icons/Share';
+// import ShoppingBagIcon from '../../../assets/icons/ShoppingBag';
+// import ShoppingCartIcon from '../../../assets/icons/ShoppingCart';
+// import UserIcon from '../../../assets/icons/User';
+import UsersIcon from '../../../assets/icons/Users';
+import Logo from '../../../assets/LogoSideBar';
+import NavSection from '../Components/NavSection';
+// import Scrollbar from '../Components/ScrollBar';
+import _ from 'lodash';
+import ChildCareIcon from '@material-ui/icons/ChildCare';
+import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
+import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered';
+import FormatAlignJustifyIcon from '@material-ui/icons/FormatAlignJustify';
+import { useTranslation } from 'react-i18next';
+import { CommonDataContext } from '../../../common/contexts/CommonDataContext';
+import APIS from '../../../common/hooks/UseApiCalls';
+import toast from 'react-hot-toast';
+import { AppConfig } from '../../../common/config';
+
+const sections = [
+  {
+    title: 'General',
+    items: [
+      {
+        title: 'Overview',
+        path: '/dashboard',
+        icon: <ChartSquareBarIcon fontSize="small" />
+      },
+      {
+        title: 'Reports',
+        path: '/dashboard/reports',
+        icon: <ChartPieIcon fontSize="small" />
+      },
+      {
+        title: 'Calendar',
+        path: '/dashboard/calendar',
+        icon: <CalendarIcon fontSize="small" />
+      }
+    ]
+  },
+  {
+    title: 'Management',
+    items: [
+      {
+        title: 'Users',
+        path: '/dashboard/users',
+        icon: <UsersIcon fontSize="small" />,
+      },
+      {
+        title: 'Organizations',
+        path: '/dashboard/organizations',
+        icon: <BriefcaseIcon fontSize="small" />,
+      },
+      {
+      title: 'Database',
+      icon:<StorageRoundedIcon fontSize="small"></StorageRoundedIcon>,
+      items: [
+        {
+          title: 'Child',
+          path: '/dashboard/child',
+          icon: <ChildCareIcon fontSize="small" />,
+        },
+        {
+          title: 'Families',
+          path: '/dashboard/family',
+          icon: <SupervisedUserCircleIcon fontSize="large" />,
+        }
+       ]
+      },
+      {
+        title: 'Forms',
+        path: '/dashboard/forms',
+        icon: <FormatAlignJustifyIcon fontSize="large" />
+      },
+      {
+        title: 'Questions',
+        path: '/dashboard/questions',
+        icon: <FormatListNumberedIcon fontSize="large" />,
+      },
+      // {
+      //   title: 'Cases',
+      //   path: '/dashboard/cases',
+      //   icon: <ChartPieIcon fontSize="large" />,
+      // },
+      {
+        title: 'Assessments',
+        path: '/dashboard/assessments',
+        icon: <ChartSquareBarIcon fontSize="large" />
+      },
+      
+    ]
+  },
+  
+];
 
 const DashboardSidebar = (props) => {
-  const { t } = useTranslation(["common"]);
+  const { t } = useTranslation(['common']);
   const navigate = useNavigate();
-  const theme = useTheme();
-  const classes = useStyles();
-  const isMobileSize = useMediaQuery(theme.breakpoints.down("sm"));
-  const { onMobileClose, openMobile, onSidebarMobileOpen } = props;
+  const { onMobileClose, openMobile } = props;
   const location = useLocation();
-  const {
-    signedinOrgType,
-    signedinUserRoleHT,
-    signedinUserRoleFS,
-    userIdData,
-  } = useContext(CommonDataContext);
-  const [websocketData, setWebsocketData] = useState(null);
-  const [filteredSections, setFilteredSections] = useState([]);
-  const sections = [
-    {
-      items: [
-        {
-          title: "Overview",
-          path: "/dashboard",
-          icon: <HomeIcon fontSize="small" />,
-          orangeIcon: <HomeIconActive fontSize="small" />,
-          HT_Allowed_Roles: [
-            SUPER_ADMIN,
-            ADMIN,
-            CASEWORKER,
-            ADMIN_CASEWORKER,
-            VIEW_ONLY,
-          ],
-           FS_Allowed_Roles: [
-            SUPER_ADMIN,
-            ADMIN,
-            CASEWORKER,
-            ADMIN_CASEWORKER,
-            VIEW_ONLY,
-          ],
-          Allowed_Acc_Type: [
-            MIRACLE,
-            GOVT_CCI,
-            GOVT_ORG,
-            NGO_PARTNER,
-            PRIVATE_CCI,
-          ],
-        },
-        {
-          title: "Overview",
-          path: "/governmentDashboardOverview",
-          icon: <HomeIcon fontSize="small" />,
-          orangeIcon: <HomeIconActive fontSize="small" />,
-          HT_Allowed_Roles: [
-            ADMIN,
-            VIEW_ONLY,
-          ],
-          Allowed_Acc_Type: [
-            PARENT_ORGANIZATION
-          ],
-        },
-        {
-          title: "Organizations",
-          path: "/governmentDashboardOrganizations",
-          icon: <OrganizationIcon fontSize="small" />,
-          orangeIcon: <OrganizationIconActive fontSize="small" />,
-          HT_Allowed_Roles: [
-            ADMIN,
-            VIEW_ONLY,
-          ],
-          Allowed_Acc_Type: [
-            PARENT_ORGANIZATION
-          ],
-        },
-        {
-          title: "Milestones",
-          path: "/governmentDashboardMilestones",
-          icon: <MilestonesIcon fontSize="small" />,
-          orangeIcon: <MilestonesIconActive fontSize="small" />,
-          HT_Allowed_Roles: [
-           ADMIN,
-           VIEW_ONLY,
-          ],
-          Allowed_Acc_Type: [
-            PARENT_ORGANIZATION
-          ],
-        },
-        {
-          title: "Milestones",
-          path: "/governmentDashboardMilestones",
-          icon: <MilestonesIcon fontSize="small" />,
-          orangeIcon: <MilestonesIconActive fontSize="small" />,
-          HT_Allowed_Roles: [SUPER_ADMIN, ADMIN, CASEWORKER, ADMIN_CASEWORKER],
-          Allowed_Acc_Type: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
-        },
-        {
-          title: "Interventions",
-          path: "/governmentDashboardInterventions",
-          icon: <InterventionsIcon fontSize="small" />,
-          orangeIcon: <InterventionsIconActive fontSize="small" />,
-          HT_Allowed_Roles: [
-            ADMIN,
-            VIEW_ONLY,
-          ],
-          Allowed_Acc_Type: [
-            PARENT_ORGANIZATION
-          ],
-        },
-         {
-          title: "Interventions",
-          path: "/governmentDashboardInterventions",
-          icon: <InterventionsIcon fontSize="small" />,
-          orangeIcon: <InterventionsIconActive fontSize="small" />,
-          HT_Allowed_Roles: [SUPER_ADMIN, ADMIN, CASEWORKER, ADMIN_CASEWORKER],
-          Allowed_Acc_Type: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
-        },
-         {
-          title: "Families",
-          path: "/governmentDashboardFamily",
-          icon: <FamilyIcon fontSize="small" />,
-          orangeIcon: <FamilyIconActive fontSize="small" />,
-          HT_Allowed_Roles: [
-            ADMIN,
-           VIEW_ONLY,
-          ],
-          Allowed_Acc_Type: [
-            PARENT_ORGANIZATION
-          ],
-        },
-        {
-          title: "Children",
-          path: "/governmentDashboardChildren",
-          icon: <ChildIcon fontSize="small" />,
-          orangeIcon: <ChildIconActive fontSize="small" />,
-          HT_Allowed_Roles: [
-            ADMIN,
-            VIEW_ONLY,
-          ],
-          Allowed_Acc_Type: [
-            PARENT_ORGANIZATION
-          ],
-        },
-        {
-          title: "Families",
-          path: "/dashboard/families",
-          icon: <FamilyIcon fontSize="small" />,
-          orangeIcon: <FamilyIconActive fontSize="small" />,
-          FS_Allowed_Roles: [
-            ADMIN,
-            CASEWORKER,
-            ADMIN_CASEWORKER,
-            VIEW_ONLY,
-          ],
-          HT_Allowed_Roles: [ADMIN, CASEWORKER, ADMIN_CASEWORKER,VIEW_ONLY],
-          Allowed_Acc_Type: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
-        },
-        {
-          title: "Children",
-          path: "/dashboard/children",
-          icon: <ChildIcon fontSize="small" />,
-          orangeIcon: <ChildIconActive fontSize="small" />,
-          FS_Allowed_Roles: [
-            ADMIN,
-            CASEWORKER,
-            ADMIN_CASEWORKER,
-            VIEW_ONLY,
-          ],
-          HT_Allowed_Roles: [ADMIN, CASEWORKER, ADMIN_CASEWORKER],
-          Allowed_Acc_Type: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
-        },
-        {
-          title: "Assessments & Progress Reports",
-          path: "/dashboard/assessments",
-          icon: <AssessmentIcon fontSize="small" />,
-          orangeIcon: <AssessmentIconActive fontSize="small" />,
-          HT_Allowed_Roles: [SUPER_ADMIN, ADMIN, CASEWORKER, ADMIN_CASEWORKER],
-          Allowed_Acc_Type: [GOVT_CCI, GOVT_ORG, NGO_PARTNER, PRIVATE_CCI],
-          style: {alignItems: "start"}
-        },
-        {
-          title: "Reports",
-          path: "/dashboard/reports",
-          icon: <ReportsIcon fontSize="small" />,
-          orangeIcon: <ReportsIconActive fontSize="small" />,
-          HT_Allowed_Roles: [
-            SUPER_ADMIN,
-            ADMIN,
-            CASEWORKER,
-            ADMIN_CASEWORKER,
-            VIEW_ONLY,
-          ],
-          Allowed_Acc_Type: [
-            MIRACLE,
-            GOVT_CCI,
-            GOVT_ORG,
-            NGO_PARTNER,
-            PRIVATE_CCI,
-          ],
-        },
-        // {
-        //   title: "Forms",
-        //   path: "/dashboard/forms",
-        //   icon: <FormsIcon fontSize="small" />,
-        //   orangeIcon: <FormsIconActive fontSize="small" />,
-        //   HT_Allowed_Roles: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER],
-        //   FS_Allowed_Roles: [],
-        //   Allowed_Acc_Type: [
-        //     MIRACLE,
-        //     GOVT_CCI,
-        //     GOVT_ORG,
-        //     NGO_PARTNER,
-        //     PRIVATE_CCI,
-        //   ],
-        // },
-        {
-          title: "Events",
-          path: "/dashboard/events",
-          icon: <CalendarIcon fontSize="small" />,
-          orangeIcon: <CalendarIconActive fontSize="small" />,
-          FS_Allowed_Roles: [
-            ADMIN,
-            CASEWORKER,
-            ADMIN_CASEWORKER,
-          ],
-          style: {alignItems: "start"}
-        },
-        {
-          title: "Messages",
-          path: "/fostershare/messages",
-          icon: <MessagesIcon fontSize="small" />,
-          orangeIcon: <MessagesIconActive fontSize="small" />,
-          FS_Allowed_Roles: [ADMIN, CASEWORKER, ADMIN_CASEWORKER ],
-        },
-        // {
-        //   title: "Support Services",
-        //   path: "/admin/support-services",
-        //   icon: <SupportServicesIcon fontSize="small" />,
-        //   orangeIcon: <SupportServicesIconActive fontSize="small" />,
-        //   FS_Allowed_Roles: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER],
-        // },
-        {
-          title: "Resources",
-          path: "/fostershare/resources",
-          icon: <ResourcesIcon fontSize="small" />,
-          orangeIcon: <ResourcesIconActive fontSize="small" />,
-          FS_Allowed_Roles: [SUPER_ADMIN],
-        },
-      ],
-    },
+  const {signedinOrgType, signedinUserRole, organizationList, userIdData, signedInOrgName, firstName, lastName,userImage, setShowNewNotifications} = useContext(CommonDataContext);
+  const [sidebarOptions , setSidebarOptions] = useState(sections)
+  const [websocketData,setWebsocketData] = useState(null);
+  const signedinUserId = localStorage.getItem('username');
   
-    {
-      title: "Admin",
-      titleShortName: <SettingsIcon sx={{ ml: -0.5 }} fontSize="small" />,
-      items: [
-        {
-          title: "System messages",
-          path: "/admin/messages",
-          icon: <SystemMessageIcon fontSize="small" />,
-          orangeIcon: <SystemMessageIconActive fontSize="small" />,
-          FS_Allowed_Roles: [SUPER_ADMIN],
-          HT_Allowed_Roles: [SUPER_ADMIN],
-          Allowed_Acc_Type: [MIRACLE],
-        },
-        {
-          title:
-            [SUPER_ADMIN].includes(signedinUserRoleFS) ||
-            [SUPER_ADMIN].includes(signedinUserRoleHT)
-              ? "Organizations"
-              : "Organization",
-          path:
-            [SUPER_ADMIN].includes(signedinUserRoleFS) ||
-            [SUPER_ADMIN].includes(signedinUserRoleHT)
-              ? "/admin/organizations"
-              : `/dashboard/organizations/${localStorage.getItem(
-                  "orgId"
-                )}/view`,
-          icon: <OrganizationIcon fontSize="small" />,
-          orangeIcon: <OrganizationIconActive fontSize="small" />,
-          FS_Allowed_Roles: [
-            SUPER_ADMIN,
-            ADMIN,
-            ADMIN_CASEWORKER,
-            CASEWORKER ,
-          ],
-          HT_Allowed_Roles: [
-            SUPER_ADMIN,
-            ADMIN,
-            CASEWORKER,
-            ADMIN_CASEWORKER,
-            VIEW_ONLY,
-          ],
-          Allowed_Acc_Type: [
-            MIRACLE,
-            GOVT_CCI,
-            GOVT_ORG,
-            NGO_PARTNER,
-            PRIVATE_CCI,
-            PARENT_ORGANIZATION
-          ],
-        },
-        {
-          title: "Team",
-          path: "/admin/team",
-          icon: <UserIcon fontSize="small" />,
-          orangeIcon: <UserIconActive fontSize="small" />,
-          FS_Allowed_Roles: [
-            SUPER_ADMIN,
-            ADMIN,
-            ADMIN_CASEWORKER,
-            CASEWORKER,
-          ],
-          HT_Allowed_Roles: [
-            SUPER_ADMIN,
-            ADMIN,
-            CASEWORKER,
-            ADMIN_CASEWORKER,
-            VIEW_ONLY,
-          ],
-          Allowed_Acc_Type: [
-            MIRACLE,
-            GOVT_CCI,
-            GOVT_ORG,
-            NGO_PARTNER,
-            PRIVATE_CCI,
-            PARENT_ORGANIZATION
-          ],
-        },
-        {
-          title: "Forms",
-          path: "/dashboard/forms",
-          icon: <FormsIcon fontSize="small" />,
-          orangeIcon: <FormsIconActive fontSize="small" />,
-          HT_Allowed_Roles: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER],
-          FS_Allowed_Roles: [],
-          Allowed_Acc_Type: [
-            MIRACLE,
-            GOVT_CCI,
-            GOVT_ORG,
-            NGO_PARTNER,
-            PRIVATE_CCI,
-          ],
-        },
-        {
-          title: "Support Services",
-          path: "/admin/support-services",
-          icon: <SupportServicesIcon fontSize="small" />,
-          orangeIcon: <SupportServicesIconActive fontSize="small" />,
-          FS_Allowed_Roles: [SUPER_ADMIN, ADMIN, ADMIN_CASEWORKER],
-        },
-      ],
-    },
-  ];
-  const filterSectionsByRoles = (sections) => {
-    
-    return sections.map((section, i) => {
-      const filteredItems = section.items.filter((item) => {
-        const htAllowedRoles = item.HT_Allowed_Roles || [];
-        const fsAllowedRoles = item.FS_Allowed_Roles || [];
-        const allowedAccTypes = item.Allowed_Acc_Type || [];
-        return (
-          (allowedAccTypes.includes(signedinOrgType) &&
-          htAllowedRoles.includes(signedinUserRoleHT)) ||
-          fsAllowedRoles.includes(signedinUserRoleFS)
-        );
-      });
-      return {
-        ...section,
-        items: filteredItems,
-      };
-    });
-  };
-
-  // useEffect(() => {
-  //   const clearLocalStorage = (event) => {
-  //     const isKeepMeSignedIn = localStorage.getItem('keepLoggedIn');
-  //     const username = sessionStorage.getItem('username');
-
-  //     //console.log("isusername", username, isKeepMeSignedIn)
-  //     // if(event && event?.currentTarget){
-  //     //   localStorage.setItem('eventoccured',JSON.parse(event?.currentTarget))
-  //     // }
-  //     if (isKeepMeSignedIn !== 'true') {
-  //       if (event && event.currentTarget.performance.navigation.type == 0) {
-  //         //localStorage.clear();
-  //         localStorage.setItem('eventoccured', 'cleared')
-  //       }
-  //     }
-  //   };
-
-  //   window.addEventListener('beforeunload', clearLocalStorage);
-  //   return () => {
-  //     window.removeEventListener('beforeunload', clearLocalStorage);
-  //   };
-  // }, []);
-
-  useEffect(() => {
-    let idToken =
-      localStorage.getItem("keepLoggedIn") == "true"
-        ? localStorage.getItem("idToken")
-        : sessionStorage.getItem("idToken");
-    if (_.isNil(idToken) || idToken === "undefined") {
-      navigate("/signin");
-    }
-    const filteredSections = filterSectionsByRoles(sections);
-    setFilteredSections(filteredSections);
-  }, [signedinUserRoleHT, signedinUserRoleFS, signedinOrgType]);
-
-  useEffect(() => {
-    if (websocketData !== null) {
-      if (
-        websocketData.statusCode === 201 &&
-        websocketData.statusMessage === "IMPORT_SUCESS"
-      ) {
-        toast.success(t("common:common.Import completed successfully"));
+  
+  //const { user } = useAuth();
+  const user = {
+        id: '5e887ac47eed253091be10cb',
+        avatar: '/static/mock-images/avatars/avatar-carson_darrin.png',
+        isActive: false,
+        lastActivity: "Today at 16:00pm",
+        name: 'User',
+        username: 'carson.darrin'
+  }
+  useEffect(()=>{
+    if (websocketData!==null){ 
+      console.log("websocket data",websocketData.statusCode)
+      if (websocketData.statusCode===201 && websocketData.statusMessage==="IMPORT_SUCESS")
+      {
+         toast.success(t('common:common.Import completed successfully'))
       }
-      if (
-        websocketData.statusCode === 201 &&
-        websocketData.statusMessage === "EXPORT_SUCESS"
-      ) {
-        toast.success(t("common:common.Export completed successfully"));
-        const url = websocketData.data.url;
+      if (websocketData.statusCode===201 && websocketData.statusMessage==="EXPORT_SUCESS")
+      {
+         toast.success(t('common:common.Export completed successfully'))
+         const url = websocketData.data.url
         //  window.open(link, "_blank");
-        const link = document.createElement("a");
+        const link = document.createElement('a');
         link.href = url;
-        link.setAttribute("download", "file.pdf");
+        link.setAttribute('download', 'file.pdf');
         document.body.appendChild(link);
         link.click();
       }
-      if (
-        websocketData.statusCode === 400 &&
-        websocketData.statusMessage === "BAD_REQUEST"
-      ) {
-        toast.error(t("common:common.Bad request"));
+      if (websocketData.statusCode===400 && websocketData.statusMessage==="BAD_REQUEST")
+      {
+        toast.error(t('common:common.Bad request'))
       }
-      if (
-        websocketData.statusCode === 102 &&
-        websocketData.statusMessage === "IMPORT_PARTIALLY_COMPLETED"
-      ) {
-        toast.error(t("common:common.Import partially completed"));
+      if (websocketData.statusCode===102 && websocketData.statusMessage==="IMPORT_PARTIALLY_COMPLETED")
+      {
+        toast.error(t('common:common.Import partially completed'))
       }
-      if (
-        websocketData.statusCode === 101 &&
-        websocketData.statusMessage === "INCORRECT_CSV"
-      ) {
-        toast.error(t("common:common.Data Error in CSV file"));
+      if (websocketData.statusCode===101 && websocketData.statusMessage==="INCORRECT_CSV")
+      {
+        toast.error(t('common:common.Data Error in CSV file'))
       }
-      if (
-        websocketData.statusCode === 104 &&
-        websocketData.statusMessage === "IMPORT_FAILED"
-      ) {
-        toast.error(t("common:common.Import Failed"));
+      if (websocketData.statusCode===104 && websocketData.statusMessage==="IMPORT_FAILED")
+      {
+        toast.error(t('common:common.Import Failed'))
       }
     }
-  }, [websocketData]);
+    },[websocketData])
 
-  // useEffect(() => {
-  //  // websocketConnection();
-  // }, [signedinUserRole])
+  const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
+ useEffect(() => {
+   websocketConnection();
+ }, [signedinUserRole])
+ const websocketConnection = ()=>{
+  if (userIdData !== null ){
+    //staging 
+   //const ws = new WebSocket(`wss://5795h1do54.execute-api.us-east-1.amazonaws.com/miracle-staging-demo?userId=${userIdData}`);
+   //dev
+   let websocketConfig = AppConfig.webSocketURL
+   const idToken = localStorage.getItem("idToken")
+   const ws = new WebSocket(`${websocketConfig}=${userIdData}&Authorization=${idToken}`);
+ ws.onopen = function(event) {
+   console.log("Websocket Connection established",event);
+ };
+ ws.onmessage = function(event) {  
+   console.log("Web socket response for import",event.data);
+   const data = JSON.parse(event.data)
+   setWebsocketData(data);
+   //setShowNewNotifications(true)
+ };
+ ws.onclose = function(event) {  
+  console.log('Websocket disconnected. Reconnect will be attempted in 1 second.')
+  setTimeout(function () {
+    websocketConnection();
+  }, 1000);
+ }
 
-  const websocketConnection = () => {
-    if (userIdData !== null) {
-      let websocketConfig = AppConfig.webSocketURL;
-      const idToken = localStorage.getItem("idToken");
-      const ws = new WebSocket(
-        `${websocketConfig}=${userIdData}&Authorization=${idToken}`
-      );
-      ws.onopen = function (event) {
-        console.log("Websocket Connection established", event);
-      };
-      ws.onmessage = function (event) {
-        console.log("Web socket response for import", event.data);
-        const data = JSON.parse(event.data);
-        setWebsocketData(data);
-      };
-      ws.onclose = function (event) {
-        console.log(
-          "Websocket disconnected. Reconnect will be attempted in 1 second."
-        );
-        setTimeout(function () {
-          //websocketConnection();
-        }, 1000);
-      };
+ ws.onerror = function(event) {  
+  console.log("Web socket error",event);
+ }
+}
+}
 
-      ws.onerror = function (event) {
-        console.log("Web socket error", event);
-      };
+  useEffect(() => {
+    if (openMobile && onMobileClose) {
+      onMobileClose();
     }
-  };
+  }, [location.pathname]);
 
-  const [currentSection, setCurrentsection] = useState();
+// const getUsers = useCallback(async () => {  
+//     try {
+//       const data = await APIS.UserDetails(signedinUserId);
+      
+//       localStorage.setItem('dpUpdateInterval',1800000)    
+//     } catch (err) {
+//       console.error(err);
+//     }
+//   }, []);
 
-  const drawerOpenHandler = (section) => {
-    setCurrentsection(filteredSections.find((obj) => obj.title === section));
-  };
+  useEffect(()=>{
+    let tempValue = _.cloneDeep(sections);
+    console.log('temp',tempValue)
+    console.log('type',signedinOrgType)
+    console.log('roles',signedinUserRole)
+    const orgId = localStorage.getItem('orgId');
+    const isDCPUOrg = organizationList?.find(item => item.id === orgId)?.isDCPUOrg;
+    console.log('bruh',localStorage.getItem('username'))
+    //getUsers()
+    if(signedinOrgType !== null && signedinUserRole !== null){
+      if(signedinUserRole == 'Super admin' || signedinUserRole == 'admin'){
+        if(signedinUserRole == 'admin'){
+          let arrayToBeMoified = tempValue[1].items;
+          arrayToBeMoified.splice(4,1)
+          tempValue[1].items = arrayToBeMoified;
+          setSidebarOptions(tempValue)
+
+        }else{
+          setSidebarOptions(tempValue)
+        }
+        // send as is
+       
+      }else if((signedinOrgType == 1 && signedinUserRole === 'admin') || ([3,4,5].includes(parseInt(signedinOrgType)) && signedinUserRole !== 'viewonly' && signedinUserRole !== 'admin' )){
+        
+        let arrayToBeMoified = tempValue[1].items;
+        arrayToBeMoified.splice(3,2)
+        tempValue[1].items = arrayToBeMoified;
+        setSidebarOptions(tempValue)
+
+      } else if( signedinOrgType == 2 && signedinUserRole !== 'viewonly' && signedinUserRole !== 'admin'){
+        // send with forms,questions,family
+        let arrayToBeMoified = tempValue[1].items;
+        if(isDCPUOrg){
+          arrayToBeMoified.splice(3,2) 
+          arrayToBeMoified[2].items.splice(1,1)        
+          tempValue[1].items = arrayToBeMoified;
+        } else {
+          let genArrayToBeMoified = tempValue[0].items;
+          genArrayToBeMoified.splice(2,1)
+          tempValue[0].items = genArrayToBeMoified;
+          arrayToBeMoified.splice(1,7)
+          tempValue[1].items = arrayToBeMoified;
+        }
+        setSidebarOptions(tempValue)
+        // console.log('new temp',tempValue)
+      } else if (signedinUserRole === 'viewonly'){
+        let arrayToBeMoified = tempValue[0].items;
+        arrayToBeMoified.splice(2,1)
+        tempValue[0].items = arrayToBeMoified;
+        setSidebarOptions([tempValue[0]])
+        
+      } 
+    }
+    if (localStorage.getItem('username') === null){
+      navigate('/')
+    }
+
+  },[signedinOrgType,signedinUserRole, organizationList])
 
   const content = (
     <Box
       sx={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
-        mr: 2,
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%'
       }}
     >
-      <Box sx={{ mt: 9, mb: 8 }}>
-        {filteredSections?.[0]?.items?.length > 0 ? (
-          filteredSections.map((section) => (
+      {/* <Scrollbar options={{ suppressScrollX: false }}> */}
+        <Box
+          sx={{
+            display: {
+              lg: 'none',
+              xs: 'flex'
+            },
+            justifyContent: 'center',
+            p: 2
+          }}
+        >
+          <RouterLink to="/dashboard">
+            <Logo
+              sx={{
+                height: 40,
+                width: 40
+              }}
+            />
+          </RouterLink>
+        </Box>
+        <Box sx={{ p: 2 }}>
+          <Box
+            sx={{
+              alignItems: 'center',
+              backgroundColor: 'background.default',
+              borderRadius: 1,
+              display: 'flex',
+              overflow: 'hidden',
+              p: 2
+            }}
+          >
+            <RouterLink to="/dashboard/profile">
+              <Avatar
+                src={userImage}
+                sx={{
+                  cursor: 'pointer',
+                  height: 48,
+                  width: 48
+                }}
+              />
+            </RouterLink>
+            <Box sx={{ ml: 2 }}>
+              <Typography
+                color="textPrimary"
+                variant="subtitle2"
+              >
+                {firstName + ' ' +lastName } 
+              </Typography>
+              <Typography
+                color="textSecondary"
+                variant="body2"
+                style={{ textTransform: 'capitalize' }}
+              >
+                {signedinUserRole} | {signedInOrgName}
+                <Link
+                  color="primary"
+                  component={RouterLink}
+                  to="/pricing"
+                >
+                  {user.plan}
+                </Link>
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
+        <Divider />
+        <Box sx={{ p: 2 }}>
+          {signedinOrgType  && signedinUserRole  && sidebarOptions.map((section) => (
             <NavSection
               key={section.title}
-              isOpenDrawer={openMobile}
               pathname={location.pathname}
               sx={{
-                "& + &": {
-                  mt: 1,
-                },
+                '& + &': {
+                  mt: 3
+                }
               }}
-              currentSection={currentSection}
-              drawerOpenHandler={drawerOpenHandler}
               {...section}
             />
-          ))
-        ) : <DashboardSkelton isWeb={openMobile}/>}
-      </Box>
-      <Divider />
+          ))}
+        </Box>
+        <Divider />
+        {/* <Box sx={{ p: 2 }}>
+          <Typography
+            color="textPrimary"
+            variant="subtitle2"
+          >
+            Need Help?
+          </Typography>
+          <Typography
+            color="textSecondary"
+            variant="body2"
+          >
+            Check our docs
+          </Typography>
+          <Button
+            color="primary"
+            component={RouterLink}
+            fullWidth
+            sx={{ mt: 2 }}
+            to="/docs"
+            variant="contained"
+          >
+            Documentation
+          </Button>
+        </Box> */}
+
+
+      {/* </Scrollbar> */}
     </Box>
   );
+
+  if (lgUp) {
+    return (
+      <Drawer
+        anchor="left"
+        open
+        PaperProps={{
+          sx: {
+            backgroundColor: 'background.paper',
+            height: 'calc(100% - 64px) !important',
+            top: '64px !Important',
+            width: 280
+          }
+        }}
+        variant="permanent"
+      >
+        {content}
+      </Drawer>
+    );
+  }
 
   return (
     <Drawer
       anchor="left"
       onClose={onMobileClose}
       open={openMobile}
-      variant="permanent"
-      className={clsx(classes.drawer, {
-        [classes.drawerOpen]: openMobile,
-        [classes.drawerClose]: !openMobile,
-      })}
-      classes={{
-        paper: clsx(classes.drawer, {
-          [classes.drawerOpen]: openMobile,
-          [classes.drawerClose]: !openMobile,
-        }),
-      }}
       PaperProps={{
         sx: {
-          backgroundColor: "#1D334B",
-          height: "calc(100% - 64px) !important",
-          top: "64px !Important",
-          borderRadius: 0,
-          width: 280,
-          "&::-webkit-scrollbar": {
-            width: "3px",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            backgroundColor: "#1a3047",
-            borderRadius: "6px",
-          },
-          "&::-webkit-scrollbar-track": {
-            backgroundColor: "#1D334B",
-          },
-        },
+          backgroundColor: 'background.paper',
+          width: 280
+        }
       }}
+      variant="temporary"
     >
-      {!isMobileSize && (
-        <div
-          className={clsx(classes.drawerToggle, {
-            [classes.drawerToggleOpen]: openMobile,
-            [classes.drawerToggleClosed]: !openMobile,
-          })}
-        >
-          <IconButton id="sideBarToggle" onClick={onSidebarMobileOpen}>
-            {!openMobile ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-          </IconButton>
-        </div>
-      )}
-      {[6].includes(Number(localStorage.getItem("signedinOrgType"))) && <DashboardFilterSection openMobile={openMobile} />}
       {content}
     </Drawer>
   );
@@ -646,7 +436,7 @@ const DashboardSidebar = (props) => {
 
 DashboardSidebar.propTypes = {
   onMobileClose: PropTypes.func,
-  openMobile: PropTypes.bool,
+  openMobile: PropTypes.bool
 };
 
 export default DashboardSidebar;

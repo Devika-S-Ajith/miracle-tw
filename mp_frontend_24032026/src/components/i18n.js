@@ -24,14 +24,14 @@ i18n
   .use(initReactI18next)
   .init({
     //resources,
-    react: {
-      useSuspense: false
+    react : {
+    useSuspense : false
     },
-    lng: language && language !== null ? language : 'en',
+    lng: language && language!== null ? language : 'en',
     //lng: 'en',
-    debug: false,
+    debug: false,   
     //fallbackLng: 'en',
-    fallbackLng: language && language !== null ? language : 'en',
+    fallbackLng: language && language!== null ? language : 'en',
     ns: ['common', 'message', 'loginView', 'dataList'],
     defaultNS: 'common',
     interpolation: {

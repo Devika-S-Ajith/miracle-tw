@@ -1,17 +1,17 @@
-import React, { useContext, useState } from 'react';
+import React, {useContext, useState} from 'react';
 // import PropTypes from 'prop-types';
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom'
-import { useTranslation } from 'react-i18next';
+import {useNavigate} from 'react-router-dom'
+import { useTranslation } from 'react-i18next'; 
 import * as Yup from 'yup';
-import { Formik, Field } from 'formik';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import { Box, Button, Card, Grid, TextField, Typography, } from '@mui/material';
-import MenuItem from '@mui/material/MenuItem';
+import { Formik,Field } from 'formik';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import { Box, Button, Card, Grid, TextField, Typography, } from '@material-ui/core';
+import MenuItem from '@material-ui/core/MenuItem';
 // import NumberFormat from 'react-number-format';
 // import wait from '../../../../__fakeApi__/Wait';
 import APIS from '../../../../common/hooks/UseApiCalls';
@@ -26,12 +26,12 @@ const EditCaseForm = (props) => {
   const { t } = useTranslation(['common']);
   const { cases, ...other } = props;
   const navigate = useNavigate();
-  const { userList } = useContext(CommonDataContext);
+  const { userList } = useContext(CommonDataContext); 
   const [modalFlag, setModalFlag] = useState(false);
   // const primaryCaregiver = cases && cases.HT_familyMembers && cases.HT_familyMembers.find(member => member.isPrimaryCareGiver === true)
 
 
-  const closeCase = async (e, value) => {
+  const closeCase =  async (e,value) => {
     e.preventDefault()
     try {
       const statusPayload = {
@@ -39,21 +39,21 @@ const EditCaseForm = (props) => {
         "forceClose": false
       }
       await APIS.CloseCase(statusPayload)
-        .then((res) => {
-          if (res.status === 200) {
-            toast.success('Case has been Closed');
-            navigate('/dashboard/cases/');
-          }
-          else if (res.body.Error === 'There must be no incomplete assessments') {
-            toast.error('There are incomplete assessments for this child.');
-          }
-          else {
-            toast.error('Something went wrong');
-          }
-          setModalFlag(false);
-        })
+      .then((res) =>{
+        if(res.status === 200){
+          toast.success('Case has been Closed');
+          navigate('/dashboard/cases/');
+        }
+        else if(res.body.Error === 'There must be no incomplete assessments'){
+          toast.error('There are incomplete assignments for this child.');
+        }
+        else {
+          toast.error('Something went wrong');
+        }
+        setModalFlag(false);
+      })
 
-    } catch (err) {
+    }catch (err) {
       toast.error('Something went wrong');
 
     }
@@ -62,14 +62,14 @@ const EditCaseForm = (props) => {
   const handleClose = (e) => {
     e.preventDefault()
     setModalFlag(false);
-  };
+    };
 
 
   return (
     <Formik
       initialValues={{
         caseID: cases.id,
-        caseWorker: cases.TWUserId,
+        caseWorker: cases.HTUserId,
         child: cases.HTChildId,
         submit: null,
       }}
@@ -81,34 +81,34 @@ const EditCaseForm = (props) => {
           child: Yup.string().max(255).required(t('common:warnings.Child is required')),
         })}
       onSubmit={async (values, { resetForm, setErrors, setStatus, setSubmitting }) => {
-        let payload = {
-          "id": cases && cases.id,
-          "TWUserId": values.caseWorker,
-          "HTChildId": values.child,
-        }
+       let payload = {
+        "id" : cases && cases.id,
+        "HTUserId": values.caseWorker,
+        "HTChildId": values.child,
+     }
 
-        try {
-          await APIS.EditCase(payload)
-            .then((res) => {
-              if (res && res.data && res.status === 200) {
-                resetForm();
-                setStatus({ success: true });
-                setSubmitting(false);
-                toast.success(t('common:case.Case Updated Successfully'));
-                navigate('/dashboard/cases/');
-              } else {
-                toast.error(t('common:common.Something went wrong'));
-                setStatus({ success: false });
-                setSubmitting(false);
-              }
-            })
-        } catch (err) {
-          toast.error(t('common:common.Something went wrong'));
-          setStatus({ success: false });
-          setErrors({ submit: err.message });
+     try { 
+      await APIS.EditCase(payload)
+      .then((res)=>{
+      if(res && res.data && res.status === 200){
+          resetForm();
+          setStatus({ success: true });
           setSubmitting(false);
+          toast.success(t('common:case.Case Updated Successfully'));
+          navigate('/dashboard/cases/');
+        }else{
+         toast.error(t('common:common.Something went wrong'));
+         setStatus({ success: false });
+         setSubmitting(false);
         }
-        // navigate('/dashboard/cases');
+      })
+    }catch (err) {
+      toast.error(t('common:common.Something went wrong'));
+      setStatus({ success: false });
+      setErrors({ submit: err.message });
+      setSubmitting(false);
+    }
+    // navigate('/dashboard/cases');
 
       }}
     >
@@ -119,26 +119,26 @@ const EditCaseForm = (props) => {
           {...other}
         >
           <Card >
-            <Box
-              sx={{ m: 2, mt: 3 }}
+            <Box 
+            sx={{ m: 2,mt:3}}
             >
               <Grid
                 container
                 spacing={3}
               >
-
+                    
                 <Grid
-                  item
-                  md={12}
-                  xs={12}
-                >
-                  <Typography
+                            item
+                            md={12}
+                            xs={12}
+                            >
+                    <Typography
                     color="textSecondary"
                     variant="subtitle2">
-                    {/* Member {index + 1} */}
-                    {t('common:case.Case Information')}
-                  </Typography>
-                </Grid>
+                        {/* Member {index + 1} */}
+                        {t('common:case.Case Information')}
+                    </Typography>
+                    </Grid>
 
                 <Grid
                   item
@@ -159,7 +159,7 @@ const EditCaseForm = (props) => {
                     disabled={true}
                   />
                 </Grid>
-
+                              
                 <Grid
                   item
                   md={6}
@@ -181,9 +181,9 @@ const EditCaseForm = (props) => {
                       fullWidth: true,
                       margin: "normal",
                       variant: "outlined",
-                      label: t('common:common.Case Worker')
-                    }}
-
+                      label:t('common:common.Case Worker')
+                   }}
+           
                   />
                 </Grid>
                 <Grid
@@ -205,11 +205,11 @@ const EditCaseForm = (props) => {
                     required
                     disabled={true}
                   >
-                    <MenuItem key={cases.HTChildId}
-                      value={cases.HTChildId}>
-                      {cases.childFirstName + ' ' + cases.childLastName}
-                    </MenuItem>
-                  </TextField>
+                      <MenuItem key={cases.HTChildId} 
+                        value={cases.HTChildId}>
+                        {cases.childFirstName+' '+cases.childLastName}
+                      </MenuItem>
+                    </TextField>
                 </Grid>
 
                 <Grid
@@ -218,58 +218,58 @@ const EditCaseForm = (props) => {
                   xs={12}
                 >
                 </Grid>
-              </Grid>
-
+                </Grid>
+                
 
               <Box sx={{ mt: 2 }}>
                 <Button
                   color="primary"
                   disabled={isSubmitting}
                   type="submit"
-                  sx={{ width: 200 }}
+                  sx={{width : 200}}
                   variant="contained"
                 >
                   {t('common:case.Update Case')}
                 </Button>
                 <Button
                   color="primary"
-                  sx={{ width: 200, ml: 21 }}
+                  sx={{width : 200,ml : 21}}
                   disabled={isSubmitting}
                   type="reset"
                   variant="contained"
                 >
                   {t('common:common.Reset')}
                 </Button>
-                {cases.caseStatus === 'Open' ? (<Button
+                {cases.caseStatus==='Open' ?(<Button
                   color="primary"
                   disabled={isSubmitting}
-                  onClick={() => setModalFlag(true)}
-                  sx={{ width: 200, ml: 21 }}
+                  onClick={()=> setModalFlag(true)}
+                  sx={{width : 200,ml : 21}}
                   variant="contained"
                 >
                   {t('common:case.Close Case')}
-                </Button>) : <></>}
+                </Button>):<></>}
               </Box>
             </Box>
             <Dialog aria-labelledby="simple-dialog-title" open={modalFlag}>
               <DialogTitle id="simple-dialog-title">Are you sure?</DialogTitle>
               <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                  {t('common:common.All scheduled assessments related to this case will be deleted')}
-                  <br />
-                  {t('common:common.Before closing the case, please complete all the overdue assessments of the child if there are any')}
-                  <br />
-                  {t('common:common.Would you like to proceed with closing this case')}<br></br>
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={(e) => closeCase(e, values)} color="primary">
-                  Yes
-                </Button>
-                <Button onClick={(e) => handleClose(e)} color="primary" autoFocus>
-                  No
-                </Button>
-              </DialogActions>
+                  <DialogContentText id="alert-dialog-description">
+                    {t('common:common.All scheduled assessments related to this case will be deleted')}
+                    <br/>
+                    {t('common:common.Before closing the case, please complete all the overdue assessments of the child if there are any')}
+                    <br/>
+                    {t('common:common.Would you like to proceed with closing this case')}<br></br>
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={(e)=>closeCase(e,values)} color="primary">
+                    Yes
+                  </Button>
+                  <Button onClick={(e)=>handleClose(e)} color="primary" autoFocus>
+                    No
+                  </Button>
+                </DialogActions>
 
             </Dialog>
           </Card>

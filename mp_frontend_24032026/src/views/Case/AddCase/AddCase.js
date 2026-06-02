@@ -1,7 +1,7 @@
 import { useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 //import { Helmet } from 'react-helmet-async';
-import { Box, Container, Grid, Typography, IconButton } from '@mui/material';
+import { Box, Container, Grid, Typography, IconButton } from '@material-ui/core';
 // import { customerApi } from '../../../__fakeApi__/customerApi';
 import AddCaseForm from '../Components/AddCaseForm';
 // import useMounted from '../../../common/hooks/UseMounted';
@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 const AddCase = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(['common']);
-  const { signedinOrgType, signedinUserRole } = useContext(CommonDataContext);
+  const {signedinOrgType, signedinUserRole} = useContext(CommonDataContext);
   // const mounted = useMounted();
   const { settings } = useSettings();
 
@@ -23,17 +23,17 @@ const AddCase = () => {
   // }, []);
 
   useEffect(() => {
-    if (signedinOrgType !== null && signedinUserRole !== null) {
-      if ((signedinOrgType == 3 || signedinOrgType == 4 || signedinOrgType == 5) && (signedinUserRole === 'admin' || signedinUserRole === 'caseworker')) {
+    if(signedinOrgType !== null && signedinUserRole !== null){
+      if((signedinOrgType == 3 || signedinOrgType == 4 || signedinOrgType == 5) && (signedinUserRole === 'admin' || signedinUserRole === 'caseworker')){
         // has access
       } else {
         navigate('/Unauthorized');
       }
     }
-    return () => {
+    return () =>{
 
     }
-  }, [signedinOrgType, signedinUserRole])
+  },[signedinOrgType,signedinUserRole])
 
   return (
     <>
@@ -44,7 +44,7 @@ const AddCase = () => {
         sx={{
           backgroundColor: 'background.default',
           minHeight: '100%',
-          mt: 2
+          mt : 2
           //py: 8
         }}
       >
@@ -54,18 +54,18 @@ const AddCase = () => {
             justifyContent="space-between"
             spacing={3}
           >
-            <Grid item sx={{ display: "flex", flexDirection: "row" }}>
+            <Grid item sx={{display : "flex",flexDirection : "row"}}>
               <IconButton
-                color="inherit"
-                onClick={() => navigate(-1)}
-                sx={{
-                  // display: {
-                  //   md: 'none'
-                  // }
-                  mt: - 0.5
-                }}
+              color="inherit"
+              onClick={()=>navigate(-1)}
+              sx={{
+                // display: {
+                //   md: 'none'
+                // }
+                mt : - 0.5
+              }}
               >
-                <ChevronLeftIcon fontSize="small" />
+              <ChevronLeftIcon fontSize="small" />
               </IconButton>
               <Typography
                 color="textPrimary"

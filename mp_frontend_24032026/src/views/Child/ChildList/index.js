@@ -1,1 +1,1 @@
-export { default } from "./ConsolidatedChildist";
+export { default } from "./ChildList"

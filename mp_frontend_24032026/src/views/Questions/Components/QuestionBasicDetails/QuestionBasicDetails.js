@@ -12,7 +12,7 @@ import {
   TableCell,
   TableRow,
   Typography
-} from '@mui/material';
+} from '@material-ui/core';
 // import LockIcon from '../../../../assets/icons/Lock';
 // import UserIcon from '../../../../assets/icons/User';
 import Label from '../../../../components/Label';
@@ -23,43 +23,46 @@ import { useTranslation } from 'react-i18next';
 const QuestionBasicDetails = (props) => {
   const { question, options, isLoading } = props;
   const { t } = useTranslation(['common']);
+  // const { languageList, locationList } = useContext(CommonDataContext);
+console.log("question as props >>",question)
   useEffect(() => {
-    console.log("isLoading >>", isLoading)
+    console.log("question >>",question)
+    console.log("isLoading >>",isLoading)
     return () => {
     }
-  }, []);
+  },[]);
 
 
   return (
-    < Card
+    < Card 
     //{...other}
     >
       <CardHeader title={t('common:question.Question Details')} />
       <Divider />
       <Table>
         <TableBody>
-          <TableRow>
+        <TableRow>
           </TableRow>
 
 
           <TableRow>
-            <TableCell>
-              <Typography
-                color="textPrimary"
-                variant="subtitle2"
-              >
-                {t('common:question.Domain')}
-              </Typography>
-            </TableCell>
-            <TableCell>
-              <Typography
-                color="textSecondary"
-                variant="body2"
-              >
-                {question && t(`common:assessment.${question.domainName}`)}
-              </Typography>
-            </TableCell>
-          </TableRow>
+              <TableCell>
+                <Typography
+                  color="textPrimary"
+                  variant="subtitle2"
+                >
+                  {t('common:question.Domain')}
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography
+                  color="textSecondary"
+                  variant="body2"
+                >
+                  {question && t(`common:assessment.${question.domainName}`)}
+                </Typography>
+              </TableCell>
+        </TableRow>
           <TableRow>
             <TableCell>
               <Typography
@@ -108,18 +111,18 @@ const QuestionBasicDetails = (props) => {
               </Typography>
             </TableCell>
             <TableCell>
-              <Label sx={{ width: 50 }}
-                //color="primary"
-                color={question.isRedFlag ? 'error' : 'success'}
-              >
-                {/* {t(`common:common.${invoice.status}`)} */}
-                {question.isRedFlag ? `${t('common:common.Yes')}` : `${t('common:common.No')}`}
-              </Label>
+            <Label sx={{width : 50}}
+                    //color="primary"
+                    color={question.isRedFlag ? 'error' : 'success'} 
+                    >
+                      {/* {t(`common:common.${invoice.status}`)} */}
+                      {question.isRedFlag ?`${t('common:common.Yes')}`:`${t('common:common.No')}` }
+                    </Label>
             </TableCell>
           </TableRow>
 
           <TableRow>
-            <TableCell sx={{ width: 450 }}>
+            <TableCell sx={{width : 450}}>
               <Typography
                 color="textPrimary"
                 variant="subtitle2"
@@ -127,23 +130,23 @@ const QuestionBasicDetails = (props) => {
                 {t('common:common.Options')}
               </Typography>
             </TableCell>
-            <TableCell
+            <TableCell 
             //sx={{display : "flex",flexDirection : "row"}}
             >
-              {options.map((option, index) => {
-                return (
-                  <Typography
+                 {options.map((option,index)=>{
+                   return(
+                    <Typography
                     key={option.score}
                     color="textSecondary"
                     variant="body2"
-                  >
-                    {index + 1}
-                    {". "}
-                    {t(`common:assessment.${option.choiceName}`)}
-                    {/* {index+1 === options.length ? " "  : ","} */}
+                    >
+                      {index + 1}
+                      {". "}
+                     {t(`common:assessment.${option.choiceName}`)}
+                     {/* {index+1 === options.length ? " "  : ","} */}
                   </Typography>
-                )
-              })}
+                   )
+                 })}
               {/* <Label color={isVerified ? 'success' : 'error'} sx={{ml : 2}}>
                 {isVerified ? 'Email verified' : 'Email not verified'}
               </Label> */}
@@ -164,26 +167,26 @@ const QuestionBasicDetails = (props) => {
               </Typography>
             </TableCell>
             <TableCell>
-              {question.choiceDetails && question.choiceDetails.length > 0 ? question.choiceDetails.map((choice, index) => {
-                return (
+              {question.choiceDetails && question.choiceDetails.length > 0 ? question.choiceDetails.map((choice,index)=>{
+                return(
                   <Typography
-                    color="textSecondary"
-                    variant="body2"
-                  >
-                    {choice.choiceName !== '' && choice.choiceName !== null && index + 1}
-                    {choice.choiceName !== '' && choice.choiceName !== null && ". "}
-                    {choice.choiceName !== '' && choice.choiceName}
-                  </Typography>
-                )
-
-              })
-                :
-                <Typography
                   color="textSecondary"
                   variant="body2"
-                >
-                  {"No Options"}
-                </Typography>}
+                  >
+                   {choice.choiceName !== '' && choice.choiceName !== null && index + 1}
+                   {choice.choiceName !== '' && choice.choiceName !== null && ". "}
+                   {choice.choiceName !== '' && choice.choiceName}
+                </Typography>
+                )
+               
+              })
+               : 
+               <Typography
+               color="textSecondary"
+               variant="body2"
+               >
+                {"No Options"}
+             </Typography> }
             </TableCell>
           </TableRow>
 

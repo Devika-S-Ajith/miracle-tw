@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from 'react';
+import { useCallback, useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Chart from 'react-apexcharts';
 import {
@@ -8,30 +8,33 @@ import {
   CardActions,
   CardContent,
   CardHeader,
+  // Tooltip,
   Typography
-} from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+} from '@material-ui/core';
+import { useTheme } from '@material-ui/core/styles';
 import ArrowRightIcon from '../../../../assets/icons/ArrowRight';
+// import InformationCircleIcon from '../../../../assets/icons/InformationCircle';
 import { useTranslation } from 'react-i18next';
+import APIS from '../../../../common/hooks/UseApiCalls';
 import { CommonDataContext } from '../../../../common/contexts/CommonDataContext';
 
 const CurrentPlacement = (props) => {
 
-  const { title, data, payload, res, ...other } = props;
-  const { signedinOrgType, signedinUserRole } = useContext(CommonDataContext);
+  const {title, data,payload,res, ...other} = props;
+  const {signedinOrgType, signedinUserRole} = useContext(CommonDataContext);
   const { t } = useTranslation(['common']);
   const theme = useTheme();
   const navigate = useNavigate();
   const [chartSeries, setChartSeries] = useState([])
   const [currentRoute, setCurrentRoute] = useState('');
-  const orgListlevel2 = ['1', '2', '3', '4', '5']
+  const orgListlevel2 = ['1','2','3','4','5']
   const userListlevel2 = ['admin']
 
-
+   
 
   let chartOptions3 = {
     chart: {
-      id: 3,
+      id:3,
       background: 'transparent',
       stacked: false,
       toolbar: {
@@ -39,25 +42,25 @@ const CurrentPlacement = (props) => {
       }
     },
     colors: [
-      '#C0392B', '#9B59B6', '#2980B9', '#1ABC9C', '#2ECC71', '#F1C40F', 'rgba(86, 100, 210, 0.5)', '#64B6F7', '#8E44AD'
+      '#C0392B','#9B59B6','#2980B9','#1ABC9C','#2ECC71','#F1C40F','rgba(86, 100, 210, 0.5)','#64B6F7','#8E44AD'
     ],
     dataLabels: {
       enabled: false
     },
     labels: [
-      t('common:common.Foster care'),
-      t('common:common.Semi- independent living'),
-      t('common:common.Parents/step parents'),
-      t('common:common.Other'),
-      t('common:common.Independent living'),
-      t('common:common.Kinship'),
-      t('common:common.CCI'),
-      t('common:common.After care'),
-      t('common:common.Group living')
+        t('common:common.Foster care'), 
+        t('common:common.Semi- independent living'), 
+        t('common:common.Parents/step parents'), 
+        t('common:common.Other'),
+        t('common:common.Independent living'), 
+        t('common:common.Kinship'), 
+        t('common:common.CCI'), 
+        t('common:common.After care'),
+        t('common:common.Group living')
     ],
     legend: {
       fontSize: '14px',
-      position: 'bottom',
+      position:'bottom',
       fontFamily: theme.typography.fontFamily,
       fontWeight: theme.typography.subtitle2.fontWeight,
       itemMargin: {
@@ -80,8 +83,8 @@ const CurrentPlacement = (props) => {
     }
   };
 
-
-  const parseApiData = (value) => {
+  
+  const parseApiData = (value) =>{
     let labelArray = [];
     let valueArray = [];
     // value.forEach((item)=> {
@@ -90,12 +93,12 @@ const CurrentPlacement = (props) => {
     // });
     for (var item in value) {
       // console.log(item);
-      labelArray.push(item);
-      valueArray.push(parseInt(value[item]));
+        labelArray.push(item);
+        valueArray.push(parseInt(value[item]));
     }
     chartOptions3.labels = labelArray;
     setChartSeries(valueArray);
-
+    
 
 
   }
@@ -116,29 +119,29 @@ const CurrentPlacement = (props) => {
   //   }
   // }, []);
 
-  useEffect(() => {
+  useEffect(()=>{
     //getCurrenPlacement(payload);
     parseApiData(res)
-  }, [res])
+  },[res])
+  
 
-
-  useEffect(() => {
-    if (signedinOrgType !== null && signedinUserRole !== null) {
+  useEffect(()=>{
+    if(signedinOrgType !== null && signedinUserRole !== null){
       let condition4 = !userListlevel2.includes(signedinUserRole);
       let condition5 = !orgListlevel2.includes(signedinOrgType);
       let condition6 = condition4 && condition5
-      if (condition4 || condition5 || condition6) {
+      if(condition4 || condition5 || condition6){
         setCurrentRoute('');
-      } else {
-        setCurrentRoute('/dashboard/reportsCurrentPlacement')
+      }else{
+        setCurrentRoute('/dashboard/reportsCurrentPlacement') 
       }
     }
 
-  }, [signedinOrgType, signedinUserRole])
+  },[signedinOrgType,signedinUserRole])
 
 
   return (
-    <Card {...other} sx={{mt:1}}>
+    <Card {...other}>
       <CardHeader
         disableTypography
         title={(
@@ -155,16 +158,19 @@ const CurrentPlacement = (props) => {
             >
               {title}
             </Typography>
+            {/* <Tooltip title="Widget25 source by Social Media platforms">
+              <InformationCircleIcon fontSize="small" />
+            </Tooltip> */}
           </Box>
         )}
       />
       <CardContent>
-        {chartSeries ? <Chart
+      {chartSeries ? <Chart
           height={300}
           options={chartOptions3}
           series={chartSeries}
           type="donut"
-        /> : <>No Data Available</>}
+        />:<>No Data Available</>}
       </CardContent>
       <CardActions
         sx={{
@@ -178,9 +184,9 @@ const CurrentPlacement = (props) => {
           endIcon={<ArrowRightIcon fontSize="small" />}
           variant="text"
           disabled={currentRoute === ''}
-          onClick={() => navigate('/dashboard/reportsCurrentPlacement', {
-            state: {
-              "fromDashboard": true
+          onClick={() => navigate('/dashboard/reportsCurrentPlacement',{
+            state : {
+              "fromDashboard":true
             }
           })}
         >

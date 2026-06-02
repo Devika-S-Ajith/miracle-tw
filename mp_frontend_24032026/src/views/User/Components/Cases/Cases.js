@@ -13,7 +13,7 @@ import {
   TableHead,
   TablePagination,
   TableRow
-} from '@mui/material';
+} from '@material-ui/core';
 import { customerApi } from '../../../../__fakeApi__/customerApi';
 import useMounted from '../../../../common/hooks/UseMounted';
 import ArrowRightIcon from '../../../../assets/icons/ArrowRight';
@@ -74,8 +74,8 @@ const Cases = (props) => {
                 {/* <TableCell>
                   Status
                 </TableCell> */}
-                <TableCell
-                  align="right"
+                <TableCell 
+                align="right" 
                 //padding="checkbox"
                 >
                   Actions
@@ -83,10 +83,10 @@ const Cases = (props) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {cases.map((invoice) => (
+            {cases.map((invoice) => (
                 <TableRow key={invoice.id}>
                   <TableCell>
-
+                    
                     {invoice.child_name}
                   </TableCell>
                   <TableCell>
@@ -97,12 +97,12 @@ const Cases = (props) => {
                     {invoice.assessments_done}
                   </TableCell>
                   <TableCell>
-                    {invoice.id}
+                  {invoice.id}
                   </TableCell>
                   <TableCell>
-                    {invoice.date}
+                  {invoice.date}
                   </TableCell>
-
+                    
                   {/* <TableCell>
                     {invoice.currency}
                     {invoice.value}

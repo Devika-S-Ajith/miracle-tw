@@ -1,188 +1,240 @@
-import { useCallback, useState, useEffect, useContext } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useCallback, useState, useEffect, useContext } from 'react';
+import { Link as RouterLink, useParams, useNavigate } from 'react-router-dom';
+//import { Helmet } from 'react-helmet-async';
 import {
   Box,
-  Card,
-  CardHeader,
-  CardContent,
+  // Breadcrumbs,
+  Button,
+  Container,
+  Divider,
   Grid,
+  // Link,
+  Tab,
+  Tabs,
   Typography,
-  Paper,
-} from "@mui/material";
-import OrganizationUsers from "../Components/OrganizationUsers";
-import useMounted from "../../../common/hooks/UseMounted";
-import ChevronRightIcon from "../../../assets/icons/ChevronRight";
-import APIS from "../../../common/hooks/UseApiCalls";
-import { useTranslation } from "react-i18next";
-import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
-import AccountDetailsCard from "./AccountDetailsCard";
-import FosterShareDetailsCard from "./FosterShareDetailsCard";
-import ThriveScaleDetailsCard from "./ThriveScaleDetailsCard";
-import { UNASSIGNED } from "../../../helpers/constant";
-import OrganizationalOverview from "../../Dashboard/GovtDashboardOverview/OrganizationalOverview";
-import useAuthorization from "../../../components/UserComponents/useAuthorization";
-import PageLoader from "../../../components/UserComponents/PageLoader";
+  IconButton
+} from '@material-ui/core';
+// import { customerApi } from '../../../__fakeApi__/customerApi';
+import OrganizationContactDetails from '../Components/OrganizationContactDetails';
+import LinkedOrganizationList from '../Components/LinkedOrganizationList';
+import OrganizationUsers from '../Components/OrganizationUsers';
+import useMounted from '../../../common/hooks/UseMounted';
+import ChevronLeftIcon from '../../../assets/icons/ChevronLeft';
+import PencilAltIcon from '../../../assets/icons/PencilAlt';
+//import gtm from '../../lib/gtm';
+import useSettings from '../../../common/hooks/UseSettings';
+import APIS from '../../../common/hooks/UseApiCalls';
+import { useTranslation } from 'react-i18next';
+import { CommonDataContext } from '../../../common/contexts/CommonDataContext';
+
+let tabs = [
+  { label: 'Details', value: 'details' },
+  { label: 'Users', value: 'users' },
+  { label: 'Linked Organizations', value: 'linked' }
+];
 
 const OrganizationDetails = () => {
-  const { t } = useTranslation(["common"]);
-  const { signedinUserRoleHT, signedinUserRoleFS, signedinOrgType } =
-    useContext(CommonDataContext);
+  const { t } = useTranslation(['common']);
+  const { signedinOrgType, signedinUserRole } = useContext(CommonDataContext)
   const navigate = useNavigate();
   const mounted = useMounted();
-  const [account, setAccount] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [refresh, setRefresh] = useState(false);
-  const { locationList } = useContext(CommonDataContext);
-  const [selectedCountry, setSelectedCountry] = useState(null);
-   const { authStatus, checkAuth } = useAuthorization("ListAccount");
-  
-  useEffect(() => {
-      document.title = "Accounts | Thrivewell";;
-      checkAuth();
-    }, []);
-
-  useEffect(() => {
-    if (locationList.length) {
-      setSelectedCountry(
-        locationList.find(
-          (obj) => obj.id == localStorage.getItem("userRegion"),
-        ),
-      );
-    }
-  }, [locationList]);
-
+  const { settings } = useSettings();
+  const [organisation, setOrganisation] = useState(null);
+  const [orgList, setOrgList] = useState(null);
+  const [linkedOrgList, setLinkedOrgList] = useState(null);
+  const [currentTab, setCurrentTab] = useState('details');
   let { id } = useParams();
 
   const getOrganisation = useCallback(async () => {
-    setLoading(true);
+    document.title = "Organizations | Details | Miracle Foundation"
     try {
       const data = await APIS.OrganisationDetails(id);
       if (mounted.current) {
-        setAccount(data.data.data);
-        setLoading(false);
+        setOrganisation(data.data.organizationDetails);
+        setOrgList(data.data.linkingOrganizations);
+        setLinkedOrgList(data.data.linkedOrganizations)
       }
     } catch (err) {
       console.error(err);
-      setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    if(authStatus === 'authorized') {
-      getOrganisation();
+    getOrganisation();
+    return () => {
     }
-  }, [authStatus]);
-
-  const handleRefresh = () => {
-    setRefresh(true);
-  };
+  }, [getOrganisation]);
 
   useEffect(() => {
-    if (refresh) {
-      getOrganisation();
+    if(signedinOrgType !== null && signedinUserRole !== null){
+      if((signedinOrgType == 1 && signedinUserRole !== 'viewonly')
+      || (signedinOrgType == 5 && ['admin','caseworker'].includes(signedinUserRole))){
+        // has access to user
+      } else if(signedinOrgType == 3 || signedinOrgType == 4 && signedinUserRole !== 'viewonly') {
+        let arrayToBeMoified = tabs;
+        arrayToBeMoified.splice(1,1)
+        tabs = arrayToBeMoified;
+      } else {
+        navigate('/Unauthorized');
+      }
     }
-  }, [refresh]);
+    return () =>{
+    }
+  },[signedinOrgType,signedinUserRole])
 
-  if (authStatus === 'loading' || authStatus === 'idle') {
-    return <PageLoader />;
+  const handleTabsChange = (event, value) => {
+    setCurrentTab(value);
+  };
+
+  if (!organisation) {
+    return null;
   }
-
-  if (authStatus === 'unauthorized') {
-    return null; // Or a custom message
-  }
-
 
   return (
     <>
+      {/* <Helmet>
+        <title>Dashboard: Customer Details | Material Kit Pro</title>
+      </Helmet> */}
+
       <Box
         sx={{
-          backgroundColor: "background.default",
-          minHeight: "100%",
-          mt: 2,
-          mr: 2,
+          backgroundColor: 'background.default',
+          minHeight: '100%',
+          mt : 2
+          //py: 8
         }}
       >
-        <Grid container width={1}>
-          <Grid item xs={12} sm={12}>
-            <Grid container justifyContent="space-between" spacing={3} >
-              <Grid item sx={{ display: "flex", flexDirection: "row" }}>
-                <Typography color="textPrimary" variant="h5">
-                  {t("common:common.Admin")}
-                </Typography>
-                <Box
-                  sx={{
-                    m: 0.75,
-                  }}
-                  style={{ cursor: "text" }}
-                >
-                  <ChevronRightIcon color="disabled" fontSize="small" />
-                </Box>
-                <Typography
+        <Container maxWidth={settings.compact ? 'xl' : false}>
+          <Grid
+            container
+            justifyContent="space-between"
+            spacing={3}
+          >
+            <Grid item sx={{display : "flex",flexDirection : "row"}}>
+            <IconButton
+              color="inherit"
+              onClick={()=>navigate(-1)}
+              sx={{
+                // display: {
+                //   md: 'none'
+                // }
+                mt : - 0.5
+              }}
+            >
+            <ChevronLeftIcon fontSize="small" />
+            </IconButton>
+              <Typography
+                color="textPrimary"
+                variant="h5"
+              >
+                {organisation.organizationName}
+              </Typography>
+              {/* <Breadcrumbs
+                aria-label="breadcrumb"
+                separator={<ChevronRightIcon fontSize="small" />}
+                sx={{ mt: 1 }}
+              >
+                <Link
                   color="textPrimary"
-                  variant="h5"
-                  style={{ cursor: "pointer" }}
-                  onClick={() => navigate("/dashboard/organizations")}
+                  component={RouterLink}
+                  to="/dashboard"
+                  variant="subtitle2"
                 >
-                  {t("common:common.Organizations")}
-                </Typography>
-                <Box
-                  sx={{
-                    m: 0.75,
-                  }}
-                  style={{ cursor: "text" }}
+                  Dashboard
+                </Link>
+                <Link
+                  color="textPrimary"
+                  component={RouterLink}
+                  to="/dashboard"
+                  variant="subtitle2"
                 >
-                  <ChevronRightIcon color="disabled" fontSize="small" />
-                </Box>
-                <Typography color="textPrimary" variant="h5">
-                  {account?.accountName}
+                  Management
+                </Link>
+                <Typography
+                  color="textSecondary"
+                  variant="subtitle2"
+                >
+                  Customers
                 </Typography>
-              </Grid>
+              </Breadcrumbs> */}
             </Grid>
-            <Grid container spacing={2} style={{ marginTop: "0px" }}>
-              <Grid item xs={12}>
-                <Grid item xs={12}>
-                  {/* ✅ alignItems="stretch" makes both items grow to the tallest sibling */}
-                  <Grid container spacing={2} alignItems="stretch">
-                    <Grid item xs={6} >
-                      <AccountDetailsCard
-                        account={account}
-                        loading={loading}
-                        setRefresh={handleRefresh}
-                        getOrganisation={getOrganisation}
-                        sx={{  height: "100%" }} // ← pass if AccountDetailsCard uses Box/Card with sx
-                      />
-                    </Grid>
-                    <Grid item xs={6} >
-                      <OrganizationalOverview
-                        isGeneralDashboard={false}
-                        isSuperAdmin={false}
-                        sx={{ height: "100%" }} // ← same
-                      />
-                    </Grid>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid item xs={12}>
-                <Card sx={{ borderRadius: "8px" }}>
-                  <CardHeader
-                    title={t("common:common.Users")}
-                    sx={{ pb: 0, pl: 3.8 }}
-                  />
-                  <CardContent sx={{ pt: 0 }}>
-                    <Box>
-                      <Grid container>
-                        <OrganizationUsers
-                          accountId={id}
-                          selectedCountry={selectedCountry}
-                        />
-                      </Grid>
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
+            <Grid item>
+              {(signedinUserRole === 'superadmin') ?(<Box sx={{ m: -1 }}>
+                <Button
+                  color="primary"
+                  component={RouterLink}
+                  startIcon={<PencilAltIcon fontSize="small" />} 
+                  sx={{ m: 1 }}
+                  //sx={{ml: -11.5,mt : 8,position : "absolute",width : 100 }}
+                  to={`/dashboard/organizations/${id}/edit`}
+                  variant="contained"
+                >
+                  {t('common:common.Edit')}
+                </Button>
+              </Box>):<></>}
             </Grid>
           </Grid>
-        </Grid>
+          <Box sx={{ mt: 3 }}>
+            <Tabs
+              indicatorColor="primary"
+              onChange={handleTabsChange}
+              scrollButtons="auto"
+              textColor="primary"
+              value={currentTab}
+              variant="scrollable"
+            >
+              {tabs.map((tab) => (
+                <Tab
+                  key={tab.value}
+                  label={t(`common:common.${tab.label}`)}
+                  value={tab.value}
+                />
+              ))}
+            </Tabs>
+          </Box>
+          <Divider />
+          <Box sx={{ mt: 3 }}>
+            {currentTab === 'details' && (
+              <Grid
+                container
+                spacing={3}
+              >
+                <Grid
+                  item
+                  //lg={settings.compact ? 6 : 4}
+                  lg={10}
+                  //md={6}
+                  md={12}
+                  //xl={settings.compact ? 6 : 3}
+                  xl={12}
+                  xs={12}
+                >
+                  <OrganizationContactDetails
+                    id={organisation.organizationId}
+                    orgId={organisation.id}
+                    address1={organisation.addressLine1}
+                    address2={organisation.addressLine2}
+                    country={organisation.HTCountryId}
+                    email={organisation.email}
+                    website={organisation.website}
+                    isVerified={organisation.isActive}
+                    phone={organisation.phoneNumber}
+                    state={organisation.HTStateId}
+                    organizationType = {organisation.HTOrganizationTypeId}
+                    city={organisation.city}
+                    district={organisation.HTDistrictId}
+                    zipCode={organisation.zipCode}
+                    profileImage={organisation.fileUrl}
+                    isDCPU={organisation.isDCPUOrg}
+                    consentRequired={organisation.consentRequired}
+                  />
+                </Grid>
+              </Grid>
+            )}
+            {currentTab === 'users' && <OrganizationUsers />}
+            {currentTab === 'linked' && <LinkedOrganizationList orgList={orgList} linkedOrgList={linkedOrgList} />}
+          </Box>
+        </Container>
       </Box>
     </>
   );

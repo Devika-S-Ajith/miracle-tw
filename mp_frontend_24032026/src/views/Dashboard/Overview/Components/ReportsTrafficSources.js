@@ -1,8 +1,8 @@
-import { useState, useCallback, useEffect, useContext, useRef } from 'react';
+import { useState,useCallback, useEffect, useContext } from 'react';
 import Chart from 'react-apexcharts';
 import { useNavigate } from 'react-router-dom';
-import { Box, Button, Card, CardHeader, CardActions, Checkbox, Typography, CircularProgress } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { Box,Button, Card, CardHeader,CardActions, Checkbox, Typography, CircularProgress } from '@material-ui/core';
+import { useTheme } from '@material-ui/core/styles';
 import APIS from '../../../../common/hooks/UseApiCalls';
 import ArrowRightIcon from '../../../../assets/icons/ArrowRight';
 import _ from "lodash";
@@ -10,12 +10,13 @@ import { CommonDataContext } from '../../../../common/contexts/CommonDataContext
 import { useTranslation } from 'react-i18next';
 
 
-const dataTemplate2 = {
+
+const dataTemplate2 ={
   series: [
     {
-      color: '#EF476F',
-      name: 'This Organization',
-      data: []
+      color:'#EF476F',
+      name:'This Organization',
+      data:[]
     },
   ],
   xaxis: {
@@ -23,50 +24,44 @@ const dataTemplate2 = {
   }
 }
 
-// Helper: converts a raw score value to a chart-safe value.
-// "-"  → null  (ApexCharts skips null points; tooltip will show "-")
-// "0" or 0 → 0
-// anything else → parseFloat(value)
-const parseScore = (value) => {
-  if (value === '-' || value === undefined || value === null) return null;
-  const parsed = parseFloat(value);
-  return isNaN(parsed) ? null : parsed;
-};
+
+// const CountArray = ['CCI 1', 'CCI 2', 'CCI 3'];
+
 
 
 const ReportsTrafficSources = (props) => {
   const { t } = useTranslation(['common']);
-  const dataTemplate = {
+  const dataTemplate ={
     series: [
       {
-        color: '#EF476F',
-        name: t('common:common.Education Score'),
-        data: []
+        color:'#EF476F',
+        name:t('common:common.Education Score'),
+        data:[]
       },
       {
-        color: '#F78C6B',
-        name: t('common:common.Family and Social Relationships Score'),
-        data: []
+        color:'#F78C6B',
+        name:t('common:common.Family and Social Relationships Score'),
+        data:[]
       },
       {
-        color: '#FFD166',
-        name: t('common:common.Health and Mental Health Score'),
-        data: []
+        color:'#FFD166',
+        name:t('common:common.Health and Mental Health Score'),
+        data:[]
       },
       {
-        color: '#06D6A0',
-        name: t('common:common.Household Economy Score'),
-        data: []
+        color:'#06D6A0',
+        name:t('common:common.Household Economy Score'),
+        data:[]
       },
       {
-        color: '#118AB2',
-        name: t('common:common.Living Conditions Score'),
-        data: []
+        color:'#118AB2',
+        name:t('common:common.Living Conditions Score'),
+        data:[]
       },
       {
-        color: '#073B4C',
-        name: t('common:common.Overall Score'),
-        data: []
+        color:'#073B4C',
+        name:t('common:common.Overall Score'),
+        data:[]
       },
     ],
     xaxis: {
@@ -81,213 +76,86 @@ const ReportsTrafficSources = (props) => {
     t('common:common.Living Conditions Score'),
     t('common:common.Overall Score')
   ];
-  const { title, chartData1, payload, isFamily = false, showCheckbox = true, showLabels = true, ...other } = props
+  const {title, chartData1,payload, ...other} = props
+  // console.log('----props arrived:',chartData1)
   const { signedInOrgName, signedinOrgType, signedinUserRole, languageChange } = useContext(CommonDataContext);
   const theme = useTheme();
   const [chartData, setChartData] = useState(dataTemplate)
   const [selectedSeries, setSelectedSeries] = useState([]);
   const [currentRoute, setCurrentRoute] = useState('');
   const [loading, setLoading] = useState(false)
-  const latestRequestId = useRef(0);
   const navigate = useNavigate();
-
-  const orgListlevel2 = ['1', '2', '3', '4', '5'];
-  const userListLevel1 = ['superadmin', 'admin'];
-
-  const parseData = (data) => {
-    let parsedData = _.cloneDeep(dataTemplate);
-    if (data.length === 0) {
-      parsedData.series[0].name = t('common:common.Education Score');
-      parsedData.series[1].name = t('common:common.Family and Social Relationships Score');
-      parsedData.series[2].name = t('common:common.Health and Mental Health Score');
-      parsedData.series[3].name = t('common:common.Household Economy Score');
-      parsedData.series[4].name = t('common:common.Living Conditions Score');
-      parsedData.series[5].name = t('common:common.Overall Score');
-    } else {
-      data.forEach(item => {
-        // Use parseScore instead of parseFloat so "-" becomes null and "0" stays 0
-        parsedData.series[0].data.push(parseScore(item?.EducationScore));
-        parsedData.series[1].data.push(parseScore(item?.FamilyandSocialRelationshipsScore));
-        parsedData.series[2].data.push(parseScore(item?.HealthAndMentalHealthScore));
-        parsedData.series[3].data.push(parseScore(item?.HouseholdEconomyScore));
-        parsedData.series[4].data.push(parseScore(item?.LivingConditionsScore));
-        parsedData.series[5].data.push(parseScore(item?.OverallScore));
-        parsedData.xaxis.dataPoints.push(item?.lastDate);
-      });
-      parsedData.series[0].name = t('common:common.Education Score');
-      parsedData.series[1].name = t('common:common.Family and Social Relationships Score');
-      parsedData.series[2].name = t('common:common.Health and Mental Health Score');
-      parsedData.series[3].name = t('common:common.Household Economy Score');
-      parsedData.series[4].name = t('common:common.Living Conditions Score');
-      parsedData.series[5].name = t('common:common.Overall Score');
-    }
-    setChartData(parsedData);
-    return parsedData;
-  };
-
-  const parseNewlyAdmittedData = (data) => {
-    let parsedData = _.cloneDeep(dataTemplate2);
-    if (data.length !== 0) {
-      data.forEach(item => {
-        parsedData.series[0].data.push(parseScore(item?.noOfChildren));
-        parsedData.xaxis.dataPoints.push(item?.monthEndDateDateOfEntry);
-      });
-      parsedData.series[0].name = signedInOrgName;
-    } else {
-      parsedData.series[0].name = signedInOrgName;
-    }
-    setChartData(parsedData);
-    setSelectedSeries([signedInOrgName]);
-    return parsedData;
-  };
-
-  const parseReintegratedChildrenData = (data) => {
-    let parsedData = _.cloneDeep(dataTemplate2);
-    if (data.length !== 0) {
-      data.forEach(item => {
-        parsedData.series[0].data.push(parseScore(item?.noOfChildren));
-        parsedData.xaxis.dataPoints.push(item?.monthEndDateOfLeaving);
-      });
-      parsedData.series[0].name = signedInOrgName;
-    } else {
-      parsedData.series[0].name = signedInOrgName;
-    }
-    setChartData(parsedData);
-    setSelectedSeries([signedInOrgName]);
-    return parsedData;
-  };
+  
+  const orgListlevel2 = ['1','2','3','4','5'];
+  const userListLevel1 = ['superadmin','admin'];
 
   const getChildServed = useCallback(async (newPayload) => {
-    const requestId = ++latestRequestId.current;
-    setLoading(true);
     try {
-      const payload = { ...newPayload, languageId: "1" };
-      if (isFamily) payload.assessmentType = 'FAMILY';
-      const response = await APIS.AverageThrivescaleReport(payload);
-      if (latestRequestId.current === requestId) {
-        parseData(response.data.message.data);
-      }
+      setLoading(true);
+      newPayload.HTCountryId = localStorage.getItem('userRegion')
+      const response = await APIS.AverageThrivescaleReport(newPayload); 
+      parseData(response.data.data)
+      setLoading(false);
+      // setChartData(parseData(response.data.data))
+      // if(response && response.status === 200 && response.data.hasOwnProperty('dataCount')){
+      //   setNumberToShow(response.data.dataCount)
+      // }
     } catch (err) {
-      if (latestRequestId.current === requestId) {
-        setChartData(dataTemplate);
-      }
       console.error(err);
-    } finally {
-      if (latestRequestId.current === requestId) setLoading(false);
+      setLoading(false);
     }
-  }, [isFamily, dataTemplate, parseData]);
+  }, []);
 
   const getNewlyAdmittedChildren = useCallback(async (newPayload) => {
-    const requestId = ++latestRequestId.current;
-    setLoading(true);
     try {
+      setLoading(true);
+      newPayload.HTCountryId = localStorage.getItem('userRegion')
       const response = await APIS.NewlyAdmittedChildrenReport(newPayload);
-      if (latestRequestId.current === requestId) {
-        parseNewlyAdmittedData(response.data.message.dashboardData);
-      }
+      parseNewlyAdmittedData(response.data.dashboardData)
+      setLoading(false);
+      // setChartData(parseData(response.data.data))
+      // if(response && response.status === 200 && response.data.hasOwnProperty('dataCount')){
+      //   setNumberToShow(response.data.dataCount)
+      // }
     } catch (err) {
-      if (latestRequestId.current === requestId) {
-        setChartData(dataTemplate2);
-      }
       console.error(err);
-    } finally {
-      if (latestRequestId.current === requestId) setLoading(false);
+      setLoading(false);
     }
-  }, [dataTemplate2, parseNewlyAdmittedData])
+  }, []);
 
   const getChildrenInCCI = useCallback(async (newPayload) => {
-    const requestId = ++latestRequestId.current;
-    setLoading(true);
     try {
+      setLoading(true);
       const response = await APIS.ChildrenInCCI(newPayload);
-      if (latestRequestId.current === requestId) {
-        parseNewlyAdmittedData(response.data.message.dashboardData);
-      }
+      parseNewlyAdmittedData(response.data.dashboardData)
+      setLoading(false);
+      // setChartData(parseData(response.data.data))
+      // if(response && response.status === 200 && response.data.hasOwnProperty('dataCount')){
+      //   setNumberToShow(response.data.dataCount)
+      // }
     } catch (err) {
-      if (latestRequestId.current === requestId) {
-        setChartData(dataTemplate2);
-      }
       console.error(err);
-    } finally {
-      if (latestRequestId.current === requestId) setLoading(false);
+      setLoading(false);
     }
-  }, [dataTemplate2, parseNewlyAdmittedData]);
+  }, []);
 
   const getChildrenReintegrated = useCallback(async (newPayload) => {
-    const requestId = ++latestRequestId.current;
-    setLoading(true);
     try {
+      setLoading(true);
       const response = await APIS.ReintegratedChildren(newPayload);
-      if (latestRequestId.current === requestId) {
-        parseReintegratedChildrenData(response.data.message.dashboardData);
-      }
+      parseReintegratedChildrenData(response.data.dashboardData)
+      setLoading(false);
+      // setChartData(parseData(response.data.data))
+      // if(response && response.status === 200 && response.data.hasOwnProperty('dataCount')){
+      //   setNumberToShow(response.data.dataCount)
+      // }
     } catch (err) {
-      if (latestRequestId.current === requestId) {
-        setChartData(dataTemplate2);
-      }
       console.error(err);
-    } finally {
-      if (latestRequestId.current === requestId) setLoading(false);
+      setLoading(false);
     }
-  }, [dataTemplate2, parseReintegratedChildrenData]);
+  }, []);
 
-  useEffect(() => {
-    if (localStorage.getItem('userRegion')) {
-      if (chartData1 === 'chartData') {
-        getChildServed(payload)
-        setSelectedSeries(AvgArray)
-        isFamily ? setCurrentRoute('/dashboard/reportAverageThriveScaleScoresFamilies') : setCurrentRoute('/dashboard/reportAverageThriveScoreChildren')
-      } else if (chartData1 === 'dataTemplate') {
-        getNewlyAdmittedChildren(payload)
-        setSelectedSeries([signedInOrgName]);
-        if (signedinOrgType !== null && signedinUserRole !== null) {
-          let condition4 = !userListLevel1.includes(signedinUserRole);
-          let condition5 = !orgListlevel2.includes(signedinOrgType);
-          let condition6 = condition4 && condition5
-          if (condition4 || condition5 || condition6) {
-            setCurrentRoute('');
-          } else {
-            setCurrentRoute('/dashboard/reportsNewlyAddeddChildren')
-          }
-        }
-      } else if (chartData1 === 'data') {
-        if (payload && Object.keys(payload).length > 0) {
-          getChildrenInCCI(payload);
-        }
-        setSelectedSeries([signedInOrgName]);
-        if (signedinOrgType !== null && signedinUserRole !== null) {
-          let condition4 = !userListLevel1.includes(signedinUserRole);
-          let condition5 = !orgListlevel2.includes(signedinOrgType);
-          let condition6 = condition4 && condition5
-          if (condition4 || condition5 || condition6) {
-            setCurrentRoute('');
-          } else {
-            setCurrentRoute('/dashboard/reportsChildrenInCCI')
-          }
-        }
-      } else {
-        if (payload && Object.keys(payload).length > 0) {
-          getChildrenReintegrated(payload);
-        }
-        setSelectedSeries([signedInOrgName]);
-        if (signedinOrgType !== null && signedinUserRole !== null) {
-          let condition4 = !userListLevel1.includes(signedinUserRole);
-          let condition5 = !orgListlevel2.includes(signedinOrgType);
-          let condition6 = condition4 && condition5
-          if (condition4 || condition5 || condition6) {
-            setCurrentRoute('');
-          } else {
-            setCurrentRoute('/dashboard/ReintegratedChildren')
-          }
-        }
-      }
-    } else {
-      return
-    }
-  }, [payload, languageChange, signedInOrgName])
-
-
-  useEffect(() => {
+  useEffect(()=>{
     if (localStorage.getItem('userRegion')) {
       if (chartData1 === 'chartData') {
         getChildServed(payload)
@@ -305,10 +173,10 @@ const ReportsTrafficSources = (props) => {
             setCurrentRoute('/dashboard/reportsNewlyAddeddChildren')
           }
         }
+        // setChartData(data)
+        // setSelectedSeries(CountArray)
       } else if (chartData1 === 'data') {
-        if (payload && Object.keys(payload).length > 0) {
-          getChildrenInCCI(payload);
-        }
+        getChildrenInCCI(payload);
         if (signedinOrgType !== null && signedinUserRole !== null) {
           let condition4 = !userListLevel1.includes(signedinUserRole);
           let condition5 = !orgListlevel2.includes(signedinOrgType);
@@ -320,9 +188,59 @@ const ReportsTrafficSources = (props) => {
           }
         }
       } else {
-        if (payload && Object.keys(payload).length > 0) {
-          getChildrenReintegrated(payload);
+        getChildrenReintegrated(payload);
+        if (signedinOrgType !== null && signedinUserRole !== null) {
+          let condition4 = !userListLevel1.includes(signedinUserRole);
+          let condition5 = !orgListlevel2.includes(signedinOrgType);
+          let condition6 = condition4 && condition5
+          if (condition4 || condition5 || condition6) {
+            setCurrentRoute('');
+          } else {
+            setCurrentRoute('/dashboard/ReintegratedChildren')
+          }
         }
+      }
+    } else {
+      return
+    }
+    
+  },[payload,languageChange])
+
+
+  useEffect(()=>{
+    if (localStorage.getItem('userRegion')) {
+      if (chartData1 === 'chartData') {
+        getChildServed(payload)
+        setSelectedSeries(AvgArray)
+        setCurrentRoute('/dashboard/averageThriveScore')
+      } else if (chartData1 === 'dataTemplate') {
+        getNewlyAdmittedChildren(payload)
+        if (signedinOrgType !== null && signedinUserRole !== null) {
+          let condition4 = !userListLevel1.includes(signedinUserRole);
+          let condition5 = !orgListlevel2.includes(signedinOrgType);
+          let condition6 = condition4 && condition5
+          if (condition4 || condition5 || condition6) {
+            setCurrentRoute('');
+          } else {
+            setCurrentRoute('/dashboard/reportsNewlyAddeddChildren')
+          }
+        }
+        // setChartData(data)
+        // setSelectedSeries(CountArray)
+      } else if (chartData1 === 'data') {
+        getChildrenInCCI(payload);
+        if (signedinOrgType !== null && signedinUserRole !== null) {
+          let condition4 = !userListLevel1.includes(signedinUserRole);
+          let condition5 = !orgListlevel2.includes(signedinOrgType);
+          let condition6 = condition4 && condition5
+          if (condition4 || condition5 || condition6) {
+            setCurrentRoute('');
+          } else {
+            setCurrentRoute('/dashboard/reportsChildrenInCCI')
+          }
+        }
+      } else {
+        getChildrenReintegrated(payload);
         if (signedinOrgType !== null && signedinUserRole !== null) {
           let condition4 = !userListLevel1.includes(signedinUserRole);
           let condition5 = !orgListlevel2.includes(signedinOrgType);
@@ -338,18 +256,93 @@ const ReportsTrafficSources = (props) => {
       return
     }
 
-  }, [localStorage.getItem('userRegion')])
+  },[localStorage.getItem('userRegion')])
+  
 
-
-  useEffect(() => {
-    if (chartData1 !== 'chartData') {
+  useEffect(()=>{
+    if(chartData1 !== 'chartData'){
       setSelectedSeries([signedInOrgName])
     }
-  }, [signedInOrgName])
+  },[signedInOrgName])
 
-  useEffect(() => {
+  useEffect(()=>{
     window.dispatchEvent(new Event('resize'))
-  }, [chartData, selectedSeries])
+  },[chartData,selectedSeries])
+
+
+  const parseData = (data) => {
+    let parsedData = _.cloneDeep(dataTemplate);
+    if(data.length===0){
+      parsedData.series[0].name = t('common:common.Education Score');
+      parsedData.series[1].name = t('common:common.Family and Social Relationships Score');
+      parsedData.series[2].name = t('common:common.Health and Mental Health Score');
+      parsedData.series[3].name = t('common:common.Household Economy Score');
+      parsedData.series[4].name = t('common:common.Living Conditions Score');
+      parsedData.series[5].name = t('common:common.Overall Score');
+      setChartData(parsedData)
+      return parsedData
+    }else{
+        data.forEach(item => {
+        parsedData.series[0].data.push(parseFloat(item?.EducationScore));
+        parsedData.series[1].data.push(parseFloat(item?.FamilyandSocialRelationshipsScore));
+        parsedData.series[2].data.push(parseFloat(item?.HealthAndMentalHealthScore));
+        parsedData.series[3].data.push(parseFloat(item?.HouseholdEconomyScore));
+        parsedData.series[4].data.push(parseFloat(item?.LivingConditionsScore));
+        parsedData.series[5].data.push(parseFloat(item?.OverallScore));
+        parsedData.xaxis.dataPoints.push(item?.lastDate);
+        parsedData.series[0].name = t('common:common.Education Score');
+        parsedData.series[1].name = t('common:common.Family and Social Relationships Score');
+        parsedData.series[2].name = t('common:common.Health and Mental Health Score');
+        parsedData.series[3].name = t('common:common.Household Economy Score');
+        parsedData.series[4].name = t('common:common.Living Conditions Score');
+        parsedData.series[5].name = t('common:common.Overall Score');
+        // let
+        setChartData(parsedData)
+        return parsedData
+      })
+    }
+   
+  }
+
+  const parseNewlyAdmittedData = (data) => {
+    let parsedData = _.cloneDeep(dataTemplate2);
+    if (data.length !== 0) {
+      data.forEach(item => {
+        setSelectedSeries([signedInOrgName])
+        parsedData.series[0].data.push(parseFloat(item?.noOfChildren));
+        parsedData.series[0].name = signedInOrgName;
+        parsedData.xaxis.dataPoints.push(item?.monthEndDateDateOfEntry);
+        setChartData(parsedData);
+        return parsedData
+      })
+    } else {
+      parsedData.series[0].name = signedInOrgName;
+      setChartData(parsedData);
+      setSelectedSeries([signedInOrgName])
+      return parsedData
+    }
+    
+  }
+
+  const parseReintegratedChildrenData = (data) => {
+    let parsedData = _.cloneDeep(dataTemplate2);
+    if (data.length !== 0) {
+      data.forEach(item => {
+        setSelectedSeries([signedInOrgName])
+        parsedData.series[0].data.push(parseFloat(item?.noOfChildren));
+        parsedData.series[0].name = signedInOrgName;
+        parsedData.xaxis.dataPoints.push(item?.monthEndDateOfLeaving);
+        setChartData(parsedData);
+        return parsedData
+      })
+    } else {
+      parsedData.series[0].name = signedInOrgName;
+      setChartData(parsedData);
+      setSelectedSeries([signedInOrgName])
+      return parsedData
+    }
+    
+  }
 
   const handleChange = (event, name) => {
     if (!event.target.checked) {
@@ -359,13 +352,11 @@ const ReportsTrafficSources = (props) => {
     }
   };
 
-  const chartSeries = showCheckbox
-    ? chartData.series.filter((item) => selectedSeries.includes(item.name))
-    : chartData.series;
+  const chartSeries = chartData.series.filter((item) => selectedSeries.includes(item.name));
 
   const chartOptions = {
     chart: {
-      id: title,
+      id:title,
       background: 'transparent',
       stacked: false,
       toolbar: {
@@ -406,12 +397,6 @@ const ReportsTrafficSources = (props) => {
       curve: 'smooth',
       lineCap: 'butt',
       width: 3
-    },
-    // Show "-" in tooltip for null values instead of nothing
-    tooltip: {
-      y: {
-        formatter: (value) => (value === null || value === undefined ? '-' : value)
-      }
     },
     theme: {
       mode: theme.palette.mode
@@ -474,66 +459,59 @@ const ReportsTrafficSources = (props) => {
           </Box>
         )}
       />
-      {!loading ? (<>
-        {showLabels && (
+      {!loading ? ( <><Box
+        sx={{
+          alignItems: 'center',
+          display: 'flex',
+          flexWrap: 'wrap',
+          px: 2
+        }}
+      >
+        { chartData.series.map((item) => (
           <Box
+            key={item.name}
             sx={{
               alignItems: 'center',
               display: 'flex',
-              flexWrap: 'wrap',
-              px: 2
+              mr: 2
             }}
           >
-            {chartData.series.map((item) => (
-              <Box
-                key={item.name}
-                sx={{
-                  alignItems: 'center',
-                  display: 'flex',
-                  mr: 2
-                }}
-              >
-                {showCheckbox &&
-                  <Checkbox
-                    checked={selectedSeries.some((visibleItem) => visibleItem === item.name)}
-                    color="primary"
-                    onChange={(event) => handleChange(event, item.name)}
-                  />
-                }
-                <Box
-                  sx={{
-                    backgroundColor: item.color,
-                    borderRadius: '50%',
-                    height: 8,
-                    ml: 1,
-                    mr: 2,
-                    width: 8
-                  }}
-                />
-                <Typography
-                  color="textPrimary"
-                  variant="subtitle2"
-                >
-                  {item.name}
-                </Typography>
-              </Box>
-            ))}
+            <Checkbox
+              checked={selectedSeries.some((visibleItem) => visibleItem === item.name)}
+              color="primary"
+              onChange={(event) => handleChange(event, item.name)}
+            />
+            <Box
+              sx={{
+                backgroundColor: item.color,
+                borderRadius: '50%',
+                height: 8,
+                ml: 1,
+                mr: 2,
+                width: 8
+              }}
+            />
+            <Typography
+              color="textPrimary"
+              variant="subtitle2"
+            >
+              {item.name}
+            </Typography>
           </Box>
-        )}
-        <Chart
-          height="390"
-          // width="690"
-          options={chartOptions}
-          series={chartSeries}
-          type="line"
-        /></>) :
-        <CircularProgress
-          sx={{
-            position: 'absolute',
-            top: "55%",
-            left: "45%"
-          }}
-          color='primary' />}
+        ))}
+      </Box>
+      <Chart
+        height="390"
+        // width="690"
+        options={chartOptions}
+        series={chartSeries}
+        type="line"
+      /></>) : 
+      <CircularProgress
+      sx={{ position:'absolute', 
+        top : "55%",
+      left : "45%"}}
+      color='primary' />}
       <CardActions
         sx={{
           px: 2,
@@ -545,13 +523,13 @@ const ReportsTrafficSources = (props) => {
           color="primary"
           endIcon={<ArrowRightIcon fontSize="small" />}
           variant="text"
-          disabled={currentRoute === ''}
-          onClick={() => navigate(currentRoute, {
-            state: {
-              "fromDashboard": true,
+          disabled = {currentRoute === ''}
+          onClick={() => navigate(currentRoute,{
+            state : {
+              "fromDashboard":true
             }
           })}
-        // disabled={true}
+          // disabled={true}
         >
           {t('common:common.View Report')}
         </Button>

@@ -1,9 +1,9 @@
 import { createContext, useEffect, useReducer } from 'react';
 import PropTypes from 'prop-types';
 import Amplify, { Auth } from 'aws-amplify';
-import { getAmplifyConfig } from "../config";
+import { amplifyConfig } from '../config';
 
-Amplify.configure(getAmplifyConfig());
+Amplify.configure(amplifyConfig);
 
 const initialState = {
   isAuthenticated: false,

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React from "react"
 import {
   Box,
   Card,
@@ -14,8 +14,10 @@ import {
   TableRow,
   Typography,
   Chip, Tooltip, Button
-} from '@mui/material';
+} from '@material-ui/core';
+import toast from 'react-hot-toast';
 import Scrollbar from '../../../Dashboard/Components/ScrollBar';
+import { useState, useCallback, useEffect } from "react";
 import { useTranslation } from 'react-i18next';
 import APIS from '../../../../common/hooks/UseApiCalls';
 import moment from 'moment';
@@ -36,15 +38,18 @@ const ProgressReport = (props) => {
     Pending: 'warning',
     Completed: 'success'
   }
+  const buttonColor = {
+    Pending: '#1D334B',
+    Completed: 'primary'
+  }
 
   const getProgressList = useCallback(async (pageValue = 1) => {
     try {
       setLoading(true)
-      let payload = {
-        "limit": 10,
-        "start": pageValue,
-        "webStatus": true,
-        type: "CHILD"
+      let payload={
+        "limit":10,
+        "start":pageValue, 
+        "webStatus":true,  
       }
       payload.HT_childId = id;
       await APIS.ProgressReportListForChild(payload).then((resp) => {
@@ -58,7 +63,7 @@ const ProgressReport = (props) => {
       })
 
 
-
+      
     } catch (err) {
       console.error(err);
       setLoading(false)
@@ -81,20 +86,20 @@ const ProgressReport = (props) => {
 
   const getProgressReportData = useCallback(async (assessmentId) => {
     try {
-      setLoading(true)
-      let payload = {
-        "TWAssessmentId": assessmentId
-      }
-      const data = await APIS.viewFollowUpProgress(payload);
-      setProgressReportModal(true)
-      setProgressReportData(data?.data?.data)
-      console.log(data?.data?.data)
-      setLoading(false)
+        setLoading(true)
+        let payload = {
+            "HTAssessmentId": assessmentId
+        }
+        const data = await APIS.viewFollowUpProgress(payload);
+        setProgressReportModal(true)
+        setProgressReportData(data?.data?.data)
+        console.log(data?.data?.data)
+        setLoading(false)
     } catch (err) {
-      console.error(err);
-      setLoading(false)
+        console.error(err);
+        setLoading(false)
     }
-  }, []);
+}, []);
 
 
   function utcToLocal(utcDateTime) {
@@ -155,10 +160,10 @@ const ProgressReport = (props) => {
                       key={ProgressListItem.AssessmentId}
                     >
                       <TableCell align="center">
-                        {ProgressListItem?.assessmentCompletionDate ? utcToLocal(ProgressListItem.assessmentCompletionDate) : '--'}
+                        {ProgressListItem?.assessmentCompletionDate?utcToLocal(ProgressListItem.assessmentCompletionDate):'--'}
                       </TableCell>
                       <TableCell align="center">
-                        <Chip label={t(`common:common.${ProgressListItem?.followUpStatus}`)} color={color[ProgressListItem?.followUpStatus]} />
+                        <Chip label={ProgressListItem?.followUpStatus} color={color[ProgressListItem?.followUpStatus]} />
                       </TableCell>
                       <TableCell align="center">
                         {ProgressListItem?.followUpCompletedOn ? utcToLocal(ProgressListItem.followUpCompletedOn) : '--'}
@@ -166,15 +171,15 @@ const ProgressReport = (props) => {
                       <TableCell
                         align="center"
                       >
-                        <Tooltip title={t('common:common.View Report')}>
+                        <Tooltip title={t('common:form.ViewProgressReport')}>
                           <Button
                             style={{ borderRadius: 4 }}
                             variant="contained"
-                            disabled={ProgressListItem.followUpStatus == 'Completed' ? false : true}
+                            disabled={ProgressListItem.followUpStatus=='Completed'?false:true}
                             size='small'
                             onClick={() => handleViewProgressReport(ProgressListItem.HTAssessmentId)}
                           >
-                            {t("common:common.View")}
+                            View
                           </Button>
                         </Tooltip>
                       </TableCell>
@@ -209,8 +214,8 @@ const ProgressReport = (props) => {
           </Box>
         </Box>
       </Card>
-      <CustomDialogModal progressReportData={progressReportData} assessmentIdForReport={assessmentIdForReport} setProgressReportModal={setProgressReportModal} progressReportModal={progressReportModal} />
-
+      <CustomDialogModal progressReportData={progressReportData} assessmentIdForReport={assessmentIdForReport} setProgressReportModal={setProgressReportModal} progressReportModal={progressReportModal}  />
+      
     </>
   )
 }

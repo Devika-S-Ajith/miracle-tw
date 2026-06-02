@@ -1,16 +1,16 @@
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
-import { Box, Button, ButtonGroup, Grid, IconButton, Tooltip, Typography } from '@mui/material';
-import ViewConfigIcon from '@mui/icons-material/ViewComfy';
-import ViewWeekIcon from '@mui/icons-material/ViewWeek';
-import ViewDayIcon from '@mui/icons-material/ViewDay';
-import ViewAgendaIcon from '@mui/icons-material/ViewAgenda';
+import { Box, Button, ButtonGroup, Grid, IconButton, Tooltip, Typography } from '@material-ui/core';
+import ViewConfigIcon from '@material-ui/icons/ViewComfy';
+import ViewWeekIcon from '@material-ui/icons/ViewWeek';
+import ViewDayIcon from '@material-ui/icons/ViewDay';
+import ViewAgendaIcon from '@material-ui/icons/ViewAgenda';
 import { useTranslation } from 'react-i18next';
 
 const CalendarToolbar = (props) => {
   const { date, onDateNext, onDatePrev, onDateToday, onViewChange, view, ...other } = props;
   const { t } = useTranslation(['common']);
-
+  
   const viewOptions = [
     {
       icon: ViewConfigIcon,

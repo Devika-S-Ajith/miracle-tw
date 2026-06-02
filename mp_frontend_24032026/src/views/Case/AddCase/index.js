@@ -1,1 +1,1 @@
-export { default } from './AddCase';
+export{ default } from './AddCase';

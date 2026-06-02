@@ -1,11 +1,11 @@
-import { makeStyles } from '@mui/styles'
+import { makeStyles } from '@material-ui/core/styles'
 export default makeStyles((theme) => ({
   Card: {
     width: '100%',
     marginBottom: theme.spacing(2),
     padding: theme.spacing(3),
   },
-
+  
   block: {
     display: 'flex',
     flexFlow: 'row nowrap',
@@ -13,7 +13,7 @@ export default makeStyles((theme) => ({
     // width: '100%',
     marginBottom: theme.spacing(1),
   },
-
+  
   resourceImageView: {
     maxWidth: 600,
     minWidth: 300,
@@ -90,5 +90,5 @@ export default makeStyles((theme) => ({
     fontSize: 98,
     marginRight: theme.spacing(2),
   },
-
+  
 }))

@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect,useContext } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
@@ -10,29 +10,31 @@ import {
   TableCell,
   TableRow,
   Typography
-} from '@mui/material';
+} from '@material-ui/core';
 import Label from '../../../../components/Label';
-import { customerApi } from '../../../../__fakeApi__/customerApi';
+// import LockIcon from '../../../../assets/icons/Lock';
+// import UserIcon from '../../../../assets/icons/User';
+import { customerApi } from '../../../../__fakeApi__/customerApi'; 
 import { CommonDataContext } from '../../../../common/contexts/CommonDataContext';
 import { useTranslation } from 'react-i18next';
 
 const CaseContactDetails = (props) => {
-  const { id,
+  const { id, 
     caseid,
     caseManager,
     child,
-    status,
-    ...other } = props;
-  const { t } = useTranslation(['common']);
+    status, 
+     ...other } = props;
+  const { t } = useTranslation(['common']);  
   const [typesData, setTypesData] = useState([]);
-  const { userList } = useContext(CommonDataContext);
+  const { userList } = useContext(CommonDataContext); 
 
   useEffect(() => {
     // getLocationsFromAPI();
     getTypesFromAPI();
     return () => {
     }
-  }, []);
+  },[]);
 
   // const getDate = (dateString) => {
   //   let yourDate = new Date(dateString)
@@ -63,21 +65,21 @@ const CaseContactDetails = (props) => {
   // }
   const getTypesFromAPI = async () => {
     try {
-      const data = await customerApi.getOrganizationType();
+      const data = await customerApi.getOrganizationType(); 
       setTypesData([...data.organisationTypes]);
     } catch (err) {
       console.error(err);
     }
   }
-  if (typesData.length) {
+   if(typesData.length ) {
 
     return (
       < Card {...other}>
-        <CardHeader title={t('common:common.Details')} />
+        <CardHeader title={t('common:common.Details')}/>
         <Divider />
         <Table>
           <TableBody>
-            <TableRow>
+          <TableRow>
               <TableCell>
                 <Typography
                   color="textPrimary"
@@ -96,7 +98,7 @@ const CaseContactDetails = (props) => {
                 </Typography>
               </TableCell>
             </TableRow>
-            <TableRow>
+          <TableRow>
               <TableCell>
                 <Typography
                   color="textPrimary"
@@ -110,14 +112,14 @@ const CaseContactDetails = (props) => {
                   color="textSecondary"
                   variant="body2"
                 >
-                  {(caseManager && userList) && userList.length &&
+                  {(caseManager && userList) && userList.length && 
                     (userList.find(item => item.id === caseManager) ?
-                      `${userList.find(item => item.id === caseManager)?.firstName} ${userList.find(item => item.id === caseManager)?.lastName}` : '-')}
+                    `${userList.find(item => item.id === caseManager)?.firstName} ${userList.find(item => item.id === caseManager)?.lastName}` : '-') }
                 </Typography>
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell sx={{ width: 450 }}>
+              <TableCell sx={{width : 450}}>
                 <Typography
                   color="textPrimary"
                   variant="subtitle2"
@@ -126,18 +128,18 @@ const CaseContactDetails = (props) => {
                 </Typography>
               </TableCell>
               <TableCell>
-                <Box sx={{ display: "flex", flexDirection: "row" }}>
-                  <Typography
-                    color="textSecondary"
-                    variant="body2"
-                  >
-                    {child}
-                  </Typography>
+                <Box sx={{display : "flex",flexDirection : "row"}}>
+                <Typography
+                  color="textSecondary"
+                  variant="body2"
+                > 
+                {child}
+                </Typography>
                 </Box>
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell sx={{ width: 450 }}>
+              <TableCell sx={{width : 450}}>
                 <Typography
                   color="textPrimary"
                   variant="subtitle2"
@@ -146,24 +148,24 @@ const CaseContactDetails = (props) => {
                 </Typography>
               </TableCell>
               <TableCell>
-                <Box sx={{ display: "flex", flexDirection: "row" }}>
-                  <Label color={status === 'Open' ? 'success' : 'error'} >
-                    {t(`common:common.${status}`)}
-                  </Label>
+                <Box sx={{display : "flex",flexDirection : "row"}}> 
+                <Label color={status === 'Open' ? 'success' : 'error'} >
+                  {t(`common:common.${status}`)}
+                </Label>
                 </Box>
               </TableCell>
             </TableRow>
           </TableBody>
         </Table>
-
+  
       </Card>
     );
-  }
-
+   }
+  
   else {
-    return (
+    return(
       <div>
-
+        
       </div>
     );
   }

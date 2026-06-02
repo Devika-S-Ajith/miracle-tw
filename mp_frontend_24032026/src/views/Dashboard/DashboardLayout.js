@@ -1,77 +1,55 @@
-import { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
-import { styled } from "@mui/system";
-import { useMediaQuery } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import DashboardNavbar from "./DashboardNavbar";
-import DashboardSidebar from "./DashboardSidebar";
-import DashboardSystemMessages from "./DashboardSystemMessages";
+import { useState } from 'react';
+import { Outlet } from 'react-router-dom';
+import { experimentalStyled } from '@material-ui/core/styles';
+import DashboardNavbar from './DashboardNavbar';
+import DashboardSidebar from './DashboardSidebar';
 
-const DashboardLayoutRoot = styled("div")(({ theme }) => ({
+const DashboardLayoutRoot = experimentalStyled('div')(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
-  display: "flex",
-  height: "100%",
-  overflow: "hidden",
-  width: "100%",
+  display: 'flex',
+  height: '100%',
+  overflow: 'hidden',
+  width: '100%'
 }));
 
-const DashboardLayoutWrapper = styled("div")(({ isSidebarMobileOpen }) => ({
-  display: "flex",
-  flex: "1 1 auto",
-  overflow: "",
-  paddingTop: "64px",
-  paddingLeft: isSidebarMobileOpen ? "250px" : "120px", // Set padding based on isSidebarMobileOpen
-  transition: "padding-left 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
-  willChange: "padding-left",
-  // width:"-webkit-fill-available"
-  width: "100%" /* Fills the available width */,
-  boxSizing:
-    "border-box" /* Include padding and border widths in the total width */,
+const DashboardLayoutWrapper = experimentalStyled('div')(({ theme }) => ({
+  display: 'flex',
+  flex: '1 1 auto',
+  overflow: 'hidden',
+  paddingTop: '64px',
+  [theme.breakpoints.up('lg')]: {
+    paddingLeft: '280px'
+  }
 }));
 
-const DashboardLayoutContainer = styled("div")({
-  display: "flex",
-  flex: "1 1 auto",
-  overflow: "hidden",
-  width: "100%",
+const DashboardLayoutContainer = experimentalStyled('div')({
+  display: 'flex',
+  flex: '1 1 auto',
+  overflow: 'hidden'
 });
 
-const DashboardLayoutContent = styled("div")({
-  // flex: '1 1 auto',
-  height: "100%",
-  overflow: "auto",
-  position: "relative",
-  paddingBottom: "64px",
-  WebkitOverflowScrolling: "touch",
-  // width: "-webkit-fill-available",
-  width: "100%" /* Fills the available width */,
-  boxSizing:
-    "border-box" /* Include padding and border widths in the total width */
+const DashboardLayoutContent = experimentalStyled('div')({
+  flex: '1 1 auto',
+  height: '100%',
+  overflow: 'auto',
+  position: 'relative',
+  paddingBottom: '64px',
+  WebkitOverflowScrolling: 'touch'
 });
 
 const DashboardLayout = () => {
-  const theme = useTheme();
-  const isMobileSize = useMediaQuery(theme.breakpoints.down("lg"));
-  const [isSidebarMobileOpen, setIsSidebarMobileOpen] = useState(
-    isMobileSize ? false : true
-  );
-
-  useEffect(() => {
-    setIsSidebarMobileOpen(!isMobileSize);
-  }, [isMobileSize]);
+  const [isSidebarMobileOpen, setIsSidebarMobileOpen] = useState(false);
 
   return (
     <DashboardLayoutRoot>
-      <DashboardNavbar />
+      <DashboardNavbar onSidebarMobileOpen={() => setIsSidebarMobileOpen(true)} />
       <DashboardSidebar
         onMobileClose={() => setIsSidebarMobileOpen(false)}
         openMobile={isSidebarMobileOpen}
-        onSidebarMobileOpen={() => setIsSidebarMobileOpen(!isSidebarMobileOpen)}
       />
-      <DashboardLayoutWrapper isSidebarMobileOpen={isSidebarMobileOpen}>
+      <DashboardLayoutWrapper>
         <DashboardLayoutContainer>
           <DashboardLayoutContent>
-            <DashboardSystemMessages />
             <Outlet />
           </DashboardLayoutContent>
         </DashboardLayoutContainer>

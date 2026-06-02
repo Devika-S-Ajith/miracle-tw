@@ -1,1 +1,1 @@
-export { default } from './ImportFileAddition';
+export {default} from './ImportFileAddition';

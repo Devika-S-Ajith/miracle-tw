@@ -4,36 +4,36 @@ import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import toast from 'react-hot-toast';
 import * as Yup from 'yup';
-import { Formik, Field } from 'formik';
-import { Box, Button, Card, CircularProgress, Grid, TextField, useTheme, Divider } from '@mui/material';
-import MenuItem from '@mui/material/MenuItem';
+import { Formik,Field } from 'formik';
+import { Box, Button, Card, CircularProgress, Grid, TextField, useTheme,Divider } from '@material-ui/core';
+import MenuItem from '@material-ui/core/MenuItem';
 import APIS from '../../common/hooks/UseApiCalls';
 import { CommonDataContext } from '../../common/contexts/CommonDataContext';
 import NumberFormat from 'react-number-format';
 import { useTranslation } from 'react-i18next';
 import UserIcon from '../../assets/icons/User';
 import AutoCompleteDropdown from '../../components/UserComponents/AutoCompleteDropdown';
-import { formatPhone, placeholderPhone } from '../../components/UserComponents/ValidatePhoneAndZip';
+import { formatPhone,placeholderPhone } from '../../components/UserComponents/ValidatePhoneAndZip';
 
 const EditProfileForm = (props) => {
   const theme = useTheme();
   const navigate = useNavigate();
 
   const { user, hidden, ...other } = props;
-  const { locationList, roleList, organizationList, setIsProfileDetailsChanged, setIsProfileImageUpdated, setIsProfileImageDeleted, userRegion } = useContext(CommonDataContext);
+  const { locationList, roleList, organizationList,setIsProfileDetailsChanged,setIsProfileImageUpdated,setIsProfileImageDeleted,userRegion } = useContext(CommonDataContext);
   const { t } = useTranslation(['common']);
 
   const [uploadedFileURL, setUploadedFileURL] = useState(null)
   const [uploadedFile, setUploadedFile] = useState(null)
   const [isEditEnabled, setisEditEnabled] = useState(false);
-  const [loadingImage, setLoadingImage] = useState(false);
-  const [isRemoveImageEnabled, setRemoveImageEnabled] = useState(true);
+  const [loadingImage,setLoadingImage]=useState(false);
+  const [isRemoveImageEnabled,setRemoveImageEnabled]=useState(true);
 
-  //   const dummyUser = {
-
-  //     avatar: '/static/mock-images/avatars/avatar-carson_darrin.png',
-
-  // }
+//   const dummyUser = {
+   
+//     avatar: '/static/mock-images/avatars/avatar-carson_darrin.png',
+   
+// }
 
 
 
@@ -50,13 +50,13 @@ const EditProfileForm = (props) => {
       setUploadedFile(event.target.files[0])
       setUploadedFileURL(fileUploaded)
       setLoadingImage(true)
-      if (fileUploaded && user.fileUrl) {
+      if(fileUploaded && user.fileUrl){
         getUpdatedSignedURL(event.target.files[0], user.id)
-      } else {
+      }else{
         getSignedURL(event.target.files[0], user.id)
-      }
+      }  
     }
-    event.target.value = ''
+    event.target.value=''
   };
 
   const fileUpload = useCallback(async (selectedFile, signedURL) => {
@@ -73,12 +73,13 @@ const EditProfileForm = (props) => {
     config.url = signedURL;
     config.data = selectedFile;
     const res = await axios(config);
-    if (res.status == 200) {
-      setIsProfileImageUpdated(true)
-      setLoadingImage(false)
-      setRemoveImageEnabled(true)
-      toast.success(t('common:user.User profile image updated successfully'));
-    }
+   if(res.status==200){
+    setIsProfileImageUpdated(true)
+    setLoadingImage(false)
+    setRemoveImageEnabled(true)
+    toast.success(t('common:user.User profile image updated successfully'));
+   }
+    console.log("uploaded",res);
   })
 
   const getSignedURL = useCallback(async (value, id) => { //? New Function
@@ -91,9 +92,11 @@ const EditProfileForm = (props) => {
         fileSize: `${value.size / 1024}`,
         description: 'profile picture'
       }
+      console.log('payload', finalPayload)
       const data = await APIS.UploadFile(finalPayload);
+      console.log('data', data)
       if (data.status === 200) {
-        fileUpload(value, data.data.signedUrl)
+        fileUpload(value, data.data.signedUrl)     
       } else {
         console.log('An Error occurred');
       }
@@ -111,9 +114,10 @@ const EditProfileForm = (props) => {
         fileName: `${value.name}`,
         fileSize: `${value.size / 1024}`,
         description: 'profile picture',
-        documentId: `${user.fileUploadMappingId}`
-      }
+        documentId:`${user.fileUploadMappingId}`
+      }    
       const data = await APIS.UploadUpdatedFile(finalPayload);
+      console.log('data', data)
       if (data.status === 200) {
         fileUpload(value, data.data.signedUrl)
       } else {
@@ -130,7 +134,7 @@ const EditProfileForm = (props) => {
     //setUploadedFile(null)
     //setUploadedFileURL(null)
   };
-  const closeEditMode = () => {
+  const closeEditMode=()=>{
     setisEditEnabled(false)
   }
 
@@ -150,12 +154,12 @@ const EditProfileForm = (props) => {
           if (res && res.data && res.status === 200) {
             //resetForm(); 
             setUploadedFileURL(null)
-            setUploadedFile(null)
-            toast.success(t('common:user.User profile image deleted successfully'));
-            setIsProfileImageDeleted(true)
+            setUploadedFile(null)        
+            toast.success(t('common:user.User profile image deleted successfully'));          
+            setIsProfileImageDeleted(true)                
           } else {
             toast.error(t('common:common.Something went wrong'));
-
+           
           }
         })
     } catch (err) {
@@ -166,11 +170,11 @@ const EditProfileForm = (props) => {
   const onRemoveImage = () => {
     setRemoveImageEnabled(false)
     DeleteProfileImage()
-    user.fileUrl = null
-
-
+    user.fileUrl=null
+   
+   
   };
-
+  
 
   return (
     <Formik
@@ -186,7 +190,7 @@ const EditProfileForm = (props) => {
         role: user.HTUserRoleId || '',
         address2: user.addressLine2 || '',
         district: user.HTDistrictId || '',
-        zipcode: user?.zipCode ? user?.zipCode?.length > 6 ? user?.zipCode.slice(0, 5) + "-" + user?.zipCode.slice(5) : user?.zipCode : '',
+        zipcode:  user?.zipCode?user?.zipCode?.length > 6?user?.zipCode.slice(0, 5) + "-" + user?.zipCode.slice(5):user?.zipCode:'',
         phone: user.phoneNumber || '',
         state: user.HTStateId || '',
         imagePath: user.fileUrl || '',
@@ -213,31 +217,32 @@ const EditProfileForm = (props) => {
           address2: Yup.string().max(255),
           district: Yup.string().max(255).required(t('common:warnings.District is required')),
           zipcode: Yup.string()
-            .required(t('common:warnings.Zipcode is required'))
-            .test('zip-format-validation', t('common:warnings.Invalid ZIP code format'), (value) => {
-              if (userRegion.toLowerCase() === 'india') {
-                return /^\d{6}$/.test(value);
-              } else {
-                return /^\d{5}$/.test(value);
-              }
-            }),
+          .required(t('common:warnings.Zipcode is required'))
+          .test('zip-format-validation', t('common:warnings.Invalid ZIP code format'), (value) => {
+            if (userRegion.toLowerCase() === 'india') {
+              return /^\d{6}$/.test(value);
+            } else {
+              return /^\d{5}$/.test(value);
+            }
+          }),
           phone: Yup.string()
-            .required(t('common:warnings.Phone Number is required'))
-            .test('phone-format-validation', t('common:warnings.Invalid Phone number'), (value, context) => {
-              const { country } = context.parent;
-              if (userRegion.toLowerCase() === 'india') {
-                return /^\+91\d{10}$/.test(value);
+          .required(t('common:warnings.Phone Number is required'))
+          .test('phone-format-validation', t('common:warnings.Invalid Phone number'), (value,context) => {
+            const { country } = context.parent;
+            if (userRegion.toLowerCase() === 'india') {
+              return /^\+91\d{10}$/.test(value);
+            } else {
+              if (country==2) {
+                return /^\+256\d{9}$/.test(value);
               } else {
-                if (country == 2) {
-                  return /^\+256\d{9}$/.test(value);
-                } else {
-                  return /^\+1\d{10}$/.test(value);
-                }
+                return /^\+1\d{10}$/.test(value);
               }
+            }
             }),
           state: Yup.string().max(255).required(t('common:warnings.State is required'))
         })}
       onSubmit={async (values, { resetForm, setErrors, setStatus, setSubmitting }) => {
+        console.log('got called?')
         let payload = {
           "id": user && user.id,
           "firstName": values.firstname,
@@ -270,7 +275,7 @@ const EditProfileForm = (props) => {
                 // }               
                 closeEditMode();
                 setIsProfileDetailsChanged(true)
-                // localStorage.setItem("dpUpdateInterval", 10000)
+               // localStorage.setItem("dpUpdateInterval", 10000)
                 navigate('/dashboard/profile/');
 
               } else {
@@ -297,7 +302,7 @@ const EditProfileForm = (props) => {
           {...other}
         >
           <Card>
-
+            
             <Box
               sx={{ m: 2, mt: 3 }}
             >
@@ -310,14 +315,14 @@ const EditProfileForm = (props) => {
                   xs={12}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} >
-                    {uploadedFileURL || user.fileUrl ?
+                    {uploadedFileURL||user.fileUrl ?
                       <img
                         src={uploadedFileURL ? uploadedFileURL : user.fileUrl}
                         style={{ width: 80, height: 80, borderRadius: '60px' }} />
                       :
                       <UserIcon fontSize="small" style={{ width: 80, height: 80, borderRadius: '60px', border: '2px solid #172b4d' }} />
                     }
-                    {loadingImage ? <CircularProgress /> : <></>}
+                   {loadingImage? <CircularProgress/>:<></>}
                   </div>
                 </Grid>
                 <Grid
@@ -340,7 +345,7 @@ const EditProfileForm = (props) => {
                     >
                       {uploadedFile ? t('common:common.Change Image') : t('common:common.Select Image')}
                     </Button> */}
-                    {values.imagePath ? <Button
+                    {values.imagePath?<Button
                       color="primary"
                       sx={{ ml: -1 }}
                       disabled={isSubmitting}
@@ -350,7 +355,7 @@ const EditProfileForm = (props) => {
                       style={{ backgroundColor: theme.palette.button.primary }}
                     >
                       {t('common:common.Change Image')}
-                    </Button> : <Button
+                    </Button>:<Button
                       color="primary"
                       sx={{ ml: -1 }}
                       disabled={isSubmitting}
@@ -371,7 +376,7 @@ const EditProfileForm = (props) => {
                       onChange={handleChangeFile}
                       style={{ display: 'none' }}
                     />
-                    {(uploadedFile || values.imagePath) && isRemoveImageEnabled ?
+                    {(uploadedFile || values.imagePath) && isRemoveImageEnabled?
                       <Button
                         color="primary"
                         sx={{ ml: 2 }}
@@ -524,12 +529,12 @@ const EditProfileForm = (props) => {
                     //disabled={true}
                     />
                   </Grid>}
-                <Grid
-                  item
-                  md={12}
-                  xs={12}
-                ><Divider /></Grid>
-                {isEditEnabled ? <Grid
+                  <Grid
+                    item
+                    md={12}
+                    xs={12}
+                  ><Divider /></Grid>
+                 {isEditEnabled ?<Grid
                   item
                   md={6}
                   xs={12}
@@ -546,71 +551,71 @@ const EditProfileForm = (props) => {
                     label="country"
                     options={locationList.countries}
                     textFieldProps={{
-                      fullWidth: true,
-                      margin: "normal",
-                      variant: "outlined",
-                      label: t('common:common.Country')
+                     fullWidth: true,
+                     margin: "normal",
+                     variant: "outlined",
+                     label:t('common:common.Country')
                     }}
-
+           
                   />
-                </Grid> :
-                  <Grid
-                    item
-                    md={6}
-                    xs={12}
+                </Grid>:
+                <Grid
+                  item
+                  md={6}
+                  xs={12}
+                >
+                  <TextField
+                    error={Boolean(touched.country && errors.country)}
+                    fullWidth
+                    helperText={touched.country && errors.country}
+                    label={t('common:common.Country')}
+                    id="country"
+                    name="country"
+                    //onBlur={handleBlur}
+                    required={isEditEnabled}
+                    select={isEditEnabled}
+                    onChange={handleChange}
+                    value={isEditEnabled ? values.country : locationList && locationList.countries && locationList.countries.length &&
+                      locationList.countries.find(item => item.id === user.HTCountryId).countryName}
+                    variant={isEditEnabled ? 'outlined' : "standard"}
+                    InputProps={{
+                      readOnly: !isEditEnabled, disableUnderline: !isEditEnabled
+                    }}
+                  // disabled={!isEditEnabled}
                   >
-                    <TextField
-                      error={Boolean(touched.country && errors.country)}
-                      fullWidth
-                      helperText={touched.country && errors.country}
-                      label={t('common:common.Country')}
-                      id="country"
-                      name="country"
-                      //onBlur={handleBlur}
-                      required={isEditEnabled}
-                      select={isEditEnabled}
-                      onChange={handleChange}
-                      value={isEditEnabled ? values.country : locationList && locationList.countries && locationList.countries.length &&
-                        locationList.countries.find(item => item.id === user.HTCountryId).countryName}
-                      variant={isEditEnabled ? 'outlined' : "standard"}
-                      InputProps={{
-                        readOnly: !isEditEnabled, disableUnderline: !isEditEnabled
-                      }}
-                    // disabled={!isEditEnabled}
-                    >
-                      {locationList && locationList.countries && locationList.countries.length && locationList.countries.map((item) => {
-                        return (
-                          <MenuItem key={item.id} value={item.id}>{item.countryName}</MenuItem>
-                        );
-                      }
-                      )}
-                    </TextField>
-                  </Grid>}
-                {isEditEnabled ? <Grid
+                    {locationList && locationList.countries && locationList.countries.length && locationList.countries.map((item) => {
+                      return (
+                        <MenuItem key={item.id} value={item.id}>{item.countryName}</MenuItem>
+                      );
+                    }
+                    )}
+                  </TextField>
+                </Grid>}
+                {isEditEnabled?<Grid
                   item
                   md={6}
                   xs={12}
                   sx={{ mt: -2 }}
                 >
                   <Field
-                    error={Boolean(touched.state && errors.state)}
-                    fullWidth
-                    helperText={touched.state && errors.state}
-                    name="state"
-                    accessKey="stateName"
-                    component={AutoCompleteDropdown}
-                    required={true}
-                    label="state"
-                    options={locationList && locationList.states && locationList.states.length && locationList.states.filter((item) => item.HTCountryId === values.country)}
-                    textFieldProps={{
-                      fullWidth: true,
-                      margin: "normal",
-                      variant: "outlined",
-                      label: t('common:common.State/Region')
-                    }}
-
+                   error={Boolean(touched.state && errors.state)}
+                   fullWidth
+                   helperText={touched.state && errors.state}
+                   name="state"
+                   accessKey="stateName"
+                   component={AutoCompleteDropdown}
+                   required={true}
+                   label="state"
+                   options={locationList && locationList.states && locationList.states.length &&  locationList.states.filter( (item) =>item.HTCountryId===values.country)}
+                   textFieldProps={{
+                     fullWidth: true,
+                     margin: "normal",
+                     variant: "outlined",
+                     label:t('common:common.State/Region')
+                   }}
+           
                   />
-                </Grid> : <Grid
+               </Grid>:<Grid
                   item
                   md={6}
                   xs={12}
@@ -642,7 +647,7 @@ const EditProfileForm = (props) => {
 
                   </TextField>
                 </Grid>}
-                {isEditEnabled ? <Grid
+                {isEditEnabled?<Grid
                   item
                   md={6}
                   xs={12}
@@ -657,16 +662,16 @@ const EditProfileForm = (props) => {
                     component={AutoCompleteDropdown}
                     required={true}
                     label="district"
-                    options={locationList && locationList.districts && locationList.districts.length && locationList.districts.filter((item) => item.HTStateId === values.state)}
+                    options={locationList && locationList.districts && locationList.districts.length &&  locationList.districts.filter( (item) =>item.HTStateId===values.state)}
                     textFieldProps={{
                       fullWidth: true,
                       margin: "normal",
                       variant: "outlined",
-                      label: t('common:common.District/County')
-                    }}
-
+                      label:t('common:common.District/County')
+                   }}
+           
                   />
-                </Grid> : <Grid
+                </Grid>:<Grid
                   item
                   md={6}
                   xs={12}
@@ -756,15 +761,15 @@ const EditProfileForm = (props) => {
                     placeholder={userRegion.toLowerCase() === "india" ? "888888" : "88888"}
                     label={t('common:common.Zipcode')}
                     name="zipcode"
-                    format={userRegion.toLowerCase() === "india"
-                      ? "######"
-                      : "#####"}
-
+                    format={ userRegion.toLowerCase() === "india"
+                    ? "######"
+                    : "#####"}
+                    
                     //prefix={'+'}
                     type="text"
                     required={isEditEnabled}
                     onBlur={handleBlur}
-                    onChange={(e) => {
+                    onChange={(e)=>{
                       let zipCode = e.target.value.trim();
                       // if (userRegion === "usa") {
                       //   // Allow only 5 or 9 digits for USA zip code
@@ -805,7 +810,7 @@ const EditProfileForm = (props) => {
                   // disabled={!isEditEnabled}
                   />
                 </Grid>
-                {isEditEnabled ? <Grid
+                {isEditEnabled?<Grid
                   item
                   md={6}
                   xs={12}
@@ -825,7 +830,7 @@ const EditProfileForm = (props) => {
                     }}
                   // disabled={!isEditEnabled}
                   />
-                </Grid> : values.address2 ? <Grid
+                </Grid>:values.address2?<Grid
                   item
                   md={6}
                   xs={12}
@@ -845,7 +850,7 @@ const EditProfileForm = (props) => {
                     }}
                   // disabled={!isEditEnabled}
                   />
-                </Grid> : <></>}
+                </Grid>:<></>}
 
                 <Grid
                   item
@@ -857,9 +862,9 @@ const EditProfileForm = (props) => {
                     fullWidth
                     error={Boolean(touched.phone && errors.phone)}
                     helperText={touched.phone && errors.phone}
-                    placeholder={placeholderPhone(userRegion, values.country)}
-                    format={formatPhone(userRegion, values.phone, values.country)}
-                    label={values.country?.length === 0 || values.country == null ? `${t('common:common.Select Country to Enter Phone')}` : `${t('common:common.Phone Number')}`}
+                    placeholder={placeholderPhone(userRegion,values.country)}
+                    format={formatPhone(userRegion,values.phone,values.country)}
+                    label={values.country?.length === 0 || values.country==null  ? `${t('common:common.Select Country to Enter Phone')}` : `${t('common:common.Phone Number')}`}
                     type="tel"
                     name="phone"
                     //disabled={values.country.length === 0}
@@ -867,7 +872,7 @@ const EditProfileForm = (props) => {
                     onChange={(e) => { e.target.value = e.target.value.replace(/[/\s()]/g, ''); handleChange(e) }}
                     value={values.phone}
                     required={isEditEnabled}
-                    disabled={values.country?.length === 0 || values.country == null}
+                    disabled={values.country?.length === 0 || values.country==null}
                     variant={isEditEnabled ? 'outlined' : "standard"}
                     InputProps={{
                       readOnly: !isEditEnabled, disableUnderline: !isEditEnabled
@@ -878,19 +883,19 @@ const EditProfileForm = (props) => {
                 <Grid />
               </Grid>
               <Grid item
-                md={12}
-                xs={12}
-                sx={{ m: 2 }}
+                    md={12}
+                    xs={12}
+                    sx={{m:2}}
               ><Divider /></Grid>
-              <Box sx={{ mt: -2 }} hidden={isEditEnabled} style={{ float: 'right' }}>
-                <Button
-                  color="primary"
-                  onClick={handleEdit}
-                  variant="text"
-                >Edit Profile
-                </Button>
-              </Box>
-
+              <Box sx={{mt:-2}} hidden={isEditEnabled} style={{ float: 'right' }}>
+              <Button
+                color="primary"
+                onClick={handleEdit}
+                variant="text"
+              >Edit Profile
+              </Button>
+            </Box>
+           
               {isEditEnabled && <Box sx={{ mt: 2, display: "flex", flexDirection: "row" }}>
                 <Button
                   color="primary"

@@ -1,6 +1,6 @@
 import Chart from 'react-apexcharts';
-import { Avatar, Box, Button, Card, Divider, Grid, Typography } from '@mui/material';
-import { alpha, useTheme } from '@mui/system';
+import { Avatar, Box, Button, Card, Divider, Grid, Typography } from '@material-ui/core';
+import { alpha, useTheme } from '@material-ui/core/styles';
 import ArrowRightIcon from '../../../../assets/icons/ArrowRight';
 import ChevronDownIcon from '../../../../assets/icons/ChevronDown';
 import ChevronUpIcon from '../../../../assets/icons/ChevronUp';

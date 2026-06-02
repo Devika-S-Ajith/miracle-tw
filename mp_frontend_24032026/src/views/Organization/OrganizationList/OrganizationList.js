@@ -1,181 +1,327 @@
-import { useState, useEffect, useCallback, useContext, useRef } from "react";
-import { Box, Grid, Typography } from "@mui/material";
-import OrganizationListTable from "../Components/OrganizationListTable";
-import useMounted from "../../../common/hooks/UseMounted";
-import ChevronRightIcon from "../../../assets/icons/ChevronRight";
-import APIS from "../../../common/hooks/UseApiCalls";
-import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
-import { useTranslation } from "react-i18next";
-import { SUPER_ADMIN } from "../../../helpers/constant";
-import { getLocationNames } from "../../../helpers/helperFunction";
-import PageLoader from "../../../components/UserComponents/PageLoader";
-import { a } from "aws-amplify";
-import useAuthorization from "../../../components/UserComponents/useAuthorization";
-
-const DEFAULT_PAYLOAD = {
-  rowCount: "10",
-  pageNumber: "1",
-  globalSearchQuery: "",
-  accountStatus: "active",
-  accountTypeFilter: "",
-  orderByField: [["accountName", "ASC"]],
-  fsStatus: "enabled",
-  HTStatus: "enabled",
-  MPAccountTypeId: [],
-};
+import { useState, useEffect, useCallback,useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+//import { Helmet } from 'react-helmet-async';
+import {
+  Box,
+  // Breadcrumbs,
+  Button,
+  Container,
+  Grid,
+  // Link,
+  Typography,
+  // Skeleton
+} from '@material-ui/core';
+import OrganizationListTable from '../Components/OrganizationListTable';
+import useMounted from '../../../common/hooks/UseMounted';
+// import ChevronRightIcon from '../../../assets/icons/ChevronRight';
+import DownloadIcon from '../../../assets/icons/Download';
+import PlusIcon from '../../../assets/icons/Plus';
+import UploadIcon from '../../../assets/icons/Upload';
+import APIS from '../../../common/hooks/UseApiCalls';
+import useSettings from '../../../common/hooks/UseSettings';
+import { CommonDataContext } from '../../../common/contexts/CommonDataContext';
+import { useTranslation } from 'react-i18next';
+import toast from 'react-hot-toast';
+//import gtm from '../../lib/gtm';
 
 const OrganizationList = () => {
-  const { t } = useTranslation(["common"]);
-  const { locationList, signedinUserRoleHT, getUserTokens } =
-    useContext(CommonDataContext);
-
+  const { t } = useTranslation(['common']);
+  const {clearListingPageDetails, signedinUserRole} = useContext(CommonDataContext);
+  const navigate = useNavigate();
   const mounted = useMounted();
-
-  // Keep latest role/locationList in refs so getOrganizations stays stable
-  // and doesn't get recreated (which would re-trigger child effects)
-  const roleRef = useRef(signedinUserRoleHT);
-  const locationListRef = useRef(locationList);
-  const loggedInUserOrgId = localStorage.getItem("orgId");
-
-  useEffect(() => { roleRef.current = signedinUserRoleHT; }, [signedinUserRoleHT]);
-  useEffect(() => { locationListRef.current = locationList; }, [locationList]);
-
-  const [accounts, setAccounts] = useState([]);
-  const [activeAccountCount, setActiveAccountCount] = useState(0);
-  const [pageCount, setPageCount] = useState(1);
-  const [loading, setLoading] = useState(false);
-
+  const { settings } = useSettings();
+  const [organizations, setOrganizations] = useState([]);
+  const [pageCount, setpageCount] = useState(1);
+  const [presentPage, setpresentPage] = useState(1);
+  const [loading,setLoading] = useState(false);
+  const [payloadData, setPayloadData] = useState({});
+  let dataList;
   const [pageData, setPageData] = useState({
-    page: 1,
-    query: "",
-    sort: "accountName",
-    typeFilter: "",
-    statusFilter: "",
-  });
+    page:1,
+    query:'',
+    sort: 'organizationName',
+    typeFilter:'',
+    statusFilter:''
+  })
+  const [isExportDisabled, setIsExportDisabled] = useState(true);
 
-  const savePageData = useCallback((pageObject = {}) => {
-    localStorage.setItem("orgPageData", JSON.stringify(pageObject));
-  }, []);
+  const handleAddOrg =()=>{
+    navigate('/dashboard/organizations/add');
+  }
 
-  const saveCurrentPage = useCallback(() => {}, []);
-  const { authStatus, checkAuth } = useAuthorization("ListAccount");
-  
-  useEffect(() => {
-      document.title = "Accounts | Thrivewell";;
-      checkAuth();
-    }, []);
+  const savePageData = (pageObject= {}) => {
+    localStorage.setItem('orgPageData',JSON.stringify(pageObject))
+  }
 
-  // ── Stable fetcher ───────────────────────────────────────────────────────
-  // Uses refs for role/locationList so the function identity never changes
-  // due to context updates — prevents child buildPayload from going stale.
-  const getOrganizations = useCallback(
-    async (payload = null) => {
-      if (!mounted.current) return;
+  const saveCurrentPage = (currentPage) => {
+    setpresentPage(currentPage);
+    console.log(`%c${presentPage}`,"display:none")
+  }
 
-      // Clear immediately — old rows must never appear on the new page
-      setAccounts([]);
-      setLoading(true);
-
-      try {
-        const finalPayload = payload ? { ...payload } : { ...DEFAULT_PAYLOAD };
-
-        if ([SUPER_ADMIN].includes(roleRef.current)) {
-          finalPayload.userCountryId = localStorage.getItem("userRegion"); // Super admin sees all org types
-          const res = await APIS.OrganizationList(finalPayload);
-          if (!mounted.current) return;
-
-          setAccounts(res?.data?.data ?? []);
-          setPageCount(res?.data?.pageCount ?? 1);
-          setActiveAccountCount(res?.data?.totalActive ?? 0);
-        } else {
-          const res = await APIS.OrganisationDetails(loggedInUserOrgId);
-          if (!mounted.current) return;
-
-          const orgData = res?.data?.data;
-          if (orgData) {
-            orgData.countryName = getLocationNames(
-              locationListRef.current,
-              orgData.MPCountryId
-            );
-            setAccounts([orgData]);
-          } else {
-            setAccounts([]);
-          }
-          setPageCount(1);
-          setActiveAccountCount(orgData ? 1 : 0);
-        }
-      } catch (err) {
-        console.error("Error fetching organizations:", err);
-        if (mounted.current) setAccounts([]);
-      } finally {
-        if (mounted.current) setLoading(false);
+  const handleImport =()=>{
+    navigate('/dashboard/organizations/import');
+  }
+  const handleExport = useCallback(async () =>{
+    try {
+      let finalPayload;
+      let payload ={
+        "moduleType": "organization",
+        "needFullData": "true",
+       }
+      finalPayload={...payloadData,...payload}
+      if(signedinUserRole==='superadmin'){
+        finalPayload.HTCountryId =''
+      }else{
+        finalPayload.HTCountryId = localStorage.getItem('userRegion')
       }
-    },
-    [mounted, loggedInUserOrgId] // stable — context values are read via refs
-  );
+      console.log("final payload in export>>",finalPayload)
+      const data = await APIS.ExportFile(finalPayload);
+      if(data.data.Message ==="Data export started.")
+      {
+      toast.success(t('common:common.Data export started'));
+      }  
+      else if(data.data.Message==="Unauthorized")
+      {
+        toast.error(t('common:common.Unauthorized'));
+      }
+    } catch (err) {
+      console.error(err);
+    }
+
+})
+
+  let getOrgListpayload = {
+    "rowCount": "10",
+    "pageNumber": "1",
+    "globalSearchQuery" : "",
+    "orgStatus":"",
+    "orgTypeFilter":"",
+    "orderByField": [
+        [
+            "organizationName",
+            "ASC"
+        ]
+    ],
+    //"zipCodeLike": "",
+    //"orgNameLike": "",
+    //"phoneNumberLike": "",
+    //"emailLike": "",
+    //"addressLine1Like": "",
+    //"addressLine2Like": "",
+}
+
+const getOrgListpayloadConstant = {
+  "rowCount": "10",
+  "pageNumber": "1",
+  "globalSearchQuery" : "",
+  "orgStatus":"",
+  "orgTypeFilter":"",
+  "orderByField": [
+      [
+          "organizationName",
+          "ASC"
+      ]
+  ],
+}
+
+  const getOrganizations =  useCallback(async (payload = null) => {
+    setLoading(true)
+    try {
+      let finalPayload
+      if(payload === null){
+        finalPayload = getOrgListpayloadConstant
+      } else {
+            finalPayload = { ...getOrgListpayload, ...payload};
+            getOrgListpayload = { ...finalPayload }
+      }
+      if(signedinUserRole==='superadmin'){
+        finalPayload.HTCountryId =''
+      }else{
+        finalPayload.HTCountryId = localStorage.getItem('userRegion')
+      }
+      console.log("final paylaod >>",finalPayload)
+      dataList={...finalPayload}
+      setPayloadData(dataList);
+      const data = await APIS.OrganizationList(finalPayload); 
+      //if (mounted.current) {
+        setOrganizations(data && data.data && data.data.organizations);
+        console.log("Org list in orgpage",data.data.organizations);
+        setpageCount(data && data.data && data.data.pageCount);
+        setLoading(false)
+        if(data && data.data && data.data.organizations.length === 0){
+          setIsExportDisabled(true)
+         }else{
+          setIsExportDisabled(false)
+         }
+      //}
+    } catch (err) {
+      console.error(err);
+      setLoading(false)
+    }
+  }, [mounted]);
 
   useEffect(() => {
-   if(authStatus === 'authorized') {
-    getUserTokens();
-    const stored = localStorage.getItem("orgPageData");
-    if (stored === null) {
+    document.title = "Organizations | Miracle Foundation"
+    setLoading(true);
+    clearListingPageDetails('orgPageData');
+    if(localStorage.getItem('orgPageData') === null){
       getOrganizations();
     } else {
-      const local = JSON.parse(stored);
-      setPageData({ ...local });
-      getOrganizations({
-        ...DEFAULT_PAYLOAD,
-        orderByField: [[`${local.sort ?? "accountName"}`, "ASC"]],
-        globalSearchQuery: local.query ?? "",
-        pageNumber: `${local.page ?? 1}`,
-        accountTypeFilter: local.typeFilter ?? "",
-      });
+      let localPageData = JSON.parse(localStorage.getItem('orgPageData'))
+      let pageObject = {
+        "orderByField": [
+          [
+              `${localPageData.sort}`,
+              "ASC"
+          ]
+      ],
+      //"orgNameLike": `${localPageData.query}`,
+      "globalSearchQuery": `${localPageData.query}`,
+      "pageNumber": `${localPageData.page}`,
+      "orgStatus": `${localPageData.statusFilter}`,
+      "orgTypeFilter":`${localPageData.typeFilter}`,
+      }
+      setPageData({...localPageData})
+      getOrganizations(pageObject)
+      
     }
-  }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authStatus]);
-
-  if (authStatus === 'loading' || authStatus === 'idle') {
-      return <PageLoader />;
+    return () => {
     }
-  
-    if (authStatus === 'unauthorized') {
-      return null; // Or a custom message
-    }
+  }, []);
 
   return (
-    <Box sx={{ backgroundColor: "background.default", minHeight: "100%", pt: 2 }}>
-      <Grid container width={1}>
-        <Grid item xs={12}>
-          <Grid container justifyContent="space-between" spacing={3}>
-            <Grid item sx={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
-              <Typography color="textPrimary" variant="h5">
-                {t("common:common.Admin")}
+    <>
+      {/* <Helmet>
+        <title>Dashboard: Customer List | Material Kit Pro</title>
+      </Helmet> */}
+      <Box
+        sx={{
+          backgroundColor: 'background.default',
+          minHeight: '100%',
+          pt : 2 //new style
+          //py: 8
+        }}
+      >
+        <Container maxWidth={settings.compact ? 'xl' : false}>
+          <Grid
+            container
+            justifyContent="space-between"
+            spacing={3}
+          >
+            <Grid item>
+              <Typography
+                color="textPrimary"
+                variant="h5"
+              >
+                {t('common:organization.Organization List')}
               </Typography>
-              <Box sx={{ m: 0.75 }} style={{ cursor: "text" }}>
-                <ChevronRightIcon color="disabled" fontSize="small" />
+              {/* <Breadcrumbs
+                aria-label="breadcrumb"
+                separator={<ChevronRightIcon fontSize="small" />}
+                sx={{ mt: 1 }}
+              >
+                <Link
+                  color="textPrimary"
+                  component={RouterLink}
+                  to="/dashboard"
+                  variant="subtitle2"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  color="textPrimary"
+                  component={RouterLink}
+                  to="/dashboard"
+                  variant="subtitle2"
+                >
+                  Management
+                </Link>
+                <Typography
+                  color="textSecondary"
+                  variant="subtitle2"
+                >
+                  Customers
+                </Typography>
+              </Breadcrumbs> */}
+
+
+              {/* <Box
+                sx={{
+                  mb: -1,
+                  mx: -1,
+                  mt: 1
+                }}
+              >
+                {signedinUserRole === 'superadmin' ?(<Button
+                  color="primary"
+                  startIcon={<DownloadIcon fontSize="small" />}
+                  sx={{ m: 1 }}
+                  //onClick={()=>{setLocationList(["kochi,alpy,tvm"])}}
+                  onClick={handleImport}
+                  
+                >
+                  {t('common:common.Import')}
+                </Button>):<></>}
+                <Button
+                  color="primary"
+                  startIcon={<UploadIcon fontSize="small" /> }
+                  sx={{ m: 1 }}
+                  onClick={handleExport}
+                  disabled={isExportDisabled}
+                >
+                  {t('common:common.Export')}
+                </Button>
+              </Box> */}
+            </Grid>
+            <Grid item>
+              <Box sx={{ m: -1}}>
+              <Button
+                  color="primary"
+                  startIcon={<UploadIcon fontSize="small" /> }
+                  sx={{ mr: 1,mt :7 }}
+                  onClick={handleExport}
+                  disabled={isExportDisabled}
+                >
+                  {t('common:common.Export')}
+                </Button>
+                {signedinUserRole === 'superadmin' ? (
+               <>
+               <Button
+                color="primary"
+                startIcon={<DownloadIcon fontSize="small" />}
+                sx={{ mr: 1,mt :7 }}
+                //onClick={()=>{setLocationList(["kochi,alpy,tvm"])}}
+                onClick={handleImport}
+                
+              >
+                {t('common:common.Import')}
+              </Button>
+              <Button
+                  // color="#172b4d"
+                  startIcon={<PlusIcon fontSize="small" />}
+                  sx={{ mr: 1,mt :7 }}
+                  variant="contained"
+                  onClick={handleAddOrg}
+                >
+                  {t('common:organization.Add Organization')}
+                </Button></>) : <></>}
               </Box>
-              <Typography color="textPrimary" variant="h5">
-                {t("common:common.Organizations")}
-              </Typography>
             </Grid>
           </Grid>
+          <Box sx={{ mt: 3 }}>
+            <OrganizationListTable 
+                                    savePageData={savePageData}
+                                    pageCount={pageCount}
+                                    pageData={pageData}
+                                    organizations={organizations} 
+                                    saveCurrentPage={saveCurrentPage}
+                                    loading={loading}
+                                    getOrganisationlist={getOrganizations} />
 
-          <Box sx={{ mt: 3 }} mr={1}>
-            <OrganizationListTable
-              savePageData={savePageData}
-              saveCurrentPage={saveCurrentPage}
-              pageCount={pageCount}
-              activeAccountCount={activeAccountCount}
-              pageData={pageData}
-              accounts={accounts}
-              loading={loading}
-              getOrganisationlist={getOrganizations}
-            />
           </Box>
-        </Grid>
-      </Grid>
-    </Box>
+        </Container>
+      </Box>
+    </>
   );
 };
 

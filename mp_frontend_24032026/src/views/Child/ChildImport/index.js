@@ -1,1 +1,1 @@
-export { default } from './ChildImport';
+export {default} from './ChildImport';

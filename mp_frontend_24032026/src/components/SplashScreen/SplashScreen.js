@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box } from '@material-ui/core';
 import Logo from '../../assets/Logo';
 
 const SplashScreen = () => (

@@ -1,230 +1,311 @@
-import { useCallback, useState, useEffect, useContext } from "react";
-import {
-  Link as RouterLink,
-  useParams,
-  useNavigate,
-  useLocation,
-} from "react-router-dom";
+import { useCallback, useState, useEffect, useContext } from 'react';
+import { Link as RouterLink, useParams, useNavigate } from 'react-router-dom';
+//import { Helmet } from 'react-helmet-async';
 import {
   Box,
+  Breadcrumbs,
   Button,
+  Container,
   Divider,
   Grid,
+  Link,
   Tab,
   Tabs,
   Typography,
-} from "@mui/material";
-import FamilyBasicDetails from "../Components/FamilyBasicDetails";
-import PencilAltIcon from "../../../assets/icons/PencilAlt";
-import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
-import APIS from "../../../common/hooks/UseApiCalls";
-import { useTranslation } from "react-i18next";
-import useAuthorization from "../../../components/UserComponents/useAuthorization";
-import Loader from "../../../components/UserComponents/Loader";
-import FamilyAssessments from "../Components/FamilyAssessments/FamilyAssessments";
-import FamilyProgressReport from "../Components/ProgressReport/FamilyProgressReport";
-import FamilyDocuments from "../Components/FamilyDocuments/FamilyDocuments";
-import RadarGraph from "../../Child/Components/RadarGraph/RadarGraph";
-import FamilyHistory from "../Components/FamilyHistory";
-import PageBreadcrumbs from "../../../components/PageBreadcrumbs/PageBreadcrumbs";
-import FollowUps from "../../Assessments/Components/FollowUps";
-import FamilyMilestones from "../Components/FamilyMilestones/FamilyMilestones";
-import FamilyInterventions from "./FamilyInterventions";
-import ConsolidatedAssessmentProgressReport from "../../../components/ConsolidatedAssessmentProgressReport";
-import ChildLogs from "../../Child/Components/ChildLogs";
-import useCRUDPermissions from "../../../components/UserComponents/useCRUDPermissions";
-import PageLoader from "../../../components/UserComponents/PageLoader";
+  IconButton
+} from '@material-ui/core';
+import { customerApi } from '../../../__fakeApi__/customerApi';
+import Members from '../Components/Members';
+import Children from '../Components/Children';
+import FamilyBasicDetails from '../Components/FamilyBasicDetails';
+//import OrganizationUsers from '../Components/OrganizationUsers';
+import useMounted from '../../../common/hooks/UseMounted';
+import ChevronLeftIcon from '../../../assets/icons/ChevronLeft';
+import PencilAltIcon from '../../../assets/icons/PencilAlt';
+//import gtm from '../../lib/gtm';
+import useSettings from '../../../common/hooks/UseSettings';
+import { CommonDataContext } from '../../../common/contexts/CommonDataContext';
+import APIS from '../../../common/hooks/UseApiCalls';
+import { useTranslation } from 'react-i18next';
 
-
+const tabs = [
+  { label: 'Details', value: 'details' },
+  { label: 'Members', value: 'members' },
+  // { label: 'Other Members', value: 'other_members' },
+  { label: 'Children', value: 'children' },
+//   { label: 'Logs', value: 'logs' }
+];
 
 const FamilyDetails = () => {
-  const { t } = useTranslation(["common"]);
+
+  const { t } = useTranslation(['common']);
   const navigate = useNavigate();
+  const mounted = useMounted();
+  const { familyList, signedinUserRole } = useContext(CommonDataContext);
+  const { settings } = useSettings();
   const [loading, setLoading] = useState(false);
+
+  const [children, setChildren] = useState([]);
   const [family, setFamily] = useState(null);
-  const [currentTab, setCurrentTab] = useState("details");
-  const { state: locationValues } = useLocation();
-  const [memberList, setMemberList] = useState([]);
-  const { 
-    IS_HT_ALLOWED, 
-    IS_FS_ALLOWED,
-    BOTH_FS_HT_ALLOWED, 
-    IS_EDIT_ALLOWED 
-  } = useCRUDPermissions();
-  const { authStatus, checkAuth } = useAuthorization("ListFamily");
+  const [primaryCaregiver, setPrimaryCaregiver] = useState(null);
 
-
-  const tabs = [
-    { label: "Details", value: "details", id: "tab_details", Permission:BOTH_FS_HT_ALLOWED },
-    { label: "Logs", value: "ConsolidatedLog", id: "tab_logs", Permission:IS_FS_ALLOWED },
-    { label: "Assessments & Progress Reports", value: "assessmentsProgressReports", id: "tab_assessments_progress_reports" , Permission:IS_HT_ALLOWED  },
-    { label: "Milestones", value: "milestones" ,id:"tab_milestones" ,  Permission:IS_HT_ALLOWED },
-    { label: "Interventions", value: "interventions", id: "tab_interventions" , Permission:IS_HT_ALLOWED },
-    { label: "Follow - ups", value: "followUps", id: "tab_follow_ups", Permission:IS_HT_ALLOWED },
-    {
-      label: "Thrive scale score trend",
-      value: "thriveScale score trend",
-      id: "tab_thriveScale_score_trend",
-      Permission:IS_HT_ALLOWED
-    },
-    { label: "History", value: "history", id: "tab_history" , Permission:BOTH_FS_HT_ALLOWED },
-    { label: "Documents", value: "documents", id: "tab_documents", Permission:BOTH_FS_HT_ALLOWED },
-  ];
-
+  const [currentTab, setCurrentTab] = useState('details');
   let { id } = useParams();
 
-  const getFamilyDetails = useCallback(async () => {
-    setLoading(true);
-    const payload = {
-      id: id,
-      listType:"DETAILED"
-    };
-    try {
-      const data = await APIS.GetFamilyDetails(payload);
-      setFamily(data.data.data || {});
-      setMemberList(data?.data?.data?.members || []);
-    } catch (err) {
-      console.error(err);
+  const getFamilies = () => {
+        setLoading(true)
+        familyList && familyList.forEach((family)=>{
+          if(family.id === id){
+            setFamily(family)
+            let members = family.HT_familyMembers;
+            let primaryCareGiver = members?.find(member=>member.isPrimaryCareGiver === true);
+            setPrimaryCaregiver(primaryCareGiver)
+          }
+          setLoading(false)
+        })
+        
+  }
+
+  useEffect(() => {
+    document.title = "Family | Details | Miracle Foundation"
+    getFamilies();
+    getFamilyDetails();
+    getChildren();
+    return () => {
     }
-    setLoading(false);
   }, []);
 
   useEffect(() => {
-    if (locationValues) {
-      setCurrentTab(locationValues.tabvalue);
+    if(signedinUserRole !== null){
+      if( signedinUserRole !== 'viewonly'){
+        // has access
+      } else {
+        navigate('/Unauthorized');
+      }
+      return () =>{
+
+      }
     }
-  }, [locationValues]);
+  },[signedinUserRole])
 
-  useEffect(() => {
-    document.title = "Family | Details | ThriveWell";
-    checkAuth();
-  }, []); // Only runs once on mount, or based on your specific logic
-
-  useEffect(() => {
-    if (authStatus === 'authorized') {
-      getFamilyDetails();
+  const getFamilyDetails = useCallback(async () => {
+    try {
+      const data = await APIS.FamilyDetails(id);
+      setFamily(data.data.familyDetails)
+    } catch (err) {
+      console.error(err);
     }
-  }, [authStatus]);
+  }, []);
 
-  if (authStatus === 'loading' || authStatus === 'idle') {
-    return <PageLoader />;
-  }
-
-  if (authStatus === 'unauthorized') {
-    return null; // Or a custom message
+  const getChildren = async () => {
+    try {
+      const data = await customerApi.getChildrenList(); 
+      //if (mounted.current) {
+        setChildren(data);
+        //setLoading(false)
+     // }
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   const handleTabsChange = (event, value) => {
     setCurrentTab(value);
   };
 
+  // if (!user) {
+  //   console.log("returning null")
+  //   return null;
+  // }
 
-  const renderTabContent = () => {
-    switch (currentTab) {
-      case "details":
-        return (
-          <Grid container spacing={3}>
-            <Grid item lg={12} md={12} xl={12} xs={12}>
-              {family && (
-                <FamilyBasicDetails
-                  family={family}
-                  refreshData={getFamilyDetails}
-                />
-              )}
-            </Grid>
-          </Grid>
-        );
-      case "assessments":
-        return <FamilyAssessments id={family?.id} />;
-      case "thriveScale score trend":
-        return <RadarGraph familyId={family?.id} />;
-      case "progressReport":
-        return <FamilyProgressReport id={family?.id} />;
-      case "documents":
-        return <FamilyDocuments active={family?.isActive} />;
-      case "history":
-        return <FamilyHistory id={family?.id} />;
-      case "followUps":
-        return <FollowUps id={family?.id} type="FAMILY" />;
-      case "interventions":
-        return <FamilyInterventions memberList={memberList} familyId={family?.id} />;
-      case "milestones":
-        return <FamilyMilestones  familyMembers={memberList}  familyName={family.familyName} />;
-      case "assessmentsProgressReports":
-        return <ConsolidatedAssessmentProgressReport id={id} pageType="FAMILY" />;
-      case "ConsolidatedLog":
-        return <ChildLogs module="family" showForChild={true} />;
-      default:
-        return null;
-    }
-  };
   return (
     <>
-      <Loader loading={loading} />
+      {/* <Helmet>
+        <title>Dashboard: Customer Details | Material Kit Pro</title>
+      </Helmet> */}
+
       <Box
         sx={{
-          backgroundColor: "background.default",
-          minHeight: "100%",
-          mt: 2,
+          backgroundColor: 'background.default',
+          minHeight: '100%',
+          mt : 2
+          //py: 8
         }}
       >
-        <Grid container width={1}>
-          <Grid item xs={12} sx={{ mr: 1 }}>
-            <Grid container justifyContent="space-between" spacing={3}>
-              <Grid item>
-                <PageBreadcrumbs
-                  data={[
-                    {
-                      label: t("common:family.Families"),
-                      onClick: () => navigate("/dashboard/families"),
-                      href: "/dashboard/families",
-                    },
-                    {
-                      label: family && family.familyName,
-                    },
-                  ]}
-                />
-              </Grid>
-
-              {IS_EDIT_ALLOWED && (
-                <Grid item>
-                  <Box sx={{ m: -1 }}>
-                    <Button
-                      color="primary"
-                      component={RouterLink}
-                      startIcon={<PencilAltIcon fontSize="small" />}
-                    sx={{ m: 1 }}
-                    to={`/dashboard/families/${family && family.id}/edit`}
-                    variant="contained"
-                  >
-                    {t("common:common.Edit")}
-                  </Button>
-                </Box>
-              </Grid>)}
-            </Grid>
-            <Box sx={{ mt: 3 }}>
-              <Tabs
-                indicatorColor="primary"
-                onChange={handleTabsChange}
-                scrollButtons="auto"
-                textColor="primary"
-                value={currentTab}
-                variant="scrollable"
+        <Container maxWidth={settings.compact ? 'xl' : false}>
+          <Grid
+            container
+            justifyContent="space-between"
+            spacing={3}
+          >
+            <Grid item sx={{display : "flex",flexDirection : "row"}}>
+              <IconButton
+              color="inherit"
+              onClick={()=>navigate(-1)}
+              sx={{
+                // display: {
+                //   md: 'none'
+                // }
+                mt : - 0.5
+              }}
               >
-                {tabs.filter((tab) => tab.Permission).map((tab) => (
-                  <Tab
-                    key={tab.value}
-                    id={tab.id}
-                    label={t(`common:common.${tab.label}`, tab.label)}
-                    value={tab.value}
-                  />
-                ))}
-              </Tabs>
-            </Box>
-            <Divider />
-            <Box sx={{ mt: 3 }}>{renderTabContent()}</Box>
+              <ChevronLeftIcon fontSize="small" />
+              </IconButton>
+              <Typography
+                color="textPrimary"
+                variant="h5"
+              >
+                {family && family.familyName && family.familyName}
+              </Typography>
+              
+              
+              {/* <Breadcrumbs
+                aria-label="breadcrumb"
+                separator={<ChevronRightIcon fontSize="small" />}
+                sx={{ mt: 1 }}
+              >
+                <Link
+                  color="textPrimary"
+                  component={RouterLink}
+                  to="/dashboard"
+                  variant="subtitle2"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  color="textPrimary"
+                  component={RouterLink}
+                  to="/dashboard"
+                  variant="subtitle2"
+                >
+                  Management
+                </Link>
+                <Typography
+                  color="textSecondary"
+                  variant="subtitle2"
+                >
+                  Customers
+                </Typography>
+              </Breadcrumbs> */}
+
+
+
+
+            </Grid>
+            <Grid item>
+              <Box sx={{ m: -1 }}>
+                <Button
+                  color="primary"
+                  component={RouterLink}
+                  startIcon={<PencilAltIcon fontSize="small" />}
+                  sx={{ m: 1 }}
+                  //sx={{ml: -11.5,mt : 8,position : "absolute",width : 100 }}
+                  to={`/dashboard/family/${family && family.id}/edit`}
+                  variant="contained"
+                >
+                  {t('common:common.Edit')}
+                </Button>
+              </Box>
+            </Grid>
           </Grid>
-        </Grid>
+          <Box sx={{ mt: 3 }}>
+            <Tabs
+              indicatorColor="primary"
+              onChange={handleTabsChange}
+              scrollButtons="auto"
+              textColor="primary"
+              value={currentTab}
+              variant="scrollable"
+            >
+              {tabs.map((tab) => (
+                <Tab
+                  key={tab.value}
+                  label={t(`common:common.${tab.label}`)}
+                  value={tab.value}
+                />
+              ))}
+            </Tabs>
+          </Box>
+          <Divider />
+          <Box sx={{ mt: 3 }}>
+            {currentTab === 'details' && (
+              <Grid
+                container
+                spacing={3}
+              >
+                <Grid
+                  item
+                  //lg={settings.compact ? 6 : 4}
+                  lg={10}
+                  //md={6}
+                  md={12}
+                  //xl={settings.compact ? 6 : 3}
+                  xl={12}
+                  xs={12}
+                >
+                  {family && <FamilyBasicDetails
+                    autoid={family.autogenfamilyid}
+                    id={family.id}
+                    address1={family.addressLine1}
+                    address2={family.addressLine2}
+                    child_name={family.child}
+                    total_children={family.numberOfChildren}
+                    country={family.HTCountryId}
+                    state={family.HTStateId}
+                    language={family.HTLanguageId}
+                    zip_code={family.zipCode}
+                    //care_givers = {family.care_givers}
+                    city={family.city}
+                    district={family.HTDistrictId}
+                    status = { family.isActive}
+                  />}
+                </Grid>
+                {/* <Grid
+                  item
+                  lg={settings.compact ? 6 : 4}
+                  md={6}
+                  xl={settings.compact ? 6 : 3}
+                  xs={12}
+                >
+                  <CustomerInvoicesSummary />
+                </Grid> */}
+                {/* <Grid
+                  item
+                  lg={settings.compact ? 6 : 4}
+                  md={6}
+                  xl={settings.compact ? 6 : 3}
+                  xs={12}
+                >
+                  <CustomerEmailsSummary />
+                </Grid> */}
+                {/* <Grid
+                  item
+                  lg={settings.compact ? 6 : 4}
+                  md={6}
+                  xl={settings.compact ? 6 : 3}
+                  xs={12}
+                >
+                  <CustomerDataManagement />
+                </Grid> */}
+              </Grid>
+            )}
+            {/* {currentTab === 'organization' && user!==null && <RelatedOrganization id={user.organizationId}/>} */}
+
+
+                    {currentTab === 'members' && family!==null && 
+                    family.HT_familyMembers?.length > 0 && 
+                    <Members familyMembers={family.HT_familyMembers}  
+                    familyId={family && family.id}
+                    total_children={'0'}
+                    />}
+
+                    {currentTab === 'children' && 
+                      <Children 
+                      children={children} 
+                      familyMembers={family?.HT_familyMembers}
+                      />}
+          </Box>
+        </Container>
       </Box>
     </>
   );

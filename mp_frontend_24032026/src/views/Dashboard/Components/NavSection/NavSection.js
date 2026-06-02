@@ -1,227 +1,170 @@
-import PropTypes from "prop-types";
-import { matchPath } from "react-router-dom";
-import { List, ListSubheader } from "@mui/material";
-import NavItem from "../NavItem";
-import { useTranslation } from "react-i18next";
-import { useContext, useEffect, useState } from "react";
-import Collapse from "@mui/material/Collapse";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import { CommonDataContext } from "../../../../common/contexts/CommonDataContext";
-import {
-  Admin,
-  FosterShare,
-  ThriveScale,
-  UNASSIGNED,
-} from "../../../../helpers/constant";
+import PropTypes from 'prop-types';
+import { matchPath } from 'react-router-dom';
+import { List, ListSubheader } from '@material-ui/core';
+import NavItem from '../NavItem';
+import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Collapse from '@mui/material/Collapse';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 
-const renderNavItems = ({
-  depth = 0,
-  title: parentTitle,
-  items,
-  pathname,
-  isOpenDrawer,
-  open,
-  setOpen,
-  t,
-}) => (
-  <List disablePadding dense>
+const renderNavItems = ({ depth = 0, items, pathname,open,setOpen,t }) => (
+  <List disablePadding>
     {items.reduce(
-      (acc, item) =>
-        reduceChildRoutes({
-          acc,
-          parentTitle,
-          item,
-          pathname,
-          depth,
-          open,
-          isOpenDrawer,
-          setOpen,
-          t,
-        }),
-      []
+      // eslint-disable-next-line no-use-before-define
+      (acc, item) => reduceChildRoutes({
+        acc,
+        item,
+        pathname,
+        depth,open,setOpen,t
+      }), []
     )}
   </List>
 );
 
-const reduceChildRoutes = ({ acc,parentTitle, pathname, item, depth, isOpenDrawer }) => {
+const reduceChildRoutes = ({ acc, pathname, item, depth,open,setOpen,t }) => {
   const key = `${item.title}-${depth}`;
-  const exactMatch = item.path
-    ? !!matchPath(
-        {
-          path: item.path,
-          end: true,
-        },
-        pathname
-      )
-    : false;
+  
+ 
+   const handleClick =()=>{
+    setOpen(!open)
+   }
 
-  if (item.path === "/dashboard") {
+  const exactMatch = item.path ? !!matchPath({
+    path: item.path,
+    end: true
+  }, pathname) : false;
+   
+  
+
+  if (item.path === '/dashboard') {
     acc.push(
       <NavItem
         active={exactMatch}
         depth={depth}
         icon={item.icon}
-        orangeIcon={item.orangeIcon}
         info={item.info}
         key={key}
-        id={item.title}
         path={item.path}
         title={item.title}
-        parentTitle={parentTitle}
-        isOpenDrawer={isOpenDrawer}
       />
     );
   } else {
-    const partialMatch = item.path
-      ? !!matchPath(
-          {
-            path: item.path,
-            end: false,
-          },
-          pathname
-        )
-      : false;
-    acc.push(
-      <NavItem
-        active={partialMatch}
-        depth={depth}
-        icon={item.icon}
-        orangeIcon={item.orangeIcon}
-        info={item.info}
-        key={key}
-        id={item.title}
-        path={item.path}
-        title={item.title}
-        parentTitle={parentTitle}
-        isOpenDrawer={isOpenDrawer}
-        style={item?.style}
-      />
-    );
+    if(item.title==='Database'){
+      
+        acc.push(
+          <List>
+          <ListItemButton onClick={handleClick} >
+            <ListItemIcon sx={(pathname===item.items[1]?.path ||pathname===item.items[0]?.path) ? {
+               color: 'primary.main',
+               fontWeight: 'fontWeightBold',
+               ml:-0.5,
+               variant:"text",
+               '& svg': {
+                 color: 'primary.main'}}:{
+                color: 'text.secondary',
+                fontWeight: 'fontWeightMedium',
+                fontSize: '0.75rem',
+                lineHeight: 2.5,
+                ml:-0.5,
+                }
+                //textTransform: 'uppercase'
+              }>
+             {item.icon}
+            </ListItemIcon>
+            <ListItemText  disableTypography ={true} primary={t(`common:common.${item.title}`)} sx={(pathname===item.items[1]?.path ||pathname===item.items[0]?.path) ? {
+               color: 'primary.main',
+               fontWeight: 'fontWeightBold',
+               ml:-1,
+               fontSize:'14px',
+               variant:"text",
+               '& svg': {
+                 color: 'primary.main'}}:{
+                color: 'text.secondary',
+                fontWeight: 'fontWeightMedium',
+                fontSize:'14px',
+                ml:-1,
+                textTransform: 'none',
+                width: '100%',
+                }
+                //textTransform: 'uppercase'
+              }/>
+            {open ? <ExpandLess /> : <ExpandMore />}
+          </ListItemButton>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+           { renderNavItems({
+              items:item.items,
+              pathname,
+              depth:2
+            })}
+          </Collapse>
+        </List>
+         
+        );
+        
+    }
+    else{
+      const partialMatch = item.path ? !!matchPath({
+        path: item.path,
+        end: false
+      }, pathname) : false;
+      acc.push(
+        <NavItem
+          active={partialMatch}
+          depth={depth}
+          icon={item.icon}
+          info={item.info}
+          key={key}
+          path={item.path}
+          title={item.title}
+        />
+      );
+    }
+    
   }
 
   return acc;
 };
 
 const NavSection = (props) => {
-  const {
-    items,
-    pathname,
-    title,
-    isDefault,
-    titleShortName,
-    isOpenDrawer,
-    currentSection,
-    drawerOpenHandler,
-    style,
-    ...other
-  } = props;
-  const { t } = useTranslation(["common"]);
-  const { signedinUserRoleHT, signedinUserRoleFS } =
-    useContext(CommonDataContext);
-  const [open, setOpen] = useState(isDefault);
-
-  const toggleList = (title) => {
-    setOpen(!open);
-    drawerOpenHandler(title);
-  };
-
-  useEffect(() => {
-    if (currentSection) {
-      if (currentSection.title === title) {
-        setOpen(true);
-      } else {
-        setOpen(false);
-      }
-    }
-  }, [currentSection]);
-
-    const [showBox, setShowBox] = useState(false);
-      useEffect(() => {
-        let timer;
-        if (isOpenDrawer) {
-          timer = setTimeout(() => setShowBox(true), 100);
-        } else {
-          setShowBox(false);
-        }
-        return () => clearTimeout(timer);
-      }, [isOpenDrawer]);
+  const { items, pathname, title, ...other } = props;
+  const { t } = useTranslation(['common']);
+  const [open,setOpen] = useState(false)
   return (
-    ((title == FosterShare && signedinUserRoleFS !== UNASSIGNED) ||
-      (title == ThriveScale && signedinUserRoleHT !== UNASSIGNED) ||
-      title == Admin) ? (
-      <List
-        subheader={
-          <ListSubheader
-            id={title}
-            disableGutters
-            disableSticky
-            sx={{
-              color: open ? "#F37123" : "white",
-              fontSize: "1rem",
-              lineHeight: 2,
-              //fontWeight: 100,
-              ml: 2,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center", // Aligns items vertically in the center
-            }}
-            onClick={() => toggleList(title)}
-          >
-            {/* <span>
-              {isOpenDrawer ? t(`common:common.${title}`) : titleShortName}
-            </span> */}
-            <span>
-              {isOpenDrawer && showBox
-                ? (title === FosterShare ? title : t(`common:common.${title}`, title)) 
-                : titleShortName}
-            </span>
-            <span
-              style={{
-                position: isOpenDrawer && "absolute",
-                // position: isOpenDrawer,
-                // right: isOpenDrawer && "8px",
-                right: isOpenDrawer && "-15px",
-              }}
-            >
-              {open ? (
-                <ArrowDropUpIcon sx={{ mt: 1.3 }} fontSize="large" />
-              ) : (
-                <ArrowDropDownIcon sx={{ mt: 1.3 }} fontSize="large" />
-              )}
-            </span>
-          </ListSubheader>
-        }
-        {...other}
-      >
-        <Collapse in={open} unmountOnExit>
-          {renderNavItems({
-            items,
-            title,
-            pathname,
-            open,
-            setOpen,
-            t,
-            isOpenDrawer,
-          })}
-        </Collapse>
-      </List>
-    ) : <>{renderNavItems({
-            items,
-            title,
-            pathname,
-            open,
-            setOpen,
-            t,
-            isOpenDrawer,
-          })}</>
+    <List
+      subheader={(
+        <ListSubheader
+          disableGutters
+          disableSticky
+          sx={{
+            color: 'text.primary',
+            fontSize: '0.75rem',
+            lineHeight: 2.5,
+            fontWeight: 700,
+            textTransform: 'uppercase'
+          }}
+        >
+          {t(`common:common.${title}`)}
+          {/* {title} */}
+        </ListSubheader>
+      )}
+      {...other}
+    >
+      {renderNavItems({
+        items,
+        pathname,open,setOpen,t
+      })}
+    </List>
   );
 };
 
 NavSection.propTypes = {
   items: PropTypes.array,
   pathname: PropTypes.string,
-  title: PropTypes.string,
+  title: PropTypes.string
 };
 
 export default NavSection;

@@ -1,124 +1,194 @@
-import { useState,useContext } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import {
-  Box,
-  Grid,
-  Typography,
-  Tab,
-  Tabs,
-  Divider,
-  IconButton,
-} from "@mui/material";
-import ChildFamilyListing from "../Components/ChildFamilyListing";
-import ChevronRightIcon from "../../../assets/icons/ChevronRight";
-import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
-import { useTranslation } from "react-i18next";
-import useAuthorization from "../../../components/UserComponents/useAuthorization";
-import AddChildForm from "../Components/AddChildForm";
-
+import { useState, useCallback, useEffect, useContext } from 'react';
+import { useParams,useNavigate } from 'react-router-dom';
+//import { Helmet } from 'react-helmet-async';
+import { Box, Container, Grid, Typography, Tab, Tabs, Divider,IconButton} from '@material-ui/core';
+// import { customerApi } from '../../../__fakeApi__/customerApi';
+// import EditUserForm from '../Components/EditUserForm';
+import EditChildForm from '../Components/EditChildForm';
+import ChildFamilyListing from '../Components/ChildFamilyListing';
+// import Cases from '../Components/Cases';
+import useMounted from '../../../common/hooks/UseMounted';
+import useSettings from '../../../common/hooks/UseSettings';
+import ChevronLeftIcon from '../../../assets/icons/ChevronLeft';
+import APIS from '../../../common/hooks/UseApiCalls';
+import { CommonDataContext } from '../../../common/contexts/CommonDataContext';
+//import gtm from '../../lib/gtm';
+import { useTranslation } from 'react-i18next';
 const EditChild = () => {
-  const { t } = useTranslation(["common"]);
-  const { signedinOrgType, signedinUserRoleHT } = useContext(CommonDataContext);
+  const { t } = useTranslation(['common']);
+  const {signedinOrgType, signedinUserRole} = useContext(CommonDataContext);
   const navigate = useNavigate();
-  const [currentTab, setCurrentTab] = useState("edit");
+  const [currentTab, setCurrentTab] = useState('edit');
+  const mounted = useMounted();
+  const { settings } = useSettings();
+  const [user, setUser] = useState(null);
+  // const [loading, setLoading] = useState(false);
   let { id } = useParams();
-  const tabs = [{ label: "Details", value: "edit" }];
-  useAuthorization(
-    signedinUserRoleHT,
-    null,
-    signedinOrgType,
-    "EditChild",
-    true
-  );
+  
+const tabs = [
+    { label: 'Details', value: 'edit' }, 
+    // { label: 'Family', value: 'Family' },
+    // { label: 'Assessments', value: 'logs' }
+  ];
+
   const handleTabsChange = (event, value) => {
     setCurrentTab(value);
   };
- 
+
+  const getUsers = useCallback(async () => {
+    try {
+      const data = await APIS.ChildDetails(id);
+      // if (mounted.current) {
+        // console.log(data)
+        setUser(data.data.data);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [mounted]);
+
+  useEffect(() => {
+    getUsers();
+    return () => {
+    }
+  }, []);
+
+  useEffect(() => {
+    if(signedinOrgType !== null && signedinUserRole !== null){
+      if((signedinOrgType == 3 || signedinOrgType == 4 || signedinOrgType == 5) && (signedinUserRole === 'admin' || signedinUserRole === 'caseworker')){
+        // has access
+      } else {
+        navigate('/Unauthorized');
+      }
+    }
+    return () =>{
+
+    }
+  },[signedinOrgType,signedinUserRole])
+
   return (
     <>
+      {/* <Helmet>
+        <title>Dashboard: Customer Edit | Material Kit Pro</title>
+      </Helmet> */}
       <Box
         sx={{
-          backgroundColor: "background.default",
-          minHeight: "100%",
-          mt: 2,
+          backgroundColor: 'background.default',
+          minHeight: '100%',
+          mt : 2
+          //py: 8
         }}
       >
-        <Grid container width={1}>
-          <Grid item xs={12} sx={{ mr: 1 }}>
-            <Grid container justifyContent="space-between" spacing={3}>
-              <Grid item sx={{ display: "flex", flexDirection: "row" }}>
-                <Typography
-                  color="textPrimary"
-                  variant="h5"
-                  sx={{ cursor: "pointer" }}
-                  onClick={() => navigate("/dashboard")}
-                >
-                  {t("common:common.Thrive Scale")}
-                </Typography>
-                <Box
-                  sx={{
-                    m: 0.75,
-                  }}
-                  style={{ cursor: "text" }}
-                >
-                  <ChevronRightIcon color="disabled" fontSize="small" />
-                </Box>
-                <Grid item>
-                  <Typography
-                    color="textPrimary"
-                    variant="h5"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => navigate('/dashboard/children')}
-                  >
-                    {t("common:common.Children")}
-                  </Typography>
-                </Grid>
-                <IconButton
-                  color="disabled"
-                  onClick={() => navigate(-1)}
-                  sx={{ mt: -0.5 }}
-                >
-                  {/* Todo - Change the color so that both right icons looks exactly the same */}
-                  <ChevronRightIcon fontSize="small" />
-                </IconButton>
-                <Typography color="textPrimary" variant="h5">
-                  {t("common:child.Child Edit")}
-                </Typography>
-              </Grid>
-            </Grid>
-            <Box sx={{ mt: 3 }}>
-              <Tabs
-                indicatorColor="primary"
-                onChange={handleTabsChange}
-                scrollButtons="auto"
-                textColor="primary"
-                value={currentTab}
-                variant="scrollable"
+        <Container maxWidth={settings.compact ? 'xl' : false}>
+          <Grid
+            container
+            justifyContent="space-between"
+            spacing={3}
+          >
+            <Grid item sx={{display : "flex",flexDirection : "row"}}>
+            <IconButton
+              color="inherit"
+              onClick={()=>navigate(-1)}
+              sx={{
+                // display: {
+                //   md: 'none'
+                // }
+                mt : - 0.5
+              }}
+            >
+            <ChevronLeftIcon fontSize="small" />
+            </IconButton>
+
+              <Typography
+                color="textPrimary"
+                variant="h5"
               >
-                {tabs.map((tab) => (
-                  <Tab
-                    key={tab.value}
-                    label={t(`common:common.${tab.label}`)}
-                    value={tab.value}
-                  />
-                ))}
-              </Tabs>
-            </Box>
-            <Divider />
-            <Box sx={{ mt: 3 }}>
-              {currentTab === "edit" && (
-                <Grid container spacing={3}>
-                  <Grid item lg={12} md={12} xl={12} xs={12}>
-                    {id && <AddChildForm childId={id} />}
-                  </Grid>
-                </Grid>
-              )}
-              {currentTab === "Family" && <ChildFamilyListing />}
-            </Box>
+                {t('common:child.Child Edit')}
+              </Typography>
+              {/* <Breadcrumbs
+                aria-label="breadcrumb"
+                separator={<ChevronRightIcon fontSize="small" />}
+                sx={{ mt: 1 }}
+              >
+                <Link
+                  color="textPrimary"
+                  component={RouterLink}
+                  to="/dashboard"
+                  variant="subtitle2"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  color="textPrimary"
+                  component={RouterLink}
+                  to="/dashboard"
+                  variant="subtitle2"
+                >
+                  Management
+                </Link>
+                <Typography
+                  color="textSecondary"
+                  variant="subtitle2"
+                >
+                  Customers
+                </Typography>
+              </Breadcrumbs> */}
+            </Grid>
+            
           </Grid>
-        </Grid>
+          <Box sx={{ mt: 3 }}>
+            <Tabs
+              indicatorColor="primary"
+              onChange={handleTabsChange}
+              scrollButtons="auto"
+              textColor="primary"
+              value={currentTab}
+              variant="scrollable"
+            >
+              {tabs.map((tab) => (
+                <Tab
+                  key={tab.value}
+                  label={t(`common:common.${tab.label}`)}
+                  value={tab.value}
+                />
+              ))}
+            </Tabs>
+          </Box>
+          <Divider />
+
+          {/* <Box mt={3}>
+            <EditOrganizationForm organization={customer} />
+          </Box> */}
+
+          <Box sx={{ mt: 3 }}>
+            {currentTab === 'edit' && (
+              <Grid
+                container
+                spacing={3}
+              >
+                <Grid
+                  item
+                  //lg={settings.compact ? 6 : 4}
+                  lg={10}
+                  //md={6}
+                  md={12}
+                  //xl={settings.compact ? 6 : 3}
+                  xl={12}
+                  xs={12}
+                >
+                 { user && <EditChildForm user={user} />}{
+                     console.log(user,'l')
+                 }
+                </Grid>
+              </Grid>
+            )}
+            {currentTab === 'Family' && <ChildFamilyListing />}
+          </Box>
+
+
+        </Container>
       </Box>
     </>
   );
 };
+
 export default EditChild;

@@ -1,4 +1,4 @@
-import createSvgIcon from '@mui/material/utils/createSvgIcon';
+import createSvgIcon from '@material-ui/core/utils/createSvgIcon';
 
 const ShoppingCart = createSvgIcon(
   <svg

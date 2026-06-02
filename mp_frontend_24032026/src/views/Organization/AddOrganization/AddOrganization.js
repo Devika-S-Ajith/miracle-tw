@@ -1,91 +1,134 @@
-import { useState, useCallback, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { Box, Grid, Typography } from "@mui/material";
-import { customerApi } from "../../../__fakeApi__/customerApi";
-import useMounted from "../../../common/hooks/UseMounted";
-import { useTranslation } from "react-i18next";
-import AccountForm from "../Components/AccountForm";
-import ChevronRightIcon from "../../../assets/icons/ChevronRight";
-import useAuthorization from "../../../components/UserComponents/useAuthorization";
-import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
-import PageLoader from "../../../components/UserComponents/PageLoader";
+  import { useState, useCallback, useEffect, useContext } from 'react';
+  import { useNavigate } from 'react-router-dom';
+  //import { Helmet } from 'react-helmet-async';
+  import { Box, Container, Grid, Typography, IconButton } from '@material-ui/core';
+  import { customerApi } from '../../../__fakeApi__/customerApi';
+  import AddOrganizationForm from '../Components/AddOrganizationForm';
+  import useMounted from '../../../common/hooks/UseMounted';
+  import useSettings from '../../../common/hooks/UseSettings';
+  import ChevronLeftIcon from '../../../assets/icons/ChevronLeft';
+  import { useTranslation } from 'react-i18next';
+  import { CommonDataContext } from '../../../common/contexts/CommonDataContext';
+  
+  const AddOrganization = () => {
+    const { t } = useTranslation(['common']);
+    const {signedinOrgType, signedinUserRole} = useContext(CommonDataContext);
+    const navigate = useNavigate();
+    const mounted = useMounted();
+    const { settings } = useSettings();
+    const [customer, setCustomer] = useState(null);
+  
+  
+    const getCustomer = useCallback(async () => {
+      try {
+        const data = await customerApi.getCustomer();
+  
+        if (mounted.current) {
+          setCustomer(data);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }, [mounted]);
+  
+    useEffect(() => {
+      getCustomer();
+      return () => {
+      }
+    }, [getCustomer]);
 
-const AddOrganization = () => {
-  const { t } = useTranslation(["common"]);
-  const navigate = useNavigate();
-   const { authStatus, checkAuth } = useAuthorization("AddAccount");
+    useEffect(() => {
+      if(signedinOrgType !== null && signedinUserRole !== null){
+        if(signedinOrgType == 1 && signedinUserRole === 'superadmin'){
+          // has access
+        } else {
+          navigate('/Unauthorized');
+        }
+      }
+      return () =>{
+      }
+    },[signedinOrgType,signedinUserRole])
   
-  useEffect(() => {
-      document.title = "Accounts | Thrivewell";;
-      checkAuth();
-    }, []);
-  
-    if (authStatus === 'loading' || authStatus === 'idle') {
-      return <PageLoader />;
+    if (!customer) {
+      return null;
     }
   
-    if (authStatus === 'unauthorized') {
-      return null; // Or a custom message
-    }
-
-  return (
-    <>
-      <Box
-        sx={{
-          backgroundColor: "background.default",
-          minHeight: "100%",
-          mt: 2
-        }}
-      >
-        <Box sx={{ width: "100%" }} px={2}>
-          <Grid container justifyContent="space-between" spacing={3}>
+    return (
+      <>
+        {/* <Helmet>
+          <title>Dashboard: Customer Edit | Material Kit Pro</title>
+        </Helmet> */}
+        <Box
+          sx={{
+            backgroundColor: 'background.default',
+            minHeight: '100%',
+            mt : 2
+            //py: 8
+          }}
+        >
+          <Container maxWidth={settings.compact ? 'xl' : false}>
             <Grid
-              item
-              sx={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}
+              container
+              justifyContent="space-between"
+              spacing={3}
             >
-              <Typography color="textPrimary" variant="h5">
-                {t("common:common.Admin")}
-              </Typography>
-              <Box
-                sx={{
-                  m: 0.75,
-                }}
-                style={{ cursor: "text" }}
+              <Grid item sx={{display : "flex",flexDirection : "row"}}>
+              <IconButton
+              color="inherit"
+              onClick={()=>navigate(-1)}
+              sx={{
+                // display: {
+                //   md: 'none'
+                // }
+                mt : - 0.5
+              }}
               >
-                <ChevronRightIcon color="disabled" fontSize="small" />
-              </Box>
-              <Typography
-                color="textPrimary"
-                variant="h5"
-                style={{ cursor: "pointer" }}
-                onClick={() => navigate("/admin/organizations")}
-              >
-                {t("common:common.Organizations")}
-              </Typography>
-              <Box
-                sx={{
-                  m: 0.75,
-                }}
-                style={{ cursor: "text" }}
-              >
-                <ChevronRightIcon color="disabled" fontSize="small" />
-              </Box>
-              <Typography
-                color="textPrimary"
-                variant="h5"
-                id="add_account_button"
-              >
-                {t("common:organization.Add a new organization")}
-              </Typography>
+              <ChevronLeftIcon fontSize="small" />
+              </IconButton>
+                <Typography
+                  color="textPrimary"
+                  variant="h5"
+                >
+                  {t('common:organization.Add Organization')}
+                </Typography>
+                {/* <Breadcrumbs
+                  aria-label="breadcrumb"
+                  separator={<ChevronRightIcon fontSize="small" />}
+                  sx={{ mt: 1 }}
+                >
+                  <Link
+                    color="textPrimary"
+                    component={RouterLink}
+                    to="/dashboard"
+                    variant="subtitle2"
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    color="textPrimary"
+                    component={RouterLink}
+                    to="/dashboard"
+                    variant="subtitle2"
+                  >
+                    Management
+                  </Link>
+                  <Typography
+                    color="textSecondary"
+                    variant="subtitle2"
+                  >
+                    Customers
+                  </Typography>
+                </Breadcrumbs> */}
+              </Grid>
             </Grid>
-          </Grid>
-          <Box mt={3}>
-            <AccountForm />
-          </Box>
+            <Box mt={3}>
+              <AddOrganizationForm organization={customer} />
+            </Box>
+          </Container>
         </Box>
-      </Box>
-    </>
-  );
-};
-
-export default AddOrganization;
+      </>
+    );
+  };
+  
+  export default AddOrganization;
+  

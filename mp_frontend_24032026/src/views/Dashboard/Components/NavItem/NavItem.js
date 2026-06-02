@@ -1,41 +1,16 @@
-import { useState, useEffect } from "react";
-import { NavLink as RouterLink } from "react-router-dom";
-import PropTypes from "prop-types";
-import { Box, Button, Collapse, ListItem } from "@mui/material";
-import ChevronDownIcon from "../../../../assets/icons/ChevronDown";
-import ChevronRightIcon from "../../../../assets/icons/ChevronRight";
-import { useTranslation } from "react-i18next";
-import { FosterShare } from "../../../../helpers/constant";
-
+import { useState } from 'react';
+import { NavLink as RouterLink } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { Box, Button, Collapse, ListItem } from '@material-ui/core';
+import ChevronDownIcon from '../../../../assets/icons/ChevronDown';
+import ChevronRightIcon from '../../../../assets/icons/ChevronRight';
+import { useTranslation } from 'react-i18next';
 
 const NavItem = (props) => {
-  const {
-    active,
-    children,
-    depth,
-    icon,
-    orangeIcon,
-    info,
-    open: openProp,
-    path,
-    title,
-    parentTitle,
-    isOpenDrawer,
-    style,
-    ...other
-  } = props;
+  const { active, children, depth, icon, info, open: openProp, path, title, ...other } = props;
   const [open, setOpen] = useState(openProp);
-  const [showBox, setShowBox] = useState(false);
-    useEffect(() => {
-      let timer;
-      if (isOpenDrawer) {
-        timer = setTimeout(() => setShowBox(true), 100);
-      } else {
-        setShowBox(false);
-      }
-      return () => clearTimeout(timer);
-    }, [isOpenDrawer]);
-  const { t } = useTranslation(["common"]);
+  const { t } = useTranslation(['common']);
+
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
@@ -52,42 +27,37 @@ const NavItem = (props) => {
       <ListItem
         disableGutters
         sx={{
-          display: "block",
-          py: 0,
+          display: 'block',
+          py: 0
         }}
         {...other}
       >
         <Button
-          id={title}
-          endIcon={
-            !open ? (
-              <ChevronRightIcon fontSize="small" />
-            ) : (
-              <ChevronDownIcon fontSize="small" />
-            )
-          }
+          endIcon={!open ? <ChevronRightIcon fontSize="small" />
+            : <ChevronDownIcon fontSize="small" />}
           onClick={handleToggle}
           startIcon={icon}
           sx={{
-            color: "text.secondary",
-            fontWeight: "fontWeightMedium",
-            justifyContent: "flex-start",
+            color: 'text.secondary',
+            fontWeight: 'fontWeightMedium',
+            justifyContent: 'flex-start',
             pl: `${paddingLeft}px`,
-            pr: "8px",
-            py: "12px",
-            textAlign: "left",
-            textTransform: "none",
-            width: "100%",
-            backgroundColor:"yellow",
+            pr: '8px',
+            py: '12px',
+            textAlign: 'left',
+            textTransform: 'none',
+            width: '100%'
           }}
           variant="text"
         >
-          {isOpenDrawer && showBox && (
-            <Box sx={{ flexGrow: 1 }}>{t(`common:common.${title}`)}</Box>
-          )}
+          <Box sx={{ flexGrow: 1 }}>
+            {t(`common:common.${title}`)}
+          </Box>
           {info}
         </Button>
-        <Collapse in={open}>{children}</Collapse>
+        <Collapse in={open}>
+          {children}
+        </Collapse>
       </ListItem>
     );
   }
@@ -97,56 +67,37 @@ const NavItem = (props) => {
     <ListItem
       disableGutters
       sx={{
-        display: "flex",
-        py: 0,
-        // ml: isOpenDrawer && 2,
-        pl: isOpenDrawer && 2,
+        display: 'flex',
+        py: 0
       }}
     >
       <Button
-        id={title}
         component={path && RouterLink}
-        startIcon={active ? orangeIcon : icon}
+        startIcon={icon}
         sx={{
-          "&:hover": active && {
-            backgroundColor: "#0C1825",
-          },
-          color: "white",
-          fontWeight: "fontWeightMedium",
-          justifyContent: isOpenDrawer ? "flex-start" : "center",
-          textAlign: isOpenDrawer ? "left" : "center",
+          color: 'text.secondary',
+          fontWeight: 'fontWeightMedium',
+          justifyContent: 'flex-start',
+          textAlign: 'left',
           pl: `${paddingLeft}px`,
-          mb: 1,
-          border: "none",
-          textTransform: "none",
-          backgroundColor: active && "#0C1825",
-          width: "100%",
+          pr: '8px',
+          py: '12px',
+          textTransform: 'none',
+          width: '100%',
           ...(active && {
-            color: "primary.main",
-            fontWeight: "fontWeightBold",
-            "& svg": {
-              color: "primary.main",
-            },
-          }),
-          ...(style || {})
+            color: 'primary.main',
+            fontWeight: 'fontWeightBold',
+            '& svg': {
+              color: 'primary.main'
+            }
+          })
         }}
-        variant={active && isOpenDrawer ? "contained" : "text"}
+        variant="text"
         to={path}
       >
-        {isOpenDrawer && showBox && (
-          <Box
-            sx={{
-              flexGrow: 1,
-              whiteSpace: "normal",
-              wordBreak: "break-word",
-              overflowWrap: "break-word",
-              lineHeight: 1.2,
-              textAlign: "left",
-            }}
-          >
-            {parentTitle === FosterShare ? title : t(`common:common.${title}`)}
-          </Box>
-        )}
+        <Box sx={{ flexGrow: 1 }}>
+          {t(`common:common.${title}`)}
+        </Box>
         {info}
       </Button>
     </ListItem>
@@ -161,12 +112,12 @@ NavItem.propTypes = {
   info: PropTypes.node,
   open: PropTypes.bool,
   path: PropTypes.string,
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired
 };
 
 NavItem.defaultProps = {
   active: false,
-  open: false,
+  open: false
 };
 
 export default NavItem;

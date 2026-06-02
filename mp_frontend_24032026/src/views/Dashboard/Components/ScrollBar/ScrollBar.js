@@ -1,7 +1,7 @@
 import { forwardRef } from 'react';
 import PropTypes from 'prop-types';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import { Box } from '@mui/material';
+import { Box } from '@material-ui/core';
 
 const Scrollbar = forwardRef((props, ref) => {
   const { children, ...other } = props;

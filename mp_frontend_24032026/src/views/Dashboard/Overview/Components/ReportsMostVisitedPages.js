@@ -10,7 +10,7 @@ import {
   TableRow,
   Tooltip,
   Typography
-} from '@mui/material';
+} from '@material-ui/core';
 import ExternalLinkIcon from '../../../../assets/icons/ExternalLink';
 import InformationCircleIcon from '../../../../assets/icons/InformationCircle';
 

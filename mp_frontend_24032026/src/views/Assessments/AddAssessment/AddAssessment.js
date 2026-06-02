@@ -1,119 +1,125 @@
-import { useEffect, useContext, useRef, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { Box, Grid, Typography } from "@mui/material";
-import { useTranslation } from "react-i18next";
-import LoadingButton from "@mui/lab/LoadingButton";
-import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
-import "../../../theme/fontSize.css";
-import ChevronRightIcon from "../../../assets/icons/ChevronRight";
-import useAuthorization from "../../../components/UserComponents/useAuthorization";
-import ViewAssessment from "../Components/ViewAssessment";
-import FileUploadIcon from '@mui/icons-material/FileUpload';
+import { useEffect, useContext } from 'react';
+import {  useNavigate, useLocation } from 'react-router-dom';
+//import { Helmet } from 'react-helmet-async';
+import { Box, Container, Grid, Typography, IconButton } from '@material-ui/core';
+import { useTranslation } from 'react-i18next';
+// import { customerApi } from '../../../__fakeApi__/customerApi';
+import AddAssessmentForm from '../Components/AddAssessmentForm';
+import useSettings from '../../../common/hooks/UseSettings';
+import ChevronLeftIcon from '../../../assets/icons/ChevronLeft';
+import { CommonDataContext } from '../../../common/contexts/CommonDataContext';
+import '../../../theme/fontSize.css'
+
+//import gtm from '../../lib/gtm';
 
 const AddAssessment = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation(["common"]);
-  const [exportLoading, setExportLoading] = useState(false);
-  const { signedinUserRoleHT, signedinOrgType } = useContext(CommonDataContext);
-  const location = useLocation();
-  const viewAssessment = location.state && location.state.viewAssessment;
-  const childRef = useRef();
-
-  const handleButtonClick = () => {
-    if (childRef.current) {
-      childRef.current.handleExport();
-    }
-  };
+  const { t } = useTranslation(['common']);
+  const { signedinUserRole, signedinOrgType } = useContext(CommonDataContext)
+  const location= useLocation();
+  const viewAssessment = location.state && location.state.viewAssessment
+  const editAssessment = location.state && location.state.editAssessment
+  const { settings } = useSettings();
 
   useEffect(() => {
-    if (viewAssessment) {
-      document.title = "Assessments | View | ThriveWell";
+    if (viewAssessment){
+      document.title = "Assessments | View | Miracle Foundation"
     }
-  }, [signedinOrgType, signedinUserRoleHT]);
+    if(signedinOrgType !== null && signedinUserRole !== null){
+      if (viewAssessment){
+        if(signedinUserRole === 'viewonly'){
+          navigate('/Unauthorized');
+        }
+      }else {// for edit and add
+        if(signedinUserRole !== 'viewonly' && [3,4,5].includes(parseInt(signedinOrgType))){
+          // has access (all orgs other than miracle and govt DCPU has add/edit)
+        } else {
+          navigate('/Unauthorized');
+        }
+      }
+    }
+    // if(signedinUserRole !== 'viewonly' && [3,4,5].includes(parseInt(signedinOrgType))){
+    //   // has access
+    // } else {
+    //   navigate('/Unauthorized');
+    // }
+  }, [signedinOrgType,signedinUserRole]);
 
-  useAuthorization(
-    signedinUserRoleHT,
-    null,
-    signedinOrgType,
-    "Assessment",
-    true
-  );
 
   return (
     <>
-      <Box
-        id="scroller"
+      {/* <Helmet>
+        <title>Dashboard: Customer Edit | Material Kit Pro</title>
+      </Helmet> */}
+      <Box id="scroller"
         sx={{
-          backgroundColor: "background.default",
-          minHeight: "100%",
-          mt: 2,
+          backgroundColor: 'background.default',
+          minHeight: '100%',
+          mt : 2
+          //py: 8
         }}
       >
-        <Grid container width={1}>
-          <Grid item xs={12} sx={{ mr: 1 }}>
-            <Grid container justifyContent="space-between" spacing={3}>
-              <Grid item sx={{ display: "flex", flexDirection: "row" }}>
-                <Typography
+        <Container maxWidth={settings.compact ? 'xl' : false}>
+          <Grid
+            container
+            justifyContent="space-between"
+            spacing={3}
+          >
+            <Grid item sx={{display : "flex",flexDirection : "row"}}>
+              <IconButton
+              color="inherit"
+              onClick={()=>navigate(-1)}
+              sx={{
+                // display: {
+                //   md: 'none'
+                // }
+                mt : - 0.5
+              }}
+              >
+              <ChevronLeftIcon fontSize="small" />
+              </IconButton>
+              <Typography
+                color="textPrimary"
+                variant="h5"
+              >
+                <label >{viewAssessment ? t('common:assessment.View Assessment') : 
+                  editAssessment ? t('common:assessment.Edit Assessment') : 
+                  t('common:assessment.Add Assessment')}</label>
+              </Typography>
+              {/* <Breadcrumbs
+                aria-label="breadcrumb"
+                separator={<ChevronRightIcon fontSize="small" />}
+                sx={{ mt: 1 }}
+              >
+                <Link
                   color="textPrimary"
-                  sx={{ cursor: "pointer" }}
-                  variant="h5"
-                  onClick={() => navigate("/dashboard")}
+                  component={RouterLink}
+                  to="/dashboard"
+                  variant="subtitle2"
                 >
-                  {t("common:common.Thrive Scale")}
+                  Dashboard
+                </Link>
+                <Link
+                  color="textPrimary"
+                  component={RouterLink}
+                  to="/dashboard"
+                  variant="subtitle2"
+                >
+                  Management
+                </Link>
+                <Typography
+                  color="textSecondary"
+                  variant="subtitle2"
+                >
+                  Customers
                 </Typography>
-                <Box
-                  sx={{
-                    m: 0.75,
-                  }}
-                  style={{ cursor: "text" }}
-                >
-                  <ChevronRightIcon color="disabled" fontSize="small" />
-                </Box>
-                <Grid item>
-                  <Typography
-                    color="textPrimary"
-                    sx={{ cursor: "pointer" }}
-                    onClick={() => navigate("/dashboard/assessments")}
-                    variant="h5"
-                  >
-                    {t("common:common.Assessments")}
-                  </Typography>
-                </Grid>
-                <Box
-                  sx={{
-                    m: 0.75,
-                  }}
-                  style={{ cursor: "text" }}
-                >
-                  <ChevronRightIcon color="disabled" fontSize="small" />
-                </Box>
-                <Grid item>
-                  <Typography color="textPrimary" variant="h5">
-                    {t("common:assessment.View Assessment")}
-                  </Typography>
-                </Grid>
-              </Grid>
-              <Grid item>
-                <LoadingButton
-                  loadingPosition="start"
-                  loading={exportLoading}
-                  variant="contained"
-                  onClick={() => handleButtonClick()}
-                  startIcon={<FileUploadIcon />}
-                >
-                  {t("common:common.Export")}
-                </LoadingButton>
-              </Grid>
+              </Breadcrumbs> */}
             </Grid>
-
-            <Box mt={3}>
-              <ViewAssessment
-                ref={childRef}
-                setExportLoading={setExportLoading}
-              />
-            </Box>
           </Grid>
-        </Grid>
+          <Box mt={3}>
+            <AddAssessmentForm />
+          </Box>
+        </Container>
       </Box>
     </>
   );

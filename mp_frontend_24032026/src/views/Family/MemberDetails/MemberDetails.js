@@ -1,10 +1,5 @@
-import { useState, useEffect, useContext } from "react";
-import {
-  Link as RouterLink,
-  useParams,
-  useNavigate,
-  useLocation,
-} from "react-router-dom";
+import { useState, useEffect, useContext } from 'react';
+import { Link as RouterLink, useParams, useNavigate } from 'react-router-dom';
 //import { Helmet } from 'react-helmet-async';
 import {
   Box,
@@ -17,24 +12,21 @@ import {
   // Tab,
   // Tabs,
   Typography,
-  IconButton,
-} from "@mui/material";
+  IconButton
+} from '@material-ui/core';
 // import { customerApi } from '../../../__fakeApi__/customerApi';
 // import Members from '../Components/Members';
 // import Children from '../Components/Children';
-import CareGiverBasicDetails from "../Components/MemberBasicDetails";
+import CareGiverBasicDetails from '../Components/MemberBasicDetails';
+//import OrganizationUsers from '../Components/OrganizationUsers';
 // import useMounted from '../../../common/hooks/UseMounted';
 //import ChevronRightIcon from '../../../assets/icons/ChevronRight';
-import PencilAltIcon from "../../../assets/icons/PencilAlt";
+import PencilAltIcon from '../../../assets/icons/PencilAlt';
 //import gtm from '../../lib/gtm';
-import useSettings from "../../../common/hooks/UseSettings";
-import ChevronLeftIcon from "../../../assets/icons/ChevronLeft";
+import useSettings from '../../../common/hooks/UseSettings';
+import ChevronLeftIcon from '../../../assets/icons/ChevronLeft';
 // import APIS from '../../../common/hooks/UseApiCalls';
-import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
-import ChevronRightIcon from "../../../assets/icons/ChevronRight";
-import { useTranslation } from "react-i18next";
-import APIS from "../../../common/hooks/UseApiCalls";
-import Loader from "../../../components/UserComponents/Loader";
+import { CommonDataContext } from '../../../common/contexts/CommonDataContext';
 
 // const tabs = [
 //   { label: 'Details', value: 'details' },
@@ -43,14 +35,9 @@ import Loader from "../../../components/UserComponents/Loader";
 
 const MemberDetails = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation(["common"]);
-
   // const mounted = useMounted();
-  const { state: locationState } = useLocation();
-  const { membersInFamily, signedinUserRole } = useContext(CommonDataContext);
+  const { membersInFamily,signedinUserRole } = useContext(CommonDataContext);
   const { settings } = useSettings();
-  const [isLoading, setIsLoading] = useState();
-
   // const [loading, setLoading] = useState(false);
 
   const [member, setMember] = useState(null);
@@ -81,44 +68,37 @@ const MemberDetails = () => {
   //   }
   // }, [mounted]);
   useEffect(() => {
-    if (signedinUserRole !== null) {
-      if (signedinUserRole !== "viewonly") {
+    if(signedinUserRole !== null){
+      if( signedinUserRole !== 'viewonly'){
         // has access
       } else {
-        navigate("/Unauthorized");
+        navigate('/Unauthorized');
       }
-      return () => {};
-    }
-  }, [signedinUserRole]);
+      return () =>{
 
-  useEffect(() => {
-    if (locationState?.data?.familyId)
-      getFamilyDetails(locationState?.data?.familyId);
-    return () => {};
-  }, [locationState?.data?.familyId]);
-
-  const getFamilyDetails = async (familyId) => {
-    setIsLoading(true);
-    try {
-      const data = await APIS.FamilyDetails(familyId);
-      if (data && data.data && data.data.familyDetails) {
-        if (data.data.familyDetails.HT_familyMembers) {
-          let totalMembers = data.data.familyDetails.HT_familyMembers;
-
-          totalMembers.map((member) => {
-            if (member.id === id) {
-              setMember(member);
-            }
-          });
-        }
-        // setCareGiver(care_giver);
-        setIsLoading(false);
       }
-    } catch (err) {
-      console.error(err);
-      setIsLoading(false);
     }
-  };
+  },[signedinUserRole])
+
+
+  const getMember = () => {
+    // setLoading(true)
+    membersInFamily && membersInFamily.length > 0 && membersInFamily.map((member)=>{
+          if(member.id === id){
+              setMember(member)
+              console.log("member found >>",member)
+          }
+          // setLoading(false)
+      })
+    
+  //}
+}
+  
+    useEffect(()=>{
+      getMember();
+      return () => {
+      }
+    },[])
 
   // const handleTabsChange = (event, value) => {
   //   setCurrentTab(value);
@@ -131,137 +111,122 @@ const MemberDetails = () => {
 
   return (
     <>
-      <Loader loading={isLoading} />
-
       {/* <Helmet>
         <title>Dashboard: Customer Details | Material Kit Pro</title>
       </Helmet> */}
-      <Grid container spacing={2} width={1}>
-        <Grid xs={12} item>
-          <Grid container justifyContent="space-between" wrap="wrap" my={3}>
-            <Grid
-              item
-              sx={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}
-            >
-              <Typography
-                color="textPrimary"
-                variant="h5"
-                sx={{ cursor: "pointer" }}
-                onClick={() => navigate("/dashboard")}
-              >
-                {t("common:common.Thrive Scale")}
-              </Typography>
-              <Box
-                sx={{
-                  m: 0.75,
-                }}
-                style={{ cursor: "text" }}
-              >
-                <ChevronRightIcon color="disabled" fontSize="small" />
-              </Box>
-              <Typography
-                color="textPrimary"
-                variant="h5"
-                style={{ cursor: "pointer" }}
-                onClick={() => navigate("/dashboard/families")}
-              >
-                {t("common:family.Families")}
-              </Typography>
-              <Box
-                sx={{
-                  m: 0.75,
-                }}
-                style={{ cursor: "text" }}
-              >
-                <ChevronRightIcon color="disabled" fontSize="small" />
-              </Box>
-              <Typography
-                color="textPrimary"
-                variant="h5"
-                style={{ cursor: "pointer" }}
-                onClick={() =>
-                  navigate(
-                    `/dashboard/families/${locationState?.data?.familyId}/view`
-                  )
-                }
-              >
-                {locationState?.data?.familyName}
-              </Typography>
-              <Box
-                sx={{
-                  m: 0.75,
-                }}
-                style={{ cursor: "text" }}
-              >
-                <ChevronRightIcon color="disabled" fontSize="small" />
-              </Box>
-              <Typography color="textPrimary" variant="h5" >
-                {member && member.firstName} {member && member.lastName}
-              </Typography>
-            </Grid>
 
+      <Box
+        sx={{
+          backgroundColor: 'background.default',
+          minHeight: '100%',
+          mt : 2
+          //py: 8
+        }}
+      >
+        <Container maxWidth={settings.compact ? 'xl' : false}>
+          <Grid
+            container
+            justifyContent="space-between"
+            spacing={3}
+          >
+             <Grid item sx={{display : "flex",flexDirection : "row"}}>
+             <IconButton
+              color="inherit"
+              onClick={()=>navigate(-1)}
+              sx={{
+                // display: {
+                //   md: 'none'
+                // }
+                mt : - 0.5
+              }}
+            >
+            <ChevronLeftIcon fontSize="small" />
+            </IconButton>
+
+              <Typography
+                color="textPrimary"
+                variant="h5"
+              >
+                {member && member.firstName } {member && member.lastName }
+              </Typography>
+              {/* <Breadcrumbs
+                aria-label="breadcrumb"
+                separator={<ChevronRightIcon fontSize="small" />}
+                sx={{ mt: 1 }}
+              >
+                <Link
+                  color="textPrimary"
+                  component={RouterLink}
+                  to="/dashboard"
+                  variant="subtitle2"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  color="textPrimary"
+                  component={RouterLink}
+                  to="/dashboard"
+                  variant="subtitle2"
+                >
+                  Management
+                </Link>
+                <Typography
+                  color="textSecondary"
+                  variant="subtitle2"
+                >
+                  Customers
+                </Typography>
+              </Breadcrumbs> */}
+            </Grid>
             <Grid item>
               <Box sx={{ m: -1 }}>
                 <Button
                   color="primary"
-                  // component={RouterLink}
+                  component={RouterLink}
                   startIcon={<PencilAltIcon fontSize="small" />}
                   sx={{ m: 1 }}
-                  // to={`/dashboard/families/member/${member && member.id}/edit`}
-                  onClick={() =>
-                    navigate(`/dashboard/families/member/${member.id}/edit`, {
-                      state: {
-                        data: {
-                          familyName: locationState?.data?.familyName,
-                          familyId: locationState?.data?.familyId,
-                        },
-                      },
-                    })
-                  }
+                  to={`/dashboard/family/member/${member && member.id}/edit`}
                   variant="contained"
                 >
-                  {t("common:common.Edit")}
+                  Edit
                 </Button>
               </Box>
             </Grid>
           </Grid>
           {/* <Divider /> */}
           <Box sx={{ mt: 3 }}>
-            <Grid container spacing={3}>
               <Grid
-                item
-                //lg={settings.compact ? 6 : 4}
-                lg={10}
-                //md={6}
-                md={12}
-                //xl={settings.compact ? 6 : 3}
-                xl={12}
-                xs={12}
+                container
+                spacing={3}
               >
-                {
-                  <CareGiverBasicDetails
-                    member_id={member?.id}
-                    first_name={member?.firstName || "-"}
-                    last_name={member?.lastName}
-                    is_primary={member?.isPrimaryCareGiver}
-                    family_member_type={member?.HT_familyMemberType}
-                    occupation={member?.occupation || "-"}
-                    phone={member?.phoneNumber || "-"}
-                    email={member?.email || "-"}
-                    relation={member?.HTFamilyRelationId}
-                    otherRelaion={
-                      member?.HTFamilyRelationId == "7"
-                        ? member?.otherRelation
-                        : null
-                    }
-                    is_active={member?.isActive}
-                  />
-                }
+                <Grid
+                  item
+                  //lg={settings.compact ? 6 : 4}
+                  lg={10}
+                  //md={6}
+                  md={12}
+                  //xl={settings.compact ? 6 : 3}
+                  xl={12}
+                  xs={12}
+                >
+                  {member && <CareGiverBasicDetails
+                    member_id={member.id}
+                    first_name={member.firstName}
+                    last_name={member.lastName}
+                    is_primary={member.isPrimaryCareGiver}
+                    family_member_type={member.HT_familyMemberType}
+                    occupation={member.occupation}
+                    phone={member.phoneNumber}
+                    email={member.email}
+                    other_relation={member.HTFamilyRelationId}
+                    is_active={member.isActive}
+                  />}
+                </Grid>
               </Grid>
-            </Grid>
+            
           </Box>
-        </Grid>
-      </Grid>
+        </Container>
+      </Box>
     </>
   );
 };

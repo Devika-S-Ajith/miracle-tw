@@ -1,4 +1,4 @@
-import createSvgIcon from '@mui/system/createSvgIcon'
+import createSvgIcon from '@material-ui/core/utils/createSvgIcon';
 
 const AcademicCap = createSvgIcon(
   <svg

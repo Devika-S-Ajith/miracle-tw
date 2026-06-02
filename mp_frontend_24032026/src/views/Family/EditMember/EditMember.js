@@ -1,165 +1,168 @@
-import { useState, useEffect, useContext } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { Box, Container, Grid, Typography, IconButton } from "@mui/material";
-import EditMemberForm from "../Components/EditMemberForm";
-import useSettings from "../../../common/hooks/UseSettings";
-import ChevronLeftIcon from "../../../assets/icons/ChevronLeft";
-import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
-import { useTranslation } from "react-i18next";
-import useAuthorization from "../../../components/UserComponents/useAuthorization";
-import APIS from "../../../common/hooks/UseApiCalls";
-import ChevronRightIcon from "../../../assets/icons/ChevronRight";
-import Loader from "../../../components/UserComponents/Loader";
+import { useState, useEffect, useContext } from 'react';
+import { useParams,useNavigate } from 'react-router-dom';
+//import { Helmet } from 'react-helmet-async';
+import { Box, Container, Grid, Typography, IconButton} from '@material-ui/core';
+// import { customerApi } from '../../../__fakeApi__/customerApi';
+import EditMemberForm from '../Components/EditMemberForm';
+// import Members from '../Components/Members';
+// import Children from '../Components/Children';
+// import useMounted from '../../../common/hooks/UseMounted';
+import useSettings from '../../../common/hooks/UseSettings';
+import ChevronLeftIcon from '../../../assets/icons/ChevronLeft';
+// import APIS from '../../../common/hooks/UseApiCalls';
+import { CommonDataContext } from '../../../common/contexts/CommonDataContext';
+//import gtm from '../../lib/gtm';
+import { useTranslation } from 'react-i18next';
 
 const EditMember = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation(["common"]);
-  const { membersInFamily, signedinOrgType, signedinUserRoleHT } =
-    useContext(CommonDataContext);
+  const { t } = useTranslation(['common']);
+  const { membersInFamily,signedinUserRole } = useContext(CommonDataContext);
+  // const mounted = useMounted();
   const { settings } = useSettings();
   const [member, setMember] = useState(null);
+  // const [family, setFamily] = useState(null);
+  // const [loading, setLoading] = useState(false);
   let { id } = useParams();
-  const [isLoading, setIsLoading] = useState();
-
-  const { state: locationState } = useLocation();
 
   useEffect(() => {
-    if (locationState?.data?.familyId)
-      getFamilyDetails(locationState?.data?.familyId);
-    return () => {};
-  }, [locationState?.data?.familyId]);
-
-  const getFamilyDetails = async (familyId) => {
-    setIsLoading(true);
-    try {
-      const data = await APIS.FamilyDetails(familyId);
-      if (data && data.data && data.data.familyDetails) {
-        if (data.data.familyDetails.HT_familyMembers) {
-          let totalMembers = data.data.familyDetails.HT_familyMembers;
-
-          totalMembers.map((member) => {
-            if (member.id === id) {
-              setMember(member);
-            }
-          });
-        }
-        // setCareGiver(care_giver);
-        setIsLoading(false);
-      }
-    } catch (err) {
-      console.error(err);
-      setIsLoading(false);
+    //gtm.push({ event: 'page_view' });
+    getFamilyAndMember();
+    return () => {
     }
-  };
+  }, []);
 
-  useAuthorization(
-    signedinUserRoleHT,
-    null,
-    signedinOrgType,
-    "ManageFamily",
-    true
-  );
+  useEffect(() => {
+    if(signedinUserRole !== null){
+      if( signedinUserRole !== 'viewonly'){
+        // has access
+      } else {
+        navigate('/Unauthorized');
+      }
+      return () =>{
 
-  // useEffect(() => {
-  //   getFamilyAndMember();
-  //   return () => {};
-  // }, []);
+      }
+    }
+  },[signedinUserRole])
 
   const getFamilyAndMember = () => {
-    membersInFamily &&
-      membersInFamily.length > 0 &&
-      membersInFamily.map((member) => {
-        if (member.id === id) {
-          setMember(member);
-        }
-      });
-  };
+      // setLoading(true)
+      membersInFamily && membersInFamily.length > 0 && membersInFamily.map((member)=>{
+            if(member.id === id){
+                setMember(member)
+            }
+            // setLoading(false)
+        })
+      
+    //}
+  }
+
+
+//   if (!customer) {
+//     return null;
+//   }
 
   return (
     <>
-      <Loader loading={isLoading} />
-
-      <Grid container spacing={2} width={1}>
-        <Grid xs={12} item>
+      {/* <Helmet>
+        <title>Dashboard: Customer Edit | Material Kit Pro</title>
+      </Helmet> */}
+      <Box
+        sx={{
+          backgroundColor: 'background.default',
+          minHeight: '100%',
+          mt : 2
+          //py: 8
+        }}
+      >
+        <Container maxWidth={settings.compact ? 'xl' : false}>
           <Grid
-            item
-            sx={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}
-            my={3}
+            container
+            justifyContent="space-between"
+            spacing={3}
           >
-            <Typography
-              color="textPrimary"
-              variant="h5"
-              sx={{ cursor: "pointer" }}
-              onClick={() => navigate("/dashboard")}
-            >
-              {t("common:common.Thrive Scale")}
-            </Typography>
-            <Box
+            <Grid item sx={{display : "flex",flexDirection : "row"}}>
+            <IconButton
+              color="inherit"
+              onClick={()=>navigate(-1)}
               sx={{
-                m: 0.75,
+                // display: {
+                //   md: 'none'
+                // }
+                mt : - 0.5
               }}
-              style={{ cursor: "text" }}
             >
-              <ChevronRightIcon color="disabled" fontSize="small" />
-            </Box>
-            <Typography
-              color="textPrimary"
-              variant="h5"
-              style={{ cursor: "pointer" }}
-              onClick={() => navigate("/dashboard/families")}
-            >
-              {t("common:family.Families")}
-            </Typography>
-            <Box
-              sx={{
-                m: 0.75,
-              }}
-              style={{ cursor: "text" }}
-            >
-              <ChevronRightIcon color="disabled" fontSize="small" />
-            </Box>
-            <Typography
-              color="textPrimary"
-              variant="h5"
-              style={{ cursor: "pointer" }}
-              onClick={() =>
-                navigate(
-                  `/dashboard/families/${locationState?.data?.familyId}/view`
-                )
-              }
-            >
-              {locationState?.data?.familyName}
-            </Typography>
-            <Box
-              sx={{
-                m: 0.75,
-              }}
-              style={{ cursor: "text" }}
-            >
-              <ChevronRightIcon color="disabled" fontSize="small" />
-            </Box>
+            <ChevronLeftIcon fontSize="small" />
+            </IconButton>
 
-            <Typography color="textPrimary" variant="h5">
-            {t("common:common.Edit Member")}
-            </Typography>
+              <Typography
+                color="textPrimary"
+                variant="h5"
+              >
+                {t('common:common.Member Edit')}
+              </Typography>
+              {/* <Breadcrumbs
+                aria-label="breadcrumb"
+                separator={<ChevronRightIcon fontSize="small" />}
+                sx={{ mt: 1 }}
+              >
+                <Link
+                  color="textPrimary"
+                  component={RouterLink}
+                  to="/dashboard"
+                  variant="subtitle2"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  color="textPrimary"
+                  component={RouterLink}
+                  to="/dashboard"
+                  variant="subtitle2"
+                >
+                  Management
+                </Link>
+                <Typography
+                  color="textSecondary"
+                  variant="subtitle2"
+                >
+                  Customers
+                </Typography>
+              </Breadcrumbs> */}
+            </Grid>
+            
           </Grid>
 
+          {/* <Divider /> */}
+
+          {/* <Box mt={3}>
+            <EditOrganizationForm organization={customer} />
+          </Box> */}
+
           <Box sx={{ mt: 3 }}>
-            <Grid container spacing={3}>
-              <Grid item lg={12} md={12} xl={12} xs={12}>
-                {member && (
-                  <EditMemberForm
-                    member={{
-                      ...member,
-                      familyId: locationState?.data?.familyId,
-                    }}
-                  />
-                )}
+              <Grid
+                container
+                spacing={3}
+              >
+                <Grid
+                  item
+                  //lg={settings.compact ? 6 : 4}
+                  lg={12}
+                  //md={6}
+                  md={12}
+                  //xl={settings.compact ? 6 : 3}
+                  xl={12}
+                  xs={12}
+                >
+                  {member && <EditMemberForm 
+                  member={member}/>}
+                </Grid>
               </Grid>
-            </Grid>
           </Box>
-        </Grid>
-      </Grid>
+
+
+        </Container>
+      </Box>
     </>
   );
 };

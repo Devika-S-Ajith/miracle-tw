@@ -3,30 +3,14 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter as Router } from 'react-router-dom';
+import {BrowserRouter as Router} from 'react-router-dom';
 //import './i18n';
-import './components/i18n';
-import { initGA, logPageView } from "./analytics";
-import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
-
-initGA();
-logPageView();
-
-function MainApp() {
-  const location = useLocation();
-
-  useEffect(() => {
-    logPageView();
-  }, [location]);
-
-  return <App />;
-}
+import '../src/components/i18n';
 
 ReactDOM.render(
   <React.StrictMode>
     <Router>
-      <MainApp />
+    <App />
     </Router>
   </React.StrictMode>,
   document.getElementById('root')
