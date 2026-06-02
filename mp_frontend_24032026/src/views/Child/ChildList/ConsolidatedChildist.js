@@ -71,11 +71,20 @@ const ConsolidatedChildList = (props) => {
     switch (status) {
       case "Active":
         return "#3DAA1D";
+      case "Case Closed":
       case "Inactive":
         return "#D6DBDE";
       default:
         return "#D6DBDE";
     }
+  };
+
+  const getStatusLabel = (status, caseCloseReason) => {
+    let statusLabel = t(`common:common.${status}`, status);
+    if (status === "Case Closed" && caseCloseReason && caseCloseReason.trim().length > 0) {
+      statusLabel = `${statusLabel} - ${caseCloseReason}`;
+    }
+    return statusLabel;
   };
 
   const columnDefinition = [
@@ -126,7 +135,7 @@ const ConsolidatedChildList = (props) => {
       enableSorting: true,
       render: (row) => (
         <Chip
-          label={`${t(`common:common.${row.status}`, row.status)}`}
+          label={getStatusLabel(row.status, row.caseCloseReason)}
           sx={{
             backgroundColor: getStatusBackgroundColor(row.status),
             color: row.status === "Active" ? "#FFFFFF" : "#000000",
