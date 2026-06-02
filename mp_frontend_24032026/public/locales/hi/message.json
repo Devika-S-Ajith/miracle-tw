@@ -1,9 +1,0 @@
-{  
-    "common": {
-      "somethingWrong": "Algo salió mal.",
-      "responseSuccess": "Guardado exitosamente.",
-      "responseFailed": "Error al guardar.",
-      "noRecords": "No se encontraron registros.",
-      "noData": "Datos no encontrados."
-    }
-}
