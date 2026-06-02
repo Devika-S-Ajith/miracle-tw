@@ -11,7 +11,7 @@ import {
   TableCell,
   TableRow,
   Typography
-} from '@material-ui/core';
+} from '@mui/material';
 // import LockIcon from '../../../../assets/icons/Lock';
 // import UserIcon from '../../../../assets/icons/User';
 // import Label from '../../../../components/Label';
@@ -30,16 +30,16 @@ const RelatedOrganization = (props) => {
     return () => {
     }
 
-  },[]);
+  }, []);
 
-    const getOrganization = async () => {
+  const getOrganization = async () => {
     try {
       const data = await customerApi.getOrganizationList();
       let organizations = data.organizations;
-      organizations.forEach((org)=>{
-          if(org.id === id){
-            setOganization(org)
-          }
+      organizations.forEach((org) => {
+        if (org.id === id) {
+          setOganization(org)
+        }
       })
 
     } catch (err) {
@@ -48,14 +48,14 @@ const RelatedOrganization = (props) => {
   }
 
   return (
-    < Card 
+    < Card
     //{...other}
     >
       <CardHeader title="Organization Details" />
       <Divider />
-      { organization && <Table>
+      {organization && <Table>
         <TableBody>
-        <TableRow>
+          <TableRow>
             <TableCell>
               <Typography
                 color="textPrimary"
@@ -74,7 +74,7 @@ const RelatedOrganization = (props) => {
             </TableCell>
           </TableRow>
           <TableRow>
-            <TableCell sx={{width : 450}}>
+            <TableCell sx={{ width: 450 }}>
               <Typography
                 color="textPrimary"
                 variant="subtitle2"
@@ -83,18 +83,18 @@ const RelatedOrganization = (props) => {
               </Typography>
             </TableCell>
             <TableCell>
-              <Box sx={{display : "flex",flexDirection : "row"}}>
-              <Typography
-                color="textSecondary"
-                variant="body2"
-              >
-                {organization.email}
-              </Typography>
-              {/* <Label color={isVerified ? 'success' : 'error'} sx={{ml : 2}}>
+              <Box sx={{ display: "flex", flexDirection: "row" }}>
+                <Typography
+                  color="textSecondary"
+                  variant="body2"
+                >
+                  {organization.email}
+                </Typography>
+                {/* <Label color={isVerified ? 'success' : 'error'} sx={{ml : 2}}>
                 {isVerified ? 'Email verified' : 'Email not verified'}
               </Label> */}
               </Box>
-             
+
             </TableCell>
           </TableRow>
           <TableRow>
@@ -129,7 +129,7 @@ const RelatedOrganization = (props) => {
                 color="textSecondary"
                 variant="body2"
               >
-                {`${locationList && locationList.countries && locationList.countries.length &&  locationList.countries.find(item => item.id === organization.HTCountryId).countryName} `}
+                {`${locationList && locationList.countries && locationList.countries.length && locationList.countries.find(item => item.id === organization.HTCountryId).countryName} `}
                 {/* {country} */}
               </Typography>
             </TableCell>
@@ -148,7 +148,7 @@ const RelatedOrganization = (props) => {
                 color="textSecondary"
                 variant="body2"
               >
-                {`${locationList && locationList.states && locationList.states.length &&  locationList.states.find(item => item.id === organization.HTStateId).stateName}`}
+                {`${locationList && locationList.states && locationList.states.length && locationList.states.find(item => item.id === organization.HTStateId).stateName}`}
                 {/* {state} */}
               </Typography>
             </TableCell>
@@ -167,7 +167,7 @@ const RelatedOrganization = (props) => {
                 color="textSecondary"
                 variant="body2"
               >
-                {`${locationList && locationList.districts && locationList.districts.length &&  locationList.districts.find(item => item.id === organization.HTDistrictId).districtName}`}
+                {`${locationList && locationList.districts && locationList.districts.length && locationList.districts.find(item => item.id === organization.HTDistrictId).districtName}`}
                 {/* {city} */}
               </Typography>
             </TableCell>
@@ -269,7 +269,8 @@ const RelatedOrganization = (props) => {
       </Table>}
 
     </Card>
-)}
+  )
+}
 
 RelatedOrganization.propTypes = {
   address1: PropTypes.string,
@@ -278,7 +279,7 @@ RelatedOrganization.propTypes = {
   email: PropTypes.string.isRequired,
   phone: PropTypes.string,
   state: PropTypes.string,
-  country : PropTypes.string,
+  country: PropTypes.string,
 };
 
 export default RelatedOrganization;

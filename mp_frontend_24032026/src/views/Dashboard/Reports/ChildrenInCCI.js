@@ -1,595 +1,472 @@
-import {React,useState,useEffect,useContext,useCallback} from 'react'
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Box,Container, Grid, Typography,CircularProgress,Table,Card, 
-    // MenuItem,
-    Button,
-    TextField,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableRow, Pagination, IconButton } from '@material-ui/core';
-import Scrollbar from '../Components/ScrollBar';
-import useSettings from '../../../common/hooks/UseSettings';
-import { useTranslation } from 'react-i18next';
-import APIS from '../../../common/hooks/UseApiCalls';
-import { CommonDataContext } from '../../../common/contexts/CommonDataContext';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import DateAdapter from '@mui/lab/AdapterDateFns';
-import DatePicker from '@mui/lab/DatePicker';
-import moment from 'moment';
-import ChevronLeftIcon from '../../../assets/icons/ChevronLeft';
-import toast from 'react-hot-toast';
-import UploadIcon from '../../../assets/icons/Upload';
-import AutoCompleteDropdownToFilter from '../../../components/UserComponents/AutoCompleteDropdownToFilter'
+import { React, useState, useEffect, useContext, useCallback } from "react";
+import { useLocation } from "react-router-dom";
+import toast from "react-hot-toast";
+import {
+  Box,
+  Grid,
+  CircularProgress,
+  Table,
+  Card,
+  TextField,
+} from "@mui/material";
+import { useTranslation } from "react-i18next";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
+import Scrollbar from "../Components/ScrollBar";
+import APIS from "../../../common/hooks/UseApiCalls";
+import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
+import AutoCompleteDropdownToFilter from "../../../components/UserComponents/AutoCompleteDropdownToFilter";
+import {
+  getDate,
+  getDistrictList,
+  getSelectedCountryDetails,
+  getStateList,
+} from "../../../helpers/helperFunction";
+import { DateFormatFromRegion } from "../../../constants";
+import ReportHeader from "./Components/ReportHeader";
+// import ReportExportButton from "./Components/ReportExportButton";
+import ReportClearFilterButton from "./Components/ReportClearFilterButton";
+import ReportTableHeader from "./Components/ReportTableHeader";
+import ReportTableData from "./Components/ReportTableData";
+import ReportTableNoData from "./Components/ReportTableNoData";
+import ReportPagination from "./Components/ReportPagination";
+
 function ChildrenInCCI() {
-    const location = useLocation();
-    const fromDashboard = location.state && location.state.fromDashboard
-    let dashboardFilter =localStorage.getItem('dashboardFilters');
-    let initialData = fromDashboard=== true ? JSON.parse(dashboardFilter): null;
-    const navigate = useNavigate();
-    const [startDate, setStartDate] = useState(initialData === null ? null :initialData.startDate);
-    const [endDate, setEndDate] = useState(initialData === null ? null :initialData.endDate);
-    const [reportData, setReportData] = useState();
-    const {locationList, childPlacementList} = useContext(CommonDataContext);
-    const [pageCount, setPageCount] = useState(1);
-    const { settings } = useSettings();
-    const [loading,setLoading] = useState(true);
-    const [page, setPage] = useState(1);
-    const { t } = useTranslation(['common']);
-    const [stateFilter, setStateFilter] = useState(initialData === null ? "" :initialData.stateFilter);
-    const [districtFilter, setDistrictFilter] = useState(initialData === null ? "" :initialData.districtFilter);
-    const [payloadData, setPayloadData] = useState({});
-    const [isExportDisabled, setIsExportDisabled] = useState(true);
-    const[keyVal,setKeyVal]=useState(false)
+  const location = useLocation();
+  const fromDashboard = location.state && location.state.fromDashboard;
+  let dashboardFilter = localStorage.getItem("dashboardFilters");
+  let initialData = fromDashboard === true ? JSON.parse(dashboardFilter) : null;
+  const [startDate, setStartDate] = useState(
+    initialData === null ? null : initialData.startDate
+  );
+  const [endDate, setEndDate] = useState(
+    initialData === null ? null : initialData.endDate
+  );
+  const [reportData, setReportData] = useState();
+  const { locationList, childPlacementList } = useContext(CommonDataContext);
+  const [pageCount, setPageCount] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const { t } = useTranslation(["common"]);
+  const [stateFilter, setStateFilter] = useState(
+    initialData === null ? "" : initialData.stateFilter
+  );
+  const [districtFilter, setDistrictFilter] = useState(
+    initialData === null ? "" : initialData.districtFilter
+  );
+  const [payloadData, setPayloadData] = useState({});
+  const [isExportDisabled, setIsExportDisabled] = useState(true);
+  const [keyVal, setKeyVal] = useState(false);
+
   const ClearFilters = () => {
-    setDistrictFilter('');
-    setStateFilter('')
+    setDistrictFilter("");
+    setStateFilter("");
     setStartDate(null);
     setEndDate(null);
-    setKeyVal(!keyVal)
+    setKeyVal(!keyVal);
     getNewlyAddedChildrenApi(null);
-    
-  }
-    const handlePageChange = (event, value) => {
-        getNewlyAddedChildrenApi({
-          "pageNumber": value,
-          //  "orgTypeFilter" : typeFilter,
-          //   "orgStatus" : statusFilter
-        })
-        setPage(value);
-      }
-      const handleStateFilter = (value) => {
-          console.log(value);
-        let payload = {
-          "districtFilter" : districtFilter,
-          "pageNumber" : "1",
-          "rowCount": "10",
-          "stateFilter" : value,
-          "startDate": startDate,
-          "endDate": endDate
-        }
-        getNewlyAddedChildrenApi(payload)
-        setStateFilter(value);
-        setPage(1);
-      };
-      const handleDistrictFilter = (value) => {
-        console.log(value);
-      let payload = {
-        "districtFilter" : value,
-        "pageNumber" : "1",
-        "rowCount": "10",
-        "stateFilter" : stateFilter,
-        "startDate": startDate,
-        "endDate": endDate
-      }
-      getNewlyAddedChildrenApi(payload)
-      setDistrictFilter(value);
-      setPage(1);
+  };
+
+  const [rowCount, setRowCount] = useState(10);
+
+  const handleRowCountChange = (event) => {
+    setRowCount(event.target.value);
+    getNewlyAddedChildrenApi({
+      pageNumber: page,
+      districtFilter: districtFilter,
+      rowCount: event.target.value,
+      stateFilter: stateFilter,
+      startDate: startDate,
+      endDate: endDate,
+    });
+  };
+
+  const handlePageChange = (event, value) => {
+    getNewlyAddedChildrenApi({
+      pageNumber: value,
+      districtFilter: districtFilter,
+      rowCount: rowCount,
+      stateFilter: value,
+      startDate: startDate,
+      endDate: endDate,
+    });
+    setPage(value);
+  };
+
+  const handleStateFilter = (value) => {
+    let payload = {
+      districtFilter: districtFilter,
+      pageNumber: "1",
+      rowCount: rowCount,
+      stateFilter: value,
+      startDate: startDate,
+      endDate: endDate,
     };
-    const handleDateFilter=()=>{
-        let startdateformat
-        let enddateformat
-        console.log({startDate})
-        if(startDate && endDate){
-            startdateformat = moment(startDate).format('YYYY-MM-DD')
-            enddateformat =moment(endDate).format('YYYY-MM-DD')
-            console.log(startdateformat,enddateformat)
-        }
-        let payload = {
-          "rowCount": "10",
-          "pageNumber": "1",
-          "districtFilter" : districtFilter,
-          "stateFilter" : stateFilter,
-          "startDate": startdateformat,
-          "endDate": enddateformat
-          }
-          getNewlyAddedChildrenApi(payload)
-        
+    getNewlyAddedChildrenApi(payload);
+    setStateFilter(value);
+    setPage(1);
+  };
+
+  const handleDistrictFilter = (value) => {
+    let payload = {
+      districtFilter: value,
+      pageNumber: "1",
+      rowCount: rowCount,
+      stateFilter: stateFilter,
+      startDate: startDate,
+      endDate: endDate,
+    };
+    getNewlyAddedChildrenApi(payload);
+    setDistrictFilter(value);
+    setPage(1);
+  };
+
+  const handleDateFilter = () => {
+    let startdateformat;
+    let enddateformat;
+    if (startDate && endDate) {
+      startdateformat = getDate(startDate);
+      enddateformat = getDate(endDate);
     }
-      let tableHead = [
-        {name : t('common:common.FirstName')},
-        {name : t('common:common.LastName')},
-        {name : t('common:common.Age')},
-        {name : t('common:common.Gender')},
-        {name : t('common:common.Date of Entry')},
-        {name : t('common:common.Placement Status')},
-        {name : t('common:common.Last Thrive Scale Score')},
-        {name : t('common:common.Next Assessment Date')},
-    ]
-    const defaultPayload={
-        "rowCount": "10",
-        "pageNumber": "1",
-        "stateFilter": "",
-        "districtFilter": "",
-        "startDate": "",
-        "endDate": ""
-    }
-    let payloadAddon={
-        "rowCount": "10",
-        "pageNumber": "1",
-        "stateFilter": "",
-        "districtFilter": "",
-        "startDate": "",
-        "endDate": ""
-    }
+    let payload = {
+      rowCount: rowCount,
+      pageNumber: "1",
+      districtFilter: districtFilter,
+      stateFilter: stateFilter,
+      startDate: startdateformat,
+      endDate: enddateformat,
+    };
+    getNewlyAddedChildrenApi(payload);
+  };
+
+  let tableHead = [
+    { name: t("common:common.FirstName") },
+    { name: t("common:common.LastName") },
+    { name: t("common:common.Age") },
+    { name: t("common:common.Gender") },
+    { name: t("common:common.Date of Entry") },
+    { name: t("common:common.Placement Status") },
+    { name: t("common:common.Last Thrive Scale Score") },
+    { name: t("common:common.Next Assessment Date") },
+  ];
+
+  const tableBody = [
+    { key: "firstName", render: (item) => item.firstName },
+    { key: "lastName", render: (item) => item.lastName },
+    { key: "age", render: (item) => item.age },
+    { key: "gender", render: (item) => item.gender },
+    { key: "dateOfEntry", render: (item) => item.dateOfEntry },
+    {
+      key: "placementStatus",
+      render: (item) =>
+        childPlacementList &&
+        childPlacementList.length &&
+        `${
+          childPlacementList.find(
+            (item1) => item1.id === item.HTChildPlacementStatusId
+          )?.placementStatus || "--"
+        }`,
+    },
+    {
+      key: "lastThriveScaleScore",
+      render: (item) => item.lastThriveScaleScore,
+    },
+    { key: "nextVisitDate", render: (item) => item.nextVisitDate },
+  ];
+
+  const defaultPayload = {
+    rowCount: rowCount,
+    pageNumber: "1",
+    stateFilter: "",
+    districtFilter: "",
+    startDate: "",
+    endDate: "",
+  };
+
+  let payloadAddon = {
+    rowCount: rowCount,
+    pageNumber: "1",
+    stateFilter: "",
+    districtFilter: "",
+    startDate: "",
+    endDate: "",
+  };
+
   useEffect(() => {
-    document.title = "Reports | Children in CCI | Miracle Foundation"
+    document.title = "Reports | Children in CCI | ThriveWell";
     if (initialData === null) {
-      if(localStorage.getItem('userRegion')){
+      if (localStorage.getItem("userRegion")) {
         getNewlyAddedChildrenApi();
-      }else{
-        return
+      } else {
+        return;
       }
-    }
-    else if (initialData) {
-      if(localStorage.getItem('userRegion')){
+    } else if (initialData) {
+      if (localStorage.getItem("userRegion")) {
         let payload = {
-          "rowCount": "10",
-          "pageNumber": "1",
-          "stateFilter": initialData.stateFilter,
-          "districtFilter": initialData.districtFilter,
-          "startDate": initialData.startDate,
-          "endDate": initialData.endDate
-        }
+          rowCount: rowCount,
+          pageNumber: "1",
+          stateFilter: initialData.stateFilter,
+          districtFilter: initialData.districtFilter,
+          startDate: initialData.startDate,
+          endDate: initialData.endDate,
+        };
         getNewlyAddedChildrenApi(payload);
-      }else{
-        return
+      } else {
+        return;
       }
-     
     }
-  }, [])
-
+  }, []);
 
   useEffect(() => {
-    //document.title = "Reports | Children in CCI | Miracle Foundation"
+    //document.title = "Reports | Children in CCI | ThriveWell"
     if (initialData === null) {
-      if(localStorage.getItem('userRegion')){
+      if (localStorage.getItem("userRegion")) {
         getNewlyAddedChildrenApi();
-      }else{
-        return
+      } else {
+        return;
       }
-      
-    }
-    else if (initialData) {
-      if(localStorage.getItem('userRegion')){
+    } else if (initialData) {
+      if (localStorage.getItem("userRegion")) {
         let payload = {
-          "rowCount": "10",
-          "pageNumber": "1",
-          "stateFilter": initialData.stateFilter,
-          "districtFilter": initialData.districtFilter,
-          "startDate": initialData.startDate,
-          "endDate": initialData.endDate
-        }
+          rowCount: rowCount,
+          pageNumber: "1",
+          stateFilter: initialData.stateFilter,
+          districtFilter: initialData.districtFilter,
+          startDate: initialData.startDate,
+          endDate: initialData.endDate,
+        };
         getNewlyAddedChildrenApi(payload);
-      }else{
-        return
+      } else {
+        return;
       }
-     
     }
-  }, [localStorage.getItem('userRegion')])
+  }, [localStorage.getItem("userRegion")]);
 
+  useEffect(() => {
+    handleDateFilter();
+  }, [startDate, endDate]);
 
-    useEffect(() => {
-        handleDateFilter();
-    }
-       , [startDate,endDate])
-    const getNewlyAddedChildrenApi= useCallback(async(payload=null)=>{
-        // let defaultPayload={
-        //         "rowCount": "10",
-        //         "pageNumber": "1",
-        //         "stateFilter": "",
-        //         "districtFilter": "",
-        //         "startDate": "2020-02-12",
-        //         "endDate": "2022-02-14"
-        //     }
-        try{
-            let finalPayload
-            if(payload === null){
-            finalPayload = defaultPayload
-            } 
-            else {
-                finalPayload = { ...payloadAddon, ...payload};
-                payloadAddon = { ...finalPayload }
-            }
-            console.log("final payload >>",finalPayload)
-            finalPayload.HTCountryId = localStorage.getItem('userRegion')
-            setPayloadData(finalPayload)
-            await APIS.ChildrenInCCI(finalPayload).then((resp)=>{
-                if(resp && resp.data){
-                    setReportData(resp.data.data);
-                    setLoading(false);
-                   
-                    setPageCount(resp.data && resp.data.pageCount)
-                   if(resp.data.data && resp.data.data.length === 0){
-                    setIsExportDisabled(true)
-                   }else{
-                    setIsExportDisabled(false)
-                   }
-                   
-                    // console.log("page count ",resp.data.pageCount)
-                    // console.log({pageCount})
-                }else{
-                    console.log("else");
-                    setLoading(false);
-                }
-        })
-        }
-        catch(err){
-            console.log("error catch");
+  const getNewlyAddedChildrenApi = useCallback(async (payload = null) => {
+    try {
+      let finalPayload;
+      if (payload === null) {
+        finalPayload = defaultPayload;
+      } else {
+        finalPayload = { ...payloadAddon, ...payload };
+        payloadAddon = { ...finalPayload };
+      }
+      finalPayload.TWCountryId = localStorage.getItem("userRegion");
+      setPayloadData(finalPayload);
+      setLoading(true);
+      await APIS.ChildrenInCCI(finalPayload).then((resp) => {
+        if (resp && resp.data && resp.data?.message) {
+          setReportData(resp.data?.message?.data);
+          setLoading(false);
+
+          setPageCount(resp.data && resp.data?.message?.pageCount);
+          if (resp.data.message && resp.data?.message?.data.length === 0) {
+            setIsExportDisabled(true);
+          } else {
+            setIsExportDisabled(false);
           }
-    })
-    const handleExport = useCallback(async () =>{
-      try {
-        let finalPayload;
-        let payload ={
-          "moduleType": "report",
-          "needFullData": "true",
-          "subModuleType": "currentCciResident",
-         }
-        finalPayload={...payloadData,...payload}
-        finalPayload.HTCountryId = localStorage.getItem('userRegion')
-        console.log("final payload in export>>",finalPayload)
-        const data = await APIS.ExportFile(finalPayload);
-        if(data.data.Message ==="Data export started.")
-        {
-        toast.success(t('common:common.Data export started'));
-        }  
-        else if(data.data.Message==="Unauthorized")
-        {
-          toast.error(t('common:common.Unauthorized'));
+        } else {
+          setLoading(false);
         }
-      } catch (err) {
-        console.error(err);
+      });
+    } catch (err) {
+      console.log("error catch");
+    }
+  });
+
+  const handleExport = useCallback(async () => {
+    try {
+      let finalPayload;
+      let payload = {
+        moduleType: "report",
+        needFullData: "true",
+        subModuleType: "currentCciResident",
+      };
+      finalPayload = { ...payloadData, ...payload };
+      finalPayload.TWCountryId = localStorage.getItem("userRegion");
+      const data = await APIS.ExportFile(finalPayload);
+      if (data.data.Message === "Data export started.") {
+        toast.success(t("common:common.Data export started"));
+      } else if (data.data.Message === "Unauthorized") {
+        toast.error(t("common:common.Unauthorized"));
       }
-  
-  })
-    return (
-        <Box
-            sx={{
-            backgroundColor: 'background.default',
-            minHeight: '100%',
-            pt : 2 //new style
-            //py: 8
-            }}
-        >
-            <Container maxWidth={settings.compact ? 'xl' : false}>
-            <Grid
-                container
-                justifyContent="space-between"
-                spacing={3}
-            >
-              <Grid item>
-                <Grid item sx={{display : "flex",flexDirection : "row"}}>
-                <IconButton
-              color="inherit"
-              onClick={()=>navigate(-1)}
-              sx={{
-                // display: {
-                //   md: 'none'
-                // }
-                mt : - 0.5
-              }}
-              >
-              <ChevronLeftIcon fontSize="small" />
-              </IconButton>  
-                <Typography
-                    color="textPrimary"
-                    variant="h5"
-                >
-                    {t('common:common.Children in CCI')}
+    } catch (err) {
+      console.error(err);
+    }
+  });
 
-                </Typography>
-                </Grid>
-                <Grid item >
-                  <Box
-                sx={{
-                  mb: -1,
-                  mx: -1,
-                  mt: -1
-                }}
-               
-              >
-                
-                <Button
-                  color="primary"
-                  startIcon={<UploadIcon fontSize="small" />}
-                  sx={{ m: 2 }}
-                  onClick={handleExport}
-                  disabled={isExportDisabled}
-                >
-                   {t('common:common.Export')}
-                </Button>
-              </Box>
-                  </Grid>
-                  </Grid>
-            </Grid>
-            </Container>
-            <Scrollbar>
-            <Card sx={{ m:4}}>
-         
-            
-            <Box sx={{ minWidth: 700 , m: 2}}>
-            {loading && <CircularProgress 
-                            sx={{zIndex : 1000,
-                                  position : "absolute",
-                                  top : "55%",
-                                  left : "45%"}}
-                            color="primary" />}
-            <Container maxWidth={settings.compact ? 'xl' : false}>
-             <Grid 
-            container
-            spacing={3}
-            sx={{pt:3}}
-            >
-            <LocalizationProvider dateAdapter={DateAdapter}>
-            <Grid item
-              xl={2}
-              md={2}
-              xs={12}
-              sx={{ mx:-1 }}>
-                {/* <DatePicker
-                    label="Start Date"
-                    // name="startDate"
-                    // value={null}
-                    // format="dd/MM/yyyy"
-                    // inputFormat = "dd/MM/yyyy"
-                    // onChange={(newValue) => {
-                    // setValue(newValue);
-                    // values.birthdate = newValue
-                    // }}
-                    value={startDate}
-                    format="dd/MM/yyyy"
-                    inputFormat = "dd/MM/yyyy"
-                    onChange={(newValue) => {
-                    setValues(newValue);
-                    startDate = newValue
-                    }}
-                    renderInput={(params) => <TextField fullWidth {...params} />}
-                    /> */}
-                <DatePicker
-                    label={t('common:common.StartDate')}
-                    value={startDate}
-                    format="dd/MM/yyyy"
-                    inputFormat="dd/MM/yyyy"
-                    onChange={(newValue) => {
-                    setStartDate(newValue);
-                    }}
-                    // onChange={handleStartFilter}
-                    renderInput={(params) => <TextField fullWidth {...params} />}
-                />    
+  return (
+    <Box
+      sx={{
+        backgroundColor: "background.default",
+        minHeight: "100%",
+        pt: 2, //new style
+        //py: 8
+      }}
+    >
+      <ReportHeader reportHeaderText={t("common:common.Children in CCI")} />
+      {/* <ReportExportButton
+        handleExport={handleExport}
+        isExportDisabled={isExportDisabled}
+      /> */}
 
-              </Grid>
-              <Grid item
-                xl={2}
-                md={2}
-                xs={12}
-                sx={{ mx:-1 }}>
-                  {/* <DatePicker
-                    label="End Date"
-                    defaultValue={values.birthdate}
-                    value={values.closedDate}
-                    format="dd/MM/yyyy"
-                    inputFormat = "dd/MM/yyyy"
-                    onChange={(newValue) => {
-                    setValue(newValue);
-                    values.closedDate = newValue
+      <Scrollbar>
+        <Grid container width={1}>
+          <Grid item xs={12}>
+            <Card sx={{ mr: 1, p: 3 }}>
+              <Box sx={{ minWidth: 700 }}>
+                {loading && (
+                  <CircularProgress
+                    sx={{
+                      zIndex: 1000,
+                      position: "fixed",
+                      top: "50%", // Adjusted to 50% to center vertically
+                      left: "50%", // Adjusted to 50% to center horizontally
+                      transform: "translate(-50%, -50%)", // Centering trick
                     }}
-                    renderInput={(params) => <TextField fullWidth {...params} />}
-                    /> */}
+                    color="primary"
+                  />
+                )}
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <Box display="flex" gap={3} flexWrap="wrap">
                     <DatePicker
-                    label={t('common:common.EndDate')}
-                    minDate={startDate}
-                    value={endDate}
-                    format="dd/MM/yyyy"
-                    inputFormat="dd/MM/yyyy"
-                    onChange={(newValue) => {
-                    setEndDate(newValue);
-                    }}
-                    renderInput={(params) => <TextField  fullWidth {...params} />}
-                /> 
-              </Grid>
-              <Grid item xl={2.2}
-              md={2.2}
-              xs={12}
-              sx={{ mt: -2,mx:-1 }}>
-             
-                <TextField                
-                  fullWidth                
-                  name="state"
-                  accessKey="stateName"
-                  key={keyVal}
-                  defaultVal={stateFilter}
-                  getValueFunction={(value)=>{handleStateFilter(value)}}
-                  component={AutoCompleteDropdownToFilter}
-                  label="state"
-                  options={locationList && locationList.states && locationList.states.length &&  locationList.states.filter( (item) =>item.HTCountryId===localStorage.getItem('userRegion'))}
-                  textFieldProps={{
-                  fullWidth: true,
-                    margin: "normal",
-                    variant: "outlined",
-                    label:t('common:common.State/Region')
-                 }}
-           
-                />
-              {/* <TextField
-                fullWidth
-                label={t('common:common.State/Region')}
-                name="state"
-                select
-                onChange={handleStateFilter}
-                value={values.state}
-                variant="outlined"
-                  >
-                     {locationList && locationList.states && locationList.states.length &&  locationList.states.filter((item) =>item.HTCountryId==='1')
-                      .map((item)=>{
-                        return(
-                        <MenuItem key={item.id} value={item.id}>{item.stateName}</MenuItem>
-                        );}
-                    )}
-                    </TextField> */}
-              </Grid>
-              <Grid item xl={2.2}
-              md={2.2}
-              xs={5}
-              sx={{ mt: -2,mx:-1 }}
-              >
-               <TextField                
-                  fullWidth                
-                  name="district"
-                  accessKey="districtName"
-                  key={stateFilter}
-                  value={districtFilter}
-                  defaultVal={districtFilter}
-                  getValueFunction={(value)=>{handleDistrictFilter(value)}}
-                  component={AutoCompleteDropdownToFilter}
-                  label="district"
-                  options={locationList && locationList.districts && locationList.districts.length &&  locationList.districts.filter( (item) =>item.HTStateId===stateFilter)}
-                  textFieldProps={{
-                  fullWidth: true,
-                    margin: "normal",
-                    variant: "outlined",
-                    label:t('common:common.District/County')
-                 }}
-                 />
-              {/* <TextField
-                    fullWidth
-                    label={t('common:common.District/County')}
-                    name="district"
-                    onChange={handleDistrictFilter}
-                    value={values.district}
-                    variant="outlined"
-                    select
-                    >
-                     {locationList && locationList.districts && locationList.districts.length &&  locationList.districts.filter( (item) =>item.HTStateId===stateFilter)
-                      .map((item)=>{
-                      return(
-                      <MenuItem key={item.id} value={item.id}>{item.districtName}</MenuItem>
+                      slotProps={{
+                        textField: { error: false },
+                      }}
+                      label={t("common:common.StartDate")}
+                      value={dayjs(startDate)}
+                      onChange={(newValue) => {
+                        setStartDate(newValue);
+                      }}
+                      format={DateFormatFromRegion()}
+                      maxDate={dayjs(endDate)}
+                      sx={{ width: 200 }}
+                    />
+                    <DatePicker
+                      slotProps={{
+                        textField: { error: false },
+                      }}
+                      label={t("common:common.EndDate")}
+                      value={dayjs(endDate)}
+                      onChange={(newValue) => {
+                        setEndDate(newValue);
+                      }}
+                      format={DateFormatFromRegion()}
+                      //maxDate={endDate}
+                      minDate={dayjs(startDate)}
+                      sx={{
+                        minWidth: 200,
+                        "& .MuiInputBase-input": {
+                          marginRight: 2,
+                        },
+                      }}
+                    />
+
+                    <Box mt={-2}>
+                      <TextField
+                        fullWidth
+                        name="state"
+                        id="state"
+                        accessKey="stateName"
+                        getValueFunction={(value) => {
+                          handleStateFilter(value);
+                        }}
+                        component={AutoCompleteDropdownToFilter}
+                        value={stateFilter}
+                        required={true}
+                        key={keyVal}
+                        defaultVal={stateFilter}
+                        label="state"
+                        options={
+                          getStateList(
+                            locationList,
+                            localStorage.getItem("userRegion")
+                          ) || []
+                        }
+                        textFieldProps={{
+                          fullWidth: true,
+                          margin: "normal",
+                          variant: "outlined",
+                          label: t("common:common.State"),
+                        }}
+                        sx={{ minWidth: 200 }}
+                      />
+                    </Box>
+                    {localStorage.getItem("userRegion") &&
+                      getSelectedCountryDetails(
+                        locationList,
+                        localStorage.getItem("userRegion")
+                      )?.districtRequired && (
+                        <Box mt={-2}>
+                          <TextField
+                            fullWidth
+                            id="district"
+                            name="district"
+                            accessKey="districtName"
+                            value={districtFilter}
+                            key={stateFilter}
+                            defaultVal={districtFilter}
+                            getValueFunction={(value) => {
+                              handleDistrictFilter(value);
+                            }}
+                            component={AutoCompleteDropdownToFilter}
+                            required={false}
+                            label="district"
+                            options={
+                              getDistrictList(
+                                locationList,
+                                localStorage.getItem("userRegion"),
+                                stateFilter
+                              ) || []
+                            }
+                            textFieldProps={{
+                              fullWidth: true,
+                              margin: "normal",
+                              variant: "outlined",
+                              label: t("common:common.Region"),
+                            }}
+                            sx={{ minWidth: 200 }}
+                          />
+                        </Box>
+                      )}
+                    <ReportClearFilterButton clearFilters={ClearFilters} />
+                  </Box>
+                </LocalizationProvider>
+                <Table>
+                  <ReportTableHeader tableHead={tableHead} />
+
+                  {reportData &&
+                    reportData.map((item, index) => {
+                      return (
+                        <ReportTableData
+                          key={index}
+                          item={item}
+                          columns={tableBody}
+                        />
                       );
-                    }
-                    )}
-                  </TextField> */}
-              </Grid>
-              {/* <Grid item xl={2}
-              md={2}
-              xs={12}>
-                <Button
-                color="primary"
-                // endIcon={<ChevronDownIcon fontSize="small" />}
-                sx={{ ml: 2, p: 2 }}
-                variant="contained"
-              >
-                Apply Filters
-              </Button>
-              </Grid>  */}
-              <Grid item  xl={4}
-              md={4}
-              xs={12}>
-               <Button
-                color="primary"
-                sx={{ ml: 2, p: 2 }}
-                variant="contained"
-                onClick={ClearFilters}
-              >
-              {t('common:common.Clear Filters')}
-              </Button>
-              </Grid>
-            </LocalizationProvider>
-            </Grid>
-            </Container>
-            <Table>
-                <TableHead>
-                    <TableRow>
-                    {tableHead.map((item,index) =>{
-                           return (
-                        <TableCell key={index}>
-                        {item.name}
-                        </TableCell>
-                           )})}
-                    </TableRow>
-                </TableHead>
-                
-                {reportData && reportData.map((item,index)=>{
-                    return (
-                <TableBody key={index}>
-                    <TableRow >
-                      <TableCell>
-                      {item.firstName}           
-                      </TableCell>
-                      <TableCell>
-                      {item.lastName}           
-                      </TableCell>
-                      <TableCell>
-                      {item.age}           
-                      </TableCell>
-                      <TableCell>
-                      {item.gender}           
-                      </TableCell>
-                      <TableCell>
-                      {item.dateOfEntry}           
-                      </TableCell>
-                      <TableCell>
-                      { childPlacementList && childPlacementList.length && 
-                      `${childPlacementList.find(item1 => item1.id === item.HTChildPlacementStatusId).placementStatus}`}   
-                      </TableCell>
-                      <TableCell>
-                      {item.lastThriveScaleScore}           
-                      </TableCell>
-                      <TableCell>
-                      {item.nextVisitDate}  
-                      </TableCell>
-                    </TableRow>      
-                </TableBody>
-                 )})}
-            </Table>
-            { reportData && reportData.length === 0 &&
-          <Box sx={{ width : "100%", ml : "40%", mt : 5,mb :1}}>
-            <Box>
-                <Grid
-                  container
-                  spacing={3}
-                >
-                      <Grid
-                        item
-                        md={3} //6
-                        xs={6} //12
-                        >
-                          <Typography>{t('common:common.No match')}</Typography>
-                      </Grid>
-                </Grid>
-            </Box>
-           </Box>
-          }
-            </Box>
-            <Box sx={{display:'flex'}} flexDirection="row-reverse"  p={1} m={1}>
-            <Box sx={{alignContent: 'flex-end'}}>
-            <Pagination onChange={handlePageChange} page={page} count={pageCount} shape="rounded" />
-            </Box> 
-            </Box>
+                    })}
+                </Table>
+                {reportData && reportData.length === 0 && <ReportTableNoData />}
+              </Box>
+              <ReportPagination
+                rowCount={rowCount}
+                page={page}
+                pageCount={pageCount}
+                handleRowCountChange={handleRowCountChange}
+                handlePageChange={handlePageChange}
+              />
             </Card>
-            </Scrollbar>
-        </Box>
-        
-    )
+          </Grid>
+        </Grid>
+      </Scrollbar>
+    </Box>
+  );
 }
 
 export default ChildrenInCCI;

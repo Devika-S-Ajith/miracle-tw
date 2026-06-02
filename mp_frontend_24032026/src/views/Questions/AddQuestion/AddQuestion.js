@@ -1,7 +1,7 @@
-import { useEffect,useContext } from 'react';
-import {  useNavigate } from 'react-router-dom';
+import { useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 //import { Helmet } from 'react-helmet-async';
-import { Box, Container, Grid, Typography, IconButton } from '@material-ui/core';
+import { Box, Container, Grid, Typography, IconButton } from '@mui/material';
 // import { customerApi } from '../../../__fakeApi__/customerApi';
 import AddQuestionForm from '../Components/AddQuestionForm';
 // import useMounted from '../../../common/hooks/UseMounted';
@@ -16,12 +16,12 @@ const AddQuestion = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(['common']);
   // const mounted = useMounted();
-  const { signedinUserRole } = useContext(CommonDataContext);
+  const { signedinUserRoleHT } = useContext(CommonDataContext);
   const { settings } = useSettings();
 
   useEffect(() => {
-    if(signedinUserRole !== null){
-      if( signedinUserRole === 'superadmin'){
+    if (signedinUserRoleHT !== null) {
+      if (signedinUserRoleHT === 'superadmin') {
         // has access
       } else {
         navigate('/Unauthorized');
@@ -29,7 +29,7 @@ const AddQuestion = () => {
     }
     return () => {
     }
-  }, [signedinUserRole]);
+  }, [signedinUserRoleHT]);
 
   return (
     <>
@@ -40,7 +40,7 @@ const AddQuestion = () => {
         sx={{
           backgroundColor: 'background.default',
           minHeight: '100%',
-          mt : 2
+          mt: 2
           //py: 8
         }}
       >
@@ -50,18 +50,18 @@ const AddQuestion = () => {
             justifyContent="space-between"
             spacing={3}
           >
-            <Grid item sx={{display : "flex",flexDirection : "row"}}>
+            <Grid item sx={{ display: "flex", flexDirection: "row" }}>
               <IconButton
-              color="inherit"
-              onClick={()=>navigate('/dashboard/questions')}
-              sx={{
-                // display: {
-                //   md: 'none'
-                // }
-                mt : - 0.5
-              }}
+                color="inherit"
+                onClick={() => navigate('/dashboard/questions')}
+                sx={{
+                  // display: {
+                  //   md: 'none'
+                  // }
+                  mt: - 0.5
+                }}
               >
-              <ChevronLeftIcon fontSize="small" />
+                <ChevronLeftIcon fontSize="small" />
               </IconButton>
               <Typography
                 color="textPrimary"

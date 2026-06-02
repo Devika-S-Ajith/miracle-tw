@@ -1,8 +1,7 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
-  Button,
   Card,
   CardHeader,
   Divider,
@@ -12,8 +11,7 @@ import {
   TableRow,
   Typography,
   Switch
-} from '@material-ui/core';
-import LockIcon from '../../../../assets/icons/Lock';
+} from '@mui/material';
 import UserIcon from '../../../../assets/icons/User';
 import Label from '../../../../components/Label';
 import { CommonDataContext } from '../../../../common/contexts/CommonDataContext';
@@ -23,9 +21,9 @@ import APIS from '../../../../common/hooks/UseApiCalls';
 
 const OrganizationContactDetails = (props) => {
   const { t } = useTranslation(['common']);
-  const { address1, address2, country, email, isVerified, phone, state, organizationType, city, district,website, profileImage, zipCode,id,isDCPU,consentRequired,orgId ,...other } = props;
-  const {userRegion,signedinUserRole,locationList,typeList,getTypesList,getLocationList } = useContext(CommonDataContext);
-  const [consentChecked,setConsentChecked] = useState(consentRequired); 
+  const { address1, address2, country, email, isVerified, phone, state, organizationType, city, district, website, profileImage, zipCode, id, isDCPU, consentRequired, orgId, ...other } = props;
+  const { userRegion, signedinUserRoleHT, locationList, typeList } = useContext(CommonDataContext);
+  const [consentChecked, setConsentChecked] = useState(consentRequired);
   const signedinOrgId = localStorage.getItem('orgId');
 
   const handleConsentStatusChange = async (value) => {
@@ -36,66 +34,59 @@ const OrganizationContactDetails = (props) => {
       }
       await APIS.ChangeConsentStatus(Payload)
         .then((res) => {
-          console.log("res", res);
-          console.log("message", res.data.Message);
           if (res.data.Message !== "Consent status updated Successfully") {
             toast.error(t('common:warnings.failed to change consent status'));
-            setConsentChecked(consentChecked);
+            // setConsentChecked(consentChecked);
           }
           else if (res.data.Message === "Consent status updated Successfully") {
             toast.success(t('common:warnings.Consent Status Updated Successfully'));
           }
           else {
             toast.error(t('common:common.Something went wrong'));
-            // setStatus({ success: false });
           }
         })
 
     } catch (err) {
       toast.error(t('common:common.Something went wrong'));
-      // setStatus({ success: false });
-      // setErr/ors({ submit: err.message });
     }
   }
 
 
-  
+
   return (
     < Card {...other}>
-      <div style={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', padding: '10px 0px'}} >
-      <CardHeader title={t('common:organization.Organization Details')} />
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', padding: '10px 0px' }} >
+        <CardHeader title={t('common:organization.Organization Details')} />
         {profileImage ?
-          <img 
-          // for="photo-upload"
-          src={profileImage} 
-          // type="image"
-          style={{ width: 60, height: 60, borderRadius: '30px' }} />
-        :
+          <img
+            src={profileImage}
+            style={{ width: 60, height: 60, borderRadius: '30px' }} />
+          :
           <UserIcon fontSize="large" style={{ width: 60, height: 60, borderRadius: '30px', border: '2px solid #172b4d' }} />
         }
       </div>
       <Divider />
       <Table>
         <TableBody>
-        <TableRow>
-              <TableCell>
-                <Typography
-                  color="textPrimary"
-                  variant="subtitle2"
-                >
-                 {t('common:common.OrganizationId')}
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography
-                  color="textSecondary"
-                  variant="body2"
-                >
-                  {id}
-                </Typography>
-              </TableCell>
-        </TableRow>
-        <TableRow>
+          <TableRow>
+            <TableCell>
+              <Typography
+                color="textPrimary"
+                variant="subtitle2"
+              >
+                {t('common:common.OrganizationId')}
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography
+                color="textSecondary"
+                variant="body2"
+              >
+                {id}
+              </Typography>
+            </TableCell>
+          </TableRow>
+          <TableRow>
             <TableCell>
               <Typography
                 color="textPrimary"
@@ -113,7 +104,7 @@ const OrganizationContactDetails = (props) => {
               </Typography>
             </TableCell>
           </TableRow>
-          {organizationType == 2?(<TableRow>
+          {organizationType == 2 ? (<TableRow>
             <TableCell>
               <Typography
                 color="textPrimary"
@@ -127,12 +118,12 @@ const OrganizationContactDetails = (props) => {
                 color="textSecondary"
                 variant="body2"
               >
-                {isDCPU ? 'Yes':'No'}
+                {isDCPU ? 'Yes' : 'No'}
               </Typography>
             </TableCell>
-          </TableRow>):<></>}
+          </TableRow>) : <></>}
           <TableRow>
-            <TableCell sx={{width : 450}}>
+            <TableCell sx={{ width: 450 }}>
               <Typography
                 color="textPrimary"
                 variant="subtitle2"
@@ -141,18 +132,15 @@ const OrganizationContactDetails = (props) => {
               </Typography>
             </TableCell>
             <TableCell>
-              <Box sx={{display : "flex",flexDirection : "row"}}>
-              <Typography
-                color="textSecondary"
-                variant="body2"
-              >
-                {email}
-              </Typography>
-              {/* <Label color={isVerified ? 'success' : 'error'} sx={{ml : 2}}>
-                {isVerified ? t('common:common.Email verified') : t('common:common.Email not verified')}
-              </Label> */}
+              <Box sx={{ display: "flex", flexDirection: "row" }}>
+                <Typography
+                  color="textSecondary"
+                  variant="body2"
+                >
+                  {email}
+                </Typography>
               </Box>
-             
+
             </TableCell>
           </TableRow>
           <TableRow>
@@ -313,7 +301,6 @@ const OrganizationContactDetails = (props) => {
                 color="textSecondary"
                 variant="body2"
               >
-                {/* {address2} */}
                 {website}
               </Typography>
             </TableCell>
@@ -332,14 +319,13 @@ const OrganizationContactDetails = (props) => {
                 color="textSecondary"
                 variant="body2"
               >
-                {/* {address2} */}
                 <Label color={isVerified ? 'success' : 'error'} >
-                {isVerified ? t('common:common.Active') : t('common:common.Inactive')}
+                  {isVerified ? t('common:common.Active') : t('common:common.Inactive')}
                 </Label>
               </Typography>
             </TableCell>
           </TableRow>
-          { <TableRow>
+          {<TableRow>
             <TableCell>
               <Typography
                 color="textPrimary"
@@ -350,9 +336,9 @@ const OrganizationContactDetails = (props) => {
               </Typography>
             </TableCell>
             <TableCell>
-              <Box sx={{display: "flex", flex: 1 }}>
-                <Switch disabled={!(signedinUserRole ==='admin' && signedinOrgId == orgId && userRegion !='india' )} size="small" color="orange" checked={consentChecked} onChange={() => { setConsentChecked(!consentChecked); handleConsentStatusChange(!consentChecked) }} />
-                <Typography 
+              <Box sx={{ display: "flex", flex: 1 }}>
+                <Switch disabled={!(signedinUserRoleHT === 'admin' && signedinOrgId == orgId && userRegion != 'india')} size="small" color="orange" checked={consentChecked} onChange={() => { setConsentChecked(!consentChecked); handleConsentStatusChange(!consentChecked) }} />
+                <Typography
                   color={consentChecked ? "#43AA8B" : "#F94144"}
                   variant="subtitle2"
                   sx={{ marginRight: 2 }}
@@ -366,14 +352,8 @@ const OrganizationContactDetails = (props) => {
       </Table>
 
     </Card>
-  //);
-//   else
-//   return(
-//     <div>
-//       <Typography>hiii no value</Typography>
-//     </div>
- );
- };
+  );
+};
 
 OrganizationContactDetails.propTypes = {
   address1: PropTypes.string,

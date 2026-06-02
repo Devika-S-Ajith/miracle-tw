@@ -1,21 +1,23 @@
-import { useEffect } from 'react';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import { Box,Drawer} from '@material-ui/core';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
-import Logo from '../../../../assets/Logo';
+import { useEffect } from "react";
+import { Link as RouterLink, useLocation } from "react-router-dom";
+import PropTypes from "prop-types";
+import { Box, Drawer } from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import Logo from "../../../../assets/Logo";
+import { useTheme } from "@mui/material/styles";
 
 const MainSidebar = (props) => {
   const { onMobileClose, openMobile } = props;
   const location = useLocation();
-  const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
+  const theme = useTheme();
+  const lgUp = useMediaQuery(theme.breakpoints.up("lg"));
+  //const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
 
   useEffect(() => {
     if (openMobile && onMobileClose) {
       onMobileClose();
     }
-    return () => {
-    }
+    return () => {};
   }, [location.pathname]);
 
   return (
@@ -26,18 +28,18 @@ const MainSidebar = (props) => {
       variant="temporary"
       PaperProps={{
         sx: {
-          backgroundColor: 'background.default',
-          width: 256
-        }
+          backgroundColor: "background.default",
+          width: 256,
+        },
       }}
     >
       <Box
         sx={{
-          alignItems: 'flex-start',
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%',
-          p: 2
+          alignItems: "flex-start",
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+          p: 2,
         }}
       >
         <RouterLink to="/dashboard">
@@ -97,7 +99,7 @@ const MainSidebar = (props) => {
 
 MainSidebar.propTypes = {
   onMobileClose: PropTypes.func,
-  openMobile: PropTypes.bool
+  openMobile: PropTypes.bool,
 };
 
 export default MainSidebar;

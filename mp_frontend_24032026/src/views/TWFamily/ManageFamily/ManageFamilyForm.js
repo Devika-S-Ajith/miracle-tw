@@ -246,6 +246,12 @@ const ManageFamilyForm = (props) => {
         return diff;
     };
 
+    const hasAddedMembers = (members = []) =>
+        members.some((member) => !!member.TWFamilyRelationId && !member.isDeleted);
+
+    const shouldIncludeAcctActivatedDate = (initialMembers = [], currentMembers = []) =>
+        initialMembers.length === 0 && hasAddedMembers(currentMembers);
+
     const handleNavigateFamilyForm = (values, initialValues) => {
         let changedValues = getChangedValues(values, initialValues);
         if (Object.keys(changedValues).length === 0) {
@@ -510,7 +516,7 @@ const ManageFamilyForm = (props) => {
                     Yup.object().shape({
                         TWFamilyRelationId: Yup.string().nullable().max(255),
 
-                        firstName: Yup.string()
+                        firstName: Yup.string().trim()
                             .nullable()
                             .max(255)
                             .test('not-empty', t('common:warnings.First Name is required', 'First Name is required'), value => !value || value.trim().length > 0)
@@ -594,17 +600,14 @@ const ManageFamilyForm = (props) => {
                                 ...(values.goal && { "TWFamilyGoalId": values.goal }),
                                 ...(values.licenceNumber && { "licenceNumber": values.licenceNumber?.trim() }),
                                 ...(values.DateStartedasFP && { "DateStartedasFP": values.DateStartedasFP }),
-                                ...{
-                                    AcctActivatedDate: values.members
-                                        .filter(member => !member.id && !!member.TWFamilyRelationId && !member.isDeleted).length ? dayjs() : null
-                                },
+                                ...(shouldIncludeAcctActivatedDate([], values.members) && { AcctActivatedDate: dayjs() }),
                             },
                             "newFamilyMembers": values.members
                                 .filter(member => !member.id && !!member.TWFamilyRelationId && !member.isDeleted)
                                 .map(({ isMajor, ...rest }) => ({ ...rest, isMinor: !isMajor })),
                             "existingChildren": values.members
                                 .filter(member => member.isExistingChild && !member.isDeleted)
-                                .map(({ isChild, isMajor, isActive, isExistingChild_rowKey,profileInformation, ...rest }) => ({ ...rest, isMinor: !rest.isMajor })),
+                                .map(({ isChild, isMajor, isActive, isExistingChild, _rowKey,profileInformation, ...rest }) => ({ ...rest, isMinor: !rest.isMajor })),
                         };
 
 
@@ -675,6 +678,9 @@ const ManageFamilyForm = (props) => {
                             ...(hasKey('goal') && { TWFamilyGoalId: changedValues.goal || null }),
                             ...(hasKey('licenceNumber') && { licenceNumber: changedValues.licenceNumber?.trim() || null }),
                             ...(hasKey('DateStartedasFP') && { DateStartedasFP: changedValues.DateStartedasFP || null }),
+                            ...(shouldIncludeAcctActivatedDate(initialValuesRef.current?.members || [], values.members) && {
+                                AcctActivatedDate: dayjs(),
+                            }),
                         };
                         const payload = {
                             id: family?.id,

@@ -1,4 +1,4 @@
-import createSvgIcon from '@material-ui/core/utils/createSvgIcon';
+import createSvgIcon from '@mui/system/createSvgIcon'
 
 const Adjustments = createSvgIcon(
   <svg

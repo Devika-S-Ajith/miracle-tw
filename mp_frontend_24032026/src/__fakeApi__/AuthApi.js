@@ -15,7 +15,6 @@ const users = [
 
 class AuthApi {
 
-    
   async login({ email, password }) {
     await wait(500);
 

@@ -1,1 +1,1 @@
-export {default} from './AddImport';
+export { default } from './AddImport';

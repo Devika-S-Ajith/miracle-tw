@@ -1,41 +1,45 @@
 import { React, useState, useEffect, useContext, useCallback } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import {
   Box,
-  Container,
   Grid,
-  Typography,
   CircularProgress,
   Table,
   Card,
-  Button,
   TextField,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Pagination,
-  IconButton,
-} from "@material-ui/core";
+} from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
 import Scrollbar from "../Components/ScrollBar";
-import useSettings from "../../../common/hooks/UseSettings";
-import { useTranslation } from "react-i18next";
 import APIS from "../../../common/hooks/UseApiCalls";
 import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
-import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import DateAdapter from "@mui/lab/AdapterDateFns";
-import DatePicker from "@mui/lab/DatePicker";
-import moment from "moment";
-import ChevronLeftIcon from "../../../assets/icons/ChevronLeft";
-import toast from 'react-hot-toast';
-import UploadIcon from '../../../assets/icons/Upload';
-import AutoCompleteDropdownToFilter from '../../../components/UserComponents/AutoCompleteDropdownToFilter'
+import AutoCompleteDropdownToFilter from "../../../components/UserComponents/AutoCompleteDropdownToFilter";
+import {
+  getDate,
+  getDistrictList,
+  getSelectedCountryDetails,
+  getStateList,
+} from "../../../helpers/helperFunction";
+import { DateFormatFromRegion } from "../../../constants";
+import ReportHeader from "./Components/ReportHeader";
+// import ReportExportButton from "./Components/ReportExportButton";
+import ReportClearFilterButton from "./Components/ReportClearFilterButton";
+import ReportTableHeader from "./Components/ReportTableHeader";
+import ReportTableData from "./Components/ReportTableData";
+import ReportTableNoData from "./Components/ReportTableNoData";
+import ReportPagination from "./Components/ReportPagination";
+
+const tableBody = [{ key: "childId" }, { key: "dateOfLeaving" }];
+
 function ReportReintegratedChildren() {
   const location = useLocation();
   const fromDashboard = location.state && location.state.fromDashboard;
   let dashboardFilter = localStorage.getItem("dashboardFilters");
   let initialData = fromDashboard === true ? JSON.parse(dashboardFilter) : null;
-  const navigate = useNavigate();
   const [startDate, setStartDate] = useState(
     initialData === null ? null : initialData.startDate
   );
@@ -43,111 +47,132 @@ function ReportReintegratedChildren() {
     initialData === null ? null : initialData.endDate
   );
   const [reportData, setReportData] = useState();
-  const { locationList} = useContext(CommonDataContext);
+  const { locationList } = useContext(CommonDataContext);
   const [pageCount, setPageCount] = useState(1);
-  const { settings } = useSettings();
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const { t } = useTranslation(["common"]);
   const [stateFilter, setStateFilter] = useState(
-    initialData === null ? " " : initialData.stateFilter
+    initialData === null ? "" : initialData.stateFilter
   );
   const [districtFilter, setDistrictFilter] = useState(
-    initialData === null ? " " : initialData.districtFilter
+    initialData === null ? "" : initialData.districtFilter
   );
   const [payloadData, setPayloadData] = useState({});
   const [isExportDisabled, setIsExportDisabled] = useState(true);
-  const[keyVal,setKeyVal]=useState(false)
+  const [keyVal, setKeyVal] = useState(false);
 
   const ClearFilters = () => {
     setStartDate(null);
     setEndDate(null);
     setDistrictFilter("");
     setStateFilter("");
-    setKeyVal(!keyVal)
+    setKeyVal(!keyVal);
     getReintegratedChildren(null);
   };
+
+  const [rowCount, setRowCount] = useState(10);
+
+  const handleRowCountChange = (event) => {
+    setRowCount(event.target.value);
+    getReintegratedChildren({
+      pageNumber: page,
+      districtFilter: districtFilter,
+      rowCount: event.target.value,
+      stateFilter: stateFilter,
+      startDate: startDate,
+      endDate: endDate,
+    });
+  };
+
   const handlePageChange = (event, value) => {
     getReintegratedChildren({
       pageNumber: value,
+      districtFilter: districtFilter,
+      rowCount: rowCount,
+      stateFilter: value,
+      startDate: startDate,
+      endDate: endDate,
     });
     setPage(value);
   };
+
   const handleStateFilter = (value) => {
-    console.log(value);
     let payload = {
-      "districtFilter" : districtFilter,
-      "pageNumber" : "1",
-      "rowCount": "10",
-      "stateFilter" : value,
-      "startDate": startDate,
-      "endDate": endDate
+      districtFilter: districtFilter,
+      pageNumber: "1",
+      rowCount: rowCount,
+      stateFilter: value,
+      startDate: startDate,
+      endDate: endDate,
     };
     getReintegratedChildren(payload);
     setStateFilter(value);
     setPage(1);
   };
+
   const handleDistrictFilter = (value) => {
-    console.log(value);
     let payload = {
-      "districtFilter" : value,
-      "pageNumber" : "1",
-      "rowCount": "10",
-      "stateFilter" : stateFilter,
-      "startDate": startDate,
-      "endDate": endDate
+      districtFilter: value,
+      pageNumber: "1",
+      rowCount: rowCount,
+      stateFilter: stateFilter,
+      startDate: startDate,
+      endDate: endDate,
     };
     getReintegratedChildren(payload);
     setDistrictFilter(value);
     setPage(1);
   };
+
   const handleDateFilter = () => {
     let startdateformat;
     let enddateformat;
-    console.log({ startDate });
     if (startDate && endDate) {
-      startdateformat = moment(startDate).format("YYYY-MM-DD");
-      enddateformat = moment(endDate).format("YYYY-MM-DD");
-      console.log(startdateformat, enddateformat);
+      startdateformat = getDate(startDate);
+      enddateformat = getDate(endDate);
     }
     let payload = {
-      "rowCount": "10",
-      "pageNumber": "1",
-      "districtFilter" : districtFilter,
-      "stateFilter" : stateFilter,
-      "startDate": startdateformat,
-      "endDate": enddateformat
+      rowCount: rowCount,
+      pageNumber: "1",
+      districtFilter: districtFilter,
+      stateFilter: stateFilter,
+      startDate: startdateformat,
+      endDate: enddateformat,
     };
     getReintegratedChildren(payload);
   };
+
   let tableHead = [
     { name: t("common:common.Child ID") },
     { name: t("common:common.dateOfLeaving") },
   ];
 
   const defaultPayload = {
-    rowCount: "10",
+    rowCount: rowCount,
     pageNumber: "1",
     stateFilter: "",
     districtFilter: "",
     startDate: "",
     endDate: "",
   };
+
   let payloadAddon = {
-    rowCount: "10",
+    rowCount: rowCount,
     pageNumber: "1",
     stateFilter: "",
     districtFilter: "",
     startDate: "",
     endDate: "",
   };
+
   useEffect(() => {
-    document.title = "Reports | Number of Reintegrated Children | Miracle Foundation"
+    document.title = "Reports | Number of Reintegrated Children | ThriveWell";
     if (initialData === null) {
-        getReintegratedChildren();
+      getReintegratedChildren();
     } else if (initialData) {
       let payload = {
-        rowCount: "10",
+        rowCount: rowCount,
         pageNumber: "1",
         stateFilter: initialData.stateFilter,
         districtFilter: initialData.districtFilter,
@@ -157,9 +182,11 @@ function ReportReintegratedChildren() {
       getReintegratedChildren(payload);
     }
   }, []);
+
   useEffect(() => {
     handleDateFilter();
   }, [startDate, endDate]);
+
   const getReintegratedChildren = useCallback(async (payload = null) => {
     try {
       let finalPayload;
@@ -169,52 +196,49 @@ function ReportReintegratedChildren() {
         finalPayload = { ...payloadAddon, ...payload };
         payloadAddon = { ...finalPayload };
       }
-      finalPayload.HTCountryId = localStorage.getItem('userRegion')
-      console.log("final payload >>", finalPayload);
-      setPayloadData(finalPayload)
+      finalPayload.TWCountryId = localStorage.getItem("userRegion");
+      setPayloadData(finalPayload);
       await APIS.ReintegratedChildren(finalPayload).then((resp) => {
         if (resp && resp.data) {
-          setReportData(resp.data.data);
+          setReportData(resp.data?.message?.data);
           setLoading(false);
-          setPageCount(resp.data && resp.data.pageCount);
-          if(resp.data.data && resp.data.data.length === 0){
-            setIsExportDisabled(true)
-           }else{
-            setIsExportDisabled(false)
-           }
+          setPageCount(resp.data && resp.data?.message?.pageCount);
+          if (resp.data.message && resp.data?.message?.data.length === 0) {
+            setIsExportDisabled(true);
+          } else {
+            setIsExportDisabled(false);
+          }
         } else {
-          console.log("else");
+          setLoading(false);
         }
       });
     } catch (err) {
       console.log("error catch");
+      setLoading(false);
     }
   });
-  const handleExport = useCallback(async () =>{
+
+  const handleExport = useCallback(async () => {
     try {
       let finalPayload;
-      let payload ={
-        "moduleType": "report",
-        "needFullData": "true",
-        "subModuleType": "reintegratedChildren",
-       }
-      finalPayload={...payloadData,...payload}
-      finalPayload.HTCountryId = localStorage.getItem('userRegion')
-      console.log("final payload in export>>",finalPayload)
+      let payload = {
+        moduleType: "report",
+        needFullData: "true",
+        subModuleType: "reintegratedChildren",
+      };
+      finalPayload = { ...payloadData, ...payload };
+      finalPayload.TWCountryId = localStorage.getItem("userRegion");
       const data = await APIS.ExportFile(finalPayload);
-      if(data.data.Message ==="Data export started.")
-      {
-      toast.success(t('common:common.Data export started'));
-      }  
-      else if(data.data.Message==="Unauthorized")
-      {
-        toast.error(t('common:common.Unauthorized'));
+      if (data.data.Message === "Data export started.") {
+        toast.success(t("common:common.Data export started"));
+      } else if (data.data.Message === "Unauthorized") {
+        toast.error(t("common:common.Unauthorized"));
       }
     } catch (err) {
       console.error(err);
     }
+  });
 
-})
   return (
     <Box
       sx={{
@@ -223,202 +247,164 @@ function ReportReintegratedChildren() {
         pt: 2,
       }}
     >
-      <Container maxWidth={settings.compact ? "xl" : false}>
-        <Grid container justifyContent="space-between" spacing={3}>
-          <Grid item>
-          <Grid item sx={{ display: "flex", flexDirection: "row" }}>
-            <IconButton
-              color="inherit"
-              onClick={() => navigate(-1)}
-              sx={{
-                mt: -0.5,
-              }}
-            >
-              <ChevronLeftIcon fontSize="small" />
-            </IconButton>
-            <Typography color="textPrimary" variant="h5">
-              {t("common:common.ReintegratedChildren")}
-            </Typography>
-          </Grid>
-          <Grid item>
-                  <Box
-                sx={{
-                  mb: -1,
-                  mx: -1,
-                  mt: -1
-                }}
-              >
-                
-                <Button
-                  color="primary"
-                  startIcon={<UploadIcon fontSize="small" />}
-                  sx={{ m: 2 }}
-                  onClick={handleExport}
-                  disabled={isExportDisabled}
-                >
-                   {t('common:common.Export')}
-                </Button>
-              </Box>
-                  </Grid>
-                  </Grid>
-        </Grid>
-      </Container>
+      <ReportHeader
+        reportHeaderText={t("common:common.ReintegratedChildren")}
+      />
+      {/* <ReportExportButton
+        handleExport={handleExport}
+        isExportDisabled={isExportDisabled}
+      /> */}
+
       <Scrollbar>
-        <Card sx={{ m: 4 }}>
-          <Box sx={{ minWidth: 700, m: 2 }}>
-            {loading && (
-              <CircularProgress
-                sx={{
-                  zIndex: 1000,
-                  position: "absolute",
-                  top: "55%",
-                  left: "45%",
-                }}
-                color="primary"
-              />
-            )}
-            <Container maxWidth={settings.compact ? "xl" : false}>
-              <Grid container spacing={3} sx={{ pt: 3 }}>
-                <LocalizationProvider dateAdapter={DateAdapter}>
-                  <Grid item xl={2} md={2} xs={12} sx={{ mx:-1 }}>
+        <Grid container width={1}>
+          <Grid item xs={12}>
+            <Card sx={{ mr: 1, p: 3 }}>
+              <Box sx={{ minWidth: 700 }}>
+                {loading && (
+                  <CircularProgress
+                    sx={{
+                      zIndex: 1000,
+                      position: "fixed",
+                      top: "50%", // Adjusted to 50% to center vertically
+                      left: "50%", // Adjusted to 50% to center horizontally
+                      transform: "translate(-50%, -50%)", // Centering trick
+                    }}
+                    color="primary"
+                  />
+                )}
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <Box display="flex" flexWrap="wrap" gap={3}>
                     <DatePicker
+                      slotProps={{
+                        textField: { error: false },
+                      }}
                       label={t("common:common.StartDate")}
-                      value={startDate}
-                      format="dd/MM/yyyy"
-                      inputFormat="dd/MM/yyyy"
+                      value={dayjs(startDate)}
                       onChange={(newValue) => {
                         setStartDate(newValue);
                       }}
-                      renderInput={(params) => (
-                        <TextField fullWidth {...params} />
-                      )}
+                      format={DateFormatFromRegion()}
+                      maxDate={dayjs(endDate)}
+                      sx={{ width: "12rem" }}
                     />
-                  </Grid>
-                  <Grid item xl={2} md={2} xs={12} sx={{ mx:-1 }}>
+
                     <DatePicker
+                      slotProps={{
+                        textField: { error: false },
+                      }}
                       label={t("common:common.EndDate")}
-                      minDate={startDate}
-                      value={endDate}
-                      format="dd/MM/yyyy"
-                      inputFormat="dd/MM/yyyy"
+                      value={dayjs(endDate)}
                       onChange={(newValue) => {
                         setEndDate(newValue);
                       }}
-                      renderInput={(params) => (
-                        <TextField fullWidth {...params} />
-                      )}
+                      format={DateFormatFromRegion()}
+                      //maxDate={endDate}
+                      sx={{
+                        minWidth: "12rem",
+                        "& .MuiInputBase-input": {
+                          marginRight: 2,
+                        },
+                      }}
+                      minDate={dayjs(startDate)}
                     />
-                  </Grid>
-                  <Grid item xl={2.2}
-              md={2.2}
-              xs={12}
-              sx={{ mt: -2,mx:-1 }}>
-             
-                <TextField                
-                  fullWidth                
-                  name="state"
-                  accessKey="stateName"
-                  key={keyVal}
-                  defaultVal={stateFilter}
-                  getValueFunction={(value)=>{handleStateFilter(value)}}
-                  component={AutoCompleteDropdownToFilter}
-                  label="state"
-                  options={locationList && locationList.states && locationList.states.length &&  locationList.states.filter( (item) =>item.HTCountryId===localStorage.getItem('userRegion'))}
-                  textFieldProps={{
-                  fullWidth: true,
-                    margin: "normal",
-                    variant: "outlined",
-                    label:t('common:common.State/Region')
-                 }}
-           
-                />
-                  </Grid>
-                  <Grid item xl={2.2}
-              md={2.2}
-              xs={5}
-              sx={{ mt: -2,mx:-1 }}
-              >
-               <TextField                
-                  fullWidth                
-                  name="district"
-                  accessKey="districtName"
-                  value={districtFilter}
-                  key={stateFilter}
-                  defaultVal={districtFilter}
-                  getValueFunction={(value)=>{handleDistrictFilter(value)}}
-                  component={AutoCompleteDropdownToFilter}
-                  label="district"
-                  options={locationList && locationList.districts && locationList.districts.length &&  locationList.districts.filter( (item) =>item.HTStateId===stateFilter)}
-                  textFieldProps={{
-                  fullWidth: true,
-                    margin: "normal",
-                    variant: "outlined",
-                    label:t('common:common.District/County')
-                 }}
-                 />
-                  </Grid>
 
-                  <Grid item xl={4} md={4} xs={12}>
-                    <Button
-                      color="primary"
-                      sx={{ ml: 2, p: 2 }}
-                      variant="contained"
-                      onClick={ClearFilters}
-                    >
-                      {t("common:common.Clear Filters")}
-                    </Button>
-                  </Grid>
+                    <Box mt={-2}>
+                      <TextField
+                        fullWidth
+                        name="state"
+                        id="state"
+                        accessKey="stateName"
+                        getValueFunction={(value) => {
+                          handleStateFilter(value);
+                        }}
+                        component={AutoCompleteDropdownToFilter}
+                        value={stateFilter}
+                        required={true}
+                        key={keyVal}
+                        defaultVal={stateFilter}
+                        label="state"
+                        options={
+                          getStateList(
+                            locationList,
+                            localStorage.getItem("userRegion")
+                          ) || []
+                        }
+                        textFieldProps={{
+                          fullWidth: true,
+                          margin: "normal",
+                          variant: "outlined",
+                          label: t("common:common.State"),
+                        }}
+                        sx={{ minWidth: 200 }}
+                      />
+                    </Box>
+                    {localStorage.getItem("userRegion") &&
+                      getSelectedCountryDetails(
+                        locationList,
+                        localStorage.getItem("userRegion")
+                      )?.districtRequired && (
+                        <Box mt={-2}>
+                          <TextField
+                            fullWidth
+                            id="district"
+                            name="district"
+                            accessKey="districtName"
+                            value={districtFilter}
+                            key={stateFilter}
+                            defaultVal={districtFilter}
+                            getValueFunction={(value) => {
+                              handleDistrictFilter(value);
+                            }}
+                            component={AutoCompleteDropdownToFilter}
+                            required={false}
+                            label="district"
+                            options={
+                              getDistrictList(
+                                locationList,
+                                localStorage.getItem("userRegion"),
+                                stateFilter
+                              ) || []
+                            }
+                            textFieldProps={{
+                              fullWidth: true,
+                              margin: "normal",
+                              variant: "outlined",
+                              label: t("common:common.Region"),
+                            }}
+                            sx={{ minWidth: 200 }}
+                          />
+                        </Box>
+                      )}
+                    <ReportClearFilterButton clearFilters={ClearFilters} />
+                  </Box>
                 </LocalizationProvider>
-              </Grid>
-            </Container>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  {tableHead.map((item, index) => {
-                    return <TableCell key={index}>{item.name}</TableCell>;
-                  })}
-                </TableRow>
-              </TableHead>
 
-              {reportData &&
-                reportData.map((item, index) => {
-                  return (
-                    <TableBody key={index}>
-                      <TableRow>
-                        <TableCell>{item.childId}</TableCell>
-                        <TableCell>{item.dateOfLeaving}</TableCell>
-                      </TableRow>
-                    </TableBody>
-                  );
-                })}
-            </Table>
-            {reportData && reportData.length === 0 && (
-              <Box sx={{ width: "100%", ml: "40%", mt: 5, mb: 1 }}>
-                <Box>
-                  <Grid container spacing={3}>
-                    <Grid
-                      item
-                      md={3} //6
-                      xs={6} //12
-                    >
-                      <Typography>{t("common:common.No match")}</Typography>
-                    </Grid>
-                  </Grid>
-                </Box>
+                <Table>
+                  <ReportTableHeader tableHead={tableHead} />
+
+                  {reportData &&
+                    reportData.map((item, index) => {
+                      return (
+                        <ReportTableData
+                          key={index}
+                          item={item}
+                          columns={tableBody}
+                        />
+                      );
+                    })}
+                </Table>
+                {reportData && reportData.length === 0 && <ReportTableNoData />}
               </Box>
-            )}
-          </Box>
-          <Box sx={{ display: "flex" }} flexDirection="row-reverse" p={1} m={1}>
-            <Box sx={{ alignContent: "flex-end" }}>
-              <Pagination
-                onChange={handlePageChange}
+              <ReportPagination
+                rowCount={rowCount}
                 page={page}
-                count={pageCount}
-                shape="rounded"
+                pageCount={pageCount}
+                handleRowCountChange={handleRowCountChange}
+                handlePageChange={handlePageChange}
               />
-            </Box>
-          </Box>
-        </Card>
+            </Card>
+          </Grid>
+        </Grid>
       </Scrollbar>
     </Box>
   );

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Chart from 'react-apexcharts';
 import {
@@ -8,32 +8,29 @@ import {
   CardActions,
   CardContent,
   CardHeader,
-  // Tooltip,
   Typography
-} from '@material-ui/core';
-import { useTheme } from '@material-ui/core/styles';
+} from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import ArrowRightIcon from '../../../../assets/icons/ArrowRight';
-// import InformationCircleIcon from '../../../../assets/icons/InformationCircle';
 import { useTranslation } from 'react-i18next';
-import APIS from '../../../../common/hooks/UseApiCalls';
 import { CommonDataContext } from '../../../../common/contexts/CommonDataContext';
 
 const ChildStatus = (props) => {
 
-  const {title, data,payload,res, ...other} = props;
-  const {signedinOrgType, signedinUserRole} = useContext(CommonDataContext);
+  const { title, data, payload, res, ...other } = props;
+  const { signedinOrgType, signedinUserRole } = useContext(CommonDataContext);
   const { t } = useTranslation(['common']);
   const theme = useTheme();
   const navigate = useNavigate();
   const [chartSeries, setChartSeries] = useState([])
   const [currentRoute, setCurrentRoute] = useState('');
-  const orgListlevel2 = ['1','2','3','4','5']
+  const orgListlevel2 = ['1', '2', '3', '4', '5']
   const userListlevel2 = ['admin']
-   
+
 
   let chartOptions2 = {
     chart: {
-      id:2,
+      id: 2,
       background: 'transparent',
       stacked: false,
       toolbar: {
@@ -41,12 +38,12 @@ const ChildStatus = (props) => {
       }
     },
     colors: [
-      '#C0392B','#FFB547','#7BC67E'
+      '#C0392B', '#FFB547', '#7BC67E'
     ],
     dataLabels: {
       enabled: false
     },
-    labels: [t('common:common.Orphan'),t('common:common.Semi-Orphan'),t('common:common.Economic Orphan')],
+    labels: [t('common:common.Orphan'), t('common:common.Semi-Orphan'), t('common:common.Economic Orphan')],
     legend: {
       fontSize: '14px',
       position: 'bottom',
@@ -72,65 +69,41 @@ const ChildStatus = (props) => {
     }
   };
 
-  
-  const parseApiData = (value) =>{
+
+  const parseApiData = (value) => {
     let labelArray = [];
     let valueArray = [];
-    // value.forEach((item)=> {
-    //   labelArray.push(item.status);
-    //   valueArray.push(parseInt(item.noOfChildren))
-    // });
-
     for (var item in value) {
-      // console.log(item);
-        labelArray.push(item);
-        valueArray.push(parseInt(value[item]));
+      labelArray.push(item);
+      valueArray.push(parseInt(value[item]));
     }
-
     chartOptions2.labels = labelArray;
     setChartSeries(valueArray);
-    
-
-
   }
-  // const getStatus = useCallback(async (newpayload) => {
-  //   try {
-  //     let finalPaylod = {...newpayload};
-  //     finalPaylod.isCurrentPlacementStatus = "false"
-  //     const response = await APIS.CurrentPlacement(finalPaylod);
-  //     parseApiData(response.data.dashboardData)
-  //     // setChartData(parseData(response.data.data))
-  //     // if(response && response.status === 200 && response.data.hasOwnProperty('dataCount')){
-  //     //   setNumberToShow(response.data.dataCount)
-  //     // }
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // }, []);
 
-  useEffect(()=>{
-        //getStatus(payload);  
-        parseApiData(res)
-  },[res])
-  
 
-  useEffect(()=>{
-    if(signedinOrgType !== null && signedinUserRole !== null){
+  useEffect(() => {
+    parseApiData(res)
+  }, [res])
+
+
+  useEffect(() => {
+    if (signedinOrgType !== null && signedinUserRole !== null) {
       let condition4 = !userListlevel2.includes(signedinUserRole);
       let condition5 = !orgListlevel2.includes(signedinOrgType);
       let condition6 = condition4 && condition5
-      if(condition4 || condition5 || condition6){
+      if (condition4 || condition5 || condition6) {
         setCurrentRoute('');
-      }else{
-        setCurrentRoute('/dashboard/reportsChildStatus') 
+      } else {
+        setCurrentRoute('/dashboard/reportsChildStatus')
       }
     }
 
-  },[signedinOrgType,signedinUserRole])
+  }, [signedinOrgType, signedinUserRole])
 
 
   return (
-    <Card {...other}>
+    <Card {...other} sx={{ mt: 1 }}>
       <CardHeader
         disableTypography
         title={(
@@ -173,9 +146,9 @@ const ChildStatus = (props) => {
           endIcon={<ArrowRightIcon fontSize="small" />}
           variant="text"
           disabled={currentRoute === ''}
-          onClick={() => navigate('/dashboard/reportsChildStatus',{
-            state : {
-              "fromDashboard":true
+          onClick={() => navigate('/dashboard/reportsChildStatus', {
+            state: {
+              "fromDashboard": true
             }
           })}
         >

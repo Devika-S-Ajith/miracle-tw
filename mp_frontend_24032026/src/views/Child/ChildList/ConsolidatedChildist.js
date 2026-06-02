@@ -53,6 +53,7 @@ const ConsolidatedChildList = (props) => {
   const open = Boolean(menuState?.anchorEl);
   const [childModalOpen, setChildModalOpen] = useState(false);
   const [hideChildModal, setHideChildModal] = useState(false);
+  const [tableResetKey, setTableResetKey] = useState(0);
   const [isExporting, setIsExporting] = useState(false);
   const { IS_HT_ALLOWED } = useCRUDPermissions();
   const handleChildModalOpen = () => {
@@ -245,6 +246,12 @@ const ConsolidatedChildList = (props) => {
     }
   };
 
+  const refreshTableWithReset = () => {
+    // Remount table to reset internal state, then load default data.
+    setTableResetKey((prev) => prev + 1);
+    getTableData();
+  };
+
   const getUserList = useCallback(async () => {
     try {
       const payload = {
@@ -340,7 +347,7 @@ const ConsolidatedChildList = (props) => {
                 <ManageChildForm
                   handleChildModalOpen={close}
                   setHideChildModal={setHideChildModal}
-                  refreshTable={getTableData}
+                  refreshTable={refreshTableWithReset}
                 />
               ),
               {
@@ -527,7 +534,7 @@ const ConsolidatedChildList = (props) => {
             hideChildModal={hideChildModal}
             handleChildModalOpen={handleChildModalOpen}
             id={activeChildId}
-            refreshTable={getTableData} // Refresh data after re-opening case
+            refreshTable={refreshTableWithReset} // Reset table, then refresh with defaults
             setHideChildModal={setHideChildModal}
           />
         </Box>
@@ -551,6 +558,7 @@ const ConsolidatedChildList = (props) => {
 
             <Box mt={2} mr>
               <ReusableTrendTable
+                key={tableResetKey}
                 columns={columnDefinition}
                 searchable
                 tableData={tableData.data}

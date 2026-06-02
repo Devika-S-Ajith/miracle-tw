@@ -1,138 +1,78 @@
-import { useState, useCallback, useEffect, useContext } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-//import { Helmet } from 'react-helmet-async';
-import { Box, Container, Grid, Typography, IconButton } from '@material-ui/core';
-import { customerApi } from '../../../__fakeApi__/customerApi';
-// import AddOrganizationForm from '../Components/AddOrganizationForm';
-import AddChildForm from '../Components/AddChildForm';
-import useMounted from '../../../common/hooks/UseMounted';
-import useSettings from '../../../common/hooks/UseSettings';
-import { CommonDataContext } from '../../../common/contexts/CommonDataContext';
-import ChevronLeftIcon from '../../../assets/icons/ChevronLeft';
-//import gtm from '../../lib/gtm';
-import { useTranslation } from 'react-i18next';
+import { useContext } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Box, Grid, Typography, IconButton } from "@mui/material";
+import AddChildForm from "../Components/AddChildForm";
+import useAuthorization from "../../../components/UserComponents/useAuthorization";
+import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
+import ChevronRightIcon from "../../../assets/icons/ChevronRight";
+
+import { useTranslation } from "react-i18next";
 const AddChild = () => {
   const navigate = useNavigate();
-  const mounted = useMounted();
-  const { settings } = useSettings();
-  const {state} = useLocation();
-  const [customer, setCustomer] = useState(null);
+  const { state } = useLocation();
   const comingFromFam = Boolean(state?.fromFamily);
-  const famNumber = state?.fromFamily; 
-  const { t } = useTranslation(['common']);
-  const {signedinOrgType, signedinUserRole} = useContext(CommonDataContext);
+  const famNumber = state?.fromFamily;
+  const { t } = useTranslation(["common"]);
+  const { signedinOrgType, signedinUserRoleHT, signedinUserRoleFS } = useContext(CommonDataContext);
 
-  const getCustomer = useCallback(async () => {
-    try {
-      const data = await customerApi.getCustomer();
-
-      if (mounted.current) {
-        setCustomer(data);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }, [mounted]);
-
-  useEffect(() => {
-    getCustomer();
-    return () => {
-    }
-  }, [getCustomer]);
-
-  useEffect(() => {
-    if(signedinOrgType !== null && signedinUserRole !== null){
-      if((signedinOrgType == 3 || signedinOrgType == 4 || signedinOrgType == 5) && (signedinUserRole === 'admin' || signedinUserRole === 'caseworker')){
-        // has access
-      } else {
-        navigate('/Unauthorized');
-      }
-    }
-    return () =>{
-
-    }
-  },[signedinOrgType,signedinUserRole])
-
-  if (!customer) {
-    return null;
-  }
+  //handle role permissions
+  useAuthorization(signedinUserRoleHT, signedinUserRoleFS, signedinOrgType, 'AddChild', true)
 
   return (
     <>
-      {/* <Helmet>
-        <title>Dashboard: Customer Edit | Material Kit Pro</title>
-      </Helmet> */}
       <Box
         sx={{
-          backgroundColor: 'background.default',
-          minHeight: '100%',
-          mt : 2
-          //py: 8
+          backgroundColor: "background.default",
+          minHeight: "100%",
+          mt: 2,
         }}
       >
-        <Container maxWidth={settings.compact ? 'xl' : false}>
-          <Grid
-            container
-            justifyContent="space-between"
-            spacing={3}
-          >
-            <Grid item sx={{display : "flex",flexDirection : "row"}}>
-              <IconButton
-              color="inherit"
-              onClick={()=>navigate(-1)}
-              sx={{
-                // display: {
-                //   md: 'none'
-                // }
-                mt : - 0.5
-              }}
-              >
-              <ChevronLeftIcon fontSize="small" />
-              </IconButton>
-              <Typography
-                color="textPrimary"
-                variant="h5"
-              >
-                {t('common:child.Add Child')}
-              </Typography>
-              {/* <Breadcrumbs
-                aria-label="breadcrumb"
-                separator={<ChevronRightIcon fontSize="small" />}
-                sx={{ mt: 1 }}
-              >
-                <Link
-                  color="textPrimary"
-                  component={RouterLink}
-                  to="/dashboard"
-                  variant="subtitle2"
-                >
-                  Dashboard
-                </Link>
-                <Link
-                  color="textPrimary"
-                  component={RouterLink}
-                  to="/dashboard"
-                  variant="subtitle2"
-                >
-                  Management
-                </Link>
+        <Grid container width={1} >
+          <Grid item xs={12} sx={{mr:1}}>
+            <Grid container justifyContent="space-between" spacing={3}>
+              <Grid item sx={{ display: "flex", flexDirection: "row" }}>
                 <Typography
-                  color="textSecondary"
-                  variant="subtitle2"
+                  color="textPrimary"
+                  variant="h5"
+                  sx={{ cursor: "pointer" }}
+                  onClick={() => navigate("/dashboard")}
                 >
-                  Customers
+                  {t("common:common.Thrive Scale")}
                 </Typography>
-              </Breadcrumbs> */}
+                <Box
+                  sx={{
+                    m: 0.75,
+                  }}
+                  style={{ cursor: "text" }}
+                >
+                  <ChevronRightIcon color="disabled" fontSize="small" />
+                </Box>
+                <Grid item>
+                  <Typography
+                    color="textPrimary"
+                    variant="h5"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => navigate(-1)}
+                  >
+                    {t("common:common.Children")}
+                  </Typography>
+                </Grid>
+                <IconButton color="disabled" sx={{ mt: -0.5 }}>
+                  <ChevronRightIcon fontSize="small" />
+                </IconButton>
+                <Typography color="textPrimary" variant="h5">
+                  {t("common:child.Add Child")}
+                </Typography>
+              </Grid>
             </Grid>
+            <Box mt={3}>
+              <AddChildForm
+                fromFam={comingFromFam}
+                famNumber={famNumber}
+              />
+            </Box>
           </Grid>
-          <Box mt={3}>
-            <AddChildForm 
-            fromFam = {comingFromFam}
-            famNumber = {famNumber}
-            //organization={customer} 
-            />
-          </Box>
-        </Container>
+        </Grid>
       </Box>
     </>
   );

@@ -1,22 +1,21 @@
-import { useState, useCallback, useEffect,useContext } from 'react';
-import { Link as RouterLink,useParams,useNavigate } from 'react-router-dom';
+import { useState, useCallback, useEffect, useContext } from 'react';
+import { Link as RouterLink, useParams, useNavigate } from 'react-router-dom';
 //import { Helmet } from 'react-helmet-async';
-import { 
-  Box, 
+import {
+  Box,
   // Breadcrumbs, 
-  Button, 
-  Container, 
-  Grid, 
+  Button,
+  Container,
+  Grid,
   // Link, 
-  Typography, 
-  Tab, 
-  Tabs, 
+  Typography,
+  Tab,
+  Tabs,
   Divider,
   IconButton
-} from '@material-ui/core';
+} from '@mui/material';
 // import { customerApi } from '../../../__fakeApi__/customerApi';
 import EditQuestionForm from '../Components/EditQuestionForm';
-// import OrganizationUsers from '../../Organization/Components/OrganizationUsers';
 // import useMounted from '../../../common/hooks/UseMounted';
 import useSettings from '../../../common/hooks/UseSettings';
 import ChevronLeftIcon from '../../../assets/icons/ChevronLeft';
@@ -29,15 +28,15 @@ import { CommonDataContext } from '../../../common/contexts/CommonDataContext';
 const EditQuestion = () => {
   const { t } = useTranslation(['common']);
   const navigate = useNavigate();
-  const { signedinUserRole } = useContext(CommonDataContext);
+  const { signedinUserRoleHT } = useContext(CommonDataContext);
   const [currentTab, setCurrentTab] = useState('details');
   // const mounted = useMounted();
   const { settings } = useSettings();
   const [question, setQuestion] = useState(null);
   let { id } = useParams();
-    const tabs = [
+  const tabs = [
     { label: 'Details', value: 'details' }
-    ];
+  ];
 
   const handleTabsChange = (event, value) => {
     setCurrentTab(value);
@@ -47,8 +46,8 @@ const EditQuestion = () => {
 
 
   useEffect(() => {
-    if(signedinUserRole !== null){
-      if( signedinUserRole === 'superadmin'){
+    if (signedinUserRoleHT !== null) {
+      if (signedinUserRoleHT === 'superadmin') {
         // has access
       } else {
         navigate('/Unauthorized');
@@ -57,20 +56,20 @@ const EditQuestion = () => {
     getQuestionDetails();
     return () => {
     }
-  }, [signedinUserRole]);
+  }, [signedinUserRoleHT]);
 
   const getQuestionDetails = useCallback(async () => {
     try {
       const data = await APIS.QuestionDetailsForEdit(id);
-      
-      data.data.data.otherLanguageDetails[0].choiceDetails.map((item, index) => {
-        if(item.choiceName){
+
+      data.data.data.otherLanguageDetails[0]?.choiceDetails?.map((item, index) => {
+        if (item.choiceName) {
           data.data.data.choiceDetails[index].choiceNameHindi = item.choiceName
         }
       })
 
-      data.data.data.otherLanguageDetails[1].choiceDetails.map((item, index) => {
-        if(item.choiceName){
+      data.data.data.otherLanguageDetails[1]?.choiceDetails?.map((item, index) => {
+        if (item.choiceName) {
           data.data.data.choiceDetails[index].choiceNameTamil = item.choiceName
         }
       })
@@ -91,7 +90,7 @@ const EditQuestion = () => {
         sx={{
           backgroundColor: 'background.default',
           minHeight: '100%',
-          mt : 2
+          mt: 2
           //py: 8
         }}
       >
@@ -101,19 +100,19 @@ const EditQuestion = () => {
             justifyContent="space-between"
             spacing={3}
           >
-            <Grid item sx={{display : "flex",flexDirection : "row"}}>
-            <IconButton
-              color="inherit"
-              onClick={()=>navigate('/dashboard/questions')}
-              sx={{
-                // display: {
-                //   md: 'none'
-                // }
-                mt : - 0.5
-              }}
-            >
-            <ChevronLeftIcon fontSize="small" />
-            </IconButton>
+            <Grid item sx={{ display: "flex", flexDirection: "row" }}>
+              <IconButton
+                color="inherit"
+                onClick={() => navigate('/dashboard/questions')}
+                sx={{
+                  // display: {
+                  //   md: 'none'
+                  // }
+                  mt: - 0.5
+                }}
+              >
+                <ChevronLeftIcon fontSize="small" />
+              </IconButton>
 
               <Typography
                 color="textPrimary"
@@ -166,7 +165,7 @@ const EditQuestion = () => {
                 </Button>
               </Box>
             </Grid>
-            
+
           </Grid>
           <Box sx={{ mt: 3 }}>
             <Tabs
@@ -187,10 +186,6 @@ const EditQuestion = () => {
             </Tabs>
           </Box>
           <Divider />
-
-          {/* <Box mt={3}>
-            <EditOrganizationForm organization={customer} />
-          </Box> */}
 
           <Box sx={{ mt: 3 }}>
             {currentTab === 'details' && (

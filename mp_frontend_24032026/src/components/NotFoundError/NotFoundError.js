@@ -1,25 +1,62 @@
 import { Link as RouterLink } from 'react-router-dom';
-//import { Helmet } from 'react-helmet-async';
-import { Box, Button, Container, Typography } from '@material-ui/core';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
-import { useTheme } from '@material-ui/core/styles';
-//import gtm from '../lib/gtm';
+import { Box, Button, Container, Typography } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
+import { useContext, useEffect, useState } from 'react';
+import { CommonDataContext } from '../../common/contexts/CommonDataContext';
+import { UNASSIGNED } from '../../helpers/constant';
+
 
 const NotFoundError = () => {
-  const theme = useTheme();
-  const mobileDevice = useMediaQuery(theme.breakpoints.down('sm'));
+    const theme = useTheme();
+    const mobileDevice = useMediaQuery(theme.breakpoints.down('sm'));
+    const { signedinUserRoleHT, signedinUserRoleFS } = useContext(CommonDataContext);
+    const [redirectDashboardLink, setRedirectDashboardLink] = useState('/');
+    const [authenticated, setAuthenticated] = useState(false);
+  
+    useEffect(() => {
+      const determineRedirectAndAuth = () => {
+        // Early return if roles are not loaded
+        if (signedinUserRoleHT === null || signedinUserRoleFS === null) {
+          return { link: '/', auth: false };
+        }
+  
+        const orgType = localStorage.getItem("signedinOrgType");
+        const isHTUnassigned = signedinUserRoleHT === UNASSIGNED;
+        const isFSUnassigned = signedinUserRoleFS === UNASSIGNED;
+  
+        // Government organization
+        if (orgType === "6") {
+          return { link: '/governmentDashboardOverview', auth: true };
+        }
+  
+        // Both roles unassigned
+        if (isHTUnassigned && isFSUnassigned) {
+          return { link: '/', auth: false };
+        }
+  
+        // HT role assigned
+        if (!isHTUnassigned) {
+          return { link: '/dashboard', auth: true };
+        }
+  
+        // FS role assigned (HT unassigned)
+        return { link: '/dashboard/team', auth: true };
+      };
+  
+      const { link, auth } = determineRedirectAndAuth();
+      setRedirectDashboardLink(link);
+      setAuthenticated(auth);
+    }, [signedinUserRoleHT, signedinUserRoleFS]);
 
   return (
     <>
-      {/* <Helmet>
-        <title>Error: Not Found | Material Kit Pro</title>
-      </Helmet> */}
       <Box
         sx={{
           alignItems: 'center',
           backgroundColor: 'background.paper',
           display: 'flex',
-          minHeight: '100%',
+          minHeight: '100vh',
           px: 3,
           py: '80px'
         }}
@@ -30,17 +67,7 @@ const NotFoundError = () => {
             color="textPrimary"
             variant={mobileDevice ? 'h4' : 'h1'}
           >
-            404: The page you are looking for isn’t here
-          </Typography>
-          <Typography
-            align="center"
-            color="textSecondary"
-            sx={{ mt: 0.5 }}
-            variant="subtitle2"
-          >
-            You either tried some shady route or you
-            came here by mistake. Whichever it is, try using the
-            navigation.
+             Oops! The page you are looking for isn’t here
           </Typography>
           <Box
             sx={{
@@ -49,16 +76,6 @@ const NotFoundError = () => {
               mt: 6
             }}
           >
-            {/* <Box
-              alt="Under development"
-              component="img"
-              src={`/static/error/error404_${theme.palette.mode}.svg`}
-              sx={{
-                height: 'auto',
-                maxWidth: '100%',
-                width: 400
-              }}
-            /> */}
           </Box>
           <Box
             sx={{
@@ -70,10 +87,10 @@ const NotFoundError = () => {
             <Button
               color="primary"
               component={RouterLink}
-              to="/dashboard"
+              to={redirectDashboardLink}
               variant="outlined"
             >
-              Back to Dashboard
+             {authenticated ? 'Back to Dashboard' : 'Back to Login'}
             </Button>
           </Box>
         </Container>

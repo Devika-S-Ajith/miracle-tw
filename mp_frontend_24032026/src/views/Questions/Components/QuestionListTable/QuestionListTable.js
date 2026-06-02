@@ -1,7 +1,7 @@
 import { useState, useContext, useEffect } from 'react';
-// import { useTheme } from '@material-ui/core/styles';
+// import { useTheme } from '@mui/material/styles';
 import { Link as RouterLink } from 'react-router-dom';
-import FilterListIcon from '@material-ui/icons/FilterList';
+import FilterListIcon from '@mui/icons-material/FilterList';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 //import numeral from 'numeral';
@@ -37,11 +37,11 @@ import {
   Tooltip,
   Typography,
   Chip
-} from '@material-ui/core';
+} from '@mui/material';
 import ArrowRightIcon from '../../../../assets/icons/ArrowRight';
 import PencilAltIcon from '../../../../assets/icons/PencilAlt';
 import SearchIcon from '../../../../assets/icons/Search';
-import ClearIcon from '@material-ui/icons/Clear';
+import ClearIcon from '@mui/icons-material/Clear';
 import TrashIcon from '../../../../assets/icons/Trash';
 // import getInitials from '../../../../common/services';
 import Scrollbar from '../../../Dashboard/Components/ScrollBar';
@@ -128,7 +128,7 @@ const QuestionListTable = (props) => {
   const { t } = useTranslation(['common']);
   const sortOptions = [
     {
-      label:t('common:question.None'),
+      label: t('common:question.None'),
       id: 'none'
     },
     {
@@ -145,9 +145,9 @@ const QuestionListTable = (props) => {
     // }
   ];
   const { questions, getQuestionList, loading, savePageData, pageCount, pageData, saveCurrentPage, ...other } = props;
-  const { questionDomainList, signedinUserRole } = useContext(CommonDataContext);
+  const { questionDomainList, signedinUserRoleHT } = useContext(CommonDataContext);
   // const [currentTab, setCurrentTab] = useState('all');
-  const [selectedQuestions, setSelectedQuestions] = useState([]); 
+  const [selectedQuestions, setSelectedQuestions] = useState([]);
   const [page, setPage] = useState("1");
   // const [limit, setLimit] = useState(10);
   const [query, setQuery] = useState("");
@@ -156,8 +156,8 @@ const QuestionListTable = (props) => {
   //const [questionList, setQuestionList] = useState([]);
   const [sort, setSort] = useState(sortOptions[0].id);
   const [sortOrder, setSortOrder] = useState('ASC');
-  let singleClickTimer='';
-  let clickCount=0;
+  let singleClickTimer = '';
+  let clickCount = 0;
   // const [filters, setFilters] = useState({
   //   hasAcceptedMarketing: null,
   //   isProspect: null,
@@ -169,56 +169,56 @@ const QuestionListTable = (props) => {
   // }
   // const theme = useTheme();
 
-  useEffect(()=>{
-  },[])
+  useEffect(() => {
+  }, [])
 
-  const handleDelete = (id)=> {
+  const handleDelete = (id) => {
     setIsOpen(!isOpen)
     setQuestionToDelete(id)
   }
-  
-  const handleClose=()=>{
+
+  const handleClose = () => {
     setIsOpen(false)
   }
-  
-  const handleConfirmDelete =  async () => {
-  
+
+  const handleConfirmDelete = async () => {
+
     try {
-      const payload ={
-      "id": questionToDelete !== null && questionToDelete,
-      "isActive": false,
-      "isDeleted": true
+      const payload = {
+        "id": questionToDelete !== null && questionToDelete,
+        "isActive": false,
+        "isDeleted": true
       }
       await APIS.DeleteQuestion(payload)
-      .then((res) =>{
-        if(res && res.data && res.data.Message === "Status Changed Successfully"){
-          toast.success(t('common:question.Question Deleted Successfully'));
-          setIsOpen(false);
-          getQuestionList();
-  
-        }else {
-          toast.error(t('common:common.Something went wrong')
-          );
-          setIsOpen(false);
-        }
-      })
-    }catch (err) {
+        .then((res) => {
+          if (res && res.data && res.data.Message === "Status Changed Successfully") {
+            toast.success(t('common:question.Question Deleted Successfully'));
+            setIsOpen(false);
+            getQuestionList();
+
+          } else {
+            toast.error(t('common:common.Something went wrong')
+            );
+            setIsOpen(false);
+          }
+        })
+    } catch (err) {
       toast.error(t('common:common.Something went wrong')
       );
     }
-  }; 
-  
+  };
+
 
   const handleQueryChange = (event) => {
     setQuery(event.target.value);
-    if(event.target.value === ""){
+    if (event.target.value === "") {
       getQuestionList({
-        "globalSearchQuery" : '',
+        "globalSearchQuery": '',
         "pageNumber": "1",
       });
-    }else {
+    } else {
       let payload = {
-        "globalSearchQuery" : event.target.value,
+        "globalSearchQuery": event.target.value,
         "pageNumber": "1",
       }
       getQuestionList(payload);
@@ -232,7 +232,7 @@ const QuestionListTable = (props) => {
   //   if(value=='none'){
   //      payload = {
   //       "orderByField": [
-          
+
   //     ],
   //     "pageNumber": "1",
   //     //"pageNumber": page.toString(),
@@ -251,68 +251,68 @@ const QuestionListTable = (props) => {
   //     "globalSearchQuery" : query
   //     }
   //   }
-   
+
   //   getQuestionList(payload);
   //   setPage(1);
   //   setSortOrder('ASC')
   // };
 
   const handleSingleClickColumn = (value) => {
-    
-      let payload = {
-        "orderByField": [
-          [
-              `${value}`,
-              `${sortOrder === 'ASC' ? 'DESC' : 'ASC'}`
-          ]
-        ],
-        "pageNumber": "1",
-        "globalSearchQuery" : query
-      }
-      getQuestionList(payload)
-      setSort(value)
-      setSortOrder(sortOrder === 'ASC' ? 'DESC' : 'ASC')
-      setPage(1);
-    
+
+    let payload = {
+      "orderByField": [
+        [
+          `${value}`,
+          `${sortOrder === 'ASC' ? 'DESC' : 'ASC'}`
+        ]
+      ],
+      "pageNumber": "1",
+      "globalSearchQuery": query
+    }
+    getQuestionList(payload)
+    setSort(value)
+    setSortOrder(sortOrder === 'ASC' ? 'DESC' : 'ASC')
+    setPage(1);
+
   }
 
   const handleDblClickColumn = () => {
-    
-      let payload = {
-        "orderByField": [
-          [
 
-          ]
-        ],
-        "pageNumber": "1",
-        "globalSearchQuery" : query
-      }
-      getQuestionList(payload)
-      setSort('none');
-      setPage(1);
-   
+    let payload = {
+      "orderByField": [
+        [
+
+        ]
+      ],
+      "pageNumber": "1",
+      "globalSearchQuery": query
+    }
+    getQuestionList(payload)
+    setSort('none');
+    setPage(1);
+
   }
 
-  const handleClickColumn=(value)=>{
+  const handleClickColumn = (value) => {
     clickCount++;
-  if (clickCount === 1) {
-    
-    singleClickTimer = setTimeout(function() {
-      clickCount=0;
-      handleSingleClickColumn(value)
-    }, 300);
+    if (clickCount === 1) {
 
-  } else if (clickCount === 2) {
-    clearTimeout(singleClickTimer);
-    clickCount=0;
-    handleDblClickColumn();
+      singleClickTimer = setTimeout(function () {
+        clickCount = 0;
+        handleSingleClickColumn(value)
+      }, 300);
+
+    } else if (clickCount === 2) {
+      clearTimeout(singleClickTimer);
+      clickCount = 0;
+      handleDblClickColumn();
+    }
   }
-}
 
   const loadDefaultList = () => {
     setQuery('')
     getQuestionList({
-      "globalSearchQuery" : '',
+      "globalSearchQuery": '',
     });
   }
 
@@ -326,10 +326,10 @@ const QuestionListTable = (props) => {
     setPagedata()
     return () => {
     }
-  },[pageData])
+  }, [pageData])
 
   const setPagedata = () => {
-    if(localStorage.getItem('questionPageData') === null){
+    if (localStorage.getItem('questionPageData') === null) {
       setPage(pageData.page);
       setQuery(pageData.query);
       setSort(pageData.sort);
@@ -343,9 +343,9 @@ const QuestionListTable = (props) => {
 
   const handleViewChange = () => {
     let pageObject = {
-      page:page, 
-      query:query,
-      sort:sort
+      page: page,
+      query: query,
+      sort: sort
     }
     savePageData(pageObject)
   }
@@ -362,11 +362,11 @@ const QuestionListTable = (props) => {
   const handlePageChange = (event, newPage) => {
     getQuestionList({
       "pageNumber": newPage.toString(),
-      "globalSearchQuery" : query,
+      "globalSearchQuery": query,
       "orderByField": [
         [
-            sort,
-            sortOrder
+          sort,
+          sortOrder
         ]
       ],
     })
@@ -383,7 +383,7 @@ const QuestionListTable = (props) => {
   // const paginatedQuestions = parseQuestions(questions);
   const enableBulkActions = selectedQuestions && selectedQuestions.length > 0;
   //const selectedSomeFamilies = selectedFamilies && selectedFamilies.length > 0
-   // && families && families.length > 0 && selectedFamilies.length < families.length;
+  // && families && families.length > 0 && selectedFamilies.length < families.length;
   //const selectedAllFamilies = selectedFamilies.length === families.length;
 
   return (
@@ -414,36 +414,36 @@ const QuestionListTable = (props) => {
           alignItems: 'center',
           display: 'flex',
           flexWrap: 'wrap',
-          pt : 2,
+          pt: 2,
           //m: -1,
           p: 2
         }}
       >
 
-      <Dialog
-        //fullScreen={fullScreen}
-        //onBackdropClick={()=>alert("hii")}
-        open={isOpen}
-        //onClose={handleClose}
-        aria-labelledby="responsive-dialog-title"
-      >
-        <DialogTitle id="responsive-dialog-title">
-        {t('common:question.confirm delete question')}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-          {t('common:question.This question will be deleted')}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={handleConfirmDelete}>
-          {t('common:common.Delete')}
-          </Button>
-          <Button onClick={handleClose} autoFocus>
-          {t('common:common.Cancel')}
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <Dialog
+          //fullScreen={fullScreen}
+          //onBackdropClick={()=>alert("hii")}
+          open={isOpen}
+          //onClose={handleClose}
+          aria-labelledby="responsive-dialog-title"
+        >
+          <DialogTitle id="responsive-dialog-title">
+            {t('common:question.confirm delete question')}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              {t('common:question.This question will be deleted')}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button autoFocus onClick={handleConfirmDelete}>
+              {t('common:common.Delete')}
+            </Button>
+            <Button onClick={handleClose} autoFocus>
+              {t('common:common.Cancel')}
+            </Button>
+          </DialogActions>
+        </Dialog>
 
 
         <Box
@@ -456,15 +456,15 @@ const QuestionListTable = (props) => {
           <TextField
             fullWidth
             InputProps={{
-              startAdornment: 
+              startAdornment:
                 <InputAdornment position="start">
                   <SearchIcon fontSize="small" />
                 </InputAdornment>,
-                endAdornment: 
+              endAdornment:
                 query && query.length > 0 && <IconButton
-                color="inherit"
-                onClick={()=>loadDefaultList()}>
-                  <ClearIcon/>
+                  color="inherit"
+                  onClick={() => loadDefaultList()}>
+                  <ClearIcon />
                 </IconButton>
             }}
             onChange={handleQueryChange}
@@ -472,7 +472,7 @@ const QuestionListTable = (props) => {
             value={query}
             variant="outlined"
           />
-          
+
         </Box>
         <Box
           sx={{
@@ -480,8 +480,8 @@ const QuestionListTable = (props) => {
             width: 20
           }}
         >
-          <FilterListIcon/>
-          
+          <FilterListIcon />
+
         </Box>
         {/* <Box
           sx={{
@@ -573,15 +573,17 @@ const QuestionListTable = (props) => {
       )}
       <Scrollbar>
 
-      {loading && <CircularProgress 
-                            sx={{zIndex : 1000,
-                                  position : "absolute",
-                                  top : "55%",
-                                  left : "45%"}}
-                            color="primary" />}
-        <Box className={questions.length ? "scrollListTable" : ""} sx={{ minWidth: 'auto'}}>
-          
-          { questions && questions.length > 0 && <Table>
+        {loading && <CircularProgress
+          sx={{
+            zIndex: 1000,
+            position: "absolute",
+            top: "55%",
+            left: "45%"
+          }}
+          color="primary" />}
+        <Box className={questions?.length ? "scrollListTable" : ""} sx={{ minWidth: 'auto' }}>
+
+          {questions && questions.length > 0 && <Table>
             <TableHead>
               <TableRow>
                 {/* <TableCell padding="checkbox">
@@ -608,15 +610,15 @@ const QuestionListTable = (props) => {
                     {t('common:question.Domain')}
                   </TableSortLabel>
                 </TableCell>
-                <TableCell 
+                <TableCell
                 >
                   {t('common:question.Is Redflag')}
                 </TableCell>
                 <TableCell
-                // width="20%"
-                align="center" sx={{pl : 8}}
+                  // width="20%"
+                  align="center" sx={{ pl: 8 }}
                 >
-                {t('common:common.Actions')}
+                  {t('common:common.Actions')}
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -658,15 +660,15 @@ const QuestionListTable = (props) => {
                           flexWrap: 'wrap',
                           justifyContent: 'left',
                           typography: 'body1',
-                          }}>
+                        }}>
                           <Link
-                            sx={{maxWidth : '40%'}}
+                            sx={{ maxWidth: '40%' }}
                             color="inherit"
                             component={RouterLink}
                             to={`/dashboard/questions`}
                             variant="subtitle2"
                           >
-                          {question.questionText}
+                            {question.questionText}
                           </Link>
                           {/* <Typography
                             color="textSecondary"
@@ -682,49 +684,51 @@ const QuestionListTable = (props) => {
                         `${questionDomainList.find(item => item.id === question.HTQuestionDomainId).domainName}`}
                     </TableCell>
                     <TableCell>
-                    <Chip
-                          color="primary"
-                          label={question && question.isRedFlag ? `${t('common:common.Yes')}`: ""}
-                          size="small"
-                          sx={{width : 70, 
-                            backgroundColor: question && 
-                            question.isRedFlag ? "#f44336" : "#ffffff00"}} 
-                        />
+                      <Chip
+                        color="primary"
+                        label={question && question.isRedFlag ? `${t('common:common.Yes')}` : ""}
+                        size="small"
+                        sx={{
+                          width: 70,
+                          backgroundColor: question &&
+                            question.isRedFlag ? "#f44336" : "#ffffff00"
+                        }}
+                      />
                     </TableCell>
                     {/* 
                     <TableCell>
                         {(questionTypeList && questionTypeList.length) && (question && question.HTQuestionTypeId) && 
                         `${questionTypeList.find(item => item.id === question.HTQuestionTypeId).typeName}`}
                     </TableCell> */}
-                    <TableCell 
-                    align="right"
+                    <TableCell
+                      align="right"
                     >
-                    {signedinUserRole === 'superadmin'?(<><Tooltip title={question.questionPublished ? `${t('common:question.Question cannot be edited as it is published')}`:`${t('common:question.Edit Question')}` }>
-                      <IconButton
-                        component={RouterLink}
-                        disabled={question.questionPublished}
-                        onClick={handleViewChange}
-                        to={`/dashboard/questions/${question.id}/edit`}
-                      >
-                        <PencilAltIcon fontSize="small"/>
-                      </IconButton>
+                      {signedinUserRoleHT === 'superadmin' ? (<><Tooltip title={question.questionPublished ? `${t('common:question.Question cannot be edited as it is published')}` : `${t('common:question.Edit Question')}`}>
+                        <IconButton
+                          component={RouterLink}
+                          disabled={question.questionPublished}
+                          onClick={handleViewChange}
+                          to={`/dashboard/questions/${question.id}/edit`}
+                        >
+                          <PencilAltIcon fontSize="small" />
+                        </IconButton>
                       </Tooltip>
-                      <Tooltip title={t('common:question.Delete Question')}>
-                      <IconButton
-                        disabled={question.questionPublished}
-                        onClick={()=> handleDelete(question.id)}
-                      >
-                        <TrashIcon fontSize="small" />
-                      </IconButton>
-                      </Tooltip></>):<></>}
+                        <Tooltip title={t('common:question.Delete Question')}>
+                          <IconButton
+                            disabled={question.questionPublished}
+                            onClick={() => handleDelete(question.id)}
+                          >
+                            <TrashIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip></>) : <></>}
                       <Tooltip title={t('common:question.View Question')}>
-                      <IconButton
-                        component={RouterLink}
-                        onClick={handleViewChange}
-                        to={`/dashboard/questions/${question.id}/view`}
-                      >
-                        <ArrowRightIcon fontSize="small" />
-                      </IconButton>
+                        <IconButton
+                          component={RouterLink}
+                          onClick={handleViewChange}
+                          to={`/dashboard/questions/${question.id}/view`}
+                        >
+                          <ArrowRightIcon fontSize="small" />
+                        </IconButton>
                       </Tooltip>
                     </TableCell>
                   </TableRow>
@@ -733,29 +737,29 @@ const QuestionListTable = (props) => {
             </TableBody>
           </Table>
           }
-          { questions && questions.length === 0  || questions === undefined &&
-          <Box sx={{ width : "100%", ml : "40%", mt : 5,mb :1}}>
-            <Box>
+          {questions && questions.length === 0 || questions === undefined &&
+            <Box sx={{ width: "100%", ml: "40%", mt: 5, mb: 1 }}>
+              <Box>
                 <Grid
                   container
                   spacing={3}
                 >
-                      <Grid
-                        item
-                        md={3} //6
-                        xs={6} //12
-                        >
-                          <Typography>{t('common:question.No Questions to list')}</Typography>
-                      </Grid>
+                  <Grid
+                    item
+                    md={3} //6
+                    xs={6} //12
+                  >
+                    <Typography>{t('common:question.No Questions to list')}</Typography>
+                  </Grid>
                 </Grid>
+              </Box>
             </Box>
-           </Box>
           }
         </Box>
       </Scrollbar>
 
-      <Box sx={{display:'flex'}} flexDirection="row-reverse"  p={1} m={1}>
-        <Box sx={{alignContent: 'flex-end'}}>
+      <Box sx={{ display: 'flex' }} flexDirection="row-reverse" p={1} m={1}>
+        <Box sx={{ alignContent: 'flex-end' }}>
 
           <Pagination onChange={handlePageChange} page={page} count={pageCount} shape="rounded" />
         </Box>

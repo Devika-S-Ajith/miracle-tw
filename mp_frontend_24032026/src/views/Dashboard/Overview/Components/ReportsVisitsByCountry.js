@@ -12,7 +12,7 @@ import {
   TableSortLabel,
   Tooltip,
   Typography
-} from '@material-ui/core';
+} from '@mui/material';
 import InformationCircleIcon from '../../../../assets/icons/InformationCircle';
 
 const sortCountries = (countries, order) => countries

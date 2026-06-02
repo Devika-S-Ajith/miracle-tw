@@ -1,1 +1,1 @@
-export {default} from './ImportMapping';
+export { default } from './ImportMapping';

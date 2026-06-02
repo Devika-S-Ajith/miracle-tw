@@ -1,1 +1,1 @@
-export { default } from './FamilyList';
+export { default } from './ConsolidatedFamilyList';

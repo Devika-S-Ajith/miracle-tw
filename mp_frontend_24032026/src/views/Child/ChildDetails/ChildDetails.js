@@ -1,245 +1,364 @@
-import { useCallback, useState, useEffect, useContext } from 'react';
-import { Link as RouterLink, useParams,useNavigate, useLocation } from 'react-router-dom';
-//import { Helmet } from 'react-helmet-async';
+import { useCallback, useState, useEffect, useContext } from "react";
+import {
+  Link as RouterLink,
+  useParams,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import {
   Box,
   Button,
-  Container,
   Divider,
   Grid,
   Tab,
   Tabs,
   Typography,
-  IconButton
-} from '@material-ui/core';
-import { customerApi } from '../../../__fakeApi__/customerApi';
-import ChildContactDetails from '../Components/ChildContactDetails';
-import ChildFamilyListing from '../Components/ChildFamilyListing';
-import ChildHistory from '../Components/ChildHistory';
-import Documents from '../Components/Documents';
-import ProgressReport from '../Components/ProgressReport'
-import CCI from '../Components/CCI';
-import useMounted from '../../../common/hooks/UseMounted';
-import ChevronLeftIcon from '../../../assets/icons/ChevronLeft';
-import PencilAltIcon from '../../../assets/icons/PencilAlt';
-//import gtm from '../../lib/gtm';
-import useSettings from '../../../common/hooks/UseSettings';
-import APIS from '../../../common/hooks/UseApiCalls';
-import Assessments from '../Components/Assessments';
-import { useTranslation } from 'react-i18next';
-import RadarGraph from '../Components/RadarGraph/RadarGraph';
-import { CommonDataContext } from '../../../common/contexts/CommonDataContext';
-
-const tabs = [
-  { label: 'Details', value: 'details' },
-  { label: 'CCI', value: 'CCI' },
-  { label: 'Family', value: 'Family' },
-  { label: 'Assessments', value: 'Assessments' },
-  { label: 'Progress Report', value: 'ProgressReport' },
-  { label: 'Thrive scale score trend', value: 'Thrive scale score trend' },
-  { label: 'History', value: 'History' },
-  { label: 'Documents', value: 'Documents' }
-  
-];
+  IconButton,
+  Modal
+} from "@mui/material";
+import ChildContactDetails from "../Components/ChildContactDetails";
+import ChildHistory from "../Components/ChildHistory";
+import Documents from "../Components/Documents";
+import ProgressReport from "../Components/ProgressReport";
+import ChevronRightIcon from "../../../assets/icons/ChevronRight";
+import PencilAltIcon from "../../../assets/icons/PencilAlt";
+import APIS from "../../../common/hooks/UseApiCalls";
+import Assessments from "../Components/Assessments";
+import { useTranslation } from "react-i18next";
+import RadarGraph from "../Components/RadarGraph/RadarGraph";
+import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
+import { authorizationConfig } from "../../../assets/authorizationConfig";
+import Loader from "../../../components/UserComponents/Loader";
+import ChildMilestones from "../Components/ChildMilestones/ChildMilestones";
+import FollowUps from "../../Assessments/Components/FollowUps";
+import ChildInterventions from "./ChildInterventions";
+import ConsolidatedAssessmentProgressReport from "../../../components/ConsolidatedAssessmentProgressReport";
+import ChildSummary from "../Components/ChildBasicDetails";
+import ChildBasicDetails from "../Components/ChildBasicDetails";
+import ChildLogs from "../Components/ChildLogs";
+import ManageChildForm from "../Components/ChildListTable/ChildDetailForms/ManageChildForm";
+import PageBreadcrumbs from "../../../components/PageBreadcrumbs/PageBreadcrumbs";
+import useCRUDPermissions from "../../../components/UserComponents/useCRUDPermissions";
+import useAuthorization from "../../../components/UserComponents/useAuthorization";
+import PageLoader from "../../../components/UserComponents/PageLoader";
+                                                                    
 
 const ChildDetails = () => {
   const navigate = useNavigate();
-  const {state} = useLocation();
+  const { state } = useLocation();
   const comingFromChildList = Boolean(state?.tabvalue);
   const currtabvalue = state?.tabvalue;
-  const mounted = useMounted();
-  const { settings } = useSettings();
-  const [customer, setCustomer] = useState(null);
-  const [currentTab, setCurrentTab] = useState(comingFromChildList ? currtabvalue:"details");
-  let { id } = useParams();
-  const {signedinOrgType, signedinUserRole} = useContext(CommonDataContext);
-  const { t } = useTranslation(['common']);
-  const getCustomer = useCallback(async () => {
-    document.title = "Child | Details | Miracle Foundation"
+  const [children, setChildren] = useState(null);
+  const [currentTab, setCurrentTab] = useState(
+    comingFromChildList ? currtabvalue : "details"
+  );
+  let { id } = useParams()
+  const { t } = useTranslation(["common"]);
+  const[memberList, setMemberList] = useState([]);
+  const[childDetailsLoading, setChildDetailsLoading] = useState(false);
+  const [childModalOpen, setChildModalOpen] = useState(false);
+  const [hideChildModal, setHideChildModal] = useState(false);
+  const [familyId, setFamilyId] = useState(null);
+  const { 
+    IS_HT_ALLOWED, 
+    IS_FS_ALLOWED,
+    BOTH_FS_HT_ALLOWED, 
+    IS_EDIT_ALLOWED 
+  } = useCRUDPermissions();
+  const { authStatus, checkAuth } = useAuthorization("ListChild");
+
+  const handleChildModalOpen = () => {
+    setChildModalOpen(!childModalOpen);
+  };
+
+  const tabs = [
+    { label: "Details", value: "details", id: "details", Permission:BOTH_FS_HT_ALLOWED },
+    { label: "Logs", value: "ConsolidatedLog", id: "childLogs", Permission:IS_FS_ALLOWED },
+    { label: "Assessments & Progress Reports", value: "assessmentsProgressReports", id: "tab_assessments_progress_reports" , Permission:IS_HT_ALLOWED  },
+    { label: "Milestones", value: "milestones" ,id:"tab_milestones", Permission:IS_HT_ALLOWED },
+    { label: "Interventions", value: "interventions", id: "tab_interventions" , Permission:IS_HT_ALLOWED },
+    { label: "Follow - ups", value: "followUps", id: "tab_follow_ups", Permission:IS_HT_ALLOWED },
+    {
+      label: "Thrive scale score trend",
+      value: "Thrive scale score trend",
+      id: "tab_thriveScale_score_trend",
+      Permission:IS_HT_ALLOWED
+    },
+    { label: "History", value: "history", id: "tab_history" , Permission:BOTH_FS_HT_ALLOWED },
+    { label: "Documents", value: "documents", id: "tab_documents", Permission:BOTH_FS_HT_ALLOWED },
+  ];
+
+  const getMembersUnderFamily = async (familyId) => {
     try {
-      const data = await APIS.ChildDetails(id);
-      // if (mounted.current) {
-        console.log(data)
-        setCustomer(data.data.data);
-      // }
-    } catch (err) { 
+      
+      if (!familyId) {
+        setMemberList([]);
+        setChildDetailsLoading(false);
+        return;
+      }
+
+      const payload = { id: familyId, listType: "DETAILED" };
+      const data = await APIS.GetFamilyDetails(payload);
+      const members = data?.data?.data?.members || [];
+      setFamilyId(familyId);
+      const membersWithoutCurrentChild = members.filter(member => member.id !== id);
+      setMemberList(membersWithoutCurrentChild);
+      setChildDetailsLoading(false);
+    } catch (err) {
+      setChildDetailsLoading(false);
       console.error(err);
     }
-  }, []);
+  };
+
+  const getChildren = useCallback(async () => {
+    setChildDetailsLoading(true)
+    setChildren(null)
+    try {
+      const res = await APIS.GetChildDetails(id);
+      setChildren(res.data.data);
+      const familyId = res.data.data?.TWFamilyId;
+      getMembersUnderFamily(familyId);
+    } catch (err) {
+      setChildDetailsLoading(false)
+      console.error(err);
+    }
+  }, [id]);
+
+   
+  useEffect(() => {
+    document.title = "Child | Details | ThriveWell";
+    checkAuth();
+  }, []); // Only runs once on mount, or based on your specific logic
 
   useEffect(() => {
-    getCustomer();
-    return () => {
+    if (authStatus === 'authorized') {
+       getChildren();
     }
-  }, [getCustomer]);
+  }, [authStatus]);
+
+  if (authStatus === 'loading' || authStatus === 'idle') {
+    return <PageLoader />;
+  }
+
+  if (authStatus === 'unauthorized') {
+    return null; // Or a custom message
+  }
 
   const handleTabsChange = (event, value) => {
     setCurrentTab(value);
   };
 
-  if (!customer) {
-    return null;
-  }
+
  
+  const renderTabContent = () => {
+    switch (currentTab) {
+      case "details":
+        return (
+          <ChildBasicDetails child={children} members={memberList} familyId={familyId} refreshData={getChildren} />
+        );
+      case "Assessments":
+        return <Assessments childId={children.id} />;
+      case "documents":
+        return <Documents childId={children.id} active={children?.isActive} />;
+      case "history":
+        return <ChildHistory id={children.id} caseId={children.TWCaseId} />;
+      case "Thrive scale score trend":
+        return <RadarGraph childId={children.id} />;
+      case "ProgressReport":
+        return <ProgressReport id={children.id} caseId={children.HTCaseId} />;
+      case "followUps":
+        return <FollowUps id={children.id} caseId={children.HTCaseId} type="CHILD" />;
+      case "assessmentsProgressReports":
+        return (
+          <Box mr>
+            <ConsolidatedAssessmentProgressReport id={id} pageType="CHILD" />;
+          </Box>
+        );
+        case "milestones":
+          return <ChildMilestones familyMembers={memberList}  familyName={children?.familyName}/>;
+      case "interventions":
+        return <ChildInterventions childId={children?.id} memberList={memberList} />;
+      case "ConsolidatedLog":
+        return <ChildLogs module="children" />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <>
-      {/* <Helmet>
-        <title>Dashboard: Customer Details | Material Kit Pro</title>
-      </Helmet> */}
-
+    <Modal
+        open={childModalOpen}
+        onClose={handleChildModalOpen}
+        sx={{ visibility: hideChildModal ? "hidden" : "visible" }}
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: { xs: "90%", sm: 500, md: 600, lg: 700 },
+            bgcolor: "background.paper",
+            // border: "2px solid #000",
+            p: 3,
+            boxShadow: 24,
+          }}
+        >
+          <ManageChildForm
+            hideChildModal={hideChildModal}
+            handleChildModalOpen={handleChildModalOpen}
+            id={id}
+            refreshData={getChildren}
+            setHideChildModal={setHideChildModal}
+          />
+        </Box>
+      </Modal>
+      <Loader loading={childDetailsLoading} />
       <Box
         sx={{
-          backgroundColor: 'background.default',
-          minHeight: '100%',
-          mt : 2
-          //py: 8
+          backgroundColor: "background.default",
+          minHeight: "100%",
+          mt: 2,
         }}
       >
-        <Container maxWidth={settings.compact ? 'xl' : false}>
-          <Grid
-            container
-            justifyContent="space-between"
-            spacing={3}
-          >
-            <Grid item sx={{display : "flex",flexDirection : "row"}}>
-              <IconButton
-              color="inherit"
-              onClick={()=>navigate(-1)}
-              sx={{
-                // display: {
-                //   md: 'none'
-                // }
-                mt : - 0.5
-              }}
-              >
-              <ChevronLeftIcon fontSize="small" />
-              </IconButton>
-              <Typography
-                color="textPrimary"
-                variant="h5"
-              >
-                {`${customer.firstName} ${customer.lastName}`}
-              </Typography>
-              {/* <Breadcrumbs
-                aria-label="breadcrumb"
-                separator={<ChevronRightIcon fontSize="small" />}
-                sx={{ mt: 1 }}
-              >
-                <Link
-                  color="textPrimary"
-                  component={RouterLink}
-                  to="/dashboard"
-                  variant="subtitle2"
-                >
-                  Dashboard
-                </Link>
-                <Link
-                  color="textPrimary"
-                  component={RouterLink}
-                  to="/dashboard"
-                  variant="subtitle2"
-                >
-                  Management
-                </Link>
-                <Typography
-                  color="textSecondary"
-                  variant="subtitle2"
-                >
-                  Customers
-                </Typography>
-              </Breadcrumbs> */}
+        <Grid container width={1}>
+          <Grid item xs={12} sx={{ mr: 1 }}>
+            <Grid container justifyContent="space-between" spacing={3}>
+           <Grid item>
+           <PageBreadcrumbs
+              data={[
+               {
+                label: t("common:common.Children"),
+                onClick: () => navigate("/dashboard/children")
+               },
+                {
+                  label: `${children?.firstName} ${children?.lastName ?? ""}`,
+                },
+              ]}
+            />
+              </Grid>
+              <Grid item>
+                <Box sx={{ m: -1 }}>
+                  {IS_EDIT_ALLOWED && (
+                    (currentTab === "details" ||
+                      currentTab === "CCI" ||
+                      currentTab === "Family") && (
+                      <Button
+                        color="primary"
+                        startIcon={<PencilAltIcon fontSize="small" />}
+                        sx={{ m: 1 }}
+                        variant="contained"
+                        onClick={() => {
+                          setChildModalOpen(true);
+                        }}
+                      >
+                        {t("common:common.Edit")}
+                      </Button>
+                    )
+                  )}
+                  {currentTab == "Family" && children.TWFamilyId ? (
+                    <Button
+                      color="primary"
+                      component={RouterLink}
+                      sx={{ m: 1 }}
+                      to={`/dashboard/families/${children.TWFamilyId}/view`}
+                      variant="contained"
+                    >
+                      {t("common:common.View Family Page")}
+                    </Button>
+                  ) : (
+                    <></>
+                  )}
+                </Box>
+              </Grid>
             </Grid>
-            <Grid item>
-              <Box sx={{ m: -1 }}>
-                {((signedinOrgType == 3 || signedinOrgType == 4 || signedinOrgType == 5) && (signedinUserRole === 'admin' || signedinUserRole === 'caseworker'))
-                ?((currentTab === 'details' ||currentTab === 'CCI'||currentTab === 'Family') && (<Button
-                  color="primary"
-                  component={RouterLink}
-                  startIcon={<PencilAltIcon fontSize="small" />} 
-                  sx={{ m: 1 }}
-                  to={`/dashboard/child/${id}/edit`}
-                  variant="contained"
-                >
-                  {t('common:common.Edit')}
-                </Button>)):<></>}
-              
-                {((currentTab == 'Family') && customer.HTFamilyId)
-                ?(<Button
-                  color="primary"
-                  component={RouterLink}
-                  sx={{ m: 1 }}
-                  to={`/dashboard/family/${customer.HTFamilyId}/view`}
-                  variant="contained"
-                >
-                  {t('common:common.View Family Page')}
-                </Button>):<></>}
-              </Box>
-            </Grid>
-          </Grid>
-          <Box sx={{ mt: 3 }}>
-            <Tabs
-              indicatorColor="primary"
-              onChange={handleTabsChange}
-              scrollButtons="auto"
-              textColor="primary"
-              value={currentTab}
-              variant="scrollable"
-            >
-              {tabs.map((tab) => (
-                <Tab
-                  key={tab.value}
-                  label={t(`common:common.${tab.label}`)}
-                  value={tab.value}
-                />
-              ))}
-            </Tabs>
-          </Box>
-          <Divider />
-          <Box sx={{ mt: 3 }}>
-            {currentTab === 'details' && (
-              
-                  <ChildContactDetails
-                    name={`${customer.firstName} ${customer.lastName}`}
-                    country={customer.HTCountryId}
-                    gender={customer.gender}
-                    birthdate={customer.birthDate}
-                    isVerified={customer.isActive}
-                    caseManager={customer.userFirstName + ' ' + customer.userLastName}
-                    caregiver={customer.familyMemberName}
-                    organization = {customer.HTOrganizationId}
-                    email = {customer.email}
-                    phone = {customer.phoneNumber}
-                    language = {customer.HTLanguageId}
-                    id={customer.childId}
-                    state = {customer.HTStateId}
-                    city = {customer.city}
-                    district = {customer.HTDistrictId}
-                    zip = {customer.zipCode}
-                    address1 = {customer.addressLine1}
-                    address2 = {customer.addressLine2}
-                    education = {customer.HTChildEducationLevelId}
-                    status = {customer.HTChildStatusId}
-                    placementStatus = {customer.HTChildPlacementStatusId}
-                    currentPlacement = {customer.HTChildCurrentPlacementStatusId}
-                    addDate = {customer.dateOfEntry}
-                    closedDate = {customer.dateOfExit}
-                    educationSpecific = {customer.highestEducationLevel}
-                    profileImage={customer.fileUrl}
+            <Box sx={{ mt: 1 }}>
+              <Tabs
+                indicatorColor="primary"
+                onChange={handleTabsChange}
+                scrollButtons="auto"
+                textColor="primary"
+                value={currentTab}
+                variant="scrollable"
+              >
+                {tabs.map((tab) => (
+                  <Tab
+                    key={tab.value}
+                    label={t(`common:common.${tab.label}`, tab.label)}
+                    value={tab.value}
                   />
-               
-            )}
-            {currentTab === 'CCI' && <CCI cciInfo = {customer}/>}
-            {currentTab === 'Family' && <ChildFamilyListing id = {customer.HTFamilyId} childId ={customer.childId} />}           
-            {currentTab === 'Assessments' && <Assessments childId = {customer.id}/>}
-            {currentTab === 'Documents' && <Documents childId = {customer.id}/>}
-            {currentTab === 'History' && <ChildHistory id={customer.id} caseId ={customer.HTCaseId}/>}
-            {currentTab === 'Thrive scale score trend' && <RadarGraph childId = {customer.id}/>}
-            {currentTab === 'ProgressReport' && <ProgressReport id={customer.id} caseId ={customer.HTCaseId}/>}
-          </Box>
-        </Container>
+                ))}
+              </Tabs>
+            </Box>
+            <Divider />
+            <Box sx={{ mt: 3 }}>
+              {/* {currentTab === "details" && (
+                <ChildContactDetails
+                  name={`${children.firstName} ${children.lastName ?? ""}`}
+                  country={children.HTCountryId}
+                  gender={children.gender}
+                  birthdate={children.birthDate}
+                  isVerified={children.isActive}
+                  caseManager={
+                    children?.userFirstName
+                      ? `${children.userFirstName} ${children.userLastName ?? ""}`
+                      : ""
+                  }
+                  caregiver={children.familyMemberName}
+                  organization={children.HTOrganizationId}
+                  email={children.email}
+                  phone={children.phoneNumber}
+                  language={children.HTLanguageId}
+                  id={children.id}
+                  state={children.HTStateId}
+                  city={children.city}
+                  district={children.HTDistrictId}
+                  zip={children.zipCode}
+                  address1={children.addressLine1}
+                  address2={children.addressLine2}
+                  education={children.HTChildEducationLevelId}
+                  status={children.HTChildStatusId}
+                  placementStatus={children.HTChildPlacementStatusId}
+                  currentPlacement={children.HTChildCurrentPlacementStatusId}
+                  addDate={children.dateOfEntry}
+                  closedDate={children.dateOfExit}
+                  educationSpecific={children.highestEducationLevel}
+                  profileImage={children.fileUrl}
+                  familyName={children.familyName}
+                  familyId ={children?.HTFamilyId}
+                  childStatus={children.isActive}
+                  childStatusList={children.childStatusList}
+                  familyMembers={memberList}
+                  getMembersUnderFamily={getMembersUnderFamily}
+                  getChildren={getChildren}
+                  isActiveFamily={isActiveFamily}
+                />
+              )}
+              {currentTab === "Assessments" && (
+                <Assessments childId={children.id} />
+              )}
+               {currentTab === "Milestones" && (
+                <ChildMilestones/>
+              )}
+              {currentTab === "Documents" && (
+                <Documents childId={children.id} active={children?.isActive} />
+              )}
+              {currentTab === "History" && (
+                <ChildHistory id={children.id} caseId={children.HTCaseId} />
+              )}
+              {currentTab === "Thrive scale score trend" && (
+                <RadarGraph childId={children.id} />
+              )}
+              {currentTab === "ProgressReport" && (
+                <ProgressReport id={children.id} caseId={children.HTCaseId} />
+              )} */}
+              {renderTabContent()}
+            </Box>
+          </Grid>
+        </Grid>
       </Box>
     </>
   );
 };
-
 export default ChildDetails;

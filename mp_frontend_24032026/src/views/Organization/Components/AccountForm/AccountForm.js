@@ -50,16 +50,22 @@ const AccountForm = (props) => {
   const navigate = useNavigate();
   const { t } = useTranslation(["common"]);
   const { organization, loading, ...other } = props;
+
+  const getAccessChecks = (accessType) => {
+    const normalized = (accessType || "BOTH");
+    return {
+      fosterShare: ["BOTH", "FOSTER_SHARE"].includes(normalized),
+      thriveScale: ["BOTH", "THRIVE_SCALE"].includes(normalized),
+    };
+  };
+
+  const initialAccessChecks = getAccessChecks(organization?.accessType);
   const [isFosterShareChecked, setIsFosterShareChecked] = useState(
-    Boolean(["BOTH", "FOSTER_SHARE"].includes(props.organization?.accessType))
+    initialAccessChecks.fosterShare
   );
   const [orgOptions, setOrgOptions] = useState([])
   const [isThriveScaleChecked, setIsThriveScaleChecked] = useState(
-    props.organization?.accessType
-      ? Boolean(
-          ["BOTH", "THRIVE_SCALE"].includes(props.organization?.accessType)
-        )
-      : false || true
+    initialAccessChecks.thriveScale
   );
  const isEditMode = !!props.organization?.id;
 
@@ -126,6 +132,12 @@ const [consentChecked, setConsentChecked] = useState(
       fetchActiveForms(organization?.MPCountryId);
     }
   }, [organization?.MPCountryId]);
+
+  useEffect(() => {
+    const accessChecks = getAccessChecks(organization?.accessType);
+    setIsFosterShareChecked(accessChecks.fosterShare);
+    setIsThriveScaleChecked(accessChecks.thriveScale);
+  }, [organization?.accessType]);
   
   const changeThriveScaleAccess = () => {
     setIsThriveScaleChecked(!isThriveScaleChecked);

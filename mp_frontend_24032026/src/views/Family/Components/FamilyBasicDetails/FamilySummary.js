@@ -42,14 +42,26 @@ const FamilySummary = ({ t, family, mostRecentAssesmentSummary }) => {
     percentageChangeFromFirst !== null &&
     percentageChangeFromFirst !== undefined;
 
-    let familyStatus = family?.status ||
-    (isActive
-      ? t("common:common.Active", "Active")
-      : t("common:common.Case closed", "Case closed"));
+
+
+  let familyStatus = family?.familyStatus 
   let statusLabel = familyStatus;
   if (family?.deactivationReason && family.deactivationReason.trim().length > 0) {
     statusLabel = `${statusLabel} - ${family.deactivationReason}`;
   }
+
+  const getStatusBackgroundColor = (status) => {
+    switch (status) {
+      case "Active":
+        return "#3DAA1D";
+      case "Case Closed":
+        return "#D6DBDE";
+      case "Pending":
+        return "#eba309";
+      default:
+        return "#D6DBDE";
+    }
+  };
 
 
   return (
@@ -76,14 +88,8 @@ const FamilySummary = ({ t, family, mostRecentAssesmentSummary }) => {
                 label={statusLabel}
                 size="small"
                 sx={{
-                  backgroundColor:
-                    familyStatus === "Active"
-                      ? "#3DAA1D"
-                      : familyStatus === "Case closed" ||
-                          familyStatus === "Case Closed"
-                        ? "#D6DBDE"
-                        : "#b8e6e1",
-                  color: familyStatus === "Active" ? "white" : "black",
+                  backgroundColor:getStatusBackgroundColor(familyStatus),
+                  color: familyStatus === "Active" || familyStatus === "Pending" ? "white" : "black",
                   fontSize: "0.75rem",
                   fontWeight: 600,
                   borderRadius: "20px",

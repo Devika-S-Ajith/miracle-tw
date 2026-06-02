@@ -1,18 +1,19 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+    sans-serif; */
+  font-family: "Mulish";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
-  }
+}
 
-.dragFormQuestionDiv:focus{
+.dragFormQuestionDiv:focus {
   outline: none !important;
 }
 
@@ -23,11 +24,11 @@ code {
 .notificationListDiv::-webkit-scrollbar {
   width: 0.5em;
 }
- 
+
 .notificationListDiv::-webkit-scrollbar-track {
   box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
 }
- 
+
 .notificationListDiv::-webkit-scrollbar-thumb {
   background-color: darkgrey;
   outline: 1px solid slategrey;
@@ -45,12 +46,45 @@ code {
   border-radius: 50%;
 }
 
-.fc-more-popover{
+.fc-more-popover {
   max-height: 250px !important;
   overflow: auto;
   padding-bottom: 10px;
 }
 
-.scrollListTable{
+.scrollListTable {
   overflow-x: auto !important;
+}
+
+/* scroll-bar */
+/* width */
+::-webkit-scrollbar {
+  width: 0.5em;
+  height: 0.5em;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 1px grey;
+  width: 0.5em;
+  border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  width: 0.4em;
+  background: #f37123c9;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #f37123;
+}
+
+.MuiInputBase-input {
+  color: #181a1b !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
 }

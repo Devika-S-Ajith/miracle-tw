@@ -1,9 +1,7 @@
 import { Link as RouterLink } from 'react-router-dom';
-//import { Helmet } from 'react-helmet-async';
-import { Box, Button, Container, Typography } from '@material-ui/core';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
-import { useTheme } from '@material-ui/core/styles';
-//import gtm from '../lib/gtm';
+import { Box, Button, Container, Typography } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 const ServerError = () => {
   const theme = useTheme();
@@ -11,9 +9,6 @@ const ServerError = () => {
 
   return (
     <>
-      {/* <Helmet>
-        <title>Error: Server Error | Material Kit Pro</title>
-      </Helmet> */}
       <Box
         sx={{
           alignItems: 'center',

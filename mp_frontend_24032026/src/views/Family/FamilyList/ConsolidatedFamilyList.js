@@ -41,8 +41,8 @@ const ConsolidatedFamilyList = (props) => {
   const [tableData, setTableData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
-  const [filterValues, setFilterValues] = useState(fromDashboard ? {caseStatus:  [{ label: "Inactive", value: "Closed", key: "Case Status" }], caseworkerId: [] } : { caseStatus: [], caseworkerId: [] });
-  const [appliedFiltersChipArray, setAppliedFiltersChipArray] = useState(fromDashboard ? {caseStatus:  [{ label: "Inactive", value: "Closed", key: "Case Status" }], caseworkerId: [] } : { caseStatus: [], caseworkerId: [] });
+  const [filterValues, setFilterValues] = useState(fromDashboard ? {caseStatus:  [ { label: "Case Closed", value: "case closed", key: "Case Status" }], caseworkerId: [] } : { caseStatus: [], caseworkerId: [] });
+  const [appliedFiltersChipArray, setAppliedFiltersChipArray] = useState(fromDashboard ? {caseStatus:  [{ label: "Case Closed", value: "case closed", key: "Case Status" }], caseworkerId: [] } : { caseStatus: [], caseworkerId: [] });
   const [query, setQuery] = useState("");
   const { signedinUserRoleHT, signedinUserRoleFS, signedinOrgId } = useContext(CommonDataContext);
   const [users, setUsers] = useState([]);
@@ -51,9 +51,9 @@ const ConsolidatedFamilyList = (props) => {
   const { IS_EDIT_ALLOWED,IS_HT_ALLOWED } = useCRUDPermissions();
 
   const statusOptions = [
-    { label: "Active", value: "Active", key: "Case Status" },
-    { label: "Case Closed", value: "Case Closed", key: "Case Status" },
-    { label: "Pending", value: "Pending", key: "Case Status" },
+    { label: "Active", value: "active", key: "Case Status" },
+    { label: "Case Closed", value: "case closed", key: "Case Status" },
+    { label: "Pending", value: "pending", key: "Case Status" },
   ]
 
   const langOptions = [
@@ -89,7 +89,7 @@ const ConsolidatedFamilyList = (props) => {
     switch (status) {
       case "Active":
         return "#3DAA1D";
-      case "Inactive":
+      case "Case Closed":
         return "#D6DBDE";
         case "Pending":
           return "#eba309";
