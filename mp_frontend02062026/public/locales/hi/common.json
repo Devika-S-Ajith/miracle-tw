@@ -649,8 +649,8 @@
     "admin": "Admin",
     "admin+casemanager": "Admin+Case manager",
     "admin+caseworker": "Admin+Case worker",
-    "caseworker": "Case worker",
-    "casemanager": "Case manager",
+    "caseworker": "केस वर्कर",
+    "casemanager": "केस वर्कर",
     "viewonly": "View only",
     "parent": "Parent"
   },
@@ -855,9 +855,12 @@
     "since_assessment_1":"मूल्यांकन #1 से",
     "assessment_number": "मूल्यांकन  #{{number}}",
     "Add another family member": "एक और परिवार सदस्य जोड़ें",
-    "Family contact information": "परिवार की संपर्क जानकारी",
     "Family type": "परिवार का प्रकार",
-    "Date the family first started serving as a foster family": "परिवार ने पालक परिवार के रूप में सेवा कब शुरू की"
+    "Date the family first started serving as a foster family": "परिवार ने पालक परिवार के रूप में सेवा कब शुरू की",
+    "Family member or caregiver": "परिवार का सदस्य या देखभालकर्ता",
+    "Profile information": "प्रोफ़ाइल जानकारी",
+    "Family contact information": "परिवार की संपर्क जानकारी (वैकल्पिक)",
+
   },
   "assessment": {
     "Assessment List": "आंकलन सूची",

@@ -1086,9 +1086,12 @@
     "since_assessment_1":"മൂല്യനിർണ്ണയം #1 മുതൽ",
     "assessment_number": "മൂല്യനിർണ്ണയം  #{{number}}",
     "Add another family member": "മറ്റൊരു കുടുംബാംഗത്തെ ചേർക്കുക",
-    "Family contact information": "കുടുംബ ബന്ധപ്പെടാനുള്ള വിവരങ്ങൾ",
     "Family type": "കുടുംബ തരം",
-    "Date the family first started serving as a foster family": "കുടുംബം ഫോസ്റ്റർ കുടുംബമായി സേവനം ആരംഭിച്ച തീയതി"
+    "Date the family first started serving as a foster family": "കുടുംബം ഫോസ്റ്റർ കുടുംബമായി സേവനം ആരംഭിച്ച തീയതി",
+    "Family member or caregiver": "കുടുംബാംഗം അല്ലെങ്കിൽ പരിചരിക്കുന്നയാൾ",
+    "Profile information": "പ്രൊഫൈല്‍ വിവരങ്ങൾ",
+    "Family contact information": "കുടുംബ ബന്ധപ്പെടാനുള്ള വിവരങ്ങൾ (ഐച്ഛികം)",
+
   },
   "form": {
     "formList": "പത്രികാ പട്ടിക",
@@ -1569,7 +1572,7 @@
     "Case Closed": "കേസ് ക്ലോസ് ചെയ്തു",
     "Status": "അവസ്ഥ",
     "Case Worker": "കേസ് വർക്കർ",
-    "Case manager": "കേസ് മാനേജർ",
+    "Case manager": "കേസ് വർക്കർ",
     "Inactive": "നിർജ്ജീവമായത്",
     "Support services": "പിന്തുണാ സേവനങ്ങൾ",
     "Support service details": "പിന്തുണാ സേവന വിശദാംശങ്ങൾ",

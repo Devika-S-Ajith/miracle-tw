@@ -1084,9 +1084,12 @@
     "since_assessment_1":"మూల్యాంకనం #1 నుండి",
     "assessment_number": "మూల్యాంకనం  #{{number}}",
     "Add another family member": "మరొక కుటుంబ సభ్యుడిని జోడించండి",
-    "Family contact information": "కుటుంబ సంప్రదింపు సమాచారం",
+    
     "Date the family first started serving as a foster family": "కుటుంబం మొదటిసారి ఫోస్టర్ కుటుంబంగా సేవ చేయడం ప్రారంభించిన తేదీ",
-    "Family type": "కుటుంబ రకం"
+    "Family type": "కుటుంబ రకం",
+    "Family member or caregiver": "కుటుంబ సభ్యుడు లేదా సంరక్షకుడు",
+    "Profile information": "ప్రొఫైల్ సమాచారం",
+    "Family contact information": "కుటుంబ సంప్రదింపు సమాచారం (ఐచ్ఛికం)"
   },
   "form": {
     "formList": "ఫారమ్ జాబితా",
@@ -1566,7 +1569,7 @@
     "Case Closed": "కేసు మూసివేయబడింది",
     "Status": "స్థితి",
     "Case Worker": "కేస్ వర్కర్",
-    "Case manager": "కేసు నిర్వాహకుడు",
+    "Case manager": "కేస్ వర్కర్",
     "Inactive": "నిష్క్రియ",
     "Support services": "మద్దతు సేవలు",
     "Support service details": "మద్దతు సేవ వివరాలు",

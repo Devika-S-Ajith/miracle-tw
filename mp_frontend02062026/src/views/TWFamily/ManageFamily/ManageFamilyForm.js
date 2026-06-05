@@ -838,7 +838,7 @@ const ManageFamilyForm = (props) => {
                                                 </Grid>
                                             </AccordionSection>
                                             <AccordionSection
-                                                title={t("common:family.Family contact information", "Family contact information")}
+                                                title={t("common:family.Family contact information", "Family contact information (optional)")}
                                             >
                                                 <Grid container spacing={1}>
                                                     <DynamicForm

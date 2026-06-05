@@ -1079,9 +1079,11 @@
     "since_assessment_1":"মূল্যায়ন #১ থেকে",
     "assessment_number": "মূল্যায়ন #{{number}}",
     "Add another family member": "আরেকজন পরিবার সদস্য যোগ করুন",
-    "Family contact information": "পরিবারের যোগাযোগের তথ্য",
+    "Family contact information": "পরিবারের যোগাযোগের তথ্য (ঐচ্ছিক)",
     "Family type": "পরিবারের ধরন",
-    "Date the family first started serving as a foster family": "পরিবারটি প্রথম কবে লালন পরিবার হিসেবে শুরু করেছে"
+    "Date the family first started serving as a foster family": "পরিবারটি প্রথম কবে লালন পরিবার হিসেবে শুরু করেছে",
+    "Family member or caregiver": "পরিবারের সদস্য বা পরিচর্যাকারী",
+    "Profile information": "প্রোফাইল তথ্য"
   },
   "form": {
     "formList": " ফর্মের তালিকা ",
@@ -1563,7 +1565,7 @@
     "Case Closed": "কেস বন্ধ",
     "Status": "অবস্থা",
     "Case Worker": "কেস ওয়ার্কার",
-    "Case manager": " কেস ম্যানেজার ",
+    "Case manager": " কেসওয়ার্কার ",
     "Inactive": " নিষ্ক্রিয় ",
     "Support services": "সহায়তা পরিষেবা",
     "Support service details": "সহায়তা পরিষেবার বিবরণ",

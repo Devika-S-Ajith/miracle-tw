@@ -413,6 +413,7 @@ export const CaseCloseDetails = ({
 export const FamilyChangeDetails = ({
   familyChangeValues,
   familyChangeReasons,
+  values
 }) => {
   const reasons = familyChangeValues?.familyChangeDetails?.childDischargeReason;
   const showOther = Array.isArray(reasons) && reasons.includes("OTHER");
@@ -439,5 +440,17 @@ export const FamilyChangeDetails = ({
       required: true,
       gridProps: { xs: 12 },
     },
+    ...(values?.familyChangeDetails?.childDischargeReason.includes("OTHER")
+    ? [{
+        type: "text",
+        name: "familyChangeDetails.otherReason",
+        label: "Please specify other reason",
+        required: true,
+        fullWidth: true,
+        showTooltip: false,
+        variant: "outlined",
+        gridProps: { xs: 12 },
+      }]
+    : []),
   ];
 };

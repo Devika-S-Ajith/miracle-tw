@@ -10,6 +10,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup"; // Added Yup import
 import { CommonDataContext } from "../../../../../common/contexts/CommonDataContext";
 import Loader from "../../../../../components/UserComponents/Loader";
+import dayjs from "dayjs";
 
 const FamilyChangeModal = ({ onFamilyChangeConfirm, onFamilyChangeCancel, close, setFieldValue, setHideChildModal }) => {
   const { t } = useTranslation(["common"]);
@@ -21,8 +22,7 @@ const FamilyChangeModal = ({ onFamilyChangeConfirm, onFamilyChangeCancel, close,
         .required("Date of family change is required")
         .nullable(),
       otherReason: Yup.string().when("childDischargeReason", {
-        is: (val) =>
-          Array.isArray(val) && val.some((item) => item?.id === "OTHER"),
+        is: (val) => Array.isArray(val) && val.includes("OTHER"),
         then: (schema) =>
           schema.required("Reason for family change is required"),
         otherwise: (schema) => schema.notRequired(),
@@ -41,7 +41,7 @@ const FamilyChangeModal = ({ onFamilyChangeConfirm, onFamilyChangeCancel, close,
   } = useFormik({
     initialValues: {
       familyChangeDetails: {
-        childDischargedDate: null,
+        childDischargedDate: dayjs(),
         otherReason: "",
         childDischargeReason: [],
       },

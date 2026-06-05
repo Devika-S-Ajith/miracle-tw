@@ -122,7 +122,7 @@ export const modalMemberBasicFormConfig = [
         type: 'dropdown',
         name: 'TWFamilyRelationId',
         translateLabels: true,
-        label: 'Role',
+        label: 'common:common.Role',
         optionsSource: 'MemberRoles',
         accessKey: 'label',
         labelKey: 'value',
@@ -139,7 +139,7 @@ export const modalMemberBasicFormConfig = [
     {
         type: 'CheckboxWithLabel',  
         name: 'isMajor',
-        label: 'This person is over the legal age of consent'
+        label: 'common:common.This person is over the legal age of consent'
     }
 
 ];
@@ -157,7 +157,7 @@ export const modalMemberPersonalFormConfig = ({phoneRef}) => [{
     {
         type: 'text',
         name: 'occupation',
-        label: 'Occupation',
+        label: 'common:common.Occupation',
         fullWidth: true,
         variant: 'outlined',
         gridProps: { md: 12, xs: 12 }
@@ -165,7 +165,7 @@ export const modalMemberPersonalFormConfig = ({phoneRef}) => [{
     {
         type: 'text',
         name: 'note',
-        label: 'Note',
+        label: 'common:question.Note',
         fullWidth: true,
         multiline: true,
         variant: 'outlined',

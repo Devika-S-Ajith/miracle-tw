@@ -667,8 +667,8 @@
     "admin": "Admin",
     "admin+casemanager": "Admin+Case Manager",
     "admin+caseworker": "Admin + Case worker",
-    "caseworker": "Case worker",
-    "casemanager": "Case manager",
+    "caseworker": "வழக்குப் பணியாளர்",
+    "casemanager": "வழக்குப் பணியாளர்",
     "viewonly": "View only",
     "parent": "Parent"
   },
@@ -1088,9 +1088,12 @@
     "since_assessment_1":"மதிப்பீடு #1 முதல்",
     "assessment_number": "மதிப்பீடு  #{{number}}",
     "Add another family member": "மற்றொரு குடும்ப உறுப்பினரைச் சேர்க்கவும்",
-    "Family contact information": "குடும்ப தொடர்பு தகவல்",
     "Date the family first started serving as a foster family": "குடும்பம் முதன்முதலில் பராமரிப்பு குடும்பமாக சேவை செய்த தேதி",
-    "Family type": "குடும்ப வகை"
+    "Family type": "குடும்ப வகை",
+    "Family member or caregiver": "குடும்ப உறுப்பினர் அல்லது பராமரிப்பாளர்",
+    "Profile information": "பிளோபில் தகவல்",
+    "Family contact information": "குடும்ப தொடர்பு தகவல் (விருப்பத்தேர்வு)",
+
   },
   "form": {
     "formList": "படிவப் பட்டியல்",

@@ -660,7 +660,7 @@
     "admin+casemanager": "ॲडमिन + केस व्यवस्थापक",
     "admin+caseworker": "ॲडमिन + केस वर्कर",
     "caseworker": "केस वर्कर",
-    "casemanager": "केस मॅनेजर",
+    "casemanager": "केस वर्कर",
     "viewonly": "फक्त व्ह्यू",
     "parent": "पालक"
   },
@@ -1086,9 +1086,12 @@
     "since_assessment_1":"मूल्यांकन #1 पासून",
     "assessment_number": "मूल्यांकन  #{{number}}",
     "Add another family member": "आणखी एक कुटुंब सदस्य जोडा",
-    "Family contact information": "कुटुंबाची संपर्क माहिती",
     "Date the family first started serving as a foster family": "कुटुंबाने फॉस्टर कुटुंब म्हणून सेवा सुरू केलेली तारीख",
-    "Family type": "कुटुंबाचा प्रकार"
+    "Family type": "कुटुंबाचा प्रकार",
+    "Family member or caregiver": "कुटुंब सदस्य या काळजीवाहक",
+    "Profile information": "प्रोफाइल जानकारी",
+    "Family contact information": "कुटुंबाची संपर्क माहिती (ऐच्छिक)",
+
 
   },
   "form": {
@@ -1569,7 +1572,7 @@
     "Case Closed": "केस बंद",
     "Status": "स्थिती",
     "Case Worker": "केस वर्कर",
-    "Case manager": "केस मॅनेजर",
+    "Case manager": "केस वर्कर",
     "Inactive": "निष्क्रिय",
     "Support services": "समर्थन सेवा",
     "Support service details": "समर्थन सेवा तपशील",

@@ -1081,9 +1081,12 @@
     "since_assessment_1":"ಮೌಲ್ಯಮಾಪನ #1 ರಿಂದ",
     "assessment_number": "ಮೌಲ್ಯಮಾಪನ  #{{number}}",
     "Add another family member": "ಮತ್ತೊಬ್ಬ ಕುಟುಂಬ ಸದಸ್ಯರನ್ನು ಸೇರಿಸಿ",
-    "Family contact information": "ಕುಟುಂಬ ಸಂಪರ್ಕ ಮಾಹಿತಿ",
     "Family type": "ಕುಟುಂಬದ ಪ್ರಕಾರ",
-    "Date the family first started serving as a foster family": "ಕುಟುಂಬವು ಮೊದಲ ಬಾರಿಗೆ ಫೋಸ್ಟರ್ ಕುಟುಂಬವಾಗಿ ಸೇವೆ ಪ್ರಾರಂಭಿಸಿದ ದಿನಾಂಕ"
+    "Date the family first started serving as a foster family": "ಕುಟುಂಬವು ಮೊದಲ ಬಾರಿಗೆ ಫೋಸ್ಟರ್ ಕುಟುಂಬವಾಗಿ ಸೇವೆ ಪ್ರಾರಂಭಿಸಿದ ದಿನಾಂಕ",
+    "Family member or caregiver": "ಕುಟುಂಬ ಸದಸ್ಯ ಅಥವಾ  पालक",
+    "Profile information": "ಪ್ರೊಫೈಲ್ ಮಾಹಿತಿ",
+    "Family contact information": "ಕುಟುಂಬ ಸಂಪರ್ಕ ಮಾಹಿತಿ (ಐಚ್ಛಿಕ)",
+
  
 
   },
@@ -1566,7 +1569,7 @@
     "Case Closed": "ಪ್ರಕರಣವನ್ನು ಇತ್ಯರ್ಥ ಪಡಿಸಲಾಗಿದೆ",
     "Status": "ಸ್ಥಿತಿ",
     "Case Worker": "ಕೇಸ್ ವರ್ಕರ್",
-    "Case manager": "ಕೇಸ್ ಮ್ಯಾನೇಜರ್",
+    "Case manager": "ಕೇಸ್ ವರ್ಕರ್",
     "Inactive": "ನಿಷ್ಕ್ರಿಯ",
     "Support services": "ಬೆಂಬಲ ಸೇವೆಗಳು",
     "Support service details": "ಬೆಂಬಲ ಸೇವೆಯ ವಿವರಗಳು",

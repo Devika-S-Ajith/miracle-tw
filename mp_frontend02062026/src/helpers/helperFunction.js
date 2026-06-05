@@ -445,8 +445,8 @@ const getConsentName = (assessment) => {
 export const generateConsentPdfHandler = async (id, assessment) => {
   try {
     const payLoad = {
-      HTConsentId: id,
-      HTLanguageId: getLanguageId(),
+      TWConsentId: id,
+      TWLanguageId: getLanguageId(),
       userTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     };
     const res = await APIS.generateConsent(payLoad);

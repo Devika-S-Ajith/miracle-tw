@@ -1087,9 +1087,11 @@
     "since_assessment_1":"મૂલ્યાંકન #1 પછીથી",
     "assessment_number": "મૂલ્યાંકન  #{{number}}",
     "Add another family member": "બીજો પરિવાર સભ્ય ઉમેરો",
-    "Family contact information": "પરિવારની સંપર્ક માહિતી",
+    "Family contact information": "પરિવારની સંપર્ક માહિતી (વૈકલ્પિક)",
     "Family type": "પરિવારનો પ્રકાર",
-    "Date the family first started serving as a foster family": "પરિવારે પ્રથમ ક્યારે ફોસ્ટર પરિવાર તરીકે સેવા શરૂ કરી"
+    "Date the family first started serving as a foster family": "પરિવારે પ્રથમ ક્યારે ફોસ્ટર પરિવાર તરીકે સેવા શરૂ કરી",
+    "Family member or caregiver": "પરિવારના સભ્ય અથવા સંભાળનાર",
+    "Profile information": "પ્રોફાઇલ માહિતી"
   },
   "form": {
     "formList": "પત્રકની યાદી ",
@@ -1569,7 +1571,7 @@
     "Case Closed": "કેસ બંધ કરેલ છે",
     "Status": "સ્થિતિ",
     "Case Worker": "કેસ વર્કર",
-    "Case manager": "કેસ મેનેજર ",
+    "Case manager": "કેસ વર્કર",
     "Inactive": "નિષ્ક્રિય  ",
     "Support services": "આધાર સેવાઓ",
     "Support service details": "આધાર સેવા વિગતો",
