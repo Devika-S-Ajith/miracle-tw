@@ -21,7 +21,7 @@ const FamilyChangeModal = ({ onFamilyChangeConfirm, onFamilyChangeCancel, close,
       childDischargedDate: Yup.date()
         .required("Date of family change is required")
         .nullable(),
-      otherReason: Yup.string().when("childDischargeReason", {
+       otherReason: Yup.string().when("childDischargeReason", {
         is: (val) => Array.isArray(val) && val.includes("OTHER"),
         then: (schema) =>
           schema.required("Reason for family change is required"),

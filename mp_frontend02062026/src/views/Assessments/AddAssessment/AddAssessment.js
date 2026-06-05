@@ -53,6 +53,22 @@ const AddAssessment = () => {
           <Grid item xs={12} sx={{ mr: 1 }}>
             <Grid container justifyContent="space-between" spacing={3}>
               <Grid item sx={{ display: "flex", flexDirection: "row" }}>
+                <Typography
+                  color="textPrimary"
+                  sx={{ cursor: "pointer" }}
+                  variant="h5"
+                  onClick={() => navigate("/dashboard")}
+                >
+                  {t("common:common.Thrive Scale")}
+                </Typography>
+                <Box
+                  sx={{
+                    m: 0.75,
+                  }}
+                  style={{ cursor: "text" }}
+                >
+                  <ChevronRightIcon color="disabled" fontSize="small" />
+                </Box>
                 <Grid item>
                   <Typography
                     color="textPrimary"
@@ -60,7 +76,7 @@ const AddAssessment = () => {
                     onClick={() => navigate("/dashboard/assessments")}
                     variant="h5"
                   >
-                    {t("common:common.Assessments & Progress Reports", "Assessments & Progress Reports")}
+                    {t("common:common.Assessments")}
                   </Typography>
                 </Grid>
                 <Box

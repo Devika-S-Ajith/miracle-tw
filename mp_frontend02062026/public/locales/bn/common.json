@@ -655,7 +655,7 @@
     "admin+casemanager": " অ্যাডমিন+কেস ম্যানেজার ",
     "admin+caseworker": " অ্যাডমিন+কেস ওয়ার্কার ",
     "caseworker": " কেস ওয়ার্কার ",
-    "casemanager": " কেস ম্যানেজার ",
+    "casemanager": " কেস ওয়ার্কার ",
     "viewonly": " শুধুমাত্র দেখুন ",
     "parent": " পিতা-মাতা "
   },
@@ -1079,11 +1079,11 @@
     "since_assessment_1":"মূল্যায়ন #১ থেকে",
     "assessment_number": "মূল্যায়ন #{{number}}",
     "Add another family member": "আরেকজন পরিবার সদস্য যোগ করুন",
-    "Family contact information": "পরিবারের যোগাযোগের তথ্য (ঐচ্ছিক)",
     "Family type": "পরিবারের ধরন",
     "Date the family first started serving as a foster family": "পরিবারটি প্রথম কবে লালন পরিবার হিসেবে শুরু করেছে",
     "Family member or caregiver": "পরিবারের সদস্য বা পরিচর্যাকারী",
-    "Profile information": "প্রোফাইল তথ্য"
+    "Profile information": "প্রোফাইল তথ্য",
+    "Family contact information": "পরিবারের যোগাযোগের তথ্য (ঐচ্ছিক)"
   },
   "form": {
     "formList": " ফর্মের তালিকা ",
@@ -1267,6 +1267,8 @@
     "Article link is required": "প্রবন্ধের লিংক প্রয়োজন",
     "Image link is required": "ছবির লিংক প্রয়োজন",
     "Date of birth cannot be in the future": "জন্ম তারিখ ভবিষ্যতে হতে পারে না",
+    "Date child entered agency cannot be before child's date of birth": "শিশুর সংস্থায় প্রবেশের তারিখ শিশুর জন্ম তারিখের আগে হতে পারে না",
+    "Child Welfare Entry date cannot be before the child's date of birth": "শিশু কল্যাণ ব্যবস্থায় প্রবেশের তারিখ শিশুর জন্ম তারিখের আগে হতে পারে না",
     "Past dates are not allowed": "অতীতের তারিখ অনুমোদিত নয়",
     "Content must be at most 500 characters":"বিষয়বস্তু সর্বোচ্চ 500 অক্ষরের হতে হবে",
     "Label must be at most 20 characters":"লেবেল সর্বোচ্চ 20 অক্ষরের হতে হবে",
@@ -1565,7 +1567,6 @@
     "Case Closed": "কেস বন্ধ",
     "Status": "অবস্থা",
     "Case Worker": "কেস ওয়ার্কার",
-    "Case manager": " কেসওয়ার্কার ",
     "Inactive": " নিষ্ক্রিয় ",
     "Support services": "সহায়তা পরিষেবা",
     "Support service details": "সহায়তা পরিষেবার বিবরণ",
@@ -1611,7 +1612,8 @@
     "Total interventions completed": "মোট সম্পন্ন হস্তক্ষেপ",
     "Average # of active cases per case manager": "প্রতি কেস ম্যানেজারের গড় # সক্রিয় কেস",
     "# of active case managers": "# সক্রিয় কেস ম্যানেজার",
-    "Total number of active cases (families + children)": "সক্রিয় কেসের মোট সংখ্যা (পরিবার + শিশু)"
+    "Total number of active cases (families + children)": "সক্রিয় কেসের মোট সংখ্যা (পরিবার + শিশু)",
+    "Case manager": " কেসওয়ার্কার "
   },
   "tableColumn":{
   "Organization name": "সংস্থার নাম",

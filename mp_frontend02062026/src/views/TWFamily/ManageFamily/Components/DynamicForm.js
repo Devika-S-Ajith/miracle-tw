@@ -253,7 +253,8 @@ const getFieldTouched = (name) => get(touched, name, false);
                              slots={{
                                 openPickerIcon: CalendarIcon,
                             }}
-                        />
+                            maxDate={fieldProps?.maxDate ? dayjs(fieldProps.maxDate).endOf('day') : undefined}
+                            minDate={fieldProps?.minDate ? dayjs(fieldProps.minDate).startOf('day') : undefined}                        />
                     </Grid>
                 );
 
@@ -293,7 +294,8 @@ const getFieldTouched = (name) => get(touched, name, false);
                             //         handleBlur?.({ target: { name: fullFieldName } });
                             //     });
                             // }}
-                            maxDate={dayjs().endOf('day')}
+                            maxDate={fieldProps?.maxDate ? dayjs(fieldProps.maxDate).endOf('day') : undefined}
+                            minDate={fieldProps?.minDate ? dayjs(fieldProps.minDate).startOf('day') : undefined}
                             slots={{
                                 openPickerIcon: CalendarIcon,
                             }}
@@ -344,7 +346,10 @@ const getFieldTouched = (name) => get(touched, name, false);
                             type="text"
                             required ={fieldProps.required}
                             onBlur={handleBlur}
-                            onChange={handleChange}
+                            onChange={(e) => {
+                                handleChange(e);
+                                fieldProps?.onChange?.(e?.target?.value);
+                            }}
                             value={fieldValue || ''} // Use helper function
                             disabled={isDisabled}
                         />

@@ -222,7 +222,7 @@ const CommonDataContextProvider = (props) => {
       setLanguageId(resData.MPLanguageId);
 
       const currentLanguageList = JSON.parse(localStorage.getItem("languageList") || "[]");
-      const langCode = currentLanguageList.find((item) => item.id == resData.MPLanguageId)
+      const langCode = currentLanguageList.find((item) => item.id == resData.TWLanguageId)
         ?.languageCode ?? "en";
 
       i18n.changeLanguage(langCode);

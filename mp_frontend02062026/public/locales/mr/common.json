@@ -1086,12 +1086,11 @@
     "since_assessment_1":"मूल्यांकन #1 पासून",
     "assessment_number": "मूल्यांकन  #{{number}}",
     "Add another family member": "आणखी एक कुटुंब सदस्य जोडा",
-    "Date the family first started serving as a foster family": "कुटुंबाने फॉस्टर कुटुंब म्हणून सेवा सुरू केलेली तारीख",
+     "Date the family first started serving as a foster family": "कुटुंबाने फॉस्टर कुटुंब म्हणून सेवा सुरू केलेली तारीख",
     "Family type": "कुटुंबाचा प्रकार",
     "Family member or caregiver": "कुटुंब सदस्य या काळजीवाहक",
     "Profile information": "प्रोफाइल जानकारी",
-    "Family contact information": "कुटुंबाची संपर्क माहिती (ऐच्छिक)",
-
+    "Family contact information": "कुटुंबाची संपर्क माहिती (ऐच्छिक)"
 
   },
   "form": {
@@ -1276,6 +1275,8 @@
     "Article link is required": "लेखाची लिंक आवश्यक आहे",
     "Image link is required": "प्रतिमेची लिंक आवश्यक आहे",
     "Date of birth cannot be in the future": "जन्मतारीख भविष्य की नहीं हो सकती",
+    "Date child entered agency cannot be before child's date of birth": "मूल एजन्सीत प्रवेश केलेली तारीख मुलाच्या जन्मतारखेपूर्वी असू शकत नाही",
+    "Child Welfare Entry date cannot be before the child's date of birth": "बाल कल्याण प्रवेश तारीख मुलाच्या जन्मतारखेपूर्वी असू शकत नाही",
     "Past dates are not allowed": "मागील तारखा अनुमत नाहीत",
     "Content must be at most 500 characters": "मजकूर जास्तीत जास्त 500 अक्षरांचा असावा",
     "Label must be at most 20 characters": "लेबल जास्तीत जास्त 20 अक्षरांचे असावे",
@@ -1572,7 +1573,6 @@
     "Case Closed": "केस बंद",
     "Status": "स्थिती",
     "Case Worker": "केस वर्कर",
-    "Case manager": "केस वर्कर",
     "Inactive": "निष्क्रिय",
     "Support services": "समर्थन सेवा",
     "Support service details": "समर्थन सेवा तपशील",
@@ -1618,7 +1618,9 @@
     "Total interventions completed": "एकूण पूर्ण झालेले हस्तक्षेप",
     "Average # of active cases per case manager": "प्रति केस मॅनेजर सक्रिय प्रकरणांची सरासरी संख्या",
     "# of active case managers": "सक्रिय केस मॅनेजर्सची संख्या",
-    "Total number of active cases (families + children)": "सक्रिय प्रकरणांची एकूण संख्या (कुटुंबे + मुले)"
+    "Total number of active cases (families + children)": "सक्रिय प्रकरणांची एकूण संख्या (कुटुंबे + मुले)",
+    "Case manager": "केस वर्कर"
+
 },
 "tableColumn":{
   "Organization name": "संस्थेचे नाव",

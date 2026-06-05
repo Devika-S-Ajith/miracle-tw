@@ -1,13 +1,16 @@
+import dayjs from "dayjs";
 import {
   GenderListOptions,
   LevelOfCareOptions,
 } from "../../../../../constants";
+import { getDistrictList } from "../../../../../helpers/helperFunction";
 
 export const ChildBasicDetails = ({
   childDropdownLists,
   users,
   familyList,
   handleFamilyChange,
+  onCurrentLivingConditionChange,
   setFieldValue,
   values,
   uniqueCheckHandler,
@@ -49,7 +52,7 @@ export const ChildBasicDetails = ({
     options: GenderListOptions,
     // value: values.gender,
     gridProps: { xs: 12 },
-    onChange: (value) => uniqueCheckHandler({ value, values, setFieldError, validateForm }),
+    onChange: (name, value) => uniqueCheckHandler({ key: name, value, values, setFieldError, validateForm }),
   },
   {
     type: "DatePicker",
@@ -63,6 +66,7 @@ export const ChildBasicDetails = ({
     fullWidth: true,
     variant: "outlined",
     gridProps: { xs: 12, md: 12 },
+    maxDate: dayjs().endOf('day'),
     onChange: (value)=>  uniqueCheckHandler({key: "dateOfBirth", value, values, setFieldError })
   },
     ...(!values?.isNewFamily
@@ -89,6 +93,7 @@ export const ChildBasicDetails = ({
     options: childDropdownLists?.currentPlacementStatus || [],
     // value: values?.TWChildCurrentPlacementStatusId,
     gridProps: { md: 12, xs: 12 },
+    onChange: onCurrentLivingConditionChange,
   },
   {
     type: "dropdown",
@@ -130,11 +135,19 @@ export const ChildAddressConditionalFields = ({
 
 export const ChildContactDetails = ({
   StateList,
+  locationList,
   handleFamilyChange,
   values,
   setFieldValue,
   t,
-}) => [
+}) => {
+  const unsetSameAddress = () => {
+    if (values?.isSameAsFamilyAddress) {
+      setFieldValue("isSameAsFamilyAddress", false);
+    }
+  };
+
+  return [
   {
     type: "text",
     name: "contactInformation.addressLine1",
@@ -144,6 +157,7 @@ export const ChildContactDetails = ({
     fullWidth: true,
     variant: "outlined",
     gridProps: { xs: 12 },
+    onChange: unsetSameAddress,
   },
   {
     type: "text",
@@ -154,6 +168,7 @@ export const ChildContactDetails = ({
     fullWidth: true,
     variant: "outlined",
     gridProps: { xs: 12 },
+    onChange: unsetSameAddress,
     // rops: { md: 6.5, xs: 6.5 }
   },
   {
@@ -165,6 +180,7 @@ export const ChildContactDetails = ({
     fullWidth: true,
     variant: "outlined",
     gridProps: { xs: 12 },
+    onChange: unsetSameAddress,
   },
   {
     type: "dropdown",
@@ -177,6 +193,32 @@ export const ChildContactDetails = ({
       StateList?.map((state) => ({ id: state.id, value: state.stateName })) ||
       [],
     gridProps: { xs: 12 },
+    onChange: unsetSameAddress,
+  },
+  {
+    type: "dropdown",
+    name: "contactInformation.TWDistrictId",
+    label: t("common:common.District/County", "District/County"),
+    translateLabels: true,
+    required: false,
+    validateOnChange: true,
+    options:
+      getDistrictList(
+        locationList,
+        values?.contactInformation?.TWCountryId,
+        values?.contactInformation?.TWStateId,
+      )?.map((district) => ({
+        id: district.id,
+        value: district.districtName,
+      })) || [],
+    condition: () => {
+      const country = locationList?.find(
+        (c) => c.id == values?.contactInformation?.TWCountryId,
+      );
+      return country?.districtRequired === true;
+    },
+    gridProps: { xs: 12 },
+    onChange: unsetSameAddress,
   },
   {
     type: "ZIPCode",
@@ -187,8 +229,10 @@ export const ChildContactDetails = ({
     fullWidth: true,
     variant: "outlined",
     gridProps: { xs: 12 },
+    onChange: unsetSameAddress,
   },
-];
+  ];
+};
 
 export const ChildAdditionalDetails = ({
   phoneRef,
@@ -273,7 +317,7 @@ export const ChildAdditionalDetails = ({
     },
   ];
 };
-export const CaseManagementDetails = (childDropdownLists) => [
+export const CaseManagementDetails = ({childDropdownLists, values}) => [
   {
     type: "DatePicker",
     name: "caseManagementInformation.dateOfEntry",
@@ -285,6 +329,8 @@ export const CaseManagementDetails = (childDropdownLists) => [
     size: "medium",
     variant: "outlined",
     gridProps: { md: 12, xs: 12 },
+    minDate: values?.dateOfBirth ? dayjs(values.dateOfBirth) : undefined,
+    maxDate: dayjs().endOf('day'),
   },
   {
     type: "MonthYearPicker",
@@ -297,6 +343,8 @@ export const CaseManagementDetails = (childDropdownLists) => [
     size: "medium",
     variant: "outlined",
     gridProps: { md: 12, xs: 12 },
+    minDate: values?.dateOfBirth ? dayjs(values.dateOfBirth) : undefined,
+    maxDate: dayjs().endOf('month'),
   },
   {
     type: "dropdown",
@@ -364,7 +412,7 @@ export const CaseCloseDetails = ({
     type: "DatePicker",
     name: "dateCaseClosed",
     label: "Date case was closed",
-   validateOnChange: true,
+    validateOnChange: true,
     size: "medium",
     color: "#FFFFFF",
     required: true,

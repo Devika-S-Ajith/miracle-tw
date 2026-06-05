@@ -257,6 +257,9 @@ const GovtDashboardChildren = Loadable(
 const ConsolidatedEventsList = Loadable(
   lazy(() => import("./views/ConsolidatedEventsList"))
 );
+const ConsolidatedEventDetails = Loadable(
+  lazy(() => import("./views/ConsolidatedEventsList/EventDetails"))
+);
 
 
 const routes = [
@@ -666,6 +669,10 @@ const routes = [
       {
         path: "/events",
         element: <ConsolidatedEventsList />,
+      },
+      {
+        path: "/events/:id",
+        element: <ConsolidatedEventDetails />,
       },
       {
         path: "organizations",

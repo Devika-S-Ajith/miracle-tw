@@ -184,7 +184,6 @@ const UserListTable = (props) => {
     roleListFS,
     signedinUserRoleHT,
     signedinUserRoleFS,
-    organizationList,
     getLocationList,
   } = useContext(CommonDataContext);
   const typeOptions = orgOptions;
@@ -1349,13 +1348,7 @@ const UserListTable = (props) => {
                         </Box>
                       </TableCell>
                       <TableCell>
-                        {` ${
-                          organizationList &&
-                          organizationList.length &&
-                          organizationList.find(
-                            (item) => item.id === customer.TWAccountId
-                          )?.accountName
-                        } `}
+                        {customer?.accountName}
                       </TableCell>
                       <TableCell>
                         {roleListFS &&

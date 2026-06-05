@@ -57,7 +57,7 @@ const ManageChildForm = ({
   isFromFamily = false,
   refreshTable,
   refreshData,
-  hideChildModal
+  hideChildModal,
 }) => {
   const { t } = useTranslation(["common"]);
   const [isLoading, setIsLoading] = useState(false); // Defined missing state
@@ -66,7 +66,12 @@ const ManageChildForm = ({
   const initialValuesRef = useRef({});
   const valuesRef = useRef({});
   const isFormDirtyRef = useRef(false);
-  const { childDropdownLists, locationList, htLanguagesList, fsLanguagesList } =
+  const {
+    childDropdownLists,
+    locationList,
+    htLanguagesList,
+    fsLanguagesList,
+  } =
     useContext(CommonDataContext);
   const [users, setUsers] = useState([]);
   const [familyList, setFamilyList] = useState([]);
@@ -74,7 +79,6 @@ const ManageChildForm = ({
   const StateList =
     locationList?.find((loc) => loc.id == userRegion)?.states || [];
   const [isEditing, setIsEditing] = useState(false);
-  const [isUniqueChild, setIsuniqueChild] = useState(true);
   const phoneRef = useRef({});
 
   useEffect(() => {
@@ -192,6 +196,10 @@ const ManageChildForm = ({
             "contactInformation.TWStateId",
             familyData.TWStateId || "",
           );
+          setFieldValue(
+            "contactInformation.TWDistrictId",
+            familyData.TWDistrictId || "",
+          );
           setFieldValue("contactInformation.zipCode", familyData.zipCode || "");
         }
       } catch (error) {
@@ -216,6 +224,12 @@ const ManageChildForm = ({
   }, []);
 
   const handleFamilyChange = async ({ data, setFieldValue }) => {
+    setFieldValue("isSameAsFamilyAddress", false);
+    valuesRef.current = {
+      ...valuesRef.current,
+      isSameAsFamilyAddress: false,
+    };
+
     if (
       childDetails?.TWFamilyId &&
       childDetails.TWFamilyId !== data?.TWFamilyId
@@ -278,35 +292,40 @@ const ManageChildForm = ({
     setFieldValue("familyChangeDetails", null);
   };
 
+  const formatDateOfBirthForApi = (dateValue) => {
+    if (!dateValue) return dateValue;
+
+    const parsedDob = new Date(dateValue);
+    if (Number.isNaN(parsedDob.getTime())) return dateValue;
+
+    const yyyy = parsedDob.getFullYear();
+    const mm = String(parsedDob.getMonth() + 1).padStart(2, "0");
+    const dd = String(parsedDob.getDate()).padStart(2, "0");
+
+    return `${yyyy}-${mm}-${dd}T00:00:00.000Z`;
+  };
+
   const uniqueCheckHandler = useDebouncedCallback(
     async ({ key, value, values, setFieldError }) => {
       // Only check if all required fields are present
-      if (values?.firstName && values.gender && values.dateOfBirth) {
+      const candidateValues = {
+        ...values,
+        ...(key ? { [key]: value } : {}),
+      };
+
+      const firstName = candidateValues.firstName;
+      const lastName = candidateValues.lastName;
+      const birthDate = formatDateOfBirthForApi(candidateValues.dateOfBirth);
+      const gender = candidateValues.gender;
+
+      if (firstName && gender && birthDate) {
         try {
-          // Handle key logic for all relevant fields
-          let firstName = values.firstName;
-          let lastName = values.lastName;
-          let birthDate = values.dateOfBirth;
-          let gender = values.gender;
-          if (key === "firstName") firstName = value;
-          else if (key === "lastName") lastName = value;
-          else if (key === "dateOfBirth") birthDate = value;
-          // else if (key === "gender") gender = value;
-            if(birthDate){
-              const parsedDob = new Date(birthDate);
-              if (!Number.isNaN(parsedDob.getTime())) {
-                const yyyy = parsedDob.getFullYear();
-                const mm = String(parsedDob.getMonth() + 1).padStart(2, "0");
-                const dd = String(parsedDob.getDate()).padStart(2, "0");
-                birthDate = `${yyyy}-${mm}-${dd}T00:00:00.000Z`;
-              }
-            }
           const res = await APIS.CheckUniqueChild({
             id: id || null,
             firstName,
             lastName: lastName?.length > 0 ? lastName : "",
             birthDate,
-            gender
+            gender,
           });
           const isUnique = res.data?.data?.isUnique;
           if (!isUnique) {
@@ -373,6 +392,62 @@ const ManageChildForm = ({
       hideModalFooter: true,
       enableClose: false,
     });
+  };
+
+  const handleCurrentLivingConditionChange = async (
+    name,
+    fieldValue,
+    data,
+    reason,
+    setFieldValue,
+  ) => {
+    const selectedPlacementLabel = (
+      data?.value ||
+      childDropdownLists?.currentPlacementStatus?.find(
+        (status) => String(status.id) === String(fieldValue),
+      )?.value ||
+      ""
+    )
+      .toString()
+      .trim()
+      .toLowerCase();
+
+    if (selectedPlacementLabel !== "institutional care") {
+      return;
+    }
+
+    const orgId = localStorage.getItem("orgId");
+    if (!orgId) {
+      return;
+    }
+
+    const setChildAddressFromOrg = (orgContact) => {
+      setFieldValue("isSameAsFamilyAddress", false);
+      setFieldValue("contactInformation.addressLine1", orgContact?.addressLine1 || "");
+      setFieldValue("contactInformation.addressLine2", orgContact?.addressLine2 || "");
+      setFieldValue("contactInformation.city", orgContact?.city || "");
+      setFieldValue(
+        "contactInformation.TWStateId",
+        orgContact?.MPStateId || "",
+      );
+      setFieldValue(
+        "contactInformation.TWDistrictId",
+        orgContact?.MPDistrictId || "",
+      );
+      setFieldValue("contactInformation.zipCode", orgContact?.zipCode || "");
+    };
+
+    try {
+      setIsLoading(true);
+      const orgRes = await APIS.OrganisationDetails(orgId);
+      const orgData = orgRes?.data?.data;
+      const orgContact = orgData?.contactInformation || orgData;
+      setChildAddressFromOrg(orgContact);
+    } catch (error) {
+      console.error("Error fetching organization address details:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const getChangedValues = (values, initialValues) => {
@@ -490,7 +565,8 @@ const ManageChildForm = ({
           dateOfCWSEntry:
             childDetails?.caseManagementInformation?.dateOfCWSEntry || null, // From commented Date of CWS entry
           TWChildPlacementStatusId:
-            childDetails?.caseManagementInformation?.TWChildPlacementStatusId || null, // From commented dropdown
+            childDetails?.caseManagementInformation?.TWChildPlacementStatusId ||
+            null, // From commented dropdown
           level: childDetails?.caseManagementInformation?.level || null,
           medicaidNumber:
             childDetails?.caseManagementInformation?.medicaidNumber || null,
@@ -536,12 +612,12 @@ const ManageChildForm = ({
             "is-not-future-date",
             t(
               "common:warnings.Date of birth cannot be in the future",
-              "Date of birth cannot be in the future"
+              "Date of birth cannot be in the future",
             ),
             (value) => {
               if (!value) return true; // Allow empty values to be handled by required
               return dayjs(value).isBefore(dayjs().endOf("day"));
-            }
+            },
           )
           .nullable(),
         TWFamilyId: Yup.string().nullable(),
@@ -603,27 +679,25 @@ const ManageChildForm = ({
         caseManagementInformation: Yup.object().shape({
           dateOfEntry: Yup.date()
             .nullable()
-            .when("dateOfBirth", (dateOfBirth, schema) => {
-              return schema.test({
-                name: "is-date-after-dateOfBirth",
-                exclusive: true,
-                message:
-                  "Date child entered agency cannot be before child's date of birth",
-                test: function (dateOfEntry) {
-                  // If either dateOfBirth or dateOfEntry is null, return true
-                  if (
-                    !dateOfBirth ||
-                    !dayjs(dateOfBirth).isValid() ||
-                    !dateOfEntry
-                  ) {
-                    return true;
-                  }
+            .test(
+              "is-date-after-dateOfBirth",
+              t(
+                "common:warnings.Date child entered agency cannot be before child's date of birth",
+                "Date child entered agency cannot be before child's date of birth",
+              ),
+              function (dateOfEntry) {
+                const dateOfBirth = this?.from?.[1]?.value?.dateOfBirth;
 
-                  // Compare the dates
-                  return dateOfEntry >= dateOfBirth;
-                },
-              });
-            })
+                if (!dateOfBirth || !dateOfEntry) return true;
+
+                const dob = dayjs(dateOfBirth);
+                const enteredAgency = dayjs(dateOfEntry);
+
+                if (!dob.isValid() || !enteredAgency.isValid()) return true;
+
+                return !enteredAgency.isBefore(dob, "day");
+              },
+            )
             .nullable(),
           dateOfCWSEntry: Yup.string()
             .test({
@@ -672,28 +746,34 @@ const ManageChildForm = ({
                 },
               });
             })
-            .when("dateOfBirth", (dateOfBirth, schema) => {
-              return schema.test({
-                name: "is-date-after-dateOfBirth",
-                exclusive: true,
-                message:
-                  "Child Welfare Entry date cannot be before the child's date of birth",
-                test: function (dateOfCWSEntry) {
-                  // if (isEditing && childData?.hadPrevCM) return true;
-                  if (!dateOfBirth || !dateOfCWSEntry) return true;
+            .test({
+              name: "is-date-after-dateOfBirth",
+              exclusive: true,
+              message: t(
+                "common:warnings.Child Welfare Entry date cannot be before the child's date of birth",
+                "Child Welfare Entry date cannot be before the child's date of birth",
+              ),
+              test: function (dateOfCWSEntry) {
+                const dateOfBirth = this?.from?.[1]?.value?.dateOfBirth;
 
-                  const dobMonth = dayjs(dateOfBirth).month() + 1;
-                  const dobYear = dayjs(dateOfBirth).year();
-                  const [entryMonth, entryYear] = dateOfCWSEntry
-                    .split("/")
-                    .map(Number);
+                if (!dateOfBirth || !dateOfCWSEntry) return true;
 
-                  return (
-                    entryYear > dobYear ||
-                    (entryYear === dobYear && entryMonth >= dobMonth)
-                  );
-                },
-              });
+                const dob = dayjs(dateOfBirth);
+                if (!dob.isValid()) return true;
+
+                const dobMonth = dob.month() + 1;
+                const dobYear = dob.year();
+                const [entryMonth, entryYear] = dateOfCWSEntry
+                  .split("/")
+                  .map(Number);
+
+                if (!entryMonth || !entryYear) return true;
+
+                return (
+                  entryYear > dobYear ||
+                  (entryYear === dobYear && entryMonth >= dobMonth)
+                );
+              },
             })
             .nullable(),
           level: Yup.string().max(255).nullable(),
@@ -710,13 +790,13 @@ const ManageChildForm = ({
         setIsLoading(true);
         try {
           let res;
-            if (
-              values?.profileInformation?.phoneNumber &&
-              "+" + phoneRef.current.dialCode ===
-                values?.profileInformation?.phoneNumber
-            ) {
-              values.profileInformation.phoneNumber = null;
-            }
+          if (
+            values?.profileInformation?.phoneNumber &&
+            "+" + phoneRef.current.dialCode ===
+              values?.profileInformation?.phoneNumber
+          ) {
+            values.profileInformation.phoneNumber = null;
+          }
           if (id) {
             let changedValues = getChangedValues(
               values,
@@ -726,57 +806,58 @@ const ManageChildForm = ({
             if (changedValues?.TWFamilyId) {
               changedValues.caseWorkerId = values.caseWorkerId;
             }
-            if(changedValues?.dateOfBirth){
-              const parsedDob = new Date(changedValues.dateOfBirth);
-              if (!Number.isNaN(parsedDob.getTime())) {
-                const yyyy = parsedDob.getFullYear();
-                const mm = String(parsedDob.getMonth() + 1).padStart(2, "0");
-                const dd = String(parsedDob.getDate()).padStart(2, "0");
-                changedValues.dateOfBirth = `${yyyy}-${mm}-${dd}T00:00:00.000Z`;
-              }
+            if (changedValues?.dateOfBirth) {
+              changedValues.dateOfBirth = formatDateOfBirthForApi(
+                changedValues.dateOfBirth,
+              );
             }
             res = await APIS.UpdateChild(changedValues);
             if (isFromFamily) {
               const newPayload = {
-                ...(changedValues?.firstName && { firstName: values.firstName }),
+                ...(changedValues?.firstName && {
+                  firstName: values.firstName,
+                }),
                 ...(changedValues?.lastName && { lastName: values.lastName }),
                 id: res.data?.data?.id,
                 ...(changedValues?.gender && { gender: values.gender }),
-                ...(changedValues?.dateOfBirth && { dateOfBirth: values.dateOfBirth }),
+                ...(changedValues?.dateOfBirth && {
+                  dateOfBirth: values.dateOfBirth,
+                }),
                 isExistingChild: true,
-                _rowKey: childInfo?._rowKey
+                _rowKey: childInfo?._rowKey,
               };
               handleResponse(newPayload);
             }
           } else {
             let payload = { ...values };
-            if(payload?.dateOfBirth){
-              const parsedDob = new Date(payload.dateOfBirth);
-              if (!Number.isNaN(parsedDob.getTime())) {
-                const yyyy = parsedDob.getFullYear();
-                const mm = String(parsedDob.getMonth() + 1).padStart(2, "0");
-                const dd = String(parsedDob.getDate()).padStart(2, "0");
-                payload.dateOfBirth = `${yyyy}-${mm}-${dd}T00:00:00.000Z`;
-              }
+            if (payload?.dateOfBirth) {
+              payload.dateOfBirth = formatDateOfBirthForApi(
+                payload.dateOfBirth,
+              );
             }
             res = await APIS.CreateChild(payload);
             const changedValues = {};
-           
-           
+
             if (isFromFamily) {
-              ["firstName", "lastName", "dateOfBirth", "gender"].forEach((field) => {
-                if (values[field] !== childInfo[field]) {
-                  changedValues[field] = values[field];
-                }
-              });
+              ["firstName", "lastName", "dateOfBirth", "gender"].forEach(
+                (field) => {
+                  if (values[field] !== childInfo[field]) {
+                    changedValues[field] = values[field];
+                  }
+                },
+              );
               const newPayload = {
-                ...(changedValues?.firstName && { firstName: values.firstName }),
+                ...(changedValues?.firstName && {
+                  firstName: values.firstName,
+                }),
                 ...(changedValues?.lastName && { lastName: values.lastName }),
                 id: res.data?.data?.id,
                 ...(changedValues?.gender && { gender: values.gender }),
-                ...(changedValues?.dateOfBirth && { dateOfBirth: values.dateOfBirth }),
+                ...(changedValues?.dateOfBirth && {
+                  dateOfBirth: values.dateOfBirth,
+                }),
                 isExistingChild: true,
-                _rowKey: childInfo?._rowKey
+                _rowKey: childInfo?._rowKey,
               };
               handleResponse(newPayload);
             }
@@ -823,7 +904,7 @@ const ManageChildForm = ({
         dirty,
         setFieldError,
         validateForm,
-        setFieldTouched
+        setFieldTouched,
       }) => {
         // Sync refs
         initialValuesRef.current = initialValues;
@@ -888,10 +969,23 @@ const ManageChildForm = ({
                           values,
                           setFieldValue,
                           handleFamilyChange,
+                          onCurrentLivingConditionChange: (
+                            name,
+                            fieldValue,
+                            data,
+                            reason,
+                          ) =>
+                            handleCurrentLivingConditionChange(
+                              name,
+                              fieldValue,
+                              data,
+                              reason,
+                              setFieldValue,
+                            ),
                           uniqueCheckHandler,
                           setFieldError,
                           validateForm,
-                          t
+                          t,
                         })}
                         isDisabled={
                           isSubmitting || childDetails?.status === "Case Closed"
@@ -905,25 +999,27 @@ const ManageChildForm = ({
                           )}
                         />
                         <Grid container spacing={2} sx={{ mt: 0.5 }}>
-                          {values?.TWFamilyId && <DynamicForm
-                            values={values}
-                            errors={errors}
-                            touched={touched}
-                            t={t}
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                            setFieldValue={setFieldValue}
-                            config={ChildAddressConditionalFields({
-                              values,
-                              handleSameAddressChange,
-                              setFieldValue,
-                              t
-                            })}
-                            isDisabled={
-                              isSubmitting ||
-                              childDetails?.status === "Case Closed"
-                            }
-                          />}
+                          {values?.TWFamilyId && (
+                            <DynamicForm
+                              values={values}
+                              errors={errors}
+                              touched={touched}
+                              t={t}
+                              handleChange={handleChange}
+                              handleBlur={handleBlur}
+                              setFieldValue={setFieldValue}
+                              config={ChildAddressConditionalFields({
+                                values,
+                                handleSameAddressChange,
+                                setFieldValue,
+                                t,
+                              })}
+                              isDisabled={
+                                isSubmitting ||
+                                childDetails?.status === "Case Closed"
+                              }
+                            />
+                          )}
 
                           <DynamicForm
                             values={values}
@@ -935,15 +1031,15 @@ const ManageChildForm = ({
                             setFieldValue={setFieldValue}
                             config={ChildContactDetails({
                               StateList,
+                              locationList,
                               handleFamilyChange,
                               values,
                               setFieldValue,
-                              t
+                              t,
                             })}
                             isDisabled={
                               isSubmitting ||
-                              childDetails?.status === "Case Closed" ||
-                              values?.isSameAsFamilyAddress
+                              childDetails?.status === "Case Closed"
                             }
                           />
                         </Grid>
@@ -968,7 +1064,10 @@ const ManageChildForm = ({
                               locationList={locationList}
                               config={ChildAdditionalDetails({
                                 childDropdownLists,
-                                languagesList: localStorage.getItem("userRegion") == "1" ? htLanguagesList : fsLanguagesList,
+                                languagesList:
+                                  localStorage.getItem("userRegion") == "1"
+                                    ? htLanguagesList
+                                    : fsLanguagesList,
                                 phoneRef,
                               })}
                               isDisabled={
@@ -996,7 +1095,10 @@ const ManageChildForm = ({
                               handleChange={handleChange}
                               handleBlur={handleBlur}
                               setFieldValue={setFieldValue}
-                              config={CaseManagementDetails(childDropdownLists)}
+                              config={CaseManagementDetails({
+                                childDropdownLists,
+                                values,
+                              })}
                               isDisabled={
                                 isSubmitting ||
                                 childDetails?.status === "Case Closed"

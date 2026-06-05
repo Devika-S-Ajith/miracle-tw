@@ -661,7 +661,7 @@
     "admin+casemanager": "એડમીન + કેસ મેનેજર ",
     "admin+caseworker": "એડમીન+ કેસ વર્કર ",
     "caseworker": " કેસ વર્કર ",
-    "casemanager": "કેસ મેનેજર ",
+    "casemanager": "કેસ વર્કર ",
     "viewonly": "ફક્ત જૂઓ ",
     "parent": "માતાપિતા "
   },
@@ -1087,11 +1087,11 @@
     "since_assessment_1":"મૂલ્યાંકન #1 પછીથી",
     "assessment_number": "મૂલ્યાંકન  #{{number}}",
     "Add another family member": "બીજો પરિવાર સભ્ય ઉમેરો",
-    "Family contact information": "પરિવારની સંપર્ક માહિતી (વૈકલ્પિક)",
     "Family type": "પરિવારનો પ્રકાર",
     "Date the family first started serving as a foster family": "પરિવારે પ્રથમ ક્યારે ફોસ્ટર પરિવાર તરીકે સેવા શરૂ કરી",
     "Family member or caregiver": "પરિવારના સભ્ય અથવા સંભાળનાર",
-    "Profile information": "પ્રોફાઇલ માહિતી"
+    "Profile information": "પ્રોફાઇલ માહિતી",
+    "Family contact information": "પરિવારની સંપર્ક માહિતી (વૈકલ્પિક)"
   },
   "form": {
     "formList": "પત્રકની યાદી ",
@@ -1275,6 +1275,8 @@
     "Article link is required": "લેખની લિંક જરૂરી છે",
     "Image link is required": "છબીની લિંક જરૂરી છે",
     "Date of birth cannot be in the future": "જન્મ तारीख भविष्य में नहीं हो सकती",
+    "Date child entered agency cannot be before child's date of birth": "બાળક એજન્સીમાં દાખલ થયાની તારીખ બાળકની જન્મ તારીખ પહેલાં હોઈ શકતી નથી",
+    "Child Welfare Entry date cannot be before the child's date of birth": "બાળ કલ્યાણ પ્રવેશ તારીખ બાળકની જન્મ તારીખ પહેલાં હોઈ શકતી નથી",
     "Past dates are not allowed": "ભૂતકાળની તારીખોને મંજૂરી નથી",
     "Content must be at most 500 characters": "સામગ્રી વધુમાં વધુ 500 અક્ષરોની હોવી જોઈએ",
     "Label must be at most 20 characters": "લેબલ વધુમાં વધુ 20 અક્ષરોનું હોવું જોઈએ",
@@ -1571,7 +1573,6 @@
     "Case Closed": "કેસ બંધ કરેલ છે",
     "Status": "સ્થિતિ",
     "Case Worker": "કેસ વર્કર",
-    "Case manager": "કેસ વર્કર",
     "Inactive": "નિષ્ક્રિય  ",
     "Support services": "આધાર સેવાઓ",
     "Support service details": "આધાર સેવા વિગતો",
@@ -1617,7 +1618,8 @@
       "Total interventions completed":"કુલ પૂર્ણ થયેલા હસ્તક્ષેપો",
       "Average # of active cases per case manager":"દર કેસ મેનેજર દીઠ સરેરાશ # સક્રિય કેસો",
       "# of active case managers":"સક્રિય કેસ મેનેજરોની સંખ્યા",
-      "Total number of active cases (families + children)":"કુલ સક્રિય કેસોની સંખ્યા (પરિવારો + બાળકો)"
+      "Total number of active cases (families + children)":"કુલ સક્રિય કેસોની સંખ્યા (પરિવારો + બાળકો)",
+      "Case manager": "કેસ વર્કર"
 },
 "tableColumn": {
   "Organization name": "સંસ્થા નામ",

@@ -56,7 +56,6 @@ const InlineMemberCreation = ({
         const primary = memberList.find(member => member?.isPrimaryCaregiver);
         return primary ? (primary.id || primary._rowKey) : null;
     });
-    const radioListRef = useRef(null);
     const searchCache = useRef({});
     const searchController = useRef(null);
     const [isAdding, setIsAdding] = useState(false);
@@ -131,13 +130,13 @@ const InlineMemberCreation = ({
         {
             label: t("common:common.Remove member", "Remove member"),
             icon: DeleteMember,
-            isDisabled: (member) => (member?.isPrimaryCaregiver || !member?.id) ? true : false,
+            isDisabled: (member) => (member?.isPrimaryCaregiver || !member?.id || member?.newlyAdded) ? true : false,
             onClick: (obj) => handleDeleteMember(obj),
         },
         {
             label: t("common:common.Clear", "Clear"),
             icon: RemoveCircleIcon,
-            isDisabled: (member) => member?.id ? true : false,
+            isDisabled: (member) => member?.id && !member?.newlyAdded ? true : false,
             onClick: (obj) => handleClearMember(obj),
         },
     ];
@@ -327,6 +326,7 @@ const InlineMemberCreation = ({
             if (existingChild.length > 0) {
                 const DuplicateModalContent = ({ close }) => {
                     const [localLastName, setLocalLastName] = useState(formik?.values?.members?.[index]?.lastName || '');
+                    const [selectedChildOption, setSelectedChildOption] = useState(null);
 
                     const handleLastNameChange = (e) => {
                         const value = e.target.value;
@@ -343,25 +343,32 @@ const InlineMemberCreation = ({
                             <Box sx={{ mb: 2 }}>
                                 <RadioGroupList
                                     name="selectedChild"
-                                    ref={radioListRef}
                                     options={existingChild}
+                                    onChange={(e) => {
+                                        const selectedValue = e?.target?.value;
+                                        const matchedChild = existingChild.find(
+                                            (child) => String(child.id) === String(selectedValue)
+                                        ) || null;
+                                        setSelectedChildOption(matchedChild);
+                                    }}
                                 />
                             </Box>
 
-                            <Typography variant="body2" sx={{ mb: 1, color: 'text.primary' }}>
-                                {t('common:child.If this child is not one of the children listed above and is new to the system, please enter a last name for identification purposes.', 'If this child is not one of the children listed above and is new to the system, please enter a last name for identification purposes.')}
-                            </Typography>
+                            {!selectedChildOption &&
+                                <><Typography variant="body2" sx={{ mb: 1, color: 'text.primary' }}>
+                                    {t('common:child.If this child is not one of the children listed above and is new to the system, please enter a last name for identification purposes.', 'If this child is not one of the children listed above and is new to the system, please enter a last name for identification purposes.')}
+                                </Typography>
 
-                            <TextFieldWithExternalLabel
-                                name='lastName'
-                                label={t('common:child.Last name', 'Last name')}
-                                variant="outlined"
-                                fullWidth
-                                required={false}
-                                value={localLastName}
-                                onChange={handleLastNameChange}
-                            />
-
+                                    <TextFieldWithExternalLabel
+                                        name='lastName'
+                                        label={t('common:child.Last name', 'Last name')}
+                                        variant="outlined"
+                                        fullWidth
+                                        required={false}
+                                        value={localLastName}
+                                        onChange={handleLastNameChange}
+                                    />
+                            </>}
                             <Box sx={{ display: 'flex', flexGrow: 1, gap: 2, mt: 3 }}>
                                 <Button
                                     variant="outlined"
@@ -379,8 +386,9 @@ const InlineMemberCreation = ({
                                 <Button
                                     variant="contained"
                                     fullWidth
+                                    disabled={!selectedChildOption}
                                     onClick={() => {
-                                        handleChildSelection(radioListRef.current?.getSelectedOption(), index);
+                                        handleChildSelection(selectedChildOption, index);
                                         toast.success(t('common:child.Existing child selected'));
                                         close();
                                     }}
@@ -443,6 +451,7 @@ const InlineMemberCreation = ({
     const handleChildSelection = (child, currentIndex) => {
         if (!child || typeof child !== 'object') return;
         const { firstName = '', lastName = '', gender = '', dateOfBirth = null, id = '', isMajor = false } = child;
+        
         formik?.setValues(prev => {
             const members = [...prev.members];
             const { _rowKey, ...currentMember } = members[currentIndex];
@@ -456,9 +465,18 @@ const InlineMemberCreation = ({
                 isChild: true,
                 isMajor,
                 isExistingChild: true,
+                newlyAdded: true,
             };
             return { ...prev, members };
         });
+        setSelectedCareGiver(prev => {
+            const currentMember = memberList[currentIndex];
+            if (currentMember?.isPrimaryCaregiver) {
+                return id || currentMember._rowKey;
+            }
+            return prev;
+        });
+        
     };
 
     const handleFieldBlur = (index, fieldName, fieldValue = null) => {
@@ -689,6 +707,7 @@ const InlineMemberCreation = ({
                                                             );
                                                         }}
                                                         onClear={() => handleClearMember(obj)}
+                                                        disableClearable={true}
                                                         required={true}
                                                         disabled={!(obj?.isActive && isFamilyActive) || !formik?.values?.caseWorker || !formik?.values?.familyName}
                                                         validateOnChange={true}

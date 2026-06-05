@@ -46,13 +46,6 @@ import AssessmentStepIndicator from "./AssessmentStepIndicator/AssessmentStepInd
 import AssessmentChildDetails from "./AssessmentChildDetails";
 import PreAssessmentDetails from "./PreAssessmentDetails/PreAssessmentDetails";
 import AssessmentSummary from "./AssessmentSummary";
-import AssessmentFollowUpSkelton from "./AssessmentFollowup/AssessmentFollowUpSkelton";
-import FormQuestionsSkelton from "./FormQuestionsSkelton";
-import AssessmentBasicDetailsSkelton from "./AssessmentBasicDetailsSkelton";
-import PreAssessmentSkelton from "./PreAssessmentSkelton";
-import AreasNeedngImmediateInterventionSkelton from "./AreasNeedngImmediateInterventionSkelton";
-import AssessmentStepIndicatorSkelton from "./AssessmentStepIndicatorSkelton";
-import ThriveScaleSummarySkelton from "./ThriveScaleSummarySkelton";
 
 const StyledCard = styled(Card)({
   maxHeight: "90vh", // Adjust the height as needed
@@ -155,7 +148,6 @@ const ViewAssessment = forwardRef((props, ref) => {
     useState(null);
   const [domainSkippingReasons, setDomainSkippingReasons] = useState(null);
   const [followUpData, setFollowUpData] = useState(null);
-  const [followUpLoading, setFollowUpLoading] = useState(false);
   const [isFirstRender, setIsFirstRender] = useState(true);
   const containerRef = useRef(null);
 
@@ -283,19 +275,19 @@ const ViewAssessment = forwardRef((props, ref) => {
         observer.unobserve(element);
       });
     };
-  }, [assessment]);
+  }, [caseDetails]);
 
   
   const getFollowUpData = useCallback(async (assessmentId) => {
     try {
-      setFollowUpLoading(true);
+      setLoading(true);
       const data = await APIS.getFollowupDomainDetails(assessmentId);
     
       setFollowUpData(data?.data?.data?.followupData[0]);
-      setFollowUpLoading(false);
+      setLoading(false);
     } catch (err) {
       console.error(err);
-      setFollowUpLoading(false);
+      setLoading(false);
     }
   }, []);
 
@@ -344,11 +336,11 @@ const ViewAssessment = forwardRef((props, ref) => {
   const handleExport = useCallback(async () => {
     try {
       props.setExportLoading(true);
-      console.log("Exporting with assessmentId:", assessment);
+
       const fileName =
-        (assessment?.TWChildId ? assessment?.childFirstName +
+        (caseDetails?.TWChildId ? caseDetails?.childFirstName?.[0] +
         "_" +
-        assessment?.childLastName : assessment?.familyName) +
+        caseDetails.childLastName : caseDetails?.familyName) +
         `_${assessment?.dateOfAssessment}TSAssessment_` +
         currentDateAndTime();
       const data = await APIS.GetAssessmentDetails(
@@ -415,7 +407,7 @@ const ViewAssessment = forwardRef((props, ref) => {
         setChildrenAssessed(details?.childrensAssessed);
         setPrimaryChoices(details.primaryChoices);
         setVisitInterval(schedulingOption);
-        // getCaseDetails(TWCaseId);
+        getCaseDetails(TWCaseId);
       }
       setLoading(false);
       setQuestionsLoading(false);
@@ -668,9 +660,9 @@ const ViewAssessment = forwardRef((props, ref) => {
           <Form>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <StyledCard ref={containerRef}>
-                {/* <Loader
+                <Loader
                   loading={loading || questionsLoading }
-                ></Loader> */}
+                ></Loader>
                 <StyledCardHeader>
                   <Box
                     sx={{
@@ -680,16 +672,12 @@ const ViewAssessment = forwardRef((props, ref) => {
                       overflow: "auto",
                     }}
                   >
-                    {
-                      domains?.length > 0 ?
-                        <AssessmentStepIndicator
-                        formPage={formPage}
-                        domains={domains}
-                        score={score}
-                        handleClickPage={handleClickPage}
-                      /> 
-                      : <AssessmentStepIndicatorSkelton />
-                    }
+                    <AssessmentStepIndicator
+                      formPage={formPage}
+                      domains={domains}
+                      score={score}
+                      handleClickPage={handleClickPage}
+                    />
                   </Box>
                 </StyledCardHeader>
                 <Grid spacing={3}>
@@ -706,35 +694,28 @@ const ViewAssessment = forwardRef((props, ref) => {
                         padding: 2,
                       }}
                     >
-                      
-                      {
-                        values?.Id ? <>
-                        <Typography
+                      <Typography
                         variant="h6"
-                        sx={{ textAlign: "center", my: 1, mb: 2 }}
+                        sx={{ textAlign: "center", my: 1 }}
                       >
                         {values?.type === "FAMILY"
                           ? t("common:family.Family Details")
                           : t("common:child.Child Details")}
                       </Typography>
-                        <AssessmentChildDetails caseDetails={values} /></>  : <AssessmentBasicDetailsSkelton />
-                      }
-                     
-                      {
-                        values?.Id ? <>
-                         <Typography
+                      <AssessmentChildDetails
+                        caseDetails={values}
+                      />
+                      <Typography
                         variant="h6"
-                        sx={{ textAlign: "center", my: 2 }}
+                        sx={{ textAlign: "center", my: 1 }}
                       >
                         {t("common:assessment.Pre Assessment")}
                       </Typography>
-                        <PreAssessmentDetails
-                          preAssessmentData={values}
-                          reIntegrationTypeList={reIntegrationTypeList}
-                          visitTypeList={visitTypeList}
-                        /></> : <PreAssessmentSkelton />
-                      }
-                     
+                      <PreAssessmentDetails
+                        preAssessmentData={values}
+                        reIntegrationTypeList={reIntegrationTypeList}
+                        visitTypeList={visitTypeList}
+                      />
                     </Box>
                   </Grid>
                   {score ? (
@@ -751,21 +732,18 @@ const ViewAssessment = forwardRef((props, ref) => {
                           padding: 2,
                         }}
                       >
-                        {Object.keys(score || {}).length > 0 ? 
-                          <>
-                            <Typography variant="h6" sx={{ textAlign: "center" }}>
-                            {t("common:assessment.Thrive Scale Summary")}:{" "}
-                            {getTWScore()}
-                            </Typography>
-                            <AssessmentSummary score={score} domains={domains} />
-                          </> : <ThriveScaleSummarySkelton />}
+                        <Typography variant="h6" sx={{ textAlign: "center" }}>
+                          {t("common:assessment.Thrive Scale Summary")}:{" "}
+                          {getTWScore()}
+                        </Typography>
+                        <AssessmentSummary score={score} domains={domains} />
                       </Box>
                     </Grid>
                   ) : (
                     <></>
                   )}
                   {domains &&
-                    domains.length > 0 && formQuestions?.length > 0 ?
+                    domains.length > 0 &&
                     domains.map((domain, index) => {
                       // Determine if this domain should be disabled (greyed out)
                       const hasActiveQuestion = formQuestions?.some(
@@ -818,7 +796,7 @@ const ViewAssessment = forwardRef((props, ref) => {
                                   color: hasActiveQuestion ? 'inherit' : 'text.disabled',
                                 }}
                               >
-                                {domain.domainName}
+                                {domain.domainName} 
                                 {assessment?.domainsSkipped?.includes(domain.id) ? (
                                   (() => {
                                     const reason = getDomainSkippedReason(domain.id) || "";
@@ -1006,7 +984,7 @@ const ViewAssessment = forwardRef((props, ref) => {
                           </Box>
                         </Grid>
                       );
-                    }): <FormQuestionsSkelton />}
+                    })}
                   <Grid item md={12} xs={12} m={2}>
                     <Box
                       className="box"
@@ -1020,284 +998,277 @@ const ViewAssessment = forwardRef((props, ref) => {
                         padding: 2,
                       }}
                     >
-                     
-                      {  
-                        domains.length > 0 && formQuestions?.length > 0 ?
-                        <>
-                         <Typography color="black" variant="h6" textAlign="center">
-                            {t(
-                              "common:assessment.Areas Needing Immediate Intervention"
-                            )}
-                          </Typography>
-                          <Typography color="textSecondary" variant="subtitle1">
-                            {checkHaveRedflagIntervention() ? t("common:assessment.Intervention Sub1") : t("common:assessment.No immediate intervention needed")}
-                          </Typography>
-                          <Grid item md={12} xs={12} sx={{ mt: 2 }}>
-                            {domains &&
-                              domains.length > 0 &&
-                              domains.map((domain, index) => {
-                                return checkDomainHaveRedflagIntervention(
-                                  domain.id
-                                ) || checkIntervention(domain.id) ? (
-                                  <Accordion
-                                    key={domain.id}
-                                    panel={index}
-                                    expanded={expanded == index}
-                                    onChange={handleChangePanel(index)}
-                                    sx={{ mb: 2, borderRadius: "4px" }}
+                      <Typography color="black" variant="h6" textAlign="center">
+                        {t(
+                          "common:assessment.Areas Needing Immediate Intervention"
+                        )}
+                      </Typography>
+                      <Typography color="textSecondary" variant="subtitle1">
+                        {checkHaveRedflagIntervention() ? t("common:assessment.Intervention Sub1") : t("common:assessment.No immediate intervention needed")}
+                      </Typography>
+                      <Grid item md={12} xs={12} sx={{ mt: 2 }}>
+                        {domains &&
+                          domains.length > 0 &&
+                          domains.map((domain, index) => {
+                            return checkDomainHaveRedflagIntervention(
+                              domain.id
+                            ) || checkIntervention(domain.id) ? (
+                              <Accordion
+                                key={domain.id}
+                                panel={index}
+                                expanded={expanded == index}
+                                onChange={handleChangePanel(index)}
+                                sx={{ mb: 2, borderRadius: "4px" }}
+                              >
+                                <StyledAccordionSummary
+                                  expandIcon={
+                                    <ArrowDropUpIcon sx={{ color: "black" }} />
+                                  }
+                                  aria-controls="panel1bh-content"
+                                  id="panel1bh-header"
+                                >
+                                  <Typography
+                                    sx={{
+                                      width: "33%",
+                                      flexShrink: 0,
+                                      fontWeight: "bold",
+                                      my: 1,
+                                    }}
                                   >
-                                    <StyledAccordionSummary
-                                      expandIcon={
-                                        <ArrowDropUpIcon sx={{ color: "black" }} />
-                                      }
-                                      aria-controls="panel1bh-content"
-                                      id="panel1bh-header"
-                                    >
-                                      <Typography
-                                        sx={{
-                                          width: "33%",
-                                          flexShrink: 0,
-                                          fontWeight: "bold",
-                                          my: 1,
-                                        }}
-                                      >
-                                        {domain.domainName}
-                                      </Typography>
+                                    {domain.domainName}
+                                  </Typography>
 
-                                      <Typography
-                                        sx={{ color: "text.secondary" }}
-                                      ></Typography>
-                                    </StyledAccordionSummary>
-                                    <StyledAccordionDetails>
-                                      <hr></hr>
-                                      <Typography>
-                                        <div key="1">
-                                          <FormGroup>
-                                            {formQuestions &&
-                                              formQuestions.length > 0 &&
-                                              formQuestions.map((item) => {
-                                                return domain.id ==
-                                                  item.TW_question
-                                                    ?.TWQuestionDomainId &&
-                                                  item.TW_question.TW_responses
-                                                    ?.length > 0 &&
-                                                  ((primaryChoices.filter(
+                                  <Typography
+                                    sx={{ color: "text.secondary" }}
+                                  ></Typography>
+                                </StyledAccordionSummary>
+                                <StyledAccordionDetails>
+                                  <hr></hr>
+                                  <Typography>
+                                    <div key="1">
+                                      <FormGroup>
+                                        {formQuestions &&
+                                          formQuestions.length > 0 &&
+                                          formQuestions.map((item) => {
+                                            return domain.id ==
+                                              item.TW_question
+                                                ?.TWQuestionDomainId &&
+                                              item.TW_question.TW_responses
+                                                ?.length > 0 &&
+                                              ((primaryChoices.filter(
+                                                (el) =>
+                                                  el.choiceName ==
+                                                  t(
+                                                    "common:assessment.In-crisis"
+                                                  )
+                                              )?.length > 0 &&
+                                                primaryChoices.filter(
+                                                  (el) =>
+                                                    el.choiceName ==
+                                                    t(
+                                                      "common:assessment.In-crisis"
+                                                    )
+                                                )[0].id ==
+                                                  item.TW_question.TW_responses.find(
+                                                    (c) => !c.isInterResp
+                                                  ).TWChoiceId) ||
+                                                (primaryChoices.filter(
+                                                  (el) =>
+                                                    el.choiceName ==
+                                                    t(
+                                                      "common:assessment.Vulnerable"
+                                                    )
+                                                )?.length > 0 &&
+                                                  primaryChoices.filter(
                                                     (el) =>
                                                       el.choiceName ==
                                                       t(
-                                                        "common:assessment.In-crisis"
+                                                        "common:assessment.Vulnerable"
                                                       )
-                                                  )?.length > 0 &&
-                                                    primaryChoices.filter(
-                                                      (el) =>
-                                                        el.choiceName ==
-                                                        t(
-                                                          "common:assessment.In-crisis"
-                                                        )
-                                                    )[0].id ==
-                                                      item.TW_question.TW_responses.find(
-                                                        (c) => !c.isInterResp
-                                                      ).TWChoiceId) ||
-                                                    (primaryChoices.filter(
-                                                      (el) =>
-                                                        el.choiceName ==
-                                                        t(
-                                                          "common:assessment.Vulnerable"
-                                                        )
-                                                    )?.length > 0 &&
-                                                      primaryChoices.filter(
-                                                        (el) =>
-                                                          el.choiceName ==
-                                                          t(
-                                                            "common:assessment.Vulnerable"
-                                                          )
-                                                      )[0].id ==
-                                                        item.TW_question.TW_responses.find(
-                                                          (c) => !c.isInterResp
-                                                        ).TWChoiceId)) ? (
-                                                  <div
-                                                    key={item.TW_question.id}
-                                                    style={{ marginBottom: 20 }}
-                                                  >
-                                                    <FormLabel sx={{color: "black", fontSize: "16px"}}>
-                                                      {
-                                                        item.TW_question
-                                                          .questionText
-                                                      }
-                                                    </FormLabel>
-                                                    <div>
-                                                      {item.TW_question
-                                                        .isRedFlag && (
-                                                        <Chip
-                                                          size="small"
-                                                          sx={{
-                                                            my: 1,
-                                                            backgroundColor:
-                                                              "#CC0000",
-                                                            color: "white",
-                                                            borderRadius: "5px",
-                                                          }}
-                                                          label={t(
-                                                            "common:assessment.Red Flag"
-                                                          )}
-                                                        ></Chip>
-                                                      )}
-                                                    </div>
-                                                    <div
-                                                      style={{
-                                                        display: "flex",
-                                                        flexDirection: "column",
+                                                  )[0].id ==
+                                                    item.TW_question.TW_responses.find(
+                                                      (c) => !c.isInterResp
+                                                    ).TWChoiceId)) ? (
+                                              <div
+                                                key={item.TW_question.id}
+                                                style={{ marginBottom: 20 }}
+                                              >
+                                                <FormLabel sx={{color: "black", fontSize: "16px"}}>
+                                                  {
+                                                    item.TW_question
+                                                      .questionText
+                                                  }
+                                                </FormLabel>
+                                                <div>
+                                                  {item.TW_question
+                                                    .isRedFlag && (
+                                                    <Chip
+                                                      size="small"
+                                                      sx={{
+                                                        my: 1,
+                                                        backgroundColor:
+                                                          "#CC0000",
+                                                        color: "white",
+                                                        borderRadius: "5px",
                                                       }}
-                                                    >
-                                                      {item?.TW_question?.TW_choices &&
-                                                        item.TW_question.TW_choices
-                                                          .length > 0 &&
-                                                        item.TW_question.TW_choices.sort(
-                                                          (a, b) => a.id - b.id
-                                                        ).length > 0 &&
-                                                        item.TW_question.TW_choices.sort(
-                                                          (a, b) => a.id - b.id
-                                                        ) &&
-                                                        moveOtherToBottom(
-                                                          item.TW_question
-                                                            .TW_choices
-                                                            .filter(choices =>
-                                                              item.TW_question?.TW_responses?.some(r => (r.TWChoiceId === choices?.id)&& r?.isInterResp))
-                                                        ).map((choice) => {
-                                                          return (
-                                                            <>
-                                                              <Grid
-                                                                container
-                                                                spacing={2}
-                                                                sx={{mt:1}}
-                                                              >
-                                                                <Grid 
-                                                                  item 
-                                                                  xs={12} 
-                                                                  md={getTextResponseForInterventionNotes( item, choice?.id) ? 6 : 12}>
-                                                                  <table>
-                                                                    <tr>
-                                                                      <td
-                                                                        style={{
-                                                                          fontWeight:
-                                                                            "bold",
-                                                                            verticalAlign: "top",
-                                                                        }}
-                                                                      >
-                                                                        {t(
-                                                                          "common:common.Intervention"
-                                                                        )}
-                                                                      </td>
-                                                                      <td
-                                                                        style={{
-                                                                          paddingLeft:
-                                                                            "16px",
-                                                                            verticalAlign: "top",
-                                                                        }}
-                                                                      >
-                                                                        {
-                                                                          choice.choiceName
-                                                                        }
-                                                                      </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                      <td
-                                                                        style={{
-                                                                          fontWeight:
-                                                                            "bold",
-                                                                            verticalAlign: "top",
-                                                                        }}
-                                                                      >
-                                                                        {t(
-                                                                          "common:assessment.Applied to"
-                                                                        )}
-                                                                      </td>
-                                                                      <td style={{ paddingLeft: "16px", verticalAlign: "top" }}>
-                                                                        {values?.type === "FAMILY" ? (() => {
-                                                                          const assessedChildrenNames = childrenAssessed
-                                                                            .filter(child =>
-                                                                              item.TW_question?.TW_responses?.some(
-                                                                                r => r.TWChoiceId === choice?.id && r.appliedTo?.includes(child.id)
-                                                                              )
-                                                                            )
-                                                                            .map(child => `${child?.firstName}${child?.lastName ? " " + child.lastName : ""}`);
+                                                      label={t(
+                                                        "common:assessment.Red Flag"
+                                                      )}
+                                                    ></Chip>
+                                                  )}
+                                                </div>
+                                                <div
+                                                  style={{
+                                                    display: "flex",
+                                                    flexDirection: "column",
+                                                  }}
+                                                >
+                                                  {item?.TW_question?.TW_choices &&
+                                                    item.TW_question.TW_choices
+                                                      .length > 0 &&
+                                                    item.TW_question.TW_choices.sort(
+                                                      (a, b) => a.id - b.id
+                                                    ).length > 0 &&
+                                                    item.TW_question.TW_choices.sort(
+                                                      (a, b) => a.id - b.id
+                                                    ) &&
+                                                    moveOtherToBottom(
+                                                      item.TW_question
+                                                        .TW_choices
+                                                        .filter(choices =>
+                                                          item.TW_question?.TW_responses?.some(r => (r.TWChoiceId === choices?.id)&& r?.isInterResp))
+                                                    ).map((choice) => {
+                                                      return (
+                                                        <>
+                                                          <Grid
+                                                            container
+                                                            spacing={2}
+                                                            sx={{mt:1}}
+                                                          >
+                                                            <Grid 
+                                                              item 
+                                                              xs={12} 
+                                                              md={getTextResponseForInterventionNotes( item, choice?.id) ? 6 : 12}>
+                                                              <table>
+                                                                <tr>
+                                                                  <td
+                                                                    style={{
+                                                                      fontWeight:
+                                                                        "bold",
+                                                                        verticalAlign: "top",
+                                                                    }}
+                                                                  >
+                                                                    {t(
+                                                                      "common:common.Intervention"
+                                                                    )}
+                                                                  </td>
+                                                                  <td
+                                                                    style={{
+                                                                      paddingLeft:
+                                                                        "16px",
+                                                                        verticalAlign: "top",
+                                                                    }}
+                                                                  >
+                                                                    {
+                                                                      choice.choiceName
+                                                                    }
+                                                                  </td>
+                                                                </tr>
+                                                                <tr>
+                                                                  <td
+                                                                    style={{
+                                                                      fontWeight:
+                                                                        "bold",
+                                                                        verticalAlign: "top",
+                                                                    }}
+                                                                  >
+                                                                    {t(
+                                                                      "common:assessment.Applied to"
+                                                                    )}
+                                                                  </td>
+                                                                  <td style={{ paddingLeft: "16px", verticalAlign: "top" }}>
+                                                                    {values?.type === "FAMILY" ? (() => {
+                                                                      const assessedChildrenNames = childrenAssessed
+                                                                        .filter(child =>
+                                                                          item.TW_question?.TW_responses?.some(
+                                                                            r => r.TWChoiceId === choice?.id && r.appliedTo?.includes(child.id)
+                                                                          )
+                                                                        )
+                                                                        .map(child => `${child?.firstName}${child?.lastName ? " " + child.lastName : ""}`);
 
-                                                                          const hasFamilyId = item.TW_question?.TW_responses?.some(
-                                                                            r => r.TWChoiceId === choice?.id && r.TWFamilyId
-                                                                          );
-                                                                          const resultParts = [...assessedChildrenNames];
-                                                                          if (hasFamilyId && assessment?.familyName) {
-                                                                            resultParts.push(assessment.familyName);
-                                                                          }
-                                                                          return resultParts.length > 0 ? resultParts.join(", ") : "-";
-                                                                        })() : values?.childName}
-                                                                      </td>
-                                                                    </tr>
-                                                                  </table>
-                                                                </Grid>
-                                                                {getTextResponseForInterventionNotes( item, choice?.id) &&
-                                                                <Grid item xs={12} md={6}>
-                                                                  <TextField
-                                                                    fullWidth
-                                                                    disabled
-                                                                    label={
-                                                                      choice.choiceName ===
-                                                                      "Other (please specify)"
-                                                                        ? t(
-                                                                            "common:assessment.Intervention notes (required)"
-                                                                          )
-                                                                        : t(
-                                                                            "common:assessment.Intervention notes (optional)"
-                                                                          )
-                                                                    }
-                                                                    name="interventionDetails"
-                                                                    value={
-                                                                      getTextResponseForInterventionNotes( item, choice?.id) ||
-                                                                      ""
-                                                                    }
-                                                                    sx={{
-                                                                      mb: 1,
-                                                                      backgroundColor: `var(--Neutrals-Steel-Tint-3, #F3F6FA)`,
-                                                                    }}
-                                                                    InputProps={{
-                                                                      readOnly: true,
-                                                                    }}
-                                                                    multiline
-                                                                    rows={2}
-                                                                    rowsMax={5}
-                                                                    variant="outlined"
-                                                                    required={
-                                                                      choice.choiceName ===
-                                                                      "Other (please specify)"
-                                                                        ? true
-                                                                        : false
-                                                                    }
-                                                                  />
-                                                                </Grid>}
-                                                              </Grid>
-                                                            </>
-                                                          );
-                                                        })}
-                                                    </div>
-                                                    <Divider color='grey'/>
-                                                  </div>
-                                                ) : (
-                                                  <></>
-                                                );
-                                              })}
-                                          </FormGroup>
-                                        </div>
-                                      </Typography>
-                                    </StyledAccordionDetails>
-                                  </Accordion>
-                                ) : (
-                                  <></>
-                                );
-                              })}
-                          </Grid>
-                        </>
-                        : <AreasNeedngImmediateInterventionSkelton />  
-                      }
+                                                                      const hasFamilyId = item.TW_question?.TW_responses?.some(
+                                                                        r => r.TWChoiceId === choice?.id && r.TWFamilyId
+                                                                      );
+                                                                      const resultParts = [...assessedChildrenNames];
+                                                                      if (hasFamilyId && assessment?.familyName) {
+                                                                        resultParts.push(assessment.familyName);
+                                                                      }
+                                                                      return resultParts.length > 0 ? resultParts.join(", ") : "-";
+                                                                    })() : values?.childName}
+                                                                  </td>
+                                                                </tr>
+                                                              </table>
+                                                            </Grid>
+                                                            {getTextResponseForInterventionNotes( item, choice?.id) &&
+                                                            <Grid item xs={12} md={6}>
+                                                              <TextField
+                                                                fullWidth
+                                                                disabled
+                                                                label={
+                                                                  choice.choiceName ===
+                                                                  "Other (please specify)"
+                                                                    ? t(
+                                                                        "common:assessment.Intervention notes (required)"
+                                                                      )
+                                                                    : t(
+                                                                        "common:assessment.Intervention notes (optional)"
+                                                                      )
+                                                                }
+                                                                name="interventionDetails"
+                                                                value={
+                                                                  getTextResponseForInterventionNotes( item, choice?.id) ||
+                                                                  ""
+                                                                }
+                                                                sx={{
+                                                                  mb: 1,
+                                                                  backgroundColor: `var(--Neutrals-Steel-Tint-3, #F3F6FA)`,
+                                                                }}
+                                                                InputProps={{
+                                                                  readOnly: true,
+                                                                }}
+                                                                multiline
+                                                                rows={2}
+                                                                rowsMax={5}
+                                                                variant="outlined"
+                                                                required={
+                                                                  choice.choiceName ===
+                                                                  "Other (please specify)"
+                                                                    ? true
+                                                                    : false
+                                                                }
+                                                              />
+                                                            </Grid>}
+                                                          </Grid>
+                                                        </>
+                                                      );
+                                                    })}
+                                                </div>
+                                                <Divider color='grey'/>
+                                              </div>
+                                            ) : (
+                                              <></>
+                                            );
+                                          })}
+                                      </FormGroup>
+                                    </div>
+                                  </Typography>
+                                </StyledAccordionDetails>
+                              </Accordion>
+                            ) : (
+                              <></>
+                            );
+                          })}
+                      </Grid>
                     </Box>
                   </Grid>
                   <Grid item md={12} xs={12} m={2}>
@@ -1313,9 +1284,6 @@ const ViewAssessment = forwardRef((props, ref) => {
                         padding: 2,
                       }}
                     >
-                      {followUpData === null ? (
-                        <AssessmentFollowUpSkelton />
-                      ) : 
                       <AssessmentFollowup
                         followUpData={followUpData}
                         domains={domains}
@@ -1328,7 +1296,7 @@ const ViewAssessment = forwardRef((props, ref) => {
                         CustomRadio={CustomRadio}
                         formQuestions={formQuestions}
                         primaryChoices={primaryChoices}
-                      />}
+                      />
                     </Box>
                   </Grid>
                   <Grid item md={12} xs={12} m={2}>

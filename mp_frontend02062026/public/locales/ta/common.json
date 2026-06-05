@@ -663,14 +663,14 @@
     "Verification Code": "சரிபார்ப்பு குறியீடு"
   },
   "userRoles": {
-    "superadmin": "Superadmin",
-    "admin": "Admin",
-    "admin+casemanager": "Admin+Case Manager",
-    "admin+caseworker": "Admin + Case worker",
+    "superadmin": "சூப்பர் நிர்வாகி",
+    "admin": "நிர்வாகி",
+    "admin+casemanager": "நிர்வாகி + வழக்கு மேலாளர்",
+    "admin+caseworker": "நிர்வாகி + வழக்குப் பணியாளர்",
     "caseworker": "வழக்குப் பணியாளர்",
     "casemanager": "வழக்குப் பணியாளர்",
-    "viewonly": "View only",
-    "parent": "Parent"
+    "viewonly": "பார்வைக்கு மட்டும்",
+    "parent": "பெற்றோர்"
   },
   "organization": {
     "Organization Type": "நிறுவன வகை",
@@ -1090,10 +1090,9 @@
     "Add another family member": "மற்றொரு குடும்ப உறுப்பினரைச் சேர்க்கவும்",
     "Date the family first started serving as a foster family": "குடும்பம் முதன்முதலில் பராமரிப்பு குடும்பமாக சேவை செய்த தேதி",
     "Family type": "குடும்ப வகை",
-    "Family member or caregiver": "குடும்ப உறுப்பினர் அல்லது பராமரிப்பாளர்",
+     "Family member or caregiver": "குடும்ப உறுப்பினர் அல்லது பராமரிப்பாளர்",
     "Profile information": "பிளோபில் தகவல்",
-    "Family contact information": "குடும்ப தொடர்பு தகவல் (விருப்பத்தேர்வு)",
-
+    "Family contact information": "குடும்ப தொடர்பு தகவல் (விருப்பத்தேர்வு)"
   },
   "form": {
     "formList": "படிவப் பட்டியல்",
@@ -1283,6 +1282,8 @@
     "Article link is required": "கட்டுரை இணைப்பு அவசியம்",
     "Image link is required": "பட இணைப்பு அவசியம்",
     "Date of birth cannot be in the future": "பிறந்த தேதி எதிர்காலத்தில் இருக்க முடியாது",
+    "Date child entered agency cannot be before child's date of birth": "குழந்தை ஏஜென்சியில் சேர்ந்த தேதி, குழந்தையின் பிறந்த தேதிக்கு முன்பாக இருக்க முடியாது",
+    "Child Welfare Entry date cannot be before the child's date of birth": "குழந்தை நலன் சேர்க்கை தேதி, குழந்தையின் பிறந்த தேதிக்கு முன்பாக இருக்க முடியாது",
     "Past dates are not allowed": "கடந்த தேதிகள் அனுமதிக்கப்படாது",
     "Content must be at most 500 characters": "உள்ளடக்கம் அதிகபட்சம் 500 எழுத்துகள் மட்டுமே இருக்க வேண்டும்",
     "Label must be at most 20 characters": "லேபல் அதிகபட்சம் 20 எழுத்துகள் மட்டுமே இருக்க வேண்டும்",
@@ -1625,7 +1626,8 @@
     "Total interventions completed": "மொத்தமாக முடிக்கப்பட்ட தலையீடுகள்",
     "Average # of active cases per case manager": "ஒவ்வொரு வழக்கு மேலாளருக்குமான செயலில் உள்ள வழக்குகளின் சராசரி எண்ணிக்கை",
     "# of active case managers": "செயலில் உள்ள வழக்கு மேலாளர்கள் எண்ணிக்கை",
-    "Total number of active cases (families + children)": "மொத்த செயலில் உள்ள வழக்குகளின் எண்ணிக்கை (குடும்பங்கள் + குழந்தைகள்)"
+    "Total number of active cases (families + children)": "மொத்த செயலில் உள்ள வழக்குகளின் எண்ணிக்கை (குடும்பங்கள் + குழந்தைகள்)",
+    "casemanager": "வழக்குப் பணியாளர்"
   },
 "tableColumn":{
   "Organization name": "நிறுவனத்தின் பெயர்",

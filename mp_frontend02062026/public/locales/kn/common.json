@@ -657,7 +657,7 @@
     "admin+casemanager": "ಅಡ್ಮಿನ್ + ಕೇಸ್ ವ್ಯವಸ್ಥಾಪಕ ",
     "admin+caseworker": "ಅಡ್ಮಿನ್+ಕೇಸ್ ವರ್ಕರ್",
     "caseworker": "ಕೇಸ್ ವರ್ಕರ್",
-    "casemanager": "ಕೇಸ್ ಮ್ಯಾನೇಜರ್",
+    "casemanager": "ಕೇಸ್ ವರ್ಕರ್",
     "viewonly": "ವೀಕ್ಷಣೆ ಮಾತ್ರ",
     "parent": "ಪೋಷಕ"
   },
@@ -1085,9 +1085,7 @@
     "Date the family first started serving as a foster family": "ಕುಟುಂಬವು ಮೊದಲ ಬಾರಿಗೆ ಫೋಸ್ಟರ್ ಕುಟುಂಬವಾಗಿ ಸೇವೆ ಪ್ರಾರಂಭಿಸಿದ ದಿನಾಂಕ",
     "Family member or caregiver": "ಕುಟುಂಬ ಸದಸ್ಯ ಅಥವಾ  पालक",
     "Profile information": "ಪ್ರೊಫೈಲ್ ಮಾಹಿತಿ",
-    "Family contact information": "ಕುಟುಂಬ ಸಂಪರ್ಕ ಮಾಹಿತಿ (ಐಚ್ಛಿಕ)",
-
- 
+    "Family contact information": "ಕುಟುಂಬ ಸಂಪರ್ಕ ಮಾಹಿತಿ (ಐಚ್ಛಿಕ)"
 
   },
   "form": {
@@ -1273,6 +1271,8 @@
     "Article link is required": "ಲೇಖದ ಲಿಂಕ್ ಅಗತ್ಯವಿದೆ",
     "Image link is required": "ಚಿತ್ರದ ಲಿಂಕ್ ಅಗತ್ಯವಿದೆ",
     "Date of birth cannot be in the future": "ಹುಟ್ಟಿದ ದಿನಾಂಕ ಭವಿಷ್ಯದಲ್ಲಿ ಇರಲು ಸಾಧ್ಯವಿಲ್ಲ",
+    "Date child entered agency cannot be before child's date of birth": "ಮಗು ಏಜೆನ್ಸಿಗೆ ಪ್ರವೇಶಿಸಿದ ದಿನಾಂಕವು ಮಗುವಿನ ಜನ್ಮ ದಿನಾಂಕಕ್ಕಿಂತ ಮುಂಚೆಯಿರಲು ಸಾಧ್ಯವಿಲ್ಲ",
+    "Child Welfare Entry date cannot be before the child's date of birth": "ಮಕ್ಕಳ ಕಲ್ಯಾಣ ಪ್ರವೇಶ ದಿನಾಂಕವು ಮಗುವಿನ ಜನ್ಮ ದಿನಾಂಕಕ್ಕಿಂತ ಮುಂಚೆಯಿರಲು ಸಾಧ್ಯವಿಲ್ಲ",
     "Past dates are not allowed": "ಹಿಂದಿನ ದಿನಾಂಕಗಳನ್ನು ಅನುಮತಿಸಲಾಗುವುದಿಲ್ಲ",
     "Content must be at most 500 characters": "ವಿಷಯವು ಗರಿಷ್ಠ 500 ಅಕ್ಷರಗಳಷ್ಟಿರಬೇಕು",
     "Label must be at most 20 characters": "ಲೇಬಲ್ ಗರಿಷ್ಠ 20 ಅಕ್ಷರಗಳಷ್ಟಿರಬೇಕು",
@@ -1569,7 +1569,6 @@
     "Case Closed": "ಪ್ರಕರಣವನ್ನು ಇತ್ಯರ್ಥ ಪಡಿಸಲಾಗಿದೆ",
     "Status": "ಸ್ಥಿತಿ",
     "Case Worker": "ಕೇಸ್ ವರ್ಕರ್",
-    "Case manager": "ಕೇಸ್ ವರ್ಕರ್",
     "Inactive": "ನಿಷ್ಕ್ರಿಯ",
     "Support services": "ಬೆಂಬಲ ಸೇವೆಗಳು",
     "Support service details": "ಬೆಂಬಲ ಸೇವೆಯ ವಿವರಗಳು",
@@ -1615,7 +1614,8 @@
     "Total interventions completed": "ಒಟ್ಟು ಪೂರ್ಣಗೊಂಡ ಮಧ್ಯಸ್ಥಿಕೆಗಳು",
     "Average # of active cases per case manager": "ಪ್ರತಿ ಕೇಸ್ ಮ್ಯಾನೇಜರ್‌ಗೆ ಸಕ್ರಿಯ ಪ್ರಕರಣಗಳ ಸರಾಸರಿ ಸಂಖ್ಯೆ",
     "# of active case managers": "ಸಕ್ರಿಯ ಕೇಸ್ ಮ್ಯಾನೇಜರ್‌ಗಳ ಸಂಖ್ಯೆ",
-    "Total number of active cases (families + children)": "ಸಕ್ರಿಯ ಪ್ರಕರಣಗಳ ಒಟ್ಟು ಸಂಖ್ಯೆ (ಕುಟುಂಬಗಳು + ಮಕ್ಕಳು)"
+    "Total number of active cases (families + children)": "ಸಕ್ರಿಯ ಪ್ರಕರಣಗಳ ಒಟ್ಟು ಸಂಖ್ಯೆ (ಕುಟುಂಬಗಳು + ಮಕ್ಕಳು)",
+    "Case manager": "ಕೇಸ್ ವರ್ಕರ್"
 },
 "tableColumn":{
   "Organization name": "ಸಂಸ್ಥೆಯ ಹೆಸರು",

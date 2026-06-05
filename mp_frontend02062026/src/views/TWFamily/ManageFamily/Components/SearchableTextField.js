@@ -7,6 +7,7 @@ import {
   Box,
   CircularProgress,
   Paper,
+  Typography,
 } from '@mui/material';
 import { useField, useFormikContext } from 'formik';
 
@@ -27,6 +28,7 @@ const SearchableTextField = ({
   size = 'medium',
   onClose,
   enableInlineError = false,
+  characterLimit = 255,
   ...otherProps
 }) => {
   const [field, meta] = useField(name);
@@ -39,6 +41,11 @@ const SearchableTextField = ({
 
   // ✅ Formik value drives inputValue
   const inputValue = field.value ?? '';
+  const normalizedInputValue = typeof inputValue === 'string' ? inputValue : String(inputValue || '');
+  const numericCharacterLimit = Number(characterLimit);
+  const hasCharacterLimit = Number.isFinite(numericCharacterLimit) && numericCharacterLimit >= 0;
+  const remainingCharacters = hasCharacterLimit ? numericCharacterLimit - normalizedInputValue.length : null;
+  const characterCounterText = hasCharacterLimit ? `${remainingCharacters}/${numericCharacterLimit}` : '';
   const currentValueRef = useRef(inputValue); 
 
   /* ---------------- SEARCH ---------------- */
@@ -145,8 +152,39 @@ const SearchableTextField = ({
             helperText={!enableInlineError && showFieldError ? meta.error : ""}
             InputProps={{
               ...params.InputProps,
+              sx: {
+                position: 'relative',
+                ...(hasCharacterLimit ? {
+                  '& .MuiInputBase-input': {
+                    paddingRight: '56px',
+                    paddingBottom: '18px',
+                  },
+                } : {}),
+                '& .inside-character-counter': {
+                  position: 'absolute',
+                  right: 8,
+                  bottom: 3,
+                  fontSize: '0.55rem',
+                  lineHeight: 1,
+                  pointerEvents: 'none',
+                  color: remainingCharacters < 0 ? 'error.main' : 'text.secondary',
+                },
+                ...params.InputProps.sx,
+              },
+              onKeyDown: (e) => {
+                if (e.key === ' ' && e.target.value === '') {
+                  e.preventDefault();
+                }
+
+                params.InputProps.onKeyDown?.(e);
+              },
               endAdornment: (
                 <>
+                  {hasCharacterLimit && enableInlineError ? (
+                    <Typography className="inside-character-counter">
+                      {characterCounterText}
+                    </Typography>
+                  ) : null}
                   {isLoading && (
                     <CircularProgress color="inherit" size={20} />
                   )}
@@ -177,6 +215,7 @@ const SearchableTextField = ({
 SearchableTextField.propTypes = {
   name: PropTypes.string.isRequired,
   searchFunction: PropTypes.func,
+  characterLimit: PropTypes.number,
 };
 
 export default SearchableTextField;

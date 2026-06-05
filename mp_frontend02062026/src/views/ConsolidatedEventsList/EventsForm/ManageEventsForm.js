@@ -173,9 +173,9 @@ const EventDetailForm = ({ close, eventData, onSuccess }) => {
       setFieldValue(
         "eventParticipants",
         eventData?.participants.map((obj) => ({
-          id: obj.FS_familyDetail.id,
+          id: obj?.TW_family?.id,
           label:
-            obj.FS_familyDetail.firstName + " " + obj.FS_familyDetail.lastName,
+            obj?.TW_family?.familyName,
         }))
       );
       setFieldValue("filePath", eventData?.filePath);
@@ -369,7 +369,7 @@ const EventDetailForm = ({ close, eventData, onSuccess }) => {
   const cancelClickHandler = () => {
     ModalService.open(() => <></>, {
       modalTitle: "Unsaved Changes",
-      width: "30%",
+      width: "45%",
       modalDescription:
         "If you leave this page, any changes you have made will be lost",
       actionButtonText: "Leave page",
@@ -636,12 +636,12 @@ const EventDetailForm = ({ close, eventData, onSuccess }) => {
                             style={{
                               fontSize: "17px",
                               pointerEvents: eventData?.participants.some(
-                                (fam) => fam.FS_familyDetail.id === obj.id
+                                (fam) => fam?.FS_familyDetail?.id === obj.id
                               )
                                 ? "none"
                                 : "unset",
                               opacity: eventData?.participants.some(
-                                (fam) => fam.FS_familyDetail.id === obj.id
+                                (fam) => fam?.FS_familyDetail?.id === obj.id
                               )
                                 ? "50%"
                                 : "unset",

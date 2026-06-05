@@ -137,7 +137,7 @@ const ConsolidatedFamilyList = (props) => {
         </>
       ),
     },
-    { id: "caseworker", label: t("common:infoCard.Case manager", "Case Manager"), enableSorting: true },
+    { id: "caseworker", label: t("common:infoCard.Case Worker", "Case Worker"), enableSorting: true },
     { id: "noOfMembers", label: t("common:common.No of Caregivers", "No of Caregivers"), enableSorting: true },
     { id: "noOfChildren", label: t("common:common.No of Children", "No of Children"), enableSorting: true },
     {
@@ -446,7 +446,7 @@ const ConsolidatedFamilyList = (props) => {
       </Box>
       <Box>
         <BodyText
-          value={t("common:infoCard.Case manager", "Case manager")}
+          value={t("common:infoCard.Case Worker", "Case Worker")}
           sx={{ mb: 1 }}
         />
         <Autocomplete

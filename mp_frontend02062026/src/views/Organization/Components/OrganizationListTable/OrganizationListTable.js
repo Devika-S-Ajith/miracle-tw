@@ -66,6 +66,8 @@ const columnHeaders = [
   { label: "Organization ID", value: "" },
   { label: "FosterShare", value: "" },
   { label: "ThriveScale", value: "" },
+  // { label: "# active families", value: "" },
+  // { label: "# active children", value: "" },
   { label: "Country", value: "MPCountryId" },
   { label: "Status", value: "isActive" },
   { label: "Actions", value: "", styleValue: { pl: 6, fontWeight: "600" } },
@@ -752,6 +754,33 @@ const OrganizationListTable = (props) => {
                   <TableCell>
                     {["BOTH", "THRIVE_SCALE"].includes(account.accessType) ? t("common:common.Enabled") : t("common:common.Disabled")}
                   </TableCell>
+                  {/* <TableCell>
+                    {account?.FSFamilyCount ? (
+                      account?.FSFamilyCount
+                    ) : (
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        fontStyle="italic"
+                      >
+                        {t("common:common.none")}
+                      </Typography>
+                    )}
+                  </TableCell>
+                  
+                  <TableCell>
+                    {account.TSChildCount ? (
+                      account.TSChildCount
+                    ) : (
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        fontStyle="italic"
+                      >
+                        {t("common:common.none")}
+                      </Typography>
+                    )}
+                  </TableCell> */}
                   <TableCell>{account.countryName}</TableCell>
                   <TableCell>
                     <Chip color="primary"

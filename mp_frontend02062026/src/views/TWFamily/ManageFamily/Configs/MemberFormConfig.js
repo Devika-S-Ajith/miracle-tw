@@ -62,6 +62,7 @@ export const InlineChildCreationConfig = [
         name: 'lastName',
         placeholder: ('common:common.Last name','Last name'),
         size: 'small',
+        enableInlineError: true,
         color:"#FFFFFF",
         required: true,
         fullWidth: true,

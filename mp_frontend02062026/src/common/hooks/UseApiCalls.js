@@ -23,6 +23,7 @@ const migrateUserAccountBaseURL = AppConfig.migrationURL;
 const LocationListURL = AppConfig.baseURL + "/countries";
 const OrganisationDetailsPartialURL = AppConfig.baseURL + "/account?id=";
 const OrganisationListURL = AppConfig.baseURL + "/accounts";
+const AccountsListURL = AppConfig.baseURL + "/tw-govt-dashboard/organization-list";
 const ConsentStatusUpdationURL =
   AppConfig.baseURL + "/account/changeConsentStatus";
 
@@ -521,6 +522,9 @@ const APIS = {
 
   OrganizationList: (payload) =>
     APIS.makePostRequest(OrganisationListURL, payload),
+
+  AccountsList: (payload) =>
+    APIS.makePostRequest(AccountsListURL, payload),
 
   getCaseManagerChildPerAccount(payload) {
     let prerequest = this.PreRequestCall();

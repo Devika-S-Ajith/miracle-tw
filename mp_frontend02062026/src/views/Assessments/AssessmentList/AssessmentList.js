@@ -43,6 +43,7 @@ const AssessmentList = () => {
           <Grid item xs={12}>
             <PageBreadcrumbs
               data={[
+                BreadcrumbsLinkThriveScale(t, navigate),
                 {
                   label: t("common:common.Assessments & Progress Reports", "Assessments & Progress Reports"),
                 },

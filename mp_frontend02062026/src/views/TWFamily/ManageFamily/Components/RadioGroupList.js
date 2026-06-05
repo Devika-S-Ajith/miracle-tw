@@ -99,6 +99,17 @@ const RadioGroupList = forwardRef(({
                                         <Radio
                                             disabled={disabled || option.disabled}
                                             checked={isChecked}
+                                            onClick={(e) => {
+                                                // If clicking the already-selected value, deselect it
+                                                if (e.target.value === value) {
+                                                    // Simulate a change event with empty value
+                                                    const deselect = {
+                                                        target: { name, value: '' }
+                                                    };
+                                                    handleChange(deselect);
+                                                    if (onChange) onChange(deselect);
+                                                }
+                                            }}
                                             sx={{
                                                 color: '#1D334B', // Red for the unchecked state
                                                 '&.Mui-checked': {

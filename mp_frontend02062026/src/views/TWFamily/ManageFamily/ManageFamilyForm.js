@@ -135,12 +135,12 @@ const ManageFamilyForm = (props) => {
                 globalSearchQuery: "",
                 accountId: [localStorage.getItem("orgId")],
                 HTUserRoleId: ["4", "5"],
-                 FSUserRoleId:["4", "5"],
+                FSUserRoleId:["4", "5"],
                 HTCountryId: localStorage.getItem("userRegion"),
             };
             payload.HTCountryId = localStorage.getItem("userRegion");
             const data = await APIS.ListUsers(payload);
-            setCaseWorkerList(data && data.data && data.data.data);
+            [CASEWORKER].includes(signedinUserRoleHT) ?  setCaseWorkerList(data.data.data.filter(user => user.id === localStorage.getItem("username"))) :setCaseWorkerList(data && data.data && data.data.data);
         } catch (err) {
             console.error(err);
         }
@@ -404,6 +404,12 @@ const ManageFamilyForm = (props) => {
             setIsLoading(false);
         });
     }
+
+    const getRelationId = (val) => {
+        const raw = Array.isArray(val) ? val[0] : val;
+        const id = String(raw ?? '');
+        return id && id !== 'null' && id !== 'undefined' ? id : null;
+    };
     
 
     return (
@@ -515,26 +521,24 @@ const ManageFamilyForm = (props) => {
                 members: Yup.array().of(
                     Yup.object().shape({
                         TWFamilyRelationId: Yup.string().nullable().max(255),
-
                         firstName: Yup.string().trim()
                             .nullable()
                             .max(255)
                             .test('not-empty', t('common:warnings.First Name is required', 'First Name is required'), value => !value || value.trim().length > 0)
                             .when('TWFamilyRelationId', (TWFamilyRelationId, schema) => {
-                                const relationId = String(Array.isArray(TWFamilyRelationId) ? TWFamilyRelationId[0] : TWFamilyRelationId);
-                                // Only require if relation is selected AND not a child-type relation
-                                return relationId && relationId !== 'null' 
-                                    ? schema.required(t('common:warnings.First Name is required', 'First Name is required'))
-                                    : schema;
+                                const relationId = getRelationId(TWFamilyRelationId);
+                                if (!relationId) return schema; // ← skip all validation
+                                return schema.required(t('common:warnings.First Name is required', 'First Name is required'));
                             }),
 
                         lastName: Yup.string()
                             .nullable()
-                            .max(255)
+                            .max(255,"Last Name cannot exceed 255 characters")
                             .test('not-empty', t('common:warnings.Last Name is required', 'Last Name is required'), value => !value || value.trim().length > 0)
                             .when('TWFamilyRelationId', (TWFamilyRelationId, schema) => {
-                                const relationId = String(Array.isArray(TWFamilyRelationId) ? TWFamilyRelationId[0] : TWFamilyRelationId);
-                                return relationId && relationId !== 'null' && !['3', '9'].includes(relationId)
+                                const relationId = getRelationId(TWFamilyRelationId);
+                                if (!relationId) return schema; // ← skip all validation
+                                return !['3', '9'].includes(relationId)
                                     ? schema.required(t('common:warnings.Last Name is required', 'Last Name is required'))
                                     : schema;
                             }),
@@ -542,9 +546,9 @@ const ManageFamilyForm = (props) => {
                         dateOfBirth: Yup.date()
                             .nullable()
                             .when('TWFamilyRelationId', (TWFamilyRelationId, schema) => {
-                                const relationId = String(Array.isArray(TWFamilyRelationId) ? TWFamilyRelationId[0] : TWFamilyRelationId);
-                                // Only require DOB if relation is selected AND not empty/null
-                                return relationId && relationId !== 'null' && ['3', '9'].includes(relationId)
+                                const relationId = getRelationId(TWFamilyRelationId);
+                                if (!relationId) return schema; // ← skip all validation
+                                return ['3', '9'].includes(relationId)
                                     ? schema.required(t('common:warnings.DOB is required', 'DOB is required'))
                                     : schema;
                             })
@@ -552,7 +556,7 @@ const ManageFamilyForm = (props) => {
                                 "is-not-future-date",
                                 t("common:warnings.Date of birth cannot be in the future", "Date of birth cannot be in the future"),
                                 (value) => {
-                                    if (!value) return true; // Allow empty values to be handled by required
+                                    if (!value) return true;
                                     return dayjs(value).isBefore(dayjs().endOf("day"));
                                 }
                             ),
@@ -561,8 +565,9 @@ const ManageFamilyForm = (props) => {
                             .nullable()
                             .max(255)
                             .when('TWFamilyRelationId', (TWFamilyRelationId, schema) => {
-                                const relationId = String(Array.isArray(TWFamilyRelationId) ? TWFamilyRelationId[0] : TWFamilyRelationId);
-                                return relationId && relationId !== 'null' && ['3', '9'].includes(relationId)
+                                const relationId = getRelationId(TWFamilyRelationId);
+                                if (!relationId) return schema; // ← skip all validation
+                                return ['3', '9'].includes(relationId)
                                     ? schema.required(t('common:warnings.Gender is required', 'Gender is required'))
                                     : schema;
                             }),
@@ -607,7 +612,7 @@ const ManageFamilyForm = (props) => {
                                 .map(({ isMajor, ...rest }) => ({ ...rest, isMinor: !isMajor })),
                             "existingChildren": values.members
                                 .filter(member => member.isExistingChild && !member.isDeleted)
-                                .map(({ isChild, isMajor, isActive, isExistingChild, _rowKey,profileInformation, ...rest }) => ({ ...rest, isMinor: !rest.isMajor })),
+                                .map(({ isChild, isMajor, isActive, isExistingChild,newlyAdded, _rowKey,profileInformation, ...rest }) => ({ ...rest, isMinor: !rest.isMajor })),
                         };
 
 
@@ -635,7 +640,7 @@ const ManageFamilyForm = (props) => {
                             return;
                         }
 
-                        const stripMemberMeta = ({ isChild, isActive, isExistingChild,isMajor, _rowKey,profileInformation, ...rest }) => rest;
+                        const stripMemberMeta = ({ isChild, isActive, isExistingChild,newlyAdded,isMajor, _rowKey,profileInformation, ...rest }) => rest;
 
                         const members = changedValues.members ?? [];
                         const caseWorkerChanged = !!changedValues.caseWorker;
@@ -825,7 +830,6 @@ const ManageFamilyForm = (props) => {
                                                                     familyId={family?.id}
                                                                     familyName={values.familyName}
                                                                     caseWorker={values?.caseWorker}                                                   
-                                                                    //isFamilyActive={family?.id ? checked : true}
                                                                     setIsLoading={setIsLoading}
                                                                     familyRelations={familyDropdownLists?.familyRelations || []}
                                                                     memberDeleteReasons={familyDropdownLists?.familyDeleteReason || []}
@@ -838,8 +842,7 @@ const ManageFamilyForm = (props) => {
                                                 </Grid>
                                             </AccordionSection>
                                             <AccordionSection
-                                                title={t("common:family.Family contact information", "Family contact information (optional)")}
-                                            >
+                                                title={t("common:family.Family contact information", "Family contact information (optional)")} >
                                                 <Grid container spacing={1}>
                                                     <DynamicForm
                                                         t={t}
@@ -852,7 +855,10 @@ const ManageFamilyForm = (props) => {
                                                         locationList={locationList}
                                                         htLanguagesList={htLanguagesList}
                                                         caseWorkerList={caseWorkerList}
-                                                        config={familyAddressDetails}
+                                                        config={familyAddressDetails({
+                                                            values,
+                                                            locationList                                        
+                                                        })}
                                                         isDisabled={family?.isActive === false}
 
                                                     />
@@ -974,7 +980,7 @@ const ManageFamilyForm = (props) => {
                                                         }}
                                                         id="submit"
                                                     >
-                                                    {mode === 'add' ? t("common:family.Save Family") : t("common:family.Update Family")}
+                                                    {mode === 'add' ? t("common:common.Save") : t("common:common.Update")}
                                                 </Button>
                                             </Box>
                                         )}                                       

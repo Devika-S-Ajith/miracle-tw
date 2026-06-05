@@ -101,7 +101,10 @@ export const familyAdditionalDetails =({
     }] : [])
 ]
 
-export const familyAddressDetails = [
+export const familyAddressDetails =({
+  values,
+  locationList
+}) => [
     // Address Line 1
     {
         type: 'text',
@@ -157,37 +160,37 @@ export const familyAddressDetails = [
         gridProps: { md: 6.5, xs: 12 }
     },
 
-    // District/County (conditional - only shows if country requires it)
-    {
-        type: 'dropdown',
-        name: 'district',
-        translateLabels: true,
-        label: 'common:common.District/County',
-        required: false,
-        optionsSource: 'district',
-        accessKey: 'districtName',
-        labelKey: 'districtName',
-        valueKey: 'id',
-        // Custom function to get districts for selected state
-        getDynamicOptions: (values, locationList) => getDistrictList(locationList, values?.country, values.state),
-        // Conditional rendering - only show if country requires district
-        condition: {
-            field: 'country',
-            operator: 'custom',
-            evaluate: (values, dataOptions) => {
-                if (!values.country) return false;
-                const country = dataOptions.locationList?.find(c => c.id === values.country);
-                return country?.districtRequired === true;
-            }
-        },
-        textFieldProps: {
-            fullWidth: true,
-            margin: 'normal',
-            variant: 'outlined'
-        },
-        gridProps: { md: 6.5, xs: 12 }
-    },
-
+        ...(locationList?.find(c => c.id === values.country)?.districtRequired === true ? [
+            {
+                type: 'dropdown',
+                name: 'district',
+                translateLabels: true,
+                label: 'common:common.District/County',
+                required: false,
+                optionsSource: 'district',
+                accessKey: 'districtName',
+                labelKey: 'districtName',
+                valueKey: 'id',
+                // Custom function to get districts for selected state
+                getDynamicOptions: (values, locationList) => getDistrictList(locationList, values?.country, values.state),
+                // Conditional rendering - only show if country requires district
+                condition: {
+                    field: 'country',
+                    operator: 'custom',
+                    evaluate: (values, dataOptions) => {
+                        if (!values.country) return false;
+                        const country = dataOptions.locationList?.find(c => c.id === values.country);
+                        return country?.districtRequired === true;
+                    }
+                },
+                textFieldProps: {
+                    fullWidth: true,
+                    margin: 'normal',
+                    variant: 'outlined'
+                },
+                gridProps: { md: 6.5, xs: 12 }
+            },
+        ] : []),
     // ZIP/Postal Code (with dynamic formatting)
     {
         type: 'ZIPCode',

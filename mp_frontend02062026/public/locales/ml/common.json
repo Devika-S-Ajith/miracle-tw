@@ -660,7 +660,7 @@
     "admin+casemanager": "അഡ്മിൻ+കേസ് മാനേജർ",
     "admin+caseworker": "അഡ്മിൻ+കേസ് വർക്കർ",
     "caseworker": "കേസ് വർക്കർ",
-    "casemanager": "കേസ് മാനേജർ",
+    "casemanager": "കേസ് വർക്കർ",
     "viewonly": "കാണുക മാത്രം",
     "parent": "രക്ഷിതാവ്"
   },
@@ -1090,8 +1090,7 @@
     "Date the family first started serving as a foster family": "കുടുംബം ഫോസ്റ്റർ കുടുംബമായി സേവനം ആരംഭിച്ച തീയതി",
     "Family member or caregiver": "കുടുംബാംഗം അല്ലെങ്കിൽ പരിചരിക്കുന്നയാൾ",
     "Profile information": "പ്രൊഫൈല്‍ വിവരങ്ങൾ",
-    "Family contact information": "കുടുംബ ബന്ധപ്പെടാനുള്ള വിവരങ്ങൾ (ഐച്ഛികം)",
-
+    "Family contact information": "കുടുംബ ബന്ധപ്പെടാനുള്ള വിവരങ്ങൾ (ഐച്ഛികം)"
   },
   "form": {
     "formList": "പത്രികാ പട്ടിക",
@@ -1276,6 +1275,8 @@
     "Article link is required": "ലേഖന ലിങ്ക് ആവശ്യമാണ്",
     "Image link is required": "ചിത്ര ലിങ്ക് ആവശ്യമാണ്",
     "Date of birth cannot be in the future": "ജനന തീയതി ഭാവിയിൽ ആയിരിക്കരുത്",
+    "Date child entered agency cannot be before child's date of birth": "കുട്ടി ഏജൻസിയിൽ പ്രവേശിച്ച തീയതി കുട്ടിയുടെ ജനനത്തീയതിക്ക് മുമ്പാകാൻ പാടില്ല",
+    "Child Welfare Entry date cannot be before the child's date of birth": "കുട്ടി വെൽഫെയർ പ്രവേശന തീയതി കുട്ടിയുടെ ജനനത്തീയതിക്ക് മുമ്പാകാൻ പാടില്ല",
     "Past dates are not allowed": "കഴിഞ്ഞ തീയതികൾ അനുവദനീയമല്ല",
     "Content must be at most 500 characters": "ഉള്ളടക്കം പരമാവധി 500 അക്ഷരങ്ങൾ ആയിരിക്കണം",
     "Label must be at most 20 characters": "ലേബൽ പരമാവധി 20 അക്ഷരങ്ങൾ ആയിരിക്കണം",
@@ -1572,7 +1573,6 @@
     "Case Closed": "കേസ് ക്ലോസ് ചെയ്തു",
     "Status": "അവസ്ഥ",
     "Case Worker": "കേസ് വർക്കർ",
-    "Case manager": "കേസ് വർക്കർ",
     "Inactive": "നിർജ്ജീവമായത്",
     "Support services": "പിന്തുണാ സേവനങ്ങൾ",
     "Support service details": "പിന്തുണാ സേവന വിശദാംശങ്ങൾ",
@@ -1618,7 +1618,8 @@
     "Total interventions completed": "ആകെ പൂർത്തിയായ ഇടപെടലുകൾ",
     "Average # of active cases per case manager": "ഓരോ കേസ് മാനേജർക്കുമുള്ള ശരാശരി # സജീവ കേസുകൾ",
     "# of active case managers": "സജീവ കേസ് മാനേജർമാരുടെ എണ്ണം",
-    "Total number of active cases (families + children)": "സജീവ കേസുകളുടെ ആകെ എണ്ണം (കുടുംബങ്ങൾ + കുട്ടികൾ)"
+    "Total number of active cases (families + children)": "സജീവ കേസുകളുടെ ആകെ എണ്ണം (കുടുംബങ്ങൾ + കുട്ടികൾ)",
+    "Case manager": "കേസ് വർക്കർ"
 },
 "tableColumn":{
   "Organization name": "സംഘടനയുടെ പേര്",

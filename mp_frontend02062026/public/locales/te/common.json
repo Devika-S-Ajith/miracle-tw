@@ -1084,10 +1084,9 @@
     "since_assessment_1":"మూల్యాంకనం #1 నుండి",
     "assessment_number": "మూల్యాంకనం  #{{number}}",
     "Add another family member": "మరొక కుటుంబ సభ్యుడిని జోడించండి",
-    
     "Date the family first started serving as a foster family": "కుటుంబం మొదటిసారి ఫోస్టర్ కుటుంబంగా సేవ చేయడం ప్రారంభించిన తేదీ",
     "Family type": "కుటుంబ రకం",
-    "Family member or caregiver": "కుటుంబ సభ్యుడు లేదా సంరక్షకుడు",
+     "Family member or caregiver": "కుటుంబ సభ్యుడు లేదా సంరక్షకుడు",
     "Profile information": "ప్రొఫైల్ సమాచారం",
     "Family contact information": "కుటుంబ సంప్రదింపు సమాచారం (ఐచ్ఛికం)"
   },
@@ -1273,6 +1272,8 @@
     "Article link is required": "వ్యాస లింక్ అవసరం",
     "Image link is required": "చిత్ర లింక్ అవసరం",
     "Date of birth cannot be in the future": "పుట్టిన తేదీ భవిష్యత్తులో ఉండకూడదు",
+    "Date child entered agency cannot be before child's date of birth": "పిల్లవాడు ఏజెన్సీలో చేరిన తేదీ, పిల్లవాడి జనన తేదీ కంటే ముందుగా ఉండకూడదు",
+    "Child Welfare Entry date cannot be before the child's date of birth": "పిల్లల సంక్షేమ ప్రవేశ తేదీ, పిల్లవాడి జనన తేదీ కంటే ముందుగా ఉండకూడదు",
     "Past dates are not allowed": "గత తేదీలు అనుమతించబడవు",
     "Content must be at most 500 characters": "కంటెంట్ గరిష్టంగా 500 అక్షరాలు మాత్రమే ఉండాలి",
     "Label must be at most 20 characters": "లేబల్ గరిష్టంగా 20 అక్షరాలు మాత్రమే ఉండాలి",

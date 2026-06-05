@@ -11,10 +11,10 @@ import { ModalService } from "../../components/Modal";
 import ReusableTrendTable from "../Dashboard/GovtDashboardOverview/Components/ReusableTrendTable";
 import useAuthorization from "../../components/UserComponents/useAuthorization";
 import PageLoader from "../../components/UserComponents/PageLoader";
+import { ArrowRight } from "@mui/icons-material";
 
 const ConsolidatedEventsList = () => {
-  
-  
+  const navigate = useNavigate();
   const { t } = useTranslation(["common"]);
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
@@ -24,19 +24,17 @@ const ConsolidatedEventsList = () => {
     totalCount: 0,
   });
   const { authStatus, checkAuth } = useAuthorization("Events");
-  
+
   useEffect(() => {
-      document.title = "Events | Thrivewell";;
-      checkAuth();
-    }, []);
-  
+    document.title = "Events | Thrivewell";
+    checkAuth();
+  }, []);
+
   useEffect(() => {
-    if(authStatus === 'authorized') {
+    if (authStatus === "authorized") {
       getTableData();
     }
   }, [authStatus]);
-
-  
 
   const columnDefinition = [
     {
@@ -70,6 +68,24 @@ const ConsolidatedEventsList = () => {
       // render: (row) =>
       //   `${row.startsAt}`,
       enableSorting: false,
+    },
+
+    {
+     id: "actions",
+      label: "",
+      align: "right",
+      minWidth: "30px",
+      maxWidth: "30px",
+
+      render: (row) => (
+        <ArrowRight
+          style={{ cursor: "pointer" }}
+          fontSize="large"
+          id="view-icon"
+          onClick={() => navigate(`/dashboard/events/${row.id}`)}
+          sx={{ cursor: "pointer" }}
+        />
+      ),
     },
   ];
 
@@ -140,7 +156,7 @@ const ConsolidatedEventsList = () => {
           label={t("common:calendar.Add Event")}
           onClick={() =>
             ModalService.open(
-              ({ close }) => <ManageEventsForm close={close} />,
+              ({ close }) => <ManageEventsForm onSuccess={getTableData} close={close} />,
               {
                 modalTitle: <Box>Event</Box>,
                 width: "30%",
@@ -155,13 +171,13 @@ const ConsolidatedEventsList = () => {
     </>
   );
 
-   if (authStatus === 'loading' || authStatus === 'idle') {
-      return <PageLoader />;
-    }
-  
-    if (authStatus === 'unauthorized') {
-      return null; // Or a custom message
-    }
+  if (authStatus === "loading" || authStatus === "idle") {
+    return <PageLoader />;
+  }
+
+  if (authStatus === "unauthorized") {
+    return null; // Or a custom message
+  }
 
   return (
     <>
@@ -182,33 +198,28 @@ const ConsolidatedEventsList = () => {
               ]}
             />
 
-            {tableData && <Box mt={2} mr>
-              <ReusableTrendTable
-                columns={columnDefinition}
-                searchable
-                tableData={tableData.data}
-                loading={loading}
-                skeltonRowcount={6}
-                apiError={apiError}
-                onReload={getTableData}
-                // filterable
-                // filterComponent={filterComponent}
-                // handleChipDelete={handleChipDelete}
-                // appliedFiltersChipArray={appliedFiltersChipArray}
-                // applyFilter={handleApplyFilters}
-                // cancelFilter={cancelFilterHandler}
-                // clearFilter={clearFiltersHandler}
-                tableExtraButtons={tableExtraButtons}
-                t={t}
-                enablePagination
-                totalPageCount={tableData.pageCount}
-                totalItems={tableData.totalCount || 0}
-                cardSx={{ textTransform: "capitalize" }}
-                defaultSortField={"date"}
-                defaultSortFieldOrder={"desc"}
-                boldHeaders={false}
-              />
-            </Box>}
+            {tableData && (
+              <Box mt={2} mr>
+                <ReusableTrendTable
+                  columns={columnDefinition}
+                  searchable
+                  tableData={tableData.data}
+                  loading={loading}
+                  skeltonRowcount={6}
+                  apiError={apiError}
+                  onReload={getTableData}
+                  tableExtraButtons={tableExtraButtons}
+                  t={t}
+                  enablePagination
+                  totalPageCount={tableData.pageCount}
+                  totalItems={tableData.totalCount || 0}
+                  cardSx={{ textTransform: "capitalize" }}
+                  defaultSortField={"date"}
+                  defaultSortFieldOrder={"desc"}
+                  boldHeaders={false}
+                />
+              </Box>
+            )}
           </Grid>
         </Grid>
       </Box>
