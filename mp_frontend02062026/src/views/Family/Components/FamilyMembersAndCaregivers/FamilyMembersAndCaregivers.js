@@ -212,26 +212,26 @@ const handleEditMember = (member) => {
         minWidth: 200,
         render: (row) => (
           <Box display="flex" justifyContent="space-between" alignItems="flex-start" width="100%">
-      <Tooltip title={row.profileInformation?.notes || ''} placement="top" arrow disableHoverListener={!row.profileInformation?.notes}>
-        <Typography
-          variant="body2"
-          color="textPrimary"
-          sx={{
-            display: '-webkit-box',
-            WebkitLineClamp: 4,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-            wordBreak: 'break-word',
-            whiteSpace: 'normal',
-            flex: 1,
-            mr: 1,
-            cursor: row.profileInformation?.notes ? 'pointer' : 'default',
-          }}
-        >
-          {row.profileInformation?.notes || '-'}
-        </Typography>
-      </Tooltip>
-           
+            <Tooltip title={row.profileInformation?.notes || ''} placement="top" arrow disableHoverListener={!row.profileInformation?.notes}>
+              <Typography
+                variant="body2"
+                color="textPrimary"
+                sx={{
+                  display: '-webkit-box',
+                  WebkitLineClamp: 4,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                  wordBreak: 'break-word',
+                  whiteSpace: 'normal',
+                  flex: 1,
+                  mr: 1,
+                  cursor: row.profileInformation?.notes ? 'pointer' : 'default',
+                }}
+              >
+                {row.profileInformation?.notes || '-'}
+              </Typography>
+            </Tooltip>
+
             <Stack direction="row" spacing={1}>
               <IconButton size="small" sx={{ color: '#2C3E50' }}>
                 <EditIcon fontSize="small" onClick={() => handleEditMember(row)} />

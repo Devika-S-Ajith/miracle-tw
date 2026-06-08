@@ -127,7 +127,7 @@ const CloseCaseModal = ({ onClose, onSubmit, deactivationReasons = [] }) => {
               <Box sx={{ p: 2, borderRadius: 1, mb: 3 }}>
                 <SmallText
                   value={t(
-                    'common:common.Why is this case being closed',
+                    'common:common.Why is this case being closed?',
                     'Why is this case being closed?'
                   )}
                 />

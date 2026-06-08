@@ -1,4 +1,4 @@
-
+import dayjs from "dayjs";
 export const InlineMemberCreationConfig = [
     {
         type: 'text',
@@ -93,6 +93,7 @@ export const InlineChildCreationConfig = [
         required: false,
         fullWidth: true,
         variant: 'outlined',
+        maxDate: dayjs().endOf('day'),
         gridProps: { md: 2, xs: 12 }
     },
 ];

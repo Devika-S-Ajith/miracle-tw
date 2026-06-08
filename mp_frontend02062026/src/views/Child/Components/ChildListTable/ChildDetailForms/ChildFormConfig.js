@@ -119,10 +119,10 @@ export const ChildBasicDetails = ({
 ];
 
 export const ChildAddressConditionalFields = ({
+  t,
   values,
   handleSameAddressChange,
   setFieldValue,
-  t,
 }) => [
   {
     type: "CheckboxWithLabel",
@@ -239,6 +239,7 @@ export const ChildAdditionalDetails = ({
   phoneRef,
   childDropdownLists,
   languagesList,
+  t,
 }) => {
   return [
     {
@@ -253,7 +254,7 @@ export const ChildAdditionalDetails = ({
     {
       type: "text",
       name: "profileInformation.email",
-      label: "common:common.Email",
+      label: t("common:common.Email", "Email"),
       required: false,
       showTooltip: false,
       fullWidth: true,
@@ -263,7 +264,7 @@ export const ChildAdditionalDetails = ({
     {
       type: "dropdown",
       name: "profileInformation.TWLanguageId",
-      label: "common:common.Primary language",
+      label: t("common:common.Primary language", "Primary language"),
       translateLabels: true,
       required: false,
       validateOnChange: true,
@@ -277,7 +278,7 @@ export const ChildAdditionalDetails = ({
     {
       type: "dropdown",
       name: "profileInformation.ethnicity",
-      label: "common:common.Ethnicity (only for US-based orgs)",
+      label: t("common:common.Ethnicity (only for US-based orgs)", "Ethnicity (only for US-based orgs)"),
       translateLabels: true,
       required: false,
       validateOnChange: true,
@@ -287,7 +288,7 @@ export const ChildAdditionalDetails = ({
     {
       type: "dropdown",
       name: "profileInformation.TWChildEducationLevelId",
-      label: "common:common.Education level",
+      label: t("common:common.Education level", "Education level"),
       translateLabels: true,
       required: false,
       validateOnChange: true,
@@ -297,7 +298,7 @@ export const ChildAdditionalDetails = ({
     {
       type: "text",
       name: "profileInformation.allergy",
-      label: "common:common.Allergies",
+      label: t("common:common.Allergies", "Allergies"),
       required: false,
       showTooltip: false,
       fullWidth: true,
@@ -307,7 +308,7 @@ export const ChildAdditionalDetails = ({
     {
       type: "text",
       name: "profileInformation.notes",
-      label: "common:common.Notes",
+      label: t("common:common.Notes", "Notes"),
       required: false,
       showTooltip: false,
       fullWidth: true,
@@ -318,12 +319,12 @@ export const ChildAdditionalDetails = ({
     },
   ];
 };
-export const CaseManagementDetails = ({childDropdownLists, values}) => [
+export const CaseManagementDetails = ({t, childDropdownLists, values}) => [
   {
     type: "DatePicker",
     name: "caseManagementInformation.dateOfEntry",
-    label: "common:common.Date child entered agency",
-    placeholder: "common:common.Date child entered agency",
+    label: t("common:common.Date child entered agency", "Date child entered agency"),
+    placeholder: t("common:common.Date child entered agency", "Date child entered agency"),
     // size: "small",
     color: "#FFFFFF",
     fullWidth: true,
@@ -336,8 +337,8 @@ export const CaseManagementDetails = ({childDropdownLists, values}) => [
   {
     type: "MonthYearPicker",
     name: "caseManagementInformation.dateOfCWSEntry",
-    label: "common:common.Date child entered welfare system",
-    placeholder: "common:common.Date child entered welfare system",
+    label: t("common:common.Date child entered welfare system", "Date child entered welfare system"),
+    placeholder: t("common:common.Date child entered welfare system", "Date child entered welfare system"),
     // size: "small",
     color: "#FFFFFF",
     fullWidth: true,
@@ -350,7 +351,7 @@ export const CaseManagementDetails = ({childDropdownLists, values}) => [
   {
     type: "dropdown",
     name: "caseManagementInformation.TWChildPlacementStatusId",
-    label: "common:common.Child Placement Status table",
+    label: t("common:common.Child Placement Status table", "Child Placement Status table"),
     translateLabels: true,
     required: false,
     validateOnChange: true,
@@ -360,7 +361,7 @@ export const CaseManagementDetails = ({childDropdownLists, values}) => [
   {
     type: "dropdown",
     name: "caseManagementInformation.level",
-    label: "common:common.Level of care (US logs only)",
+    label: t("common:common.Level of care (US logs only)", "Level of care (US logs only)"),
     translateLabels: true,
     required: false,
     validateOnChange: true,
@@ -370,7 +371,7 @@ export const CaseManagementDetails = ({childDropdownLists, values}) => [
   {
     type: "text",
     name: "caseManagementInformation.medicaidNumber",
-    label: "common:common.Medicaid number (US logs only)",
+    label: t("common:common.Medicaid number (US logs only)", "Medicaid number (US logs only)"),
     required: false,
     showTooltip: false,
     fullWidth: true,
@@ -381,7 +382,7 @@ export const CaseManagementDetails = ({childDropdownLists, values}) => [
   {
     type: "text",
     name: "caseManagementInformation.placementId",
-    label: "common:common.Placement ID (US logs only)",
+    label: t("common:common.Placement ID (US logs only)", "Placement ID (US logs only)"),
     required: false,
     showTooltip: false,
     fullWidth: true,
@@ -393,7 +394,7 @@ export const CaseManagementDetails = ({childDropdownLists, values}) => [
   {
     type: "text",
     name: "caseManagementInformation.previousPlacementsCount",
-    label: "common:common.# of previous placements (US logs only)",
+    label: t("common:common.# of previous placements (US logs only)", "# of previous placements (US logs only)"),
     showTooltip: false,
     fullWidth: true,
     variant: "outlined",
@@ -460,11 +461,10 @@ export const CaseCloseDetails = ({
 ];
 
 export const FamilyChangeDetails = ({
-  familyChangeValues,
   familyChangeReasons,
   values
 }) => {
-  const reasons = values?.familyChangeValues?.familyChangeDetails?.childDischargeReason;
+  const reasons = values?.familyChangeDetails?.childDischargeReason;
   const showOther = Array.isArray(reasons) && reasons.includes("OTHER");
   return [
     {

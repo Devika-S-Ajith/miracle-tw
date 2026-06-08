@@ -71,7 +71,6 @@ function FieldRow({ icon, label, value, valueColor }) {
 
 export default function FamilyMemberCard({ data = SAMPLE_DATA }) {
     const { familyDropdownLists } = useContext(CommonDataContext);
-    const { t } = useTranslation(["common"]);
     const {
         firstName,
         lastName,
@@ -80,7 +79,7 @@ export default function FamilyMemberCard({ data = SAMPLE_DATA }) {
         profileInformation,
         isActive,
     } = data;
-
+    const { t } = useTranslation(["common"]);
     const { phoneNumber, occupation, notes, appAccessEnabled, email } = profileInformation || {};
 
     const initials = getInitials(firstName, lastName);

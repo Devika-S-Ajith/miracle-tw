@@ -284,16 +284,12 @@ const InlineMemberCreation = ({
     };
 
     const checkForDuplicateChild = async (index, member, fieldValue = null, fieldName = null) => {
-        let { firstName, lastName, gender, dateOfBirth, id } = member;
+        let { firstName, gender, dateOfBirth, id } = member;
         if (id) return;
-        if (!firstName || !gender || !dateOfBirth) return;
         if (fieldValue !== null && fieldName) {
             switch (fieldName) {
                 case 'firstName':
                     firstName = fieldValue;
-                    break;
-                case 'lastName':
-                    lastName = fieldValue;
                     break;
                 case 'gender':
                     gender = fieldValue;
@@ -305,14 +301,13 @@ const InlineMemberCreation = ({
                     break;
             }
         }
-
+        if (!firstName || !gender || !dateOfBirth) return;
         try {
             setIsLoading(true);
             const payload = {
                 firstName: firstName.trim(),
-                lastName: lastName?.trim(),
                 gender: gender,
-                birthDate: toUTCMidnight(dateOfBirth),
+                birthDate: dateOfBirth,
                 filters: {
                     familyId: null
                 }
@@ -322,7 +317,6 @@ const InlineMemberCreation = ({
             setIsLoading(false);
 
             const existingChild = response?.data?.data || [];
-
             if (existingChild.length > 0) {
                 const DuplicateModalContent = ({ close }) => {
                     const [localLastName, setLocalLastName] = useState(formik?.values?.members?.[index]?.lastName || '');
@@ -489,8 +483,8 @@ const InlineMemberCreation = ({
     };
 
     const handleDateChange = (index, newValue) => {
-        formik?.setFieldValue(`members.${index}.dateOfBirth`, newValue);
-        handleFieldBlur(index, 'dateOfBirth', newValue);
+        formik?.setFieldValue(`members.${index}.dateOfBirth`, toUTCMidnight(newValue));
+        handleFieldBlur(index, 'dateOfBirth', toUTCMidnight(newValue));
     };
 
     const checkEmptyDataFields = (index) => {
@@ -625,11 +619,32 @@ const InlineMemberCreation = ({
         });
     }, [formik, memberDeleteReasons, familyChangeReasons, t]);
 
+    const nonChildMemberCount = memberList.filter(
+        (member) => !member?.isDeleted && member?.isChild !== true
+    ).length;
+    const shouldDisableNonChildRelations = nonChildMemberCount > 20;
 
-    const buildFamilyOptions = (isChild, memberId) => {
-        if (!memberId) return familyRelations;
-        return isChild ? familyRelations.filter(relation => relation.groupValue === "Child")
-            : familyRelations.filter(relation => relation.groupValue !== "Child");
+    const buildFamilyOptions = (isChild, memberId, selectedRelationId = null) => {
+        const scopedOptions = !memberId
+            ? familyRelations
+            : isChild
+                ? familyRelations.filter(relation => relation.groupValue === "Child")
+                : familyRelations.filter(relation => relation.groupValue !== "Child");
+
+        // Keep existing members editable; restrict only brand-new rows.
+        if (!shouldDisableNonChildRelations || memberId) {
+            return scopedOptions;
+        }
+
+        return scopedOptions.map((relation) => {
+            const isChildRelation = relation.groupValue === "Child";
+            const isSelectedRelation = String(relation.id) === String(selectedRelationId);
+
+            return {
+                ...relation,
+                disabled: !isChildRelation && !isSelectedRelation,
+            };
+        });
     };
 
 
@@ -699,7 +714,7 @@ const InlineMemberCreation = ({
                                                     <Field
                                                         name={`members.${i}.TWFamilyRelationId`}
                                                         component={DropdownWithExternalLabel}
-                                                        options={buildFamilyOptions(obj.isChild, obj?.id)}
+                                                        options={buildFamilyOptions(obj.isChild, obj?.id, obj?.TWFamilyRelationId)}
                                                         customFunction={(newValue) => {
                                                             formik?.setFieldValue(
                                                                 `members.${i}.isChild`,

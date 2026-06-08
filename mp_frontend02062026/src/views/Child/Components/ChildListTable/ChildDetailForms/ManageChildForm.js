@@ -1063,6 +1063,7 @@ const ManageChildForm = ({
                               setFieldValue={setFieldValue}
                               locationList={locationList}
                               config={ChildAdditionalDetails({
+                                t,
                                 childDropdownLists,
                                 languagesList:
                                   localStorage.getItem("userRegion") == "1"
@@ -1096,6 +1097,7 @@ const ManageChildForm = ({
                               handleBlur={handleBlur}
                               setFieldValue={setFieldValue}
                               config={CaseManagementDetails({
+                                t,
                                 childDropdownLists,
                                 values,
                               })}
