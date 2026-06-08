@@ -123,7 +123,7 @@ const InlineMemberCreation = ({
 
     const menuActions = [
         {
-            label: t("common:family.Edit", "Edit"),
+            label: t("common:common.Edit", "Edit"),
             icon: PencilEditIcon,
             onClick: (obj) => handleEditMember(obj),
         },
@@ -557,7 +557,7 @@ const InlineMemberCreation = ({
                 <Box sx={{ p: 3 }}>
                     <Typography variant="body1" sx={{ mb: 2 }}>
                         {t(
-                            `common:child.Closing a family's case also closes the cases for all family members and children in the family.`,
+                            `common:child.Closing a family's case also closes the cases for all family members and children in the family`,
                             `Closing a family's case also closes the cases for all family members and children in the family.`
                         )}
                     </Typography>
@@ -807,7 +807,7 @@ const InlineMemberCreation = ({
                                                                 }}
                                                             />
                                                             <Typography sx={{ whiteSpace: 'wrap' }}>
-                                                                {t('common:family.Primary contact', 'Primary contact')}
+                                                                {t('common:common.Primary contact', 'Primary contact')}
                                                             </Typography>
                                                             <IconButton
                                                                 aria-label="more"

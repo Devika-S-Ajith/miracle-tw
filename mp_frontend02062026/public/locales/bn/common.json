@@ -598,10 +598,9 @@
     "Role in family": "পরিবারে ভূমিকা",
     "First name": "নামের প্রথম অংশ",
     "Last name": "পদবি",
-    "Licence number": "লাইসেন্স নম্বর",
     "Close case": "কেস বন্ধ করুন",
     "Date case was closed": "কেস বন্ধের তারিখ",
-    "Why is this case being closed?": "এই কেসটি কেন বন্ধ করা হচ্ছে?",
+    "Why is this case being closed": "এই কেসটি কেন বন্ধ করা হচ্ছে?",
     "No, cancel": "না, বাতিল করুন",
     "Yes, close case": "হ্যাঁ, কেস বন্ধ করুন",
     "Filter" : "ফিল্টার",
@@ -636,7 +635,28 @@
     "What was the resolution": "সমাধান কী ছিল",
     "Was the incident reported to the proper authorities?": "ঘटनাটি কি যথাযথ কর্তৃপক্ষকে জানানো হয়েছিল?",
     "To whom was the incident reported?": "ঘटनাটি কাকে জানানো হয়েছিল?",
-    "Is there anything else to note?": "আর কিছু উল্লেখ করার আছে কি?"
+    "Is there anything else to note?": "আর কিছু উল্লেখ করার আছে কি?",
+    "No,Cancel": "না, বাতিল করুন",
+    "Child’s first name": "শিশুর প্রথম নাম",
+  "Child’s last name": "শিশুর শেষ নাম",
+  "Case worker for this child": "এই শিশুর জন্য কেস ওয়ার্কার",
+  "Family child is living with": "শিশুটি যে পরিবারের সাথে বসবাস করছে",
+  "This child has a legally recognized disability": "এই শিশুর আইনগতভাবে স্বীকৃত প্রতিবন্ধকতা রয়েছে",
+  "Additional profile information (optional)": "অতিরিক্ত প্রোফাইল তথ্য (ঐচ্ছিক)",
+  "Ethnicity (only for US-based orgs)": "জাতিগত পরিচয় (শুধুমাত্র মার্কিন সংস্থার জন্য)",
+  "Education level": "শিক্ষার স্তর",
+  "Allergies": "অ্যালার্জি",
+  "Case management details (optional)": "কেস ব্যবস্থাপনার বিবরণ (ঐচ্ছিক)",
+  "Date child entered agency": "শিশু সংস্থায় যোগদানের তারিখ",
+  "Date child entered welfare system": "শিশু কল্যাণ ব্যবস্থায় প্রবেশের তারিখ",
+  "Medicaid number (US logs only)": "মেডিকেইড নম্বর (শুধুমাত্র মার্কিন লগের জন্য)",
+  "Level of care (US logs only)": "যত্নের স্তর (শুধুমাত্র মার্কিন লগের জন্য)",
+  "Placement ID (US logs only)": "প্লেসমেন্ট আইডি (শুধুমাত্র মার্কিন লগের জন্য)",
+  "# of previous placements (US logs only)": "পূর্ববর্তী প্লেসমেন্টের সংখ্যা (শুধুমাত্র মার্কিন লগের জন্য)",
+  "Remove member": "সদস্য সরান",
+    "Licence number": "লাইসেন্স নম্বর (ঐচ্ছিক)"
+
+
   },
   "signin": {
     "Sign in to your account": " আপনার অ্যাকাউন্টে সাইন ইন করুন। ",
@@ -785,7 +805,8 @@
     "ChildExistsMessage3": "দয়া করে আপনার থ্রাইভওয়েল অ্যাডমিনিস্ট্রেটরের সঙ্গে যোগাযোগ করুন এবং অনুরোধ করুন যেন এই শিশুটিকে আপনাকে অ্যাসাইন এবং/অথবা রিএক্টিভেট করা হয়। একবার শিশুটি আপনাকে অ্যাসাইন হয়ে গেলে, আপনি তাকে এই পরিবারে যোগ করতে পারবেন। |",
     "FirstNameLastNameDOB": "প্রথম নাম, শেষ নাম এবং জন্ম তারিখ",
     "Discontinued Education": "বন্ধ শিক্ষা",
-    "Highest Education": "সর্বোচ্চ শিক্ষা"
+    "Highest Education": "সর্বোচ্চ শিক্ষা",
+    "Closing a family's case also closes the cases for all family members and children in the family":"একটি পরিবারের মামলা বন্ধ করলে, সেই পরিবারের সকল সদস্য ও শিশুদের মামলাও বন্ধ হয়ে যায়।"
   },
   "assessment": {
     "Assessment List": " মূল্যায়ন তালিকা ",
@@ -1080,10 +1101,11 @@
     "assessment_number": "মূল্যায়ন #{{number}}",
     "Add another family member": "আরেকজন পরিবার সদস্য যোগ করুন",
     "Family type": "পরিবারের ধরন",
-    "Date the family first started serving as a foster family": "পরিবারটি প্রথম কবে লালন পরিবার হিসেবে শুরু করেছে",
+    "Date the family first started serving as a foster family": "পরিবারটি প্রথম কবে লালন পরিবার হিসেবে শুরু করেছে (ঐচ্ছিক)",
     "Family member or caregiver": "পরিবারের সদস্য বা পরিচর্যাকারী",
     "Profile information": "প্রোফাইল তথ্য",
-    "Family contact information": "পরিবারের যোগাযোগের তথ্য (ঐচ্ছিক)"
+    "Family contact information": "পরিবারের যোগাযোগের তথ্য (ঐচ্ছিক)",
+    "Additional information": "অতিরিক্ত তথ্য (ঐচ্ছিক)"
   },
   "form": {
     "formList": " ফর্মের তালিকা ",

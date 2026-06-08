@@ -100,7 +100,7 @@ const AddFamilyMemberModal = ({ onClose, getMemberDetails,familyId, member, isFa
                 <Box sx={{ p: 3 }}>
                     <Typography variant="body1" sx={{ mb: 2 }}>
                         {t(
-                            `common:child.Closing a family's case also closes the cases for all family members and children in the family.`,
+                            `common:child.Closing a family's case also closes the cases for all family members and children in the family`,
                             `Closing a family's case also closes the cases for all family members and children in the family.`
                         )}
                     </Typography>

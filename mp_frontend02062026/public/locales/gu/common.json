@@ -602,10 +602,9 @@
     "Role in family": "પરિવારમાં ભૂમિકા",
     "First name": "પ્રથમ નામ",
     "Last name": "અટક",
-    "Licence number": "લાઇસન્સ નંબર",
     "Close case": "કેસ બંધ કરો",
     "Date case was closed": "કેસ બંધ થયાની તારીખ",
-    "Why is this case being closed?": "આ કેસ કેમ બંધ કરવામાં આવી રહ્યો છે?",
+    "Why is this case being closed": "આ કેસ કેમ બંધ કરવામાં આવી રહ્યો છે?",
     "No, cancel": "ના, રદ કરો",
     "Yes, close case": "હા, કેસ બંધ કરો",
     "Filter": "ફિલ્ટર",
@@ -641,7 +640,27 @@
     "What was the resolution": "ઉકેલ શું હતો",
     "Was the incident reported to the proper authorities?": "શું ઘટનાની જાણ યોગ્ય સત્તાધિકારીઓને કરવામાં આવી હતી?",
     "To whom was the incident reported?": "ઘટનાની જાણ કોને કરવામાં આવી હતી?",
-    "Is there anything else to note?": "શું નોંધવા જેવી બીજી કોઈ વાત છે?"
+    "Is there anything else to note?": "શું નોંધવા જેવી બીજી કોઈ વાત છે?",
+    "No,Cancel": "ના, રદ કરો",
+      "Child’s first name": "બાળકનું પ્રથમ નામ",
+  "Child’s last name": "બાળકનું છેલ્લું નામ",
+  "Case worker for this child": "આ બાળક માટે કેસ વર્કર",
+  "Family child is living with": "બાળક જે પરિવાર સાથે રહે છે",
+  "This child has a legally recognized disability": "આ બાળકને કાયદેસર માન્ય વિકલાંગતા છે",
+  "Additional profile information (optional)": "વધારાની પ્રોફાઇલ માહિતી (વૈકલ્પિક)",
+  "Ethnicity (only for US-based orgs)": "વંશીયતા (ફક્ત યુએસ આધારિત સંસ્થાઓ માટે)",
+  "Education level": "શિક્ષણ સ્તર",
+  "Allergies": "એલર્જી",
+  "Case management details (optional)": "કેસ મેનેજમેન્ટ વિગતો (વૈકલ્પિક)",
+  "Date child entered agency": "બાળક એજન્સીમાં દાખલ થયાની તારીખ",
+  "Date child entered welfare system": "બાળક કલ્યાણ પ્રણાલીમાં દાખલ થયાની તારીખ",
+  "Medicaid number (US logs only)": "મેડિકેઇડ નંબર (ફક્ત યુએસ લોગ્સ માટે)",
+  "Level of care (US logs only)": "સંભાળનું સ્તર (ફક્ત યુએસ લોગ્સ માટે)",
+  "Placement ID (US logs only)": "પ્લેસમેન્ટ આઈડી (ફક્ત યુએસ લોગ્સ માટે)",
+  "# of previous placements (US logs only)": "અગાઉના પ્લેસમેન્ટની સંખ્યા (ફક્ત યુએસ લોગ્સ માટે)",
+  "Remove member": "સભ્યને દૂર કરો",
+    "Licence number": "લાઇસન્સ નંબર (વૈકલ્પિક)"
+
     
   },
   "signin": {
@@ -792,7 +811,8 @@
     "ChildExistsMessage3": "કૃપા કરીને તમારા થ્રાઇવવેલ એડમિનિસ્ટ્રેટરનો સંપર્ક કરો અને વિનંતી કરો કે આ બાળક તમને અસાઇન કરવામાં આવે અને/અથવા રીઍક્ટિવેટ કરવામાં આવે. બાળક તમને અસાઇન થયા પછી, તમે તેને આ પરિવારમાં ઉમેરી શકો છો. |",
     "FirstNameLastNameDOB": "પ્રથમ નામ, છેલ્લું નામ અને જન્મ તારીખ",
     "Discontinued Education": "બંધ કરેલું શિક્ષણ",
-    "Highest Education": "સર્વોચ્ચ શિક્ષણ"
+    "Highest Education": "સર્વોચ્ચ શિક્ષણ",
+    "Closing a family's case also closes the cases for all family members and children in the family":"પરિવારનો કેસ બંધ કરવાથી તે પરિવારના તમામ સભ્યો અને બાળકોના કેસ પણ બંધ થઈ જાય છે."
   },
   "assessment": {
     "Assessment List": "આકારણીની યાદી ",
@@ -1074,7 +1094,6 @@
     "Contact information": "કોન્ટેક્ટ માહિતી",
     "Family status": "પરિવારની સ્ટેટસ",
     "Cannot delete family with active children": "સક્રિય બાળકો ધરાવતા પરિવારને કાઢી નાંખી શકાતો નથી",
-    "Additional information": "વધુ માહિતી ",
     "todo_title":"કરવાનું",
     "todo_subtitle":"બધી ક્રિયાઓ મોબાઇલ એપમાં પૂર્ણ કરવી જરૂરી છે",
     "most_recent_assessment_summary": "તાજેતરનું મૂલ્યાંકન સારાંશ",
@@ -1088,7 +1107,8 @@
     "assessment_number": "મૂલ્યાંકન  #{{number}}",
     "Add another family member": "બીજો પરિવાર સભ્ય ઉમેરો",
     "Family type": "પરિવારનો પ્રકાર",
-    "Date the family first started serving as a foster family": "પરિવારે પ્રથમ ક્યારે ફોસ્ટર પરિવાર તરીકે સેવા શરૂ કરી",
+    "Date the family first started serving as a foster family": "પરિવારે પ્રથમ ક્યારે ફોસ્ટર પરિવાર તરીકે સેવા શરૂ કરી (વૈકલ્પિક)",
+    "Additional information": "વધુ માહિતી (વૈકલ્પિક) ",
     "Family member or caregiver": "પરિવારના સભ્ય અથવા સંભાળનાર",
     "Profile information": "પ્રોફાઇલ માહિતી",
     "Family contact information": "પરિવારની સંપર્ક માહિતી (વૈકલ્પિક)"

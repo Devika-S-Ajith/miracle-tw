@@ -89,7 +89,7 @@ const CloseCaseModal = ({ onClose, onSubmit, deactivationReasons = [] }) => {
               {/* ── Info text ─────────────────────────────────────────── */}
               <Typography variant="body1" sx={{ mb: 2 }}>
                 {t(
-                  `common:child.Closing a family's case also closes the cases for all family members and children in the family.`,
+                  `common:child.Closing a family's case also closes the cases for all family members and children in the family`,
                   `Closing a family's case also closes the cases for all family members and children in the family.`
                 )}
               </Typography>
@@ -127,7 +127,7 @@ const CloseCaseModal = ({ onClose, onSubmit, deactivationReasons = [] }) => {
               <Box sx={{ p: 2, borderRadius: 1, mb: 3 }}>
                 <SmallText
                   value={t(
-                    'common:family.Why is this case being closed?',
+                    'common:common.Why is this case being closed',
                     'Why is this case being closed?'
                   )}
                 />

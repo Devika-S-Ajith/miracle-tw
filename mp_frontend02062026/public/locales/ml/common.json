@@ -602,10 +602,9 @@
     "Role in family": "കുടുംബത്തിലെ പങ്ക്",
     "First name": "പേര്",
     "Last name": "അവസാന നാമം",
-    "Licence number": "ലൈസൻസ് നമ്പർ",
     "Close case": "കേസ് അടയ്ക്കുക",
     "Date case was closed": "കേസ് അടച്ച തീയതി",
-    "Why is this case being closed?": "ഈ കേസ് എന്തുകൊണ്ട് അടയ്ക്കുന്നു?",
+    "Why is this case being closed": "ഈ കേസ് എന്തുകൊണ്ട് അടയ്ക്കുന്നു?",
     "No, cancel": "ഇല്ല, റദ്ദാക്കുക",
     "Yes, close case": "അതെ, കേസ് അടയ്ക്കുക",
     "Filter":"ഫിൽട്ടർ",
@@ -641,7 +640,27 @@
     "What was the resolution": "പരിഹാരം എന്തായിരുന്നു",
     "Was the incident reported to the proper authorities?": "സംഭവം ബന്ധപ്പെട്ട അധികാരികളെ അറിയിച്ചിരുന്നോ?",
     "To whom was the incident reported?": "സംഭവം ആരെ അറിയിച്ചിരുന്നു?",
-    "Is there anything else to note?": "കൂടുതൽ ശ്രദ്ധിക്കേണ്ട മറ്റെന്തെങ്കിലും ഉണ്ടോ?"
+    "Is there anything else to note?": "കൂടുതൽ ശ്രദ്ധിക്കേണ്ട മറ്റെന്തെങ്കിലും ഉണ്ടോ?",
+    "No,Cancel": "ഇല്ല, റദ്ദാക്കുക",
+  "Child’s first name": "കുട്ടിയുടെ ആദ്യ നാമം",
+  "Child’s last name": "കുട്ടിയുടെ അവസാന നാമം",
+  "Case worker for this child": "ഈ കുട്ടിയുടെ കേസ് വർക്കർ",
+  "Family child is living with": "കുട്ടി താമസിക്കുന്ന കുടുംബം",
+  "This child has a legally recognized disability": "ഈ കുട്ടിക്ക് നിയമപരമായി അംഗീകരിച്ച വൈകല്യമുണ്ട്",
+  "Additional profile information (optional)": "അധിക പ്രൊഫൈൽ വിവരങ്ങൾ (ഓപ്ഷണൽ)",
+  "Ethnicity (only for US-based orgs)": "വംശീയത (യുഎസ് അധിഷ്ഠിത സ്ഥാപനങ്ങൾക്ക് മാത്രം)",
+  "Education level": "വിദ്യാഭ്യാസ നില",
+  "Allergies": "അലർജികൾ",
+  "Case management details (optional)": "കേസ് മാനേജ്മെന്റ് വിവരങ്ങൾ (ഓപ്ഷണൽ)",
+  "Date child entered agency": "കുട്ടി ഏജൻസിയിൽ ചേർന്ന തീയതി",
+  "Date child entered welfare system": "കുട്ടി ക്ഷേമ സംവിധാനത്തിൽ പ്രവേശിച്ച തീയതി",
+  "Medicaid number (US logs only)": "മെഡിക്കെയ്ഡ് നമ്പർ (യുഎസ് ലോഗുകൾക്ക് മാത്രം)",
+  "Level of care (US logs only)": "പരിചരണ നില (യുഎസ് ലോഗുകൾക്ക് മാത്രം)",
+  "Placement ID (US logs only)": "പ്ലേസ്‌മെന്റ് ഐഡി (യുഎസ് ലോഗുകൾക്ക് മാത്രം)",
+  "# of previous placements (US logs only)": "മുൻ പ്ലേസ്‌മെന്റുകളുടെ എണ്ണം (യുഎസ് ലോഗുകൾക്ക് മാത്രം)",
+  "Remove member": "അംഗത്തെ നീക്കം ചെയ്യുക",
+    "Licence number": "ലൈസൻസ് നമ്പർ (ഐച്ഛികം)"
+
   },
   "signin": {
     "Sign in to your account": "താങ്കളുടെ അക്കൗണ്ടിലേക്ക് സൈൻ ഇൻ ചെയ്യുക",
@@ -789,7 +808,8 @@
     "ChildExistsMessage3": "ദയവായി നിങ്ങളുടെ ത്രൈവ്‌വെൽ അഡ്മിനിസ്ട്രേറ്ററുമായി ബന്ധപ്പെടുക, ഈ കുട്ടിയെ നിങ്ങളെ അസൈൻ ചെയ്യാനും/അല്ലെങ്കിൽ റിയാക്ടിവേറ്റ് ചെയ്യാനും അഭ്യർത്ഥിക്കുക. കുട്ടിയെ നിങ്ങളെ അസൈൻ ചെയ്താൽ, നിങ്ങള്‍ക്കത് ഈ കുടുംബത്തിൽ ചേർക്കാനാകും.",
     "FirstNameLastNameDOB": "ആദ്യ നാമം, അവസാന നാമം, ജനനത്തീയതി",
     "Discontinued Education": "വിദ്യാഭ്യാസം മുടങ്ങി",
-    "Highest Education": "ഉന്നത വിദ്യാഭ്യാസം"
+    "Highest Education": "ഉന്നത വിദ്യാഭ്യാസം",
+    "Closing a family's case also closes the cases for all family members and children in the family":"ഒരു കുടുംബത്തിന്റെ കേസ് അടയ്ക്കുമ്പോൾ, ആ കുടുംബത്തിലെ എല്ലാ കുടുംബാംഗങ്ങളുടെയും കുട്ടികളുടെയും കേസുകളും അടയ്ക്കപ്പെടും."
   },
   "assessment": {
     "Assessment List": "വിലയിരുത്തൽ പട്ടിക",
@@ -1073,7 +1093,6 @@
     "Family status": "കുടുംബ സ്റ്റേറ്റസ്",
     "Cannot delete family with active children": "സജീവമായ കുട്ടികളുള്ള കുടുംബം ഡിലീറ്റ് ചെയ്യാനാവില്ല",
     "Goal is required": "ലക്ഷ്യം ആവശ്യമാണ്",
-    "Additional information": "കൂടുതൽ വിവരങ്ങൾ",
     "todo_title":"ചെയ്യേണ്ടത്",
     "todo_subtitle":"എല്ലാ പ്രവർത്തനങ്ങളും മൊബൈൽ ആപ്പിൽ പൂർത്തിയാക്കണം",
     "most_recent_assessment_summary": "ഏറ്റവും പുതിയ വിലയിരുത്തൽ സംഗ്രഹം",
@@ -1087,7 +1106,8 @@
     "assessment_number": "മൂല്യനിർണ്ണയം  #{{number}}",
     "Add another family member": "മറ്റൊരു കുടുംബാംഗത്തെ ചേർക്കുക",
     "Family type": "കുടുംബ തരം",
-    "Date the family first started serving as a foster family": "കുടുംബം ഫോസ്റ്റർ കുടുംബമായി സേവനം ആരംഭിച്ച തീയതി",
+    "Date the family first started serving as a foster family": "കുടുംബം ഫോസ്റ്റർ കുടുംബമായി സേവനം ആരംഭിച്ച തീയതി (ഐച്ഛികം)",
+    "Additional information": "കൂടുതൽ വിവരങ്ങൾ (ഐച്ഛികം)",
     "Family member or caregiver": "കുടുംബാംഗം അല്ലെങ്കിൽ പരിചരിക്കുന്നയാൾ",
     "Profile information": "പ്രൊഫൈല്‍ വിവരങ്ങൾ",
     "Family contact information": "കുടുംബ ബന്ധപ്പെടാനുള്ള വിവരങ്ങൾ (ഐച്ഛികം)"

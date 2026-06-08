@@ -1,5 +1,5 @@
 import React, { useContext, useMemo, useState } from 'react';
-import { Typography, Box, IconButton, Stack, Modal } from '@mui/material';
+import { Typography, Box, IconButton, Stack, Modal, Tooltip } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import ReusableTrendTable from '../../../Dashboard/GovtDashboardOverview/Components/ReusableTrendTable';
@@ -211,10 +211,26 @@ const handleEditMember = (member) => {
         width: 200,
         minWidth: 200,
         render: (row) => (
-          <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
-            <Typography variant="body2" color="textPrimary">
-              {row.profileInformation?.notes || '-'}
-            </Typography>
+          <Box display="flex" justifyContent="space-between" alignItems="flex-start" width="100%">
+      <Tooltip title={row.profileInformation?.notes || ''} placement="top" arrow disableHoverListener={!row.profileInformation?.notes}>
+        <Typography
+          variant="body2"
+          color="textPrimary"
+          sx={{
+            display: '-webkit-box',
+            WebkitLineClamp: 4,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+            wordBreak: 'break-word',
+            whiteSpace: 'normal',
+            flex: 1,
+            mr: 1,
+            cursor: row.profileInformation?.notes ? 'pointer' : 'default',
+          }}
+        >
+          {row.profileInformation?.notes || '-'}
+        </Typography>
+      </Tooltip>
            
             <Stack direction="row" spacing={1}>
               <IconButton size="small" sx={{ color: '#2C3E50' }}>

@@ -23,6 +23,7 @@ import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import { CommonDataContext } from "../../../../common/contexts/CommonDataContext";
 import LabelValue from "../../../../components/LabelValue";
+import { useTranslation } from "react-i18next";
 
 const SAMPLE_DATA = {
     member_id: "mem_00123",
@@ -70,6 +71,7 @@ function FieldRow({ icon, label, value, valueColor }) {
 
 export default function FamilyMemberCard({ data = SAMPLE_DATA }) {
     const { familyDropdownLists } = useContext(CommonDataContext);
+    const { t } = useTranslation(["common"]);
     const {
         firstName,
         lastName,
@@ -165,17 +167,17 @@ export default function FamilyMemberCard({ data = SAMPLE_DATA }) {
                         <Grid item xs={12} sm={6}>
                             <FieldRow
                                 icon={<PersonIcon fontSize="small" />}
-                                label="First name"
+                                label={t("common:common.First name", "First name")}
                                 value={firstName}
                             />
                             <FieldRow
                                 icon={<WorkIcon fontSize="small" />}
-                                label="Occupation"
+                                label={t("common:common.Occupation", "Occupation")}
                                 value={occupation}
                             />
                             <FieldRow
                                 icon={<EmailIcon fontSize="small" />}
-                                label="Email"
+                                label={t("common:common.Email", "Email")}
                                 value={email}
                                 valueColor="primary.main"
                             />
@@ -183,17 +185,17 @@ export default function FamilyMemberCard({ data = SAMPLE_DATA }) {
                         <Grid item xs={12} sm={6}>
                             <FieldRow
                                 icon={<PersonIcon fontSize="small" />}
-                                label="Last name"
+                                label={t("common:common.Last name", "Last name")}
                                 value={lastName}
                             />
                             <FieldRow
                                 icon={<PhoneIcon fontSize="small" />}
-                                label="Phone"
+                                label={t("common:common.Phone", "Phone")}
                                 value={phoneNumber}
                             />
                             <FieldRow
                                 icon={<FamilyRestroomIcon fontSize="small" />}
-                                label="Relation"
+                                label={t("common:common.Relation", "Relation")}
                                 value={familyDropdownLists?.familyRelations?.find(item => item.id === TWFamilyRelationId)?.value || TWFamilyRelationId}
                             />
                         </Grid>

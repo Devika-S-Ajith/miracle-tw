@@ -599,10 +599,9 @@
     "Role in family": "ಕುಟುಂಬದಲ್ಲಿ ಪಾತ್ರ",
     "First name": "ಮೊದಲ ಹೆಸರು",
     "Last name": "ಕೊನೆಯ ಹೆಸರು",
-    "Licence number": "ಲೈಸೆನ್ಸ್ ಸಂಖ್ಯೆ",
     "Close case": "ಪ್ರಕರಣವನ್ನು ಮುಚ್ಚಿ",
     "Date case was closed": "ಪ್ರಕರಣ ಮುಚ್ಚಿದ ದಿನಾಂಕ",
-    "Why is this case being closed?": "ಈ ಪ್ರಕರಣವನ್ನು ಏಕೆ ಮುಚ್ಚಲಾಗುತ್ತಿದೆ?",
+    "Why is this case being closed": "ಈ ಪ್ರಕರಣವನ್ನು ಏಕೆ ಮುಚ್ಚಲಾಗುತ್ತಿದೆ?",
     "No, cancel": "ಇಲ್ಲ, ರದ್ದುಮಾಡಿ",
     "Yes, close case": "ಹೌದು, ಪ್ರಕರಣ ಮುಚ್ಚಿ",
     "Filter":"ಫಿಲ್ಟರ್",
@@ -638,7 +637,26 @@
     "What was the resolution": "ಪರಿಹಾರ ಏನು?",
     "Was the incident reported to the proper authorities?": "ಘಟನೆ ಸರಿಯಾದ ಅಧಿಕಾರಿಗಳಿಗೆ ವರದಿ ಮಾಡಲಾಗಿದೆಯೇ?",
     "To whom was the incident reported?": "ಘಟನೆ ಯಾರಿಗೆ ವರದಿ ಮಾಡಲಾಗಿದೆ?",
-    "Is there anything else to note?": "ಗಮನಿಸಲು ಇನ್ನೇನಾದರೂ ಇದೆಯೇ?"
+    "Is there anything else to note?": "ಗಮನಿಸಲು ಇನ್ನೇನಾದರೂ ಇದೆಯೇ?",
+    "No,Cancel": "ಇಲ್ಲ, ರದ್ದುಮಾಡಿ",
+    "Child’s first name": "ಮಗುವಿನ ಮೊದಲ ಹೆಸರು",
+  "Child’s last name": "ಮಗುವಿನ ಕೊನೆಯ ಹೆಸರು",
+  "Case worker for this child": "ಈ ಮಗುವಿನ ಕೇಸ್ ವರ್ಕರ್",
+  "Family child is living with": "ಮಗು ವಾಸಿಸುತ್ತಿರುವ ಕುಟುಂಬ",
+  "This child has a legally recognized disability": "ಈ ಮಗುವಿಗೆ ಕಾನೂನುಬದ್ಧವಾಗಿ ಗುರುತಿಸಲ್ಪಟ್ಟ ಅಂಗವೈಕಲ್ಯವಿದೆ",
+  "Additional profile information (optional)": "ಹೆಚ್ಚುವರಿ ಪ್ರೊಫೈಲ್ ಮಾಹಿತಿ (ಐಚ್ಛಿಕ)",
+  "Ethnicity (only for US-based orgs)": "ಜನಾಂಗೀಯತೆ (ಅಮೆರಿಕ ಮೂಲದ ಸಂಸ್ಥೆಗಳಿಗೆ ಮಾತ್ರ)",
+  "Education level": "ಶಿಕ್ಷಣ ಮಟ್ಟ",
+  "Allergies": "ಅಲರ್ಜಿ",
+  "Case management details (optional)": "ಪ್ರಕರಣ ನಿರ್ವಹಣೆಯ ವಿವರಗಳು (ಐಚ್ಛಿಕ)",
+  "Date child entered agency": "ಮಗು ಸಂಸ್ಥೆಗೆ ಸೇರಿದ ದಿನಾಂಕ",
+  "Date child entered welfare system": "ಮಗು ಕಲ್ಯಾಣ ವ್ಯವಸ್ಥೆಗೆ ಸೇರಿದ ದಿನಾಂಕ",
+  "Medicaid number (US logs only)": "ಮೆಡಿಕೇಡ್ ಸಂಖ್ಯೆ (ಅಮೆರಿಕನ್ ಲಾಗ್‌ಗಳಿಗೆ ಮಾತ್ರ)",
+  "Level of care (US logs only)": "ಆರೈಕೆಯ ಮಟ್ಟ (ಅಮೆರಿಕನ್ ಲಾಗ್‌ಗಳಿಗೆ ಮಾತ್ರ)",
+  "Placement ID (US logs only)": "ನಿಯೋಜನೆ ಐಡಿ (ಅಮೆರಿಕನ್ ಲಾಗ್‌ಗಳಿಗೆ ಮಾತ್ರ)",
+  "# of previous placements (US logs only)": "ಹಿಂದಿನ ನಿಯೋಜನೆಗಳ ಸಂಖ್ಯೆ (ಅಮೆರಿಕನ್ ಲಾಗ್‌ಗಳಿಗೆ ಮಾತ್ರ)",
+    "Remove member": "ಸದಸ್ಯರನ್ನು ತೆಗೆದುಹಾಕಿ",
+    "Licence number": "ಲೈಸೆನ್ಸ್ ಸಂಖ್ಯೆ (ಐಚ್ಛಿಕ)"
   },
   "signin": {
     "Sign in to your account": "ನಿಮ್ಮ ಖಾತೆಗೆ ಸೈನ್ ಇನ್ ಮಾಡಿ.",
@@ -787,7 +805,8 @@
     "ChildExistsMessage3": "ದಯವಿಟ್ಟು ನಿಮ್ಮ ಥ್ರೈವ್‌ವೆಲ್ ಆಡಳಿತಾಧಿಕಾರಿಯನ್ನು ಸಂಪರ್ಕಿಸಿ ಮತ್ತು ಈ ಮಗುವನ್ನು ನಿಮಗೆ ಅಸೈನ್ ಮಾಡಬೇಕು ಮತ್ತು/ಅಥವಾ ರಿಯಾಕ್ಟಿವೇಟ್ ಮಾಡಬೇಕು ಎಂದು ವಿನಂತಿಸಿ. ಮಗು ನಿಮಗೆ ಅಸೈನ್ ಆದ ನಂತರ, ನೀವು ಈ ಕುಟುಂಬಕ್ಕೆ ಅವನನ್ನು ಸೇರಿಸಬಹುದು. |",
     "FirstNameLastNameDOB": "ಮೊದಲ ಹೆಸರು, ಕೊನೆಯ ಹೆಸರು ಮತ್ತು ಹುಟ್ಟಿದ ದಿನಾಂಕ",
     "Discontinued Education": "ಶಿಕ್ಷಣವನ್ನು ಸ್ಥಗಿತಗೊಳಿಸಿದೆ",
-    "Highest Education": "ಅತ್ಯುನ್ನತ ಶಿಕ್ಷಣ"
+    "Highest Education": "ಅತ್ಯುನ್ನತ ಶಿಕ್ಷಣ",
+    "Closing a family's case also closes the cases for all family members and children in the family":"ಒಂದು ಕುಟುಂಬದ ಪ್ರಕರಣವನ್ನು ಮುಚ್ಚುವುದರಿಂದ, ಆ ಕುಟುಂಬದ ಎಲ್ಲಾ ಸದಸ್ಯರು ಮತ್ತು ಮಕ್ಕಳ ಪ್ರಕರಣಗಳೂ ಮುಚ್ಚಲ್ಪಡುತ್ತವೆ."
   },
   "assessment": {
     "Assessment List": "ಮೌಲ್ಯಮಾಪನ ಪಟ್ಟಿ",
@@ -1082,11 +1101,11 @@
     "assessment_number": "ಮೌಲ್ಯಮಾಪನ  #{{number}}",
     "Add another family member": "ಮತ್ತೊಬ್ಬ ಕುಟುಂಬ ಸದಸ್ಯರನ್ನು ಸೇರಿಸಿ",
     "Family type": "ಕುಟುಂಬದ ಪ್ರಕಾರ",
-    "Date the family first started serving as a foster family": "ಕುಟುಂಬವು ಮೊದಲ ಬಾರಿಗೆ ಫೋಸ್ಟರ್ ಕುಟುಂಬವಾಗಿ ಸೇವೆ ಪ್ರಾರಂಭಿಸಿದ ದಿನಾಂಕ",
+    "Date the family first started serving as a foster family": "ಕುಟುಂಬವು ಮೊದಲ ಬಾರಿಗೆ ಫೋಸ್ಟರ್ ಕುಟುಂಬವಾಗಿ ಸೇವೆ ಪ್ರಾರಂಭಿಸಿದ ದಿನಾಂಕ (ಐಚ್ಛಿಕ)",
+    "Additional information": "ಹೆಚ್ಚಿನ ಮಾಹಿತಿ (ಐಚ್ಛಿಕ)",
     "Family member or caregiver": "ಕುಟುಂಬ ಸದಸ್ಯ ಅಥವಾ  पालक",
     "Profile information": "ಪ್ರೊಫೈಲ್ ಮಾಹಿತಿ",
-    "Family contact information": "ಕುಟುಂಬ ಸಂಪರ್ಕ ಮಾಹಿತಿ (ಐಚ್ಛಿಕ)"
-
+    "Family contact information": "ಕುಟುಂಬ ಸಂಪರ್ಕ ಮಾಹಿತಿ (ಐಚ್ಛಿಕ)",
   },
   "form": {
     "formList": "ಅರ್ಜಿಯ ವಿವರಣೆಗಳು",

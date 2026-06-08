@@ -327,7 +327,7 @@ const ManageFamilyForm = (props) => {
                                 textTransform: 'none'
                             }}
                         >
-                            {t('common:common.Yes,leave page', "Yes, leave page")}
+                            {t('common:common.Yes, leave page', "Yes, leave page")}
                         </Button>
                     </Box>
                 </Box>
@@ -865,7 +865,7 @@ const ManageFamilyForm = (props) => {
                                                 </Grid>
                                             </AccordionSection>
                                             <AccordionSection
-                                                title={t("common:family.Additional information", "Additional information")}
+                                                title={t("common:family.Additional information", "Additional information (optional)")}
                                             >
                                                 <Grid container spacing={1}>
                                                     <DynamicForm

@@ -73,7 +73,7 @@ export const ChildBasicDetails = ({
       ? [{
         type: "dropdown",
         name: "TWFamilyId",
-        label: "Family child is living with",
+        label: t("common:common.Family child is living with", "Family child is living with"),
         translateLabels: true,
         required: false,
         validateOnChange: true,
@@ -86,7 +86,7 @@ export const ChildBasicDetails = ({
   {
     type: "dropdown",
     name: "TWChildCurrentPlacementStatusId",
-    label: "Current living condition",
+    label: t("common:common.Current Placement", "Current living condition"),
     translateLabels: true,
     required: false,
     validateOnChange: true,
@@ -98,7 +98,7 @@ export const ChildBasicDetails = ({
   {
     type: "dropdown",
     name: "caseWorkerId",
-    label: "Case worker for this child",
+    label: t("common:common.Case worker for this child", "Case worker for this child"),
     translateLabels: true,
     required: true,
     validateOnChange: true,
@@ -113,7 +113,7 @@ export const ChildBasicDetails = ({
   {
     type: "CheckboxWithLabel",
     name: "childHasDisability",
-    label: "This child has a legally recognized disability",
+    label: t("common:common.This child has a legally recognized disability", "This child has a legally recognized disability"),
     gridProps: { xs: 12 },
   },
 ];
@@ -122,11 +122,12 @@ export const ChildAddressConditionalFields = ({
   values,
   handleSameAddressChange,
   setFieldValue,
+  t,
 }) => [
   {
     type: "CheckboxWithLabel",
     name: "isSameAsFamilyAddress",
-    label: "Child's address is the same as family's address",
+    label: t("common:common.Child's address is the same as family's address", "Child's address is the same as family's address"),
     gridProps: { xs: 12 },
     onChange: (checked) =>
       handleSameAddressChange({ checked, values, setFieldValue }),
@@ -252,7 +253,7 @@ export const ChildAdditionalDetails = ({
     {
       type: "text",
       name: "profileInformation.email",
-      label: "Email",
+      label: "common:common.Email",
       required: false,
       showTooltip: false,
       fullWidth: true,
@@ -262,7 +263,7 @@ export const ChildAdditionalDetails = ({
     {
       type: "dropdown",
       name: "profileInformation.TWLanguageId",
-      label: "Primary language",
+      label: "common:common.Primary language",
       translateLabels: true,
       required: false,
       validateOnChange: true,
@@ -276,7 +277,7 @@ export const ChildAdditionalDetails = ({
     {
       type: "dropdown",
       name: "profileInformation.ethnicity",
-      label: "Ethnicity (only for US-based orgs)",
+      label: "common:common.Ethnicity (only for US-based orgs)",
       translateLabels: true,
       required: false,
       validateOnChange: true,
@@ -286,7 +287,7 @@ export const ChildAdditionalDetails = ({
     {
       type: "dropdown",
       name: "profileInformation.TWChildEducationLevelId",
-      label: "Education level",
+      label: "common:common.Education level",
       translateLabels: true,
       required: false,
       validateOnChange: true,
@@ -296,7 +297,7 @@ export const ChildAdditionalDetails = ({
     {
       type: "text",
       name: "profileInformation.allergy",
-      label: "Allergies",
+      label: "common:common.Allergies",
       required: false,
       showTooltip: false,
       fullWidth: true,
@@ -306,7 +307,7 @@ export const ChildAdditionalDetails = ({
     {
       type: "text",
       name: "profileInformation.notes",
-      label: "Notes",
+      label: "common:common.Notes",
       required: false,
       showTooltip: false,
       fullWidth: true,
@@ -321,8 +322,8 @@ export const CaseManagementDetails = ({childDropdownLists, values}) => [
   {
     type: "DatePicker",
     name: "caseManagementInformation.dateOfEntry",
-    label: "Date child entered agency",
-    placeholder: "Date child entered agency",
+    label: "common:common.Date child entered agency",
+    placeholder: "common:common.Date child entered agency",
     // size: "small",
     color: "#FFFFFF",
     fullWidth: true,
@@ -335,8 +336,8 @@ export const CaseManagementDetails = ({childDropdownLists, values}) => [
   {
     type: "MonthYearPicker",
     name: "caseManagementInformation.dateOfCWSEntry",
-    label: "Date child entered welfare system",
-    placeholder: "Date child entered welfare system",
+    label: "common:common.Date child entered welfare system",
+    placeholder: "common:common.Date child entered welfare system",
     // size: "small",
     color: "#FFFFFF",
     fullWidth: true,
@@ -349,7 +350,7 @@ export const CaseManagementDetails = ({childDropdownLists, values}) => [
   {
     type: "dropdown",
     name: "caseManagementInformation.TWChildPlacementStatusId",
-    label: "Case management step",
+    label: "common:common.Child Placement Status table",
     translateLabels: true,
     required: false,
     validateOnChange: true,
@@ -359,7 +360,7 @@ export const CaseManagementDetails = ({childDropdownLists, values}) => [
   {
     type: "dropdown",
     name: "caseManagementInformation.level",
-    label: "Level of care (US logs only)",
+    label: "common:common.Level of care (US logs only)",
     translateLabels: true,
     required: false,
     validateOnChange: true,
@@ -369,7 +370,7 @@ export const CaseManagementDetails = ({childDropdownLists, values}) => [
   {
     type: "text",
     name: "caseManagementInformation.medicaidNumber",
-    label: "Medicaid number (US logs only)",
+    label: "common:common.Medicaid number (US logs only)",
     required: false,
     showTooltip: false,
     fullWidth: true,
@@ -380,7 +381,7 @@ export const CaseManagementDetails = ({childDropdownLists, values}) => [
   {
     type: "text",
     name: "caseManagementInformation.placementId",
-    label: "Placement ID (US logs only)",
+    label: "common:common.Placement ID (US logs only)",
     required: false,
     showTooltip: false,
     fullWidth: true,
@@ -392,7 +393,7 @@ export const CaseManagementDetails = ({childDropdownLists, values}) => [
   {
     type: "text",
     name: "caseManagementInformation.previousPlacementsCount",
-    label: "# of previous placements (US logs only)",
+    label: "common:common.# of previous placements (US logs only)",
     showTooltip: false,
     fullWidth: true,
     variant: "outlined",
@@ -463,7 +464,7 @@ export const FamilyChangeDetails = ({
   familyChangeReasons,
   values
 }) => {
-  const reasons = familyChangeValues?.familyChangeDetails?.childDischargeReason;
+  const reasons = values?.familyChangeValues?.familyChangeDetails?.childDischargeReason;
   const showOther = Array.isArray(reasons) && reasons.includes("OTHER");
   return [
     {
@@ -488,7 +489,7 @@ export const FamilyChangeDetails = ({
       required: true,
       gridProps: { xs: 12 },
     },
-    ...(values?.familyChangeDetails?.childDischargeReason.includes("OTHER")
+    ...(showOther
     ? [{
         type: "text",
         name: "familyChangeDetails.otherReason",
