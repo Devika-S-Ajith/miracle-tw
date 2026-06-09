@@ -108,13 +108,13 @@ const handleEditMember = (member) => {
           )?.value || '';
        
           const caregiverLabel = row.isPrimaryCaregiver
-            ? 'Primary caregiver'
+            ? t('common:family.Primary caregiver', 'Primary caregiver')
             : row.isChild
             ? null
-            : 'Caregiver';
-       
+            : t('common:family.Caregiver', 'Caregiver');
+         
           let subText = '';
-       
+         
           if (row.isChild) {
             const age = row.dateOfBirth
               ? Math.floor((new Date() - new Date(row.dateOfBirth)) / (365.25 * 24 * 60 * 60 * 1000))
@@ -126,7 +126,8 @@ const handleEditMember = (member) => {
               age !== null ? `${age}yo` : null,
               dob ? `(${dob})` : null,
               convertUnderscoreToText(row.gender || null),
-            ].filter(Boolean);
+              row.isPrimaryCaregiver ? caregiverLabel : null,
+            ];
             subText = parts.join(' | ');
           } else {
             subText = [relation, caregiverLabel].filter(Boolean).join(' | ');

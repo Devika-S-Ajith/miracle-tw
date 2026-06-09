@@ -1103,7 +1103,8 @@
     "Profile information": "প্রোফাইল তথ্য",
     "Family contact information": "পরিবারের যোগাযোগের তথ্য (ঐচ্ছিক)",
     "Additional information": "অতিরিক্ত তথ্য (ঐচ্ছিক)",
-    "Date the family first started serving as a foster family": "পরিবারটি প্রথম কবে লালন পরিবার হিসেবে শুরু করেছে (ঐচ্ছিক)"
+    "Date the family first started serving as a foster family": "পরিবারটি প্রথম কবে লালন পরিবার হিসেবে শুরু করেছে (ঐচ্ছিক)",
+    "Family goal" : "পরিবারের লক্ষ্য"
   },
   "form": {
     "formList": " ফর্মের তালিকা ",

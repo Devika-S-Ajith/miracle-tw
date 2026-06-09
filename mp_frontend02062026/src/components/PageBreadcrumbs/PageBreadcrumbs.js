@@ -3,6 +3,7 @@ import Breadcrumbs from "@mui/material/Breadcrumbs";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
+import { Tooltip } from "@mui/material";
 
 const PageBreadcrumbs = ({ data }) => {
   const breadcrumbs = data.map((item, index) => {
@@ -21,25 +22,30 @@ const PageBreadcrumbs = ({ data }) => {
       );
     } else {
       return (
-        <Typography
+        <Tooltip
           key={index}
-          variant="h5"
-          sx={{
-            color: "text.primary",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            maxWidth: {
-              xs: 180, // small screens
-              sm: 300, // medium screens
-              md: 500, // large screens
-              lg: 500, // extra large screens
-            },
-          }}
-          title={item?.label?.length > 30 ? item.label : undefined}
+          title={item?.label?.length > 30 ? item.label : ""}
+          placement="bottom-start"
+          arrow
         >
-          {item.label}
-        </Typography>
+          <Typography
+            variant="h5"
+            sx={{
+              color: "text.primary",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              maxWidth: {
+                xs: 180,
+                sm: 300,
+                md: 500,
+                lg: 500,
+              },
+            }}
+          >
+            {item.label}
+          </Typography>
+        </Tooltip>
       );
     }
   });

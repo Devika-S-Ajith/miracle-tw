@@ -18,6 +18,14 @@ const ChildSummary = ({ child }) => {
   const { t } = useTranslation(["common"]); 
   const { locationList, childDropdownLists } = useContext(CommonDataContext);
   const phoneNumber = splitCountryCodeAndPhoneNumber(child?.profileInformation?.phoneNumber)
+  const getStatusLabel = (status, caseCloseReason) => {
+    let statusLabel = t(`common:common.${status}`, status);
+    if (status === "Case Closed" && caseCloseReason && caseCloseReason.trim().length > 0) {
+      statusLabel = `${statusLabel} - ${caseCloseReason}`;
+    }
+    return statusLabel;
+  };
+
   return (
     <CommonCard title="Child Summary">
       <Grid container direction="row" spacing={1}>
@@ -34,7 +42,7 @@ const ChildSummary = ({ child }) => {
             label={t("common:infoCard.Status", "Status")}
             value={
               <Chip
-                label={child?.status}
+                 label={getStatusLabel(child?.status, child?.caseCloseReason)}
                 size="small"
                 sx={{
                   backgroundColor:

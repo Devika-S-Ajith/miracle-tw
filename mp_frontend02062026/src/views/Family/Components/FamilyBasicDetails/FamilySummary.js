@@ -83,6 +83,7 @@ const FamilySummary = ({ t, family, mostRecentAssesmentSummary }) => {
         <Grid item xs={6}>
           <LabelValue
             label={t("common:common.Status", "Status")}
+            tooltip={false}
             value={
               <Chip
                 label={statusLabel}

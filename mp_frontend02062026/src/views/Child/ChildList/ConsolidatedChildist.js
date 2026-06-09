@@ -16,9 +16,8 @@ import {
 } from "@mui/material";
 import PageBreadcrumbs from "../../../components/PageBreadcrumbs/PageBreadcrumbs";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import PencilAltIcon from "../../../assets/icons/PencilAlt";
-import TrashIcon from "../../../assets/icons/Trash";
 import { AssessmentProgressReportIcon } from "../../../assets/icons/SideBarIcons";
 import BodyText from "../../../components/BodyText/BodyText";
 import SecondaryButton from "../../../components/SecondaryButton/SecondaryButton";
@@ -30,6 +29,7 @@ import { GenerateFileName } from "../../../helpers/helperFunction";
 import useAuthorization from "../../../components/UserComponents/useAuthorization";
 import PageLoader from "../../../components/UserComponents/PageLoader";
 import useCRUDPermissions from "../../../components/UserComponents/useCRUDPermissions";
+import { ADMIN, ADMIN_CASEWORKER, CASEWORKER } from "../../../helpers/constant";
 
 const statusOptions = [
   { label: "Active", value: "Active", key: "Status" },
@@ -44,9 +44,15 @@ const ConsolidatedChildList = (props) => {
   const [apiError, setApiError] = useState(null);
   const [filterValues, setFilterValues] = useState({ status: [], caseWorker: [] });
   const [appliedFiltersChipArray, setAppliedFiltersChipArray] = useState({ status: [], caseWorker: [] });
-  const { signedinOrgId, signedInOrgName, userIdData } =
+  const { signedinOrgId, signedInOrgName, userIdData, signedinUserRoleHT, signedinUserRoleFS } =
     useContext(CommonDataContext);
   const [users, setUsers] = useState([]);
+  const isCaseWorkerOnly =
+    (signedinUserRoleHT === CASEWORKER || signedinUserRoleFS === CASEWORKER) &&
+    signedinUserRoleHT !== ADMIN_CASEWORKER &&
+    signedinUserRoleFS !== ADMIN_CASEWORKER &&
+    signedinUserRoleHT !== ADMIN &&
+    signedinUserRoleFS !== ADMIN;
   //   actions
   const [menuState, setMenuState] = useState({ anchorEl: null, row: null });
   const [activeChildId, setActiveChildId] = useState(null);
@@ -323,7 +329,7 @@ const ConsolidatedChildList = (props) => {
             startIcon={
               <img
                 src="/static/icons/ExportIcon.svg"
-                alt=""
+                alt="Export"
                 style={{ width: 20, height: 20 }}
               />
             }
@@ -337,6 +343,7 @@ const ConsolidatedChildList = (props) => {
           startIcon={
             <img
               src="/static/icons/AddIcon.svg"
+              alt="Add"
               style={{ width: 20, height: 20 }}
             />
           }
@@ -412,50 +419,52 @@ const ConsolidatedChildList = (props) => {
           )}
         />
       </Box>
-      <Box>
-        <BodyText
-          value={t("common:tableColumn.Case Manager", "Case manager")}
-          sx={{ mb: 1 }}
-        />
-        <Autocomplete
-          disablePortal
-          options={users}
-          getOptionLabel={(option) => option.label}
-          multiple
-          value={filterValues?.caseWorker || []}
-          isOptionEqualToValue={(option, value) => option.value === value.value}
-          onChange={(event, newValue) => {
-            setFilterValues((prev) => ({
-              ...prev,
-              caseWorker: newValue,
-            }));
-          }}
-          sx={{ width: 300 }}
-          renderInput={(params) => <TextField {...params} />}
-          renderTags={(value, getTagProps) => (
-            <Stack direction="row" gap={1} flexWrap="wrap">
-              {value.map((option, index) => (
-                <Chip
-                  key={option.value}
-                  label={option.label}
-                  sx={{ mb: 1, backgroundColor: "#34475D", color: "#fff" }}
-                  deleteIcon={
-                    <CloseIcon style={{ color: "#fff", fontSize: "16px" }} />
-                  }
-                  onDelete={() =>
-                    setFilterValues((prev) => ({
-                      ...prev,
-                      caseWorker: Array.isArray(prev.caseWorker)
-                        ? prev.caseWorker.filter((item) => item.value !== option.value)
-                        : [],
-                    }))
-                  }
-                />
-              ))}
-            </Stack>
-          )}
-        />
-      </Box>
+      {!isCaseWorkerOnly && (
+        <Box>
+          <BodyText
+            value={t("common:tableColumn.Case Manager", "Case manager")}
+            sx={{ mb: 1 }}
+          />
+          <Autocomplete
+            disablePortal
+            options={users}
+            getOptionLabel={(option) => option.label}
+            multiple
+            value={filterValues?.caseWorker || []}
+            isOptionEqualToValue={(option, value) => option.value === value.value}
+            onChange={(event, newValue) => {
+              setFilterValues((prev) => ({
+                ...prev,
+                caseWorker: newValue,
+              }));
+            }}
+            sx={{ width: 300 }}
+            renderInput={(params) => <TextField {...params} />}
+            renderTags={(value, getTagProps) => (
+              <Stack direction="row" gap={1} flexWrap="wrap">
+                {value.map((option, index) => (
+                  <Chip
+                    key={option.value}
+                    label={option.label}
+                    sx={{ mb: 1, backgroundColor: "#34475D", color: "#fff" }}
+                    deleteIcon={
+                      <CloseIcon style={{ color: "#fff", fontSize: "16px" }} />
+                    }
+                    onDelete={() =>
+                      setFilterValues((prev) => ({
+                        ...prev,
+                        caseWorker: Array.isArray(prev.caseWorker)
+                          ? prev.caseWorker.filter((item) => item.value !== option.value)
+                          : [],
+                      }))
+                    }
+                  />
+                ))}
+              </Stack>
+            )}
+          />
+        </Box>
+      )}
     </>
   );
 

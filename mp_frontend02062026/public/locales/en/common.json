@@ -684,7 +684,7 @@
     "Placement ID (US logs only)": "Placement ID (US logs only)",
     "# of previous placements (US logs only)": "# of previous placements (US logs only)",
     "Remove member": "Remove member",
-    "Licence number": "Licence number (optional)"
+    "Licence number": "License number (optional)"
   },
    
   "signin": {
@@ -1159,7 +1159,8 @@
     "Family member or caregiver" : "Family member or caregiver",
     "Profile information": "Profile information",
     "Additional information": "Additional information (optional)",
-    "Date the family first started serving as a foster family": "Date the family first started serving as a foster family (optional)"
+    "Date the family first started serving as a foster family": "Date the family first started serving as a foster family (optional)",
+    "Family goal": "Family goal"
   },
   "form": {
     "formList": "Form List",

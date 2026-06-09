@@ -1111,7 +1111,8 @@
     "Profile information": "பிளோபில் தகவல்",
     "Family contact information": "குடும்ப தொடர்பு தகவல் (விருப்பத்தேர்வு)",
     "Additional information": "மேலும் தகவல் (விருப்பத்தேர்வு)",
-    "Date the family first started serving as a foster family": "குடும்பம் முதன்முதலில் பராமரிப்பு குடும்பமாக சேவை செய்த தேதி (விருப்பத்தேர்வு)"
+    "Date the family first started serving as a foster family": "குடும்பம் முதன்முதலில் பராமரிப்பு குடும்பமாக சேவை செய்த தேதி (விருப்பத்தேர்வு)",
+    "Family goal": "குடும்ப இலக்கு"
   },
   "form": {
     "formList": "படிவப் பட்டியல்",

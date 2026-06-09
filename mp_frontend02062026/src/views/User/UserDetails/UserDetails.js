@@ -144,9 +144,9 @@ const UserDetails = () => {
                       id={user.id}
                       firstName={user.firstName}
                       lastName={user.lastName}
-                      country={user.HTCountryId}
-                      district={user.HTDistrictId}
-                      state={user.HTStateId}
+                      country={user.TWCountryId || user.HTCountryId}
+                      district={user.TWDistrictId || user.HTDistrictId}
+                      state={user.TWStateId || user.HTStateId}
                       email={user.email}
                       phone={user.phoneNumber}
                       organization={user.TWAccountId}

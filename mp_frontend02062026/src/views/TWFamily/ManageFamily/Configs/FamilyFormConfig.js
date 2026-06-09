@@ -32,6 +32,22 @@ export const familyAdditionalDetails =({
 }) =>  [
     {
         type: 'dropdown',
+        name: 'language',
+        translateLabels: true,
+        label: 'common:common.Primary Language',
+        optionsSource: 'languages',
+        accessKey: 'language',
+        labelKey: 'language',
+        valueKey: 'id',
+        textFieldProps: {
+            fullWidth: true,
+            margin: 'normal',
+            variant: 'outlined'
+        },
+        gridProps: { md: 6.5, xs: 12 }
+    },
+    {
+        type: 'dropdown',
         name: 'family_situation',
         label: 'common:family.Family Situation',
         required: false,
@@ -53,7 +69,7 @@ export const familyAdditionalDetails =({
     {
         type: 'dropdown',
         name: 'goal',
-        label: 'common:family.Goal',
+        label: 'common:family.Family goal',
         required: false,
         validateOnChange: true,
         labelKey: 'value',
@@ -62,22 +78,6 @@ export const familyAdditionalDetails =({
             return familyTypeAndGoal
                 ?.find((item) => item.id === values.family_type)
                 ?.goals || [];
-        },
-        gridProps: { md: 6.5, xs: 12 }
-    },
-    {
-        type: 'dropdown',
-        name: 'language',
-        translateLabels: true,
-        label: 'common:common.Primary Language',
-        optionsSource: 'languages',
-        accessKey: 'language',
-        labelKey: 'language',
-        valueKey: 'id',
-        textFieldProps: {
-            fullWidth: true,
-            margin: 'normal',
-            variant: 'outlined'
         },
         gridProps: { md: 6.5, xs: 12 }
     },

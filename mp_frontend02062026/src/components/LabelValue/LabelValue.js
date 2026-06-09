@@ -13,17 +13,15 @@ const LabelValue = ({
   const [timeoutId, setTimeoutId] = useState(null);
 
   const handleMouseEnter = () => {
-    // Start the timer when the mouse enters
     const id = setTimeout(() => {
-      setShowTooltip(true); // Show tooltip after .5 seconds
-    }, 500); // 500ms delay
-    setTimeoutId(id); // Save timeout ID so it can be cleared if necessary
+      setShowTooltip(true);
+    }, 500);
+    setTimeoutId(id);
   };
 
   const handleMouseLeave = () => {
-    // Clear the timer if the mouse leaves before .5 seconds
     clearTimeout(timeoutId);
-    setShowTooltip(false); // Hide the tooltip immediately
+    setShowTooltip(false);
   };
 
   return (
@@ -32,34 +30,31 @@ const LabelValue = ({
         {label}
       </Typography>
 
-      <Typography
-        color="textPrimary"
-        fontWeight={descriptionFontWeight}
-        fontSize="1rem"
-        sx={{
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          whiteSpace: wrap ? "wrap" : "nowrap",
-          wordBreak: wrap ? "break-all" : "normal",
-          cursor: onClick ? "pointer" : "text",
-        }}
-        onClick={onClick}
-        onMouseEnter={tooltip ? handleMouseEnter : undefined}
-        onMouseLeave={tooltip ? handleMouseLeave : undefined}
+      <Tooltip
+        title={tooltip && value ? value : ""}
+        disableInteractive
+        open={tooltip && !!value ? showTooltip : false}
+        onClose={() => setShowTooltip(false)}
+        placement="bottom-start"
       >
-        {tooltip && value ? (
-          <Tooltip
-            title={value}
-            disableInteractive
-            open={showTooltip}
-            onClose={() => setShowTooltip(false)}
-          >
-            <span>{value || "-"}</span>
-          </Tooltip>
-        ) : (
-          value || "-"
-        )}
-      </Typography>
+        <Typography
+          color="textPrimary"
+          fontWeight={descriptionFontWeight}
+          fontSize="1rem"
+          sx={{
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: wrap ? "wrap" : "nowrap",
+            wordBreak: wrap ? "break-all" : "normal",
+            cursor: onClick ? "pointer" : "text",
+          }}
+          onClick={onClick}
+          onMouseEnter={tooltip ? handleMouseEnter : undefined}
+          onMouseLeave={tooltip ? handleMouseLeave : undefined}
+        >
+          {value || "-"}
+        </Typography>
+      </Tooltip>
     </>
   );
 };
