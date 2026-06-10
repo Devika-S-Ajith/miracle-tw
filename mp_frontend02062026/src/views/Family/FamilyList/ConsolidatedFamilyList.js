@@ -438,49 +438,51 @@ const ConsolidatedFamilyList = (props) => {
           )}
         />
       </Box>
-      <Box>
-        <BodyText
-          value={t("common:infoCard.Case Worker", "Case Worker")}
-          sx={{ mb: 1 }}
-        />
-        <Autocomplete
-          disablePortal
-          options={users}
-          getOptionLabel={(option) =>
-            t(`common:infoCard.${option.label}`, option.label)
-          }
-          multiple
-          value={filterValues?.caseworkerId || []}
-          isOptionEqualToValue={(option, value) => option.value === value.value}
-          onChange={(event, newValue) => {
-            setFilterValues((prev) => ({ ...prev, caseworkerId: newValue }));
-          }}
-          sx={{ width: 300 }}
-          renderInput={(params) => <TextField {...params} />}
-          renderTags={(value, getTagProps) => (
-            <Stack direction="row" gap={1} flexWrap="wrap">
-              {value.map((option, index) => (
-                <Chip
-                  key={option.value}
-                  label={option.label}
-                  sx={{ mb: 1, backgroundColor: "#34475D", color: "#fff" }}
-                  deleteIcon={
-                    <CloseIcon style={{ color: "#fff", fontSize: "16px" }} />
-                  }
-                  onDelete={() =>
-                    setFilterValues((prev) => ({
-                      ...prev,
-                      caseworkerId: Array.isArray(prev.caseworkerId)
-                        ? prev.caseworkerId?.filter((item) => item.value !== option.value)
-                        : [],
-                    }))
-                  }
-                />
-              ))}
-            </Stack>
-          )}
-        />
-      </Box>
+      {([ADMIN, ADMIN_CASEWORKER].includes(signedinUserRoleHT) || [ADMIN, ADMIN_CASEWORKER].includes(signedinUserRoleFS)) && (
+        <Box>
+          <BodyText
+            value={t("common:infoCard.Case Worker", "Case Worker")}
+            sx={{ mb: 1 }}
+          />
+          <Autocomplete
+            disablePortal
+            options={users}
+            getOptionLabel={(option) =>
+              t(`common:infoCard.${option.label}`, option.label)
+            }
+            multiple
+            value={filterValues?.caseworkerId || []}
+            isOptionEqualToValue={(option, value) => option.value === value.value}
+            onChange={(event, newValue) => {
+              setFilterValues((prev) => ({ ...prev, caseworkerId: newValue }));
+            }}
+            sx={{ width: 300 }}
+            renderInput={(params) => <TextField {...params} />}
+            renderTags={(value, getTagProps) => (
+              <Stack direction="row" gap={1} flexWrap="wrap">
+                {value.map((option, index) => (
+                  <Chip
+                    key={option.value}
+                    label={option.label}
+                    sx={{ mb: 1, backgroundColor: "#34475D", color: "#fff" }}
+                    deleteIcon={
+                      <CloseIcon style={{ color: "#fff", fontSize: "16px" }} />
+                    }
+                    onDelete={() =>
+                      setFilterValues((prev) => ({
+                        ...prev,
+                        caseworkerId: Array.isArray(prev.caseworkerId)
+                          ? prev.caseworkerId?.filter((item) => item.value !== option.value)
+                          : [],
+                      }))
+                    }
+                  />
+                ))}
+              </Stack>
+            )}
+          />
+        </Box>
+      )}
     </>
   );
 

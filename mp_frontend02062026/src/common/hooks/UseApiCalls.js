@@ -1182,7 +1182,7 @@ const APIS = {
   ListChildrenConsent(payload) {
     const ChildConsentCompletedURL =
       API_URLS.consentForm.familyChildConsent +
-      `?HTChildId=` +
+      `?TWChildId=` +
       payload.HTChildId;
 
     return this.makeGetRequest(ChildConsentCompletedURL);

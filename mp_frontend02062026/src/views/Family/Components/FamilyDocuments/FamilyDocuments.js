@@ -392,7 +392,7 @@ const FamilyDocuments = (props) => {
                             ? `Consent ${_.startCase(
                                 _.toLower(assessment.consentStatus),
                               )} - ${
-                                assessment.HTChildId
+                                assessment.TWChildId
                                   ? `${assessment.childFirstName} ${assessment.childLastName}`
                                   : `${assessment.memberFirstName} ${assessment.memberLastName}`
                               }`

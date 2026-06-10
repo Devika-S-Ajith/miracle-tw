@@ -7,25 +7,39 @@ import APIS from "../common/hooks/UseApiCalls";
 import { PhoneNumberUtil } from "google-libphonenumber";
 
 
-export const getLocationNames = (locationList, countryID, stateID) => {
+export const getLocationNames = (
+  locationList,
+  countryID,
+  stateID,
+  districtID
+) => {
   const selectedCountry = locationList?.find(
     (individualCountry) => individualCountry.id == countryID
   );
 
   if (selectedCountry) {
-    const countryName = selectedCountry.countryName;
-    if (stateID !== null) {
+    if (districtID !== null && districtID !== undefined) {
       const selectedState = selectedCountry.states?.find(
-        (state) => state.id === stateID
+        (state) => state.id == stateID
       );
-
-      if (selectedState) {
-        const stateName = selectedState.stateName;
-        return stateName;
+      const selectedDistrict = selectedState?.districts?.find(
+        (district) => district.id == districtID
+      );
+      if (selectedDistrict) {
+        return selectedDistrict.districtName;
       }
     }
 
-    return countryName;
+    if (stateID !== null && stateID !== undefined) {
+      const selectedState = selectedCountry.states?.find(
+        (state) => state.id == stateID
+      );
+      if (selectedState) {
+        return selectedState.stateName;
+      }
+    }
+
+    return selectedCountry.countryName;
   }
   return;
 };

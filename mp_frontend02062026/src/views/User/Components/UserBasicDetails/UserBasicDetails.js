@@ -621,24 +621,41 @@ const UserBasicDetails = (props) => {
                     }
                     secondary={
                       <>
-                        <Typography variant="body2" color="textSecondary">
-                          {getLocationNames(locationList, country)}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary">
-                          {getLocationNames(locationList, country, state)}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary">
-                          {city}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary">
-                          {zip}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary">
-                          {address1}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary">
-                          {address2}
-                        </Typography>
+                        {address1 && (
+                          <Typography variant="body2" color="textSecondary">
+                            {address1}
+                          </Typography>
+                        )}
+                        {address2 && (
+                          <Typography variant="body2" color="textSecondary">
+                            {address2}
+                          </Typography>
+                        )}
+                        {city && (
+                          <Typography variant="body2" color="textSecondary">
+                            {city}
+                          </Typography>
+                        )}
+                        {zip && (
+                          <Typography variant="body2" color="textSecondary">
+                            {zip}
+                          </Typography>
+                        )}
+                        {district && (
+                          <Typography variant="body2" color="textSecondary">
+                            {getLocationNames(locationList, country, state, district)}
+                          </Typography>
+                        )}
+                        {state && (
+                          <Typography variant="body2" color="textSecondary">
+                            {getLocationNames(locationList, country, state)}
+                          </Typography>
+                        )}
+                        {country && (
+                          <Typography variant="body2" color="textSecondary">
+                            {getLocationNames(locationList, country)}
+                          </Typography>
+                        )}
                       </>
                     }
                   />

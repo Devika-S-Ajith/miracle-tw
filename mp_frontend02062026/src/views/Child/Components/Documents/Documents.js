@@ -314,11 +314,11 @@ const Documents = (props) => {
         orderByField: [["id", "DESC"]],
         globalSearchQuery: "",
         HTOrganizationId: "",
-        HTChildId: `${id}`,
+        HTChildId: `${props.childId}`,
       };
       try {
         let finalPayload = {
-          childId: `${id}`,
+          childId: props.childId,
           documentType: "doc",
           TWAccountId: localStorage.getItem("orgId"),
         };
