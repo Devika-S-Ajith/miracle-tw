@@ -264,30 +264,10 @@ const CommonDataContextProvider = (props) => {
       setSignedInOrgName(org.accountName);
       localStorage.setItem("signedinOrgType", org.MPAccountTypeId);
         setSignedinOrgType(org.MPAccountTypeId);
-      // const typeRes = await APIS.OrgTypeDetails(org.MPAccountTypeId);
-      // if (typeRes.status === 200) {
-      //   const typeId = typeRes.data?.data[0].id;
-        
-      // }
     } catch (err) {
       console.error(err);
     }
   }, []);
-
-  const getInitialUserData = async () => {
-    const payload = {
-      "TWUserId": localStorage.getItem("username"),
-      "limit": 1,
-      "start": 0,
-      "name": "",
-      "todolistOnly": false
-    }
-    try {
-      const res = await APIS.GetInitializeUserData(payload);
-    } catch (err) {
-      console.error("Error fetching user region:", err);
-    }
-  }
 
   const getUserRegion = async () => {
     try {
@@ -528,7 +508,7 @@ const CommonDataContextProvider = (props) => {
         pageNumber: "1",
         globalSearchQuery: "",
         orderByField: [["accountName", "ASC"]],
-        MPCountryId: localStorage.getItem("userRegion"),
+        TWCountryId: localStorage.getItem("userRegion"),
       };
       const data = await APIS.OrganizationList(payload);
       if (data?.data?.data?.length) setOrganizationList(data.data.data);

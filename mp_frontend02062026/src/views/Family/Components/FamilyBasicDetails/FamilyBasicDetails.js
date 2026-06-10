@@ -84,7 +84,6 @@ const FamilyBasicDetails = ({ family, refreshData }) => {
   return (
     <Masonry columns={2} spacing={2}>
       {SummaryWidget}
-      
       <Box sx={{ height: "fit-content" }}>
         <ToDoWidget t={t} TWFamilyId={family?.id} />
       </Box>

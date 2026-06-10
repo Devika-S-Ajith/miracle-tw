@@ -807,6 +807,7 @@
     "ChildExistsMessage3": "దయచేసి మీ థ్రైవ్‌వెల్ అడ్మినిస్ట్రేటర్ను సంప్రదించి, ఈ చిన్నారిని మీకు అసైన్ చేయాలని మరియు/లేదా రియాక్టివేట్ చేయాలని అభ్యర్థించండి. చిన్నారి మీకు అసైన్ అయిన తర్వాత, మీరు అతన్ని ఈ కుటుంబంలో చేర్చగలరు.",
     "FirstNameLastNameDOB": "మొదటి పేరు, చివరి పేరు మరియు పుట్టిన తేదీ",
     "Discontinued Education": "చదువుకు స్వస్తి పలికారు",
+    "Existing child selected": "ఇప్పటికే ఉన్న చిన్నారి ఎంపిక చేయబడింది",
     "Highest Education": "అత్యున్నత విద్య",
     "Closing a family's case also closes the cases for all family members and children in the family":"ఒక కుటుంబ కేసును మూసివేస్తే, ఆ కుటుంబంలోని అన్ని కుటుంబ సభ్యులు మరియు పిల్లల కేసులు కూడా మూసివేయబడతాయి."
   },
@@ -1107,7 +1108,7 @@
     "Profile information": "ప్రొఫైల్ సమాచారం",
     "Family contact information": "కుటుంబ సంప్రదింపు సమాచారం (ఐచ్ఛికం)",
     "Date the family first started serving as a foster family": "కుటుంబం మొదటిసారి ఫోస్టర్ కుటుంబంగా సేవ చేయడం ప్రారంభించిన తేదీ (ఐచ్చికం)",
-    "Additional information": "అదనపు సమాచారం (ఐచ్చికం)",
+    "Additional information": "అదనపు సమాచారం (ఐచ్ఛికం)",
     "Family goal": "కుటుంబ లక్ష్యం"
   },
   "form": {

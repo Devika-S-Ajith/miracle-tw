@@ -256,7 +256,6 @@ const AddFamilyMemberModal = ({ onClose, getMemberDetails,familyId, member, isFa
                 }
 
                 const changed = getChangedValues(values, initialValuesRef.current);
-
                 const payload = {
                     id: id,
                     ...(familyId && { TWFamilyId: familyId }),
@@ -264,7 +263,7 @@ const AddFamilyMemberModal = ({ onClose, getMemberDetails,familyId, member, isFa
                     ...(changed.firstName !== undefined && { firstName: changed.firstName?.trim() }),
                     ...(changed.lastName !== undefined && { lastName: changed.lastName?.trim() }),
                     ...(changed.TWFamilyRelationId !== undefined && { TWFamilyRelationId: changed.TWFamilyRelationId }),
-                    ...(changed.isMajor !== undefined && { isMinor: !changed.isMajor }),
+                    ...(changed.isMajor !== undefined && { isMajor: changed.isMajor }),
                     ...(changed.isActive !== undefined && { isActive: changed.isActive }),
                     ...(['phoneNumber', 'occupation', 'note', 'appAccessEnabled', 'email'].some(k => changed[k] !== undefined) && {
                         profileInformation: {
@@ -282,7 +281,7 @@ const AddFamilyMemberModal = ({ onClose, getMemberDetails,familyId, member, isFa
 
                 try {
                     if (id) {
-                        await APIS.UpdateFamilyMember(payload).then(() => {
+                        await APIS.UpdateFamilyMember({...payload, ...(changed.isMajor !== undefined && {isMinor: !(changed.isMajor)})}).then(() => {
                             handleResponse(payload);
                         });
                     } else {

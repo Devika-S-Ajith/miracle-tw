@@ -13,15 +13,17 @@ const LabelValue = ({
   const [timeoutId, setTimeoutId] = useState(null);
 
   const handleMouseEnter = () => {
+    // Start the timer when the mouse enters
     const id = setTimeout(() => {
-      setShowTooltip(true);
-    }, 500);
-    setTimeoutId(id);
+      setShowTooltip(true); // Show tooltip after .5 seconds
+    }, 500); // 500ms delay
+    setTimeoutId(id); // Save timeout ID so it can be cleared if necessary
   };
 
   const handleMouseLeave = () => {
+    // Clear the timer if the mouse leaves before .5 seconds
     clearTimeout(timeoutId);
-    setShowTooltip(false);
+    setShowTooltip(false); // Hide the tooltip immediately
   };
 
   return (
@@ -29,7 +31,6 @@ const LabelValue = ({
       <Typography color="textPrimary" fontWeight={700} fontSize="0.75rem">
         {label}
       </Typography>
-
       <Tooltip
         title={tooltip && value ? value : ""}
         disableInteractive
@@ -55,6 +56,7 @@ const LabelValue = ({
           {value || "-"}
         </Typography>
       </Tooltip>
+
     </>
   );
 };

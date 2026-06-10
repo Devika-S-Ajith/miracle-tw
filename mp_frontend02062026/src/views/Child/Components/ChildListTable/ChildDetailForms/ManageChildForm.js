@@ -29,7 +29,7 @@ import {
 import { CommonDataContext } from "../../../../../common/contexts/CommonDataContext";
 import APIS from "../../../../../common/hooks/UseApiCalls";
 import useMounted from "../../../../../common/hooks/UseMounted";
-import { dateFormatter, MonthDayYearFormatter } from "../../../../../constants";
+import { MonthDayYearFormatter } from "../../../../../constants";
 import dayjs from "dayjs";
 import { useDebouncedCallback } from "use-debounce";
 import { ModalService } from "../../../../../components/Modal";
@@ -39,12 +39,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import FamilyChangeModal from "./FamilyChangeModal";
 import toast from "react-hot-toast";
 import Loader from "../../../../../components/UserComponents/Loader";
-import { PhoneNumberUtil } from "google-libphonenumber";
 import { validatePhoneNumber } from "../../../../../helpers/helperFunction";
-import _, { first } from "lodash";
 
 const userRegion = localStorage.getItem("userRegion");
-const phoneUtil = PhoneNumberUtil.getInstance();
 
 const ManageChildForm = ({
   handleChildModalOpen,
@@ -71,16 +68,21 @@ const ManageChildForm = ({
     locationList,
     htLanguagesList,
     fsLanguagesList,
+    signedinUserRoleHT,
+    signedinUserRoleFS
   } =
     useContext(CommonDataContext);
   const [users, setUsers] = useState([]);
   const [familyList, setFamilyList] = useState([]);
   const [childDetails, setChildDetails] = useState(null);
+  const HTcaseworker = signedinUserRoleHT === "caseworker";
+  const FScaseworker = signedinUserRoleFS === "caseworker";
+  const isCaseworker = HTcaseworker || FScaseworker;
   const StateList =
     locationList?.find((loc) => loc.id == userRegion)?.states || [];
   const [isEditing, setIsEditing] = useState(false);
   const phoneRef = useRef({});
-
+  const [childExists, setChildExists] = useState(false);
   useEffect(() => {
     if (id) {
       getChildDetails();
@@ -120,24 +122,32 @@ const ManageChildForm = ({
   const getUserList = useCallback(async () => {
     try {
       setIsLoading(true);
+      const RoleHTIds = HTcaseworker ? ["5"] : ["4", "5"];
+      const RoleFSIds = FScaseworker ? ["5"] : ["4", "5"];
+      const username = localStorage.getItem("username") || "";
       const payload = {
         rowCount: "10000",
         pageNumber: "1",
         orderByField: [["firstName", "ASC"]],
-        globalSearchQuery: "",
         accountId: [localStorage.getItem("orgId")],
-        HTUserRoleId: ["4", "5"],
-        FSUserRoleId: ["4", "5"],
+        HTUserRoleId: RoleHTIds,
+        FSUserRoleId: RoleFSIds,
         TWCountryId: localStorage.getItem("userRegion"),
       };
       const data = await APIS.ListUsers(payload);
-      setUsers(data && data.data && data.data.data);
+
+      const userList = (data && data.data && data.data.data) || [];
+      setUsers(
+        isCaseworker && username
+          ? userList.filter((user) => user?.id === username)
+          : userList,
+      );
     } catch (err) {
       console.error(err);
     } finally {
       setIsLoading(false);
     }
-  }, [mounted]);
+  }, [mounted, signedinUserRoleHT, signedinUserRoleFS]);
 
   const getFamilyList = useCallback(async () => {
     try {
@@ -243,9 +253,6 @@ const ManageChildForm = ({
             onFamilyChangeCancel={onFamilyChangeCancel}
             setFieldValue={setFieldValue}
             setHideChildModal={setHideChildModal}
-            // closeEditForm={closeEditForm}
-            // onCaseClose={onCaseChange}
-            // childId={childId}
           />
         ),
         {
@@ -306,7 +313,7 @@ const ManageChildForm = ({
   };
 
   const uniqueCheckHandler = useDebouncedCallback(
-    async ({ key, value, values, setFieldError }) => {
+    async ({ key, value, values, setFieldError, setFieldTouched }) => {
       // Only check if all required fields are present
       const candidateValues = {
         ...values,
@@ -329,7 +336,16 @@ const ManageChildForm = ({
           });
           const isUnique = res.data?.data?.isUnique;
           if (!isUnique) {
-            ChildExistPopUp(setFieldError);
+            ChildExistPopUp();
+            setChildExists(true);
+            setFieldTouched("firstName", true, false);
+            setFieldError(
+              "firstName",
+              t("common:warnings.childAlreadyExist", "Child already exists"),
+            );
+          } else {
+            setChildExists(false);
+            setFieldError("firstName", undefined);
           }
         } catch (error) {
           console.error("Unique check error:", error);
@@ -339,7 +355,7 @@ const ManageChildForm = ({
     800,
   );
 
-  const ChildExistPopUp = (setFieldError) => {
+  const ChildExistPopUp = () => {
     return ModalService.open(
       ({ close }) => (
         <Box>
@@ -360,7 +376,9 @@ const ManageChildForm = ({
             color="primary"
             fullWidth
             sx={{ mt: 2 }}
-            onClick={() => HandleChilExistPopupClose(close, setFieldError)}
+            onClick={() =>
+              HandleChilExistPopupClose(close)
+            }
           >
             {t("common:common.Close")}
           </Button>
@@ -368,21 +386,16 @@ const ManageChildForm = ({
       ),
       {
         modalTitle: t("common:child.Child already exists"),
-        width: "25%",
+        width: "35%",
+        height: "95%",
         hideModalFooter: true,
         enableClose: false,
       },
     );
   };
 
-  const HandleChilExistPopupClose = (close, setFieldError) => {
+  const HandleChilExistPopupClose = (close) => {
     close();
-    setFieldError("firstName", t("common:warnings.childAlreadyExist"));
-    const errorField = document.querySelector(".Mui-error, [data-error]");
-    (errorField?.parentElement ?? errorField)?.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-    });
   };
 
   const deleteChildClickHandler = () => {
@@ -485,6 +498,7 @@ const ManageChildForm = ({
 
   const reOpenCaseHandler = async () => {
     try {
+      setIsLoading(true);
       const res = await APIS.ReOpenChidCase({ childId: id });
       if (res?.status === 200) {
         handleChildModalOpen(); // Close the current form/modal
@@ -507,6 +521,7 @@ const ManageChildForm = ({
     } catch (error) {
       console.error("Error re-opening case:", error);
     } finally {
+      setIsLoading(false);
     }
   };
 
@@ -529,7 +544,9 @@ const ManageChildForm = ({
         TWFamilyId: childDetails?.TWFamilyId || null,
         TWChildCurrentPlacementStatusId:
           childDetails?.TWChildCurrentPlacementStatusId || null,
-        caseWorkerId: childDetails?.caseWorkerId || null,
+        caseWorkerId:
+          childDetails?.caseWorkerId ||
+          (isCaseworker ?  users?.[0]?.id : null),
         childHasDisability: childDetails?.childHasDisability || false,
         isSameAsFamilyAddress: childDetails?.isSameAsFamilyAddress || false,
         isNewFamily: childInfo?.isNewFamily || false,
@@ -591,6 +608,11 @@ const ManageChildForm = ({
               "common:warnings.First Name is required",
               "First Name is required",
             ),
+          )
+          .test(
+            "child-already-exists",
+            t("common:warnings.childAlreadyExist", "Child already exists"),
+            () => !childExists,
           )
           .max(255)
           .nullable(),
@@ -728,10 +750,8 @@ const ManageChildForm = ({
                 message:
                   "Child Welfare Entry date cannot be after the child entered agency date",
                 test: function (dateOfCWSEntry) {
-                  // if (isEditing && childData?.hadPrevCM) return true;
 
                   if (!dateOfEntry || !dateOfCWSEntry) return true;
-
                   const dateEnteredAgencyMonth = dayjs(dateOfEntry).month() + 1;
                   const dateEnteredAgencyYear = dayjs(dateOfEntry).year();
                   const [entryMonth, entryYear] = dateOfCWSEntry
@@ -824,6 +844,7 @@ const ManageChildForm = ({
                   dateOfBirth: values.dateOfBirth,
                 }),
                 isExistingChild: true,
+                isPrimaryCaregiver: childInfo?.isPrimaryCaregiver || false,
                 _rowKey: childInfo?._rowKey,
               };
               handleResponse(newPayload);
@@ -857,6 +878,7 @@ const ManageChildForm = ({
                   dateOfBirth: values.dateOfBirth,
                 }),
                 isExistingChild: true,
+                isPrimaryCaregiver: childInfo?.isPrimaryCaregiver || false,
                 _rowKey: childInfo?._rowKey,
               };
               handleResponse(newPayload);
@@ -916,6 +938,18 @@ const ManageChildForm = ({
           const el = document.querySelector(".Mui-error, [data-error]");
           (el?.parentElement ?? el)?.scrollIntoView({ behavior: "smooth" });
         }
+
+        const childStatusHeading = childDetails && id
+          ? `${t(`common:common.${childDetails?.status}`, childDetails?.status)}${
+              childDetails?.status === "Case Closed"
+                ? ` ${MonthDayYearFormatter(
+                    childDetails?.lastCaseClosedDate,
+                    "short",
+                  )}`
+                : ""
+            }`
+          : t("common:common.Active", "Active");
+
         return (
           <>
             <Loader loading={isLoading} />
@@ -929,18 +963,7 @@ const ManageChildForm = ({
                 <Stack direction="row" justifyContent="flex-start" spacing={1}>
                   <Heading heading={t("common:common.Child", "Child")} />
                   <Heading
-                    heading={
-                      childDetails && id
-                        ? `${t(`common:common.${childDetails?.status}`, childDetails?.status)}${
-                            childDetails?.status === "Case Closed"
-                              ? ` ${MonthDayYearFormatter(
-                                  childDetails?.lastCaseClosedDate,
-                                  "short",
-                                )}`
-                              : ""
-                          }`
-                        : t("common:common.Active", "Active")
-                    }
+                    heading={childStatusHeading}
                     color="#F37123"
                   />
                 </Stack>
@@ -983,6 +1006,7 @@ const ManageChildForm = ({
                               setFieldValue,
                             ),
                           uniqueCheckHandler,
+                          setFieldTouched,
                           setFieldError,
                           validateForm,
                           t,

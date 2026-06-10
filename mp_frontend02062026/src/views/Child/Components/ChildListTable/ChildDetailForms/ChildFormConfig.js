@@ -12,9 +12,10 @@ export const ChildBasicDetails = ({
   handleFamilyChange,
   onCurrentLivingConditionChange,
   setFieldValue,
+  setFieldTouched,
+  setFieldError,
   values,
   uniqueCheckHandler,
-  setFieldError,
   validateForm,
   t,
 }) => [
@@ -27,7 +28,7 @@ export const ChildBasicDetails = ({
     fullWidth: true,
     variant: "outlined",
     gridProps: { xs: 12 },
-    onChange: (value) => uniqueCheckHandler({ key: "firstName", value, values, setFieldError }),
+    onChange: (value) => uniqueCheckHandler({ key: "firstName", value, values, validateForm, setFieldTouched, setFieldError, t }),
   },
   {
     type: "text",
@@ -38,7 +39,7 @@ export const ChildBasicDetails = ({
     fullWidth: true,
     variant: "outlined",
     gridProps: { xs: 12 },
-    onChange: (value) => uniqueCheckHandler({ key: "lastName", value, values, setFieldError }),
+    onChange: (value) => uniqueCheckHandler({ key: "lastName", value, values, validateForm, setFieldTouched, setFieldError, t }),
   },
   {
     type: "dropdown",
@@ -52,7 +53,7 @@ export const ChildBasicDetails = ({
     options: GenderListOptions,
     // value: values.gender,
     gridProps: { xs: 12 },
-    onChange: (name, value) => uniqueCheckHandler({ key: name, value, values, setFieldError, validateForm }),
+    onChange: (name, value) => uniqueCheckHandler({ key: name, value, values, validateForm, setFieldTouched, setFieldError, t }),
   },
   {
     type: "DatePicker",
@@ -67,7 +68,7 @@ export const ChildBasicDetails = ({
     variant: "outlined",
     gridProps: { xs: 12, md: 12 },
     maxDate: dayjs().endOf('day'),
-    onChange: (value)=>  uniqueCheckHandler({key: "dateOfBirth", value, values, setFieldError })
+    onChange: (value)=>  uniqueCheckHandler({key: "dateOfBirth", value, values, validateForm, setFieldTouched, setFieldError, t })
   },
     ...(!values?.isNewFamily
       ? [{

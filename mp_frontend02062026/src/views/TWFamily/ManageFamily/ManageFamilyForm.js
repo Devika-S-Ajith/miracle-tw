@@ -104,7 +104,6 @@ const ManageFamilyForm = (props) => {
         isChild: false,
         isPrimaryCaregiver: true,
         firstName:null,
-        lastName:null,
         dateOfBirth:null,
         _rowKey: uuidv4(),
     }).current;

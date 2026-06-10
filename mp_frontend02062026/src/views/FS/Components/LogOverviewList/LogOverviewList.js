@@ -403,12 +403,16 @@ const LogOverviewList = ({ module, listData }) => {
                       <RemoveRedEyeIcon
                         id="view-icon"
                         onClick={() => {
+                          const path = behavioralLogListItem?.entity === "CHILD" ? "children" :  "families";
                           ["dashboard"].includes(module)
                             ? navigate(
-                                `/fosterShare/${module}/?behavioralLog=${behavioralLogListItem.id}`
+                              `${path}/${behavioralLogListItem.TWChildId}/view`,
+                              {
+                        state: { tabvalue: "ConsolidatedLog" },
+                      }
                               )
                             : navigate(
-                                `/fosterShare/${module}/${id}/?behavioralLog=${behavioralLogListItem.id}`
+                                `/${path}/${id}/?behavioralLog=${behavioralLogListItem.id}/view`
                               );
                         }}
                       />

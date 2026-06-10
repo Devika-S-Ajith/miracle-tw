@@ -1,11 +1,10 @@
-import { useEffect, useContext } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
   Grid,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
 import useAuthorization from "../../../components/UserComponents/useAuthorization";
 import ConsolidatedAssessmentProgressReport from "../../../components/ConsolidatedAssessmentProgressReport";
 import PageBreadcrumbs from "../../../components/PageBreadcrumbs/PageBreadcrumbs";

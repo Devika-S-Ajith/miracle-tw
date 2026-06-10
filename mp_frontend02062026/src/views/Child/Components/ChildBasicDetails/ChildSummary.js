@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import CommonCard from "../../../../components/CommonCard/CommonCard";
-import { Box, Chip, Divider, Grid, Stack } from "@mui/material";
-import BodyText from "../../../../components/BodyText/BodyText";
+import { Chip, Divider, Grid } from "@mui/material";
 import { convertUnderscoreToText, dateFormatter } from "../../../../constants";
 import {
   getLanguageNameFromId,
@@ -26,6 +25,13 @@ const ChildSummary = ({ child }) => {
     return statusLabel;
   };
 
+  let statusBackgroundColor = "#71C5D4";
+  if (child?.status === "Active") {
+    statusBackgroundColor = "#3DAA1D";
+  } else if (child?.status === "Case Closed") {
+    statusBackgroundColor = "#D6DBDE";
+  }
+
   return (
     <CommonCard title="Child Summary">
       <Grid container direction="row" spacing={1}>
@@ -42,15 +48,10 @@ const ChildSummary = ({ child }) => {
             label={t("common:infoCard.Status", "Status")}
             value={
               <Chip
-                 label={getStatusLabel(child?.status, child?.caseCloseReason)}
+                label={getStatusLabel(child?.status, child?.caseCloseReason)}
                 size="small"
                 sx={{
-                  backgroundColor:
-                    child?.status === "Active"
-                      ? "#3DAA1D"
-                      : child?.status === "Case Closed"
-                        ? "#D6DBDE"
-                        : "#71C5D4",
+                  backgroundColor: statusBackgroundColor,
                   color: child?.status === "Active" ? "white" : "black",
                   fontSize: "0.75rem",
                   fontWeight: 600,
@@ -162,29 +163,6 @@ const ChildSummary = ({ child }) => {
           />
         </Grid>
       </Grid>
-
-
-      {/* <Stack
-        justifyContent="center"
-        alignItems="center"
-        direction="row"
-        spacing={2}
-        mt={1}
-      >
-        <Stack>
-          <BodyText value={"55.7%"} fontWeight={600} />
-          <BodyText value={"Jan 1 2024"} />
-        </Stack>
-        <img
-          // key={index}
-          src="/static/icons/rightArrow.png"
-          style={{ width: 25, height: 25 }}
-        />
-        <Stack>
-          <BodyText value={"55.7%"} fontWeight={600} />
-          <BodyText value={"Jan 1 2024"} />
-        </Stack>
-      </Stack> */}
     </CommonCard>
   );
 };

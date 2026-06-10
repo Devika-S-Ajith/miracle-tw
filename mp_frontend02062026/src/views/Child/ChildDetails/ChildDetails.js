@@ -282,9 +282,10 @@ const ChildDetails = () => {
                 value={currentTab}
                 variant="scrollable"
               >
-                {tabs.map((tab) => (
+                {tabs.filter((tab) => tab.Permission).map((tab) => (
                   <Tab
                     key={tab.value}
+                    id={tab.id}
                     label={t(`common:common.${tab.label}`, tab.label)}
                     value={tab.value}
                   />

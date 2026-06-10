@@ -44,7 +44,6 @@ const CloseCaseForm = ({
       const payload = {
         childId: childId,
         caseCloseReason: values.deactivationReason,
-        // previousFamilyCutoffDaysCount: days,
         caseCloseDate: values.dateCaseClosed,
         keepFamilyAssociation: values.association, // Assuming true is the option to keep association
       };
@@ -132,7 +131,6 @@ const CloseCaseForm = ({
   });
   const cancelHandler = () => {
     close();
-    // handleChildModalOpen();
     setHideChildModal(false);
   };
   return (

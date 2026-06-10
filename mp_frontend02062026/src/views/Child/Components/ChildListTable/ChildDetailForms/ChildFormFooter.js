@@ -20,7 +20,6 @@ const ChildFormFooter = ({
   const { t } = useTranslation(["common"]);
 
   const closeCaseHandler = () => {
-    // handleChildModalOpen();
     setHideChildModal(true);
     ModalService.open(
       ({ close }) => (
@@ -63,11 +62,6 @@ const ChildFormFooter = ({
           mt={3}
         >
           <Stack direction="row" spacing={2}>
-            {/* <SecondaryButton
-              label={t("common:common.Delete", "Delete")}
-              sx={{ visibility: childId ? "visible" : "hidden" }}
-              onClick={deleteChildClickHandler}
-            /> */}
             <SecondaryButton
               label={t("common:common.Close case", "Close case")}
               sx={{ visibility: childId && !hideChildModal ? "visible" : "hidden" }}

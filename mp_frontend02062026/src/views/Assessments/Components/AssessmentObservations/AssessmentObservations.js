@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Typography, Grid } from "@mui/material";
+import { ObservationTextField } from "./ObservationTextField";
 
 function AssessmentObservations({
   observationData,
@@ -10,25 +11,6 @@ function AssessmentObservations({
   handleChange,
 }) {
   const { t } = useTranslation(["common"]);
-
-  const ObservationTextField = ({ label, name, value, required = false }) => (
-    <Grid item md={12} xs={12} mt={2}>
-      <CustomTextField
-        fullWidth
-        label={label}
-        name={name}
-        onBlur={handleBlur}
-        onChange={handleChange}
-        value={value}
-        disabled
-        multiline
-        rows={3}
-        rowsMax={10}
-        variant="outlined"
-        required={required}
-      />
-    </Grid>
-  );
 
   return (
     <>
@@ -47,23 +29,35 @@ function AssessmentObservations({
           name="caseworker_thought"
           value={observationValues.caseworker_thought}
           required
+          CustomTextField={CustomTextField}
+          handleBlur={handleBlur}
+          handleChange={handleChange}
         />
         <ObservationTextField
           label={t("common:assessment.Caregiver’s thoughts")}
           name="caregiver_thought"
           value={observationValues.caregiver_thought}
           required
+          CustomTextField={CustomTextField}
+          handleBlur={handleBlur}
+          handleChange={handleChange}
         />
         <ObservationTextField
           label={t("common:assessment.Child’s thoughts")}
           name="child_thought"
           value={observationValues.child_thought}
           required
+          CustomTextField={CustomTextField}
+          handleBlur={handleBlur}
+          handleChange={handleChange}
         />
         <ObservationTextField
           label={t("common:assessment.Placement recommendations (optional)")}
           name="placement_recommendations"
           value={observationValues.placement_recommendations}
+          CustomTextField={CustomTextField}
+          handleBlur={handleBlur}
+          handleChange={handleChange}
         />
       </Grid>
     </>

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import ReusableTrendTable from "../../Dashboard/GovtDashboardOverview/Components/ReusableTrendTable";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
@@ -18,17 +18,14 @@ import PageBreadcrumbs from "../../../components/PageBreadcrumbs/PageBreadcrumbs
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import PencilAltIcon from "../../../assets/icons/PencilAlt";
-import TrashIcon from "../../../assets/icons/Trash";
 import { AssessmentProgressReportIcon } from "../../../assets/icons/SideBarIcons";
 import BodyText from "../../../components/BodyText/BodyText";
 import SecondaryButton from "../../../components/SecondaryButton/SecondaryButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { GenerateFileName } from "../../../helpers/helperFunction";
 import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
-import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { ADMIN, ADMIN_CASEWORKER, CASEWORKER } from "../../../helpers/constant";
 import useCRUDPermissions from "../../../components/UserComponents/useCRUDPermissions";
-import { fr } from "date-fns/locale";
 import useAuthorization from "../../../components/UserComponents/useAuthorization";
 import PageLoader from "../../../components/UserComponents/PageLoader";
 
@@ -46,7 +43,7 @@ const ConsolidatedFamilyList = (props) => {
   const [query, setQuery] = useState("");
   const { signedinUserRoleHT, signedinUserRoleFS, signedinOrgId } = useContext(CommonDataContext);
   const [users, setUsers] = useState([]);
-  const { htLanguagesList, signedInOrgName, userIdData } =
+  const { signedInOrgName, userIdData } =
     useContext(CommonDataContext);
   const { IS_EDIT_ALLOWED,IS_HT_ALLOWED } = useCRUDPermissions();
 
@@ -55,14 +52,6 @@ const ConsolidatedFamilyList = (props) => {
     { label: "Case Closed", value: "case closed", key: "Case Status" },
     { label: "Pending", value: "pending", key: "Case Status" },
   ]
-
-  const langOptions = [
-    { id: 0, language: t("common:common.All") },
-    ...htLanguagesList,
-  ];
-  const [langFilter, setLangFilter] = useState(
-    langOptions && langOptions[0].id,
-  );
 
   const [menuState, setMenuState] = useState({ anchorEl: null, row: null });
   const open = Boolean(menuState.anchorEl);
@@ -243,6 +232,7 @@ const ConsolidatedFamilyList = (props) => {
     try {
       const res = await APIS.exportFamilies(
         appliedFiltersChipArray?.caseStatus?.map((item) => item.value) || [],
+        appliedFiltersChipArray?.caseworkerId?.map((item) => item.value) || [],
         query
       );
       const linkSource = `data:application/xlsx;base64,${res.data.body}`;
@@ -280,6 +270,10 @@ const ConsolidatedFamilyList = (props) => {
       search = "",
       filter = filterValues,
     } = params || {};
+    setQuery((prev) => {
+      if (prev === search) return prev;
+      return search;
+    });
     const payload = {
       globalSearchQuery: search,
       orderByField: [[sort, order.toUpperCase()]],

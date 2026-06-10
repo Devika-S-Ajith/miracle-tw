@@ -44,7 +44,7 @@ const ConsolidatedChildList = (props) => {
   const [apiError, setApiError] = useState(null);
   const [filterValues, setFilterValues] = useState({ status: [], caseWorker: [] });
   const [appliedFiltersChipArray, setAppliedFiltersChipArray] = useState({ status: [], caseWorker: [] });
-  const { signedinOrgId, signedInOrgName, userIdData, signedinUserRoleHT, signedinUserRoleFS } =
+  const { signedinOrgId,signedinUserRoleHT, signedinUserRoleFS, signedInOrgName, userIdData } =
     useContext(CommonDataContext);
   const [users, setUsers] = useState([]);
   const isCaseWorkerOnly =
@@ -53,6 +53,7 @@ const ConsolidatedChildList = (props) => {
     signedinUserRoleFS !== ADMIN_CASEWORKER &&
     signedinUserRoleHT !== ADMIN &&
     signedinUserRoleFS !== ADMIN;
+
   //   actions
   const [menuState, setMenuState] = useState({ anchorEl: null, row: null });
   const [activeChildId, setActiveChildId] = useState(null);
@@ -131,7 +132,7 @@ const ConsolidatedChildList = (props) => {
     },
     {
       id: "caseWorker",
-      label: "Case Manager",
+      label: "Case worker",
       enableSorting: true,
       render: (row) => `${row.caseWorkerFirstName || ""} ${row.caseWorkerLastName || ""}`.trim() || "-",
     },
@@ -329,7 +330,7 @@ const ConsolidatedChildList = (props) => {
             startIcon={
               <img
                 src="/static/icons/ExportIcon.svg"
-                alt="Export"
+                alt=""
                 style={{ width: 20, height: 20 }}
               />
             }
@@ -343,7 +344,6 @@ const ConsolidatedChildList = (props) => {
           startIcon={
             <img
               src="/static/icons/AddIcon.svg"
-              alt="Add"
               style={{ width: 20, height: 20 }}
             />
           }
@@ -420,51 +420,51 @@ const ConsolidatedChildList = (props) => {
         />
       </Box>
       {!isCaseWorkerOnly && (
-        <Box>
-          <BodyText
-            value={t("common:tableColumn.Case Manager", "Case manager")}
-            sx={{ mb: 1 }}
-          />
-          <Autocomplete
-            disablePortal
-            options={users}
-            getOptionLabel={(option) => option.label}
-            multiple
-            value={filterValues?.caseWorker || []}
-            isOptionEqualToValue={(option, value) => option.value === value.value}
-            onChange={(event, newValue) => {
-              setFilterValues((prev) => ({
-                ...prev,
-                caseWorker: newValue,
-              }));
-            }}
-            sx={{ width: 300 }}
-            renderInput={(params) => <TextField {...params} />}
-            renderTags={(value, getTagProps) => (
-              <Stack direction="row" gap={1} flexWrap="wrap">
-                {value.map((option, index) => (
-                  <Chip
-                    key={option.value}
-                    label={option.label}
-                    sx={{ mb: 1, backgroundColor: "#34475D", color: "#fff" }}
-                    deleteIcon={
-                      <CloseIcon style={{ color: "#fff", fontSize: "16px" }} />
-                    }
-                    onDelete={() =>
-                      setFilterValues((prev) => ({
-                        ...prev,
-                        caseWorker: Array.isArray(prev.caseWorker)
-                          ? prev.caseWorker.filter((item) => item.value !== option.value)
-                          : [],
-                      }))
-                    }
-                  />
-                ))}
-              </Stack>
-            )}
-          />
-        </Box>
-      )}
+
+      <Box>
+        <BodyText
+          value={t("common:tableColumn.Case worker", "Case worker")}
+          sx={{ mb: 1 }}
+        />
+        <Autocomplete
+          disablePortal
+          options={users}
+          getOptionLabel={(option) => option.label}
+          multiple
+          value={filterValues?.caseWorker || []}
+          isOptionEqualToValue={(option, value) => option.value === value.value}
+          onChange={(event, newValue) => {
+            setFilterValues((prev) => ({
+              ...prev,
+              caseWorker: newValue,
+            }));
+          }}
+          sx={{ width: 300 }}
+          renderInput={(params) => <TextField {...params} />}
+          renderTags={(value, getTagProps) => (
+            <Stack direction="row" gap={1} flexWrap="wrap">
+              {value.map((option, index) => (
+                <Chip
+                  key={option.value}
+                  label={option.label}
+                  sx={{ mb: 1, backgroundColor: "#34475D", color: "#fff" }}
+                  deleteIcon={
+                    <CloseIcon style={{ color: "#fff", fontSize: "16px" }} />
+                  }
+                  onDelete={() =>
+                    setFilterValues((prev) => ({
+                      ...prev,
+                      caseWorker: Array.isArray(prev.caseWorker)
+                        ? prev.caseWorker.filter((item) => item.value !== option.value)
+                        : [],
+                    }))
+                  }
+                />
+              ))}
+            </Stack>
+          )}
+        />
+      </Box>)}
     </>
   );
 
@@ -497,6 +497,7 @@ const ConsolidatedChildList = (props) => {
     try {
       const res = await APIS.exportChildren({
         childStatusFilter: statusFilter, // "inActive","all"
+        caseWorkerFilter: filterValues?.caseWorker?.map((item) => item.value) || [],
         globalSearchQuery: query || "",
       });
       const linkSource = `data:application/xlsx;base64,${res.data}`;

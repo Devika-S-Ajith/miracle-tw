@@ -66,7 +66,6 @@ const BehaviorLogDetails = ({
       setBehaviorLogDetail(
         data && data.data && data.data.data && data.data.data?.logs,
       );
-      //setpageCount(data && data.data && data.data.pageCount);
       setLoading(false);
     } catch (err) {
       console.error(err);
@@ -82,12 +81,6 @@ const BehaviorLogDetails = ({
     setSelectedImage(null);
   };
 
-  const scroll = (scrollOffset) => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollLeft += scrollOffset;
-    }
-  };
-
   const getLogImages = useCallback(async () => {
     setImagesLoading(true);
     try {
@@ -101,7 +94,6 @@ const BehaviorLogDetails = ({
       };
 
       const data = await APIS.GetLogImages(payload);
-      console.log(data?.data?.data?.downloadUrl);
       if (data?.data?.data) {
         setImageList(data?.data?.data?.downloadUrl || []);
       }

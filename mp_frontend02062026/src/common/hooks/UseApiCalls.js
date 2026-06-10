@@ -1,7 +1,7 @@
 import _ from "lodash";
 import axios from "axios";
 import { AppConfig } from "../config";
-import { API, Auth } from "aws-amplify";
+import { Auth } from "aws-amplify";
 import toast from "react-hot-toast";
 import API_URLS from "./apiUrls";
 
@@ -959,7 +959,6 @@ const APIS = {
       }else{
         UserCompletedURL = UserEmailURL + email;
       }
-      //const UserCompletedURL = UserEmailURL + email +  `&excludeId=${id}`;
       return axios
         .get(UserCompletedURL)
         .then((response) => {
@@ -3470,7 +3469,6 @@ const APIS = {
     APIS.makePostRequest(API_URLS.systemMessages.getMessageViewCount, payload),
 
   checkIfAppDepricated() {
-    // let prerequest = this.PreRequestCall();
     return axios.all([]).then((res) => {
       return axios
         .get(checkIfAppDepricatedURL)
@@ -3519,7 +3517,7 @@ const APIS = {
   },
 
   CheckDuplicateChild: (payload) => APIS.makePostRequest(CheckDuplicateChildURL, payload),
-  exportFamilies: (status="all", globalSearchQuery="") => APIS.makeGetRequest(`${exportFamiliesURL}?status=${status}&globalSearchQuery=${globalSearchQuery}`),
+  exportFamilies: (status="all", caseworkerIds = [], globalSearchQuery="") => APIS.makeGetRequest(`${exportFamiliesURL}?status=${status}&globalSearchQuery=${globalSearchQuery}&caseworkerId=${caseworkerIds}`),
   exportChildren: (payload)=> APIS.makePostRequest(`${exportChildrenURL}`, payload),
   exportAssessments: (payload)=> APIS.makePostRequest(`${exportAssessmentURL}`, payload),
   DeleteFamilyDocument(payload) {

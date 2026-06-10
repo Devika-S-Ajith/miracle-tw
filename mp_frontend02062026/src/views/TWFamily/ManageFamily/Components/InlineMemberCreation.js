@@ -69,6 +69,7 @@ const InlineMemberCreation = ({
     };
     const getMemberDetailsRef = useRef(null);
     getMemberDetailsRef.current = (member) => {
+        console.log("Updating member details in formik for member:", member,selectedCareGiver);
         formik?.setValues(prev => {
             const currentMembers = prev.members || [];
 
@@ -81,6 +82,7 @@ const InlineMemberCreation = ({
             if (memberIndex === -1) return prev; // no change, Formik won't re-render
 
             const existing = currentMembers[memberIndex];
+            console.log("Existing member data:", existing);
             const updatedMembers = [...currentMembers];
             updatedMembers[memberIndex] = {
                 ...existing,
@@ -94,6 +96,7 @@ const InlineMemberCreation = ({
             return { ...prev, members: updatedMembers };
 
         });
+        setSelectedCareGiver(member.isPrimaryCaregiver ? (member.id || member._rowKey) : selectedCareGiver)
     };
 
     const getMemberDetails = useCallback((member) => {
@@ -316,7 +319,15 @@ const InlineMemberCreation = ({
             const response = await APIS.GetDuplicateChildList(payload);
             setIsLoading(false);
 
-            const existingChild = response?.data?.data || [];
+            const existingChildIds = new Set(
+                (formik?.values?.members || [])
+                    .filter((m) => m?.isChild && m?.id)
+                    .map((m) => String(m.id))
+            );
+
+            const existingChild = (response?.data?.data || []).filter(
+                (child) => !existingChildIds.has(String(child?.id))
+            );
             if (existingChild.length > 0) {
                 const DuplicateModalContent = ({ close }) => {
                     const [localLastName, setLocalLastName] = useState(formik?.values?.members?.[index]?.lastName || '');
@@ -325,7 +336,6 @@ const InlineMemberCreation = ({
                     const handleLastNameChange = (e) => {
                         const value = e.target.value;
                         setLocalLastName(value);
-                        formik?.setFieldValue(`members.${index}.lastName`, value);
                     };
 
                     return (
@@ -368,10 +378,6 @@ const InlineMemberCreation = ({
                                     variant="outlined"
                                     fullWidth
                                     onClick={() => {
-                                        formik?.setFieldValue(`members.${index}.firstName`, '');
-                                        formik?.setFieldValue(`members.${index}.lastName`, '');
-                                        formik?.setFieldValue(`members.${index}.gender`, '');
-                                        formik?.setFieldValue(`members.${index}.dateOfBirth`, null);
                                         close();
                                     }}
                                 >
@@ -380,10 +386,14 @@ const InlineMemberCreation = ({
                                 <Button
                                     variant="contained"
                                     fullWidth
-                                    disabled={!selectedChildOption}
+                                    disabled={!selectedChildOption && !localLastName}
                                     onClick={() => {
-                                        handleChildSelection(selectedChildOption, index);
-                                        toast.success(t('common:child.Existing child selected'));
+                                        if (selectedChildOption) {
+                                            handleChildSelection(selectedChildOption, index);
+                                            toast.success(t('common:child.Existing child selected', "Existing child selected"));
+                                        } else {
+                                            formik?.setFieldValue(`members.${index}.lastName`, localLastName);
+                                        }
                                         close();
                                     }}
                                 >
@@ -414,7 +424,15 @@ const InlineMemberCreation = ({
         if (searchTerm.length < 3) return [];
 
         if (searchCache.current[searchTerm]) {
-            return searchCache.current[searchTerm];
+            const existingChildIds = new Set(
+                (formik?.values?.members || [])
+                    .filter((m) => m?.isChild && m?.id)
+                    .map((m) => String(m.id))
+            );
+
+            return (searchCache.current[searchTerm] || []).filter(
+                (child) => !existingChildIds.has(String(child?.id))
+            );
         }
 
         searchController.current?.abort();
@@ -431,7 +449,15 @@ const InlineMemberCreation = ({
             const response = await APIS.GetDuplicateChildList(payload, {
                 signal: searchController.current.signal,
             });
-            const result = response?.data?.data.filter(child => child.familyId === null) || [];
+            const existingChildIds = new Set(
+                (formik?.values?.members || [])
+                    .filter((m) => m?.isChild && m?.id)
+                    .map((m) => String(m.id))
+            );
+
+            const result = (response?.data?.data || []).filter(
+                (child) => child.familyId === null && !existingChildIds.has(String(child?.id))
+            );
             searchCache.current[searchTerm] = result;
             return result;
         } catch (error) {
@@ -440,7 +466,7 @@ const InlineMemberCreation = ({
             }
             return [];
         }
-    }, []);
+    }, [formik?.values?.members]);
 
     const handleChildSelection = (child, currentIndex) => {
         if (!child || typeof child !== 'object') return;

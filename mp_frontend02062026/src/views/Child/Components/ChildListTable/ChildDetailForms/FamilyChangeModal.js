@@ -48,8 +48,10 @@ const FamilyChangeModal = ({ onFamilyChangeConfirm, onFamilyChangeCancel, close,
     },
     validationSchema: schema,
     onSubmit: () => {
+      setIsLoading(true);
       close();
       onFamilyChangeConfirm({ familyChangeValues, setFieldValue });
+      setIsLoading(false);
     },
   });
 

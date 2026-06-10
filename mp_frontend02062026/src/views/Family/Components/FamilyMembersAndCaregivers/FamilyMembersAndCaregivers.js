@@ -11,7 +11,8 @@ import ManageChildForm from '../../../Child/Components/ChildListTable/ChildDetai
 import AddFamilyMemberModal from '../../../TWFamily/ManageFamily/Components/AddFamilyMemberModal';
 import FamilyMemberCard from '../../../TWFamily/ManageFamily/Components/FamilyMemberCard';
 import { useNavigate } from 'react-router';
-import { convertUnderscoreToText } from '../../../../constants';
+import { convertUnderscoreToText, dateFormatter } from '../../../../constants';
+import { calculateAge } from '../../../../helpers/helperFunction';
 
 
 
@@ -81,7 +82,8 @@ const handleEditMember = (member) => {
         <AddFamilyMemberModal
           onClose={close}
           familyId={familyId}
-          member={member}
+          member={{...member,isMajor: !member.isMinor}}
+          getMemberDetails={refreshData}
           isMemberActive={member?.isActive}
           dropdownValues={{
             familyRelations: familyDropdownLists?.familyRelations.filter(
@@ -112,18 +114,19 @@ const handleEditMember = (member) => {
             : row.isChild
             ? null
             : t('common:family.Caregiver', 'Caregiver');
-         
+
+       
           let subText = '';
-         
+       
           if (row.isChild) {
             const age = row.dateOfBirth
-              ? Math.floor((new Date() - new Date(row.dateOfBirth)) / (365.25 * 24 * 60 * 60 * 1000))
+              ? calculateAge(dateFormatter(row?.dateOfBirth), t)
               : null;
             const dob = row.dateOfBirth
               ? new Date(row.dateOfBirth).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
               : null;
             const parts = [
-              age !== null ? `${age}yo` : null,
+              age !== null ? `${age}` : null,
               dob ? `(${dob})` : null,
               convertUnderscoreToText(row.gender || null),
               row.isPrimaryCaregiver ? caregiverLabel : null,

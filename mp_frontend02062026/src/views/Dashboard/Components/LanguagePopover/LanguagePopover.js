@@ -231,24 +231,24 @@ const LanguagePopover = ({
   };
 
   const selectedOption = AlllanguageOptions[i18n.language];
-  
-  // Get user's region and filter languages accordingly
   const getUserRegionLanguages = () => {
     const userRegionId = localStorage.getItem("userRegion");
     const userRegion = locationList?.find(
       (location) => location.id === userRegionId
     );
-    
+   
     // If user is from US or Uganda, show only English
     if (userRegion?.isoCode === "US" || userRegion?.isoCode === "UGN") {
       return languageOptions.language.filter((lang) => lang.value === "en");
     }
-    
+   
     // For other regions, show all languages
     return languageOptions.language;
   };
 
+
   const languageList = getUserRegionLanguages();
+
 
   return (
     <>

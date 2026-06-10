@@ -803,6 +803,7 @@
     "ChildExistsMessage3": "দয়া করে আপনার থ্রাইভওয়েল অ্যাডমিনিস্ট্রেটরের সঙ্গে যোগাযোগ করুন এবং অনুরোধ করুন যেন এই শিশুটিকে আপনাকে অ্যাসাইন এবং/অথবা রিএক্টিভেট করা হয়। একবার শিশুটি আপনাকে অ্যাসাইন হয়ে গেলে, আপনি তাকে এই পরিবারে যোগ করতে পারবেন। |",
     "FirstNameLastNameDOB": "প্রথম নাম, শেষ নাম এবং জন্ম তারিখ",
     "Discontinued Education": "বন্ধ শিক্ষা",
+    "Existing child selected": "বিদ্যমান শিশু নির্বাচন করা হয়েছে",
     "Highest Education": "সর্বোচ্চ শিক্ষা",
     "Closing a family's case also closes the cases for all family members and children in the family":"একটি পরিবারের মামলা বন্ধ করলে, সেই পরিবারের সকল সদস্য ও শিশুদের মামলাও বন্ধ হয়ে যায়।"
   },

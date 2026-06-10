@@ -846,8 +846,9 @@
     "ChildExistsMessage3": "Please contact your ThriveWell  administrator and request that this child be assigned to you and/or reactivated. Once the child is assigned to you, you will be able to add them to this family.",
     "FirstNameLastNameDOB": "first name, last name, and date of birth",
     "Discontinued Education": "Discontinued education",
+    "Existing child selected": "Existing child selected",
     "Highest Education": "Highest Education",
-     "Closing a family's case also closes the cases for all family members and children in the family": "Closing a family's case also closes the cases for all family members and children in the family."
+    "Closing a family's case also closes the cases for all family members and children in the family": "Closing a family's case also closes the cases for all family members and children in the family."
   },
   "assessment": {
     "Assessment List": "Assessment List",
@@ -1161,6 +1162,7 @@
     "Additional information": "Additional information (optional)",
     "Date the family first started serving as a foster family": "Date the family first started serving as a foster family (optional)",
     "Family goal": "Family goal"
+
   },
   "form": {
     "formList": "Form List",

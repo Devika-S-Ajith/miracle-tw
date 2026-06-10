@@ -9,10 +9,6 @@ function AssessmentChildDetails({ caseDetails }) {
   const ASSESSMENT_TYPE = caseDetails?.type;
   const isFamily = ASSESSMENT_TYPE === "FAMILY" || false;
   const isChild = ASSESSMENT_TYPE === "CHILD" || false;
-  const findAge = (dateString) => {
-    const birthday = +new Date(dateString);
-    return ~~((Date.now() - birthday) / 31557600000);
-  };
 
   const getCaseData = (type) => {
     let options = {

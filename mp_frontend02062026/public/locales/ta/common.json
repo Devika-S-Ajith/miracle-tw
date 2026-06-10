@@ -813,6 +813,7 @@
     "ChildExistsMessage3": "தயவுசெய்து உங்கள் த்ரைவ்வெல் நிர்வாகியை தொடர்பு கொண்டு, இந்தக் குழந்தையை உங்களுக்கு அசைன் செய்யவும்/அல்லது ரியாக்டிவேட் செய்யவும் கேட்டுக்கொள்ளுங்கள். குழந்தை உங்களுக்கு அசைன் செய்யப்பட்டதும், நீங்கள் அவரை இந்தக் குடும்பத்தில் சேர்க்க முடியும். |",
     "FirstNameLastNameDOB": "முதல் பெயர், கடைசி பெயர் மற்றும் பிறந்த தேதி",
     "Discontinued Education": "நிறுத்தப்பட்ட கல்வி",
+    "Existing child selected": "ஏற்கனவே உள்ள குழந்தை தேர்ந்தெடுக்கப்பட்டது",
     "Highest Education": "மிக உயர்ந்த கல்வி",
     "Closing a family's case also closes the cases for all family members and children in the family":"ஒரு குடும்பத்தின் வழக்கை மூடுவது, அந்த குடும்பத்தின் அனைத்து குடும்ப உறுப்பினர்கள் மற்றும் குழந்தைகளின் வழக்குகளையும் மூடுகிறது."
   },
@@ -1107,7 +1108,7 @@
     "assessment_number": "மதிப்பீடு  #{{number}}",
     "Add another family member": "மற்றொரு குடும்ப உறுப்பினரைச் சேர்க்கவும்",
     "Family type": "குடும்ப வகை",
-     "Family member or caregiver": "குடும்ப உறுப்பினர் அல்லது பராமரிப்பாளர்",
+    "Family member or caregiver": "குடும்ப உறுப்பினர் அல்லது பராமரிப்பாளர்",
     "Profile information": "பிளோபில் தகவல்",
     "Family contact information": "குடும்ப தொடர்பு தகவல் (விருப்பத்தேர்வு)",
     "Additional information": "மேலும் தகவல் (விருப்பத்தேர்வு)",

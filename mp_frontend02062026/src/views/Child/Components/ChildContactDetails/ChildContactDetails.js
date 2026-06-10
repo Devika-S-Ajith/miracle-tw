@@ -97,27 +97,6 @@ const ChildContactDetails = (props) => {
     return new Date([month, day, year].join("/"));
   };
 
-  const getDate = (dateToFormat = null) => {
-    let yourDate;
-    if (dateToFormat === null) {
-      yourDate = new Date();
-    } else {
-      yourDate = new Date(stringToDate(dateToFormat));
-    }
-    // yourDate.toISOString().split('T')[0];
-    const offset = yourDate.getTimezoneOffset();
-    yourDate = new Date(yourDate.getTime() - offset * 60 * 1000);
-    return yourDate.toISOString().split("T")[0];
-  };
-
-  const getAge = (datestring) => {
-    let startDate = new Date(stringToDate(datestring));
-    let endDate = new Date();
-    let diffYear = (startDate.getTime() - endDate.getTime()) / 1000;
-    diffYear /= 60 * 60 * 24;
-    return Math.abs(Math.round(diffYear / 365.25));
-  };
-
   const getTypesFromAPI = async () => {
     try {
       const data = await customerApi.getOrganizationType();

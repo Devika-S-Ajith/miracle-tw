@@ -10,17 +10,7 @@ import {
     Grid,
     Stack,
     Paper,
-    Tooltip,
 } from "@mui/material";
-import PersonIcon from "@mui/icons-material/Person";
-import PhoneIcon from "@mui/icons-material/Phone";
-import EmailIcon from "@mui/icons-material/Email";
-import WorkIcon from "@mui/icons-material/Work";
-import NoteIcon from "@mui/icons-material/StickyNote2";
-import BadgeIcon from "@mui/icons-material/Badge";
-import FamilyRestroomIcon from "@mui/icons-material/FamilyRestroom";
-import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import { CommonDataContext } from "../../../../common/contexts/CommonDataContext";
 import LabelValue from "../../../../components/LabelValue";
 import { useTranslation } from "react-i18next";
@@ -82,11 +72,10 @@ export default function FamilyMemberCard({ data = SAMPLE_DATA }) {
     const { t } = useTranslation(["common"]);
     const { phoneNumber, occupation, notes, appAccessEnabled, email } = profileInformation || {};
 
-    const initials = getInitials(firstName, lastName);
     const fullName = [firstName, lastName].filter(Boolean).join(" ");
 
     return (
-        <Box sx={{ p: 1, maxWidth: 560, mx: "auto" }}>
+        <Box sx={{ p: 0, maxWidth: 560, mx: "auto" }}>
             <Card
                 elevation={0}
                 sx={{
@@ -99,62 +88,50 @@ export default function FamilyMemberCard({ data = SAMPLE_DATA }) {
                 {/* Header strip */}
                 <Box
                     sx={{
-                        height: 6,
+                        height: 2,
                         borderRadius: "4px 4px 0 0",
                     }}
                 />
 
-                <CardContent sx={{ pl: 3 }}>
+                <CardContent sx={{ pt: 1, pb: 2, px: 1 }}>
                     {/* Top: avatar + name + badges */}
-                    <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start", mb: 2.5 }}>
-                        <Avatar
-                            sx={{
-                                width: 54,
-                                height: 54,
-                                bgcolor: isActive ? "primary.main" : "grey.400",
-                                fontSize: "1.1rem",
-                                fontWeight: 600,
-                                flexShrink: 0,
-                            }}
-                        >
-                            {initials || <PersonIcon />}
-                        </Avatar>
-
+                    <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start", mb: 1.5 }}>
                         <Box sx={{ flex: 1, minWidth: 0 }}>
-                            <Typography
-                                variant="h6"
-                                sx={{ fontWeight: 600, fontSize: "1.05rem", lineHeight: 1.3 }}
-                            >
-                                {fullName || "Unnamed Member"}
-                            </Typography>
-
-                            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap mt={0.5}>
+                            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap mt={0}>
+                                <Typography
+                                    variant="h6"
+                                    sx={{ fontWeight: 600, fontSize: "1.05rem", lineHeight: 1.3 }}
+                                >
+                                    {fullName?.toUpperCase() || "Unnamed Member"}
+                                </Typography>
                                 <Chip
                                     size="small"
                                     label={isActive ? "Active" : "Inactive"}
                                     color={isActive ? "success" : "default"}
                                     sx={{ height: 22, fontSize: "0.7rem", fontWeight: 600 }}
                                 />
-                                
-                                    <Chip
-                                        size="small"
-                                        //icon={<AdminPanelSettingsIcon sx={{ fontSize: "0.85rem !important" }} />}
-                                        label={isMinor ? "Minor":"Major"}
-                                        color="info"
-                                        variant="outlined"
-                                        sx={{ height: 22, fontSize: "0.7rem" }}
-                                    />
-                            
-                                {appAccessEnabled && (
-                                    <Chip
-                                        size="small"
-                                        icon={<PhoneAndroidIcon sx={{ fontSize: "0.85rem !important" }} />}
-                                        label="App access enabled"
-                                        color="primary"
-                                        variant="outlined"
-                                        sx={{ height: 22, fontSize: "0.7rem" }}
-                                    />
-                                )}
+                            </Stack>
+                            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap mt={0.25}>
+                                <Typography
+                                    variant="body2"
+                                >
+                                    {isMinor ? "Minor" : "Major"}
+                                </Typography>
+                                <Divider
+                                    orientation="vertical"
+                                    flexItem
+                                    sx={{
+                                        alignSelf: "center",
+                                        height: 14,
+                                        borderColor: "text.disabled",
+                                        borderRightWidth: 3,
+                                    }}
+                                />
+                                <Typography
+                                    variant="body2"
+                                >
+                                    {appAccessEnabled ? "App Access Enabled" : "App Access Disabled"}
+                                </Typography>
                             </Stack>
                         </Box>
                     </Box>
@@ -165,17 +142,17 @@ export default function FamilyMemberCard({ data = SAMPLE_DATA }) {
                     <Grid container columnSpacing={3}>
                         <Grid item xs={12} sm={6}>
                             <FieldRow
-                                icon={<PersonIcon fontSize="small" />}
+
                                 label={t("common:common.First name", "First name")}
                                 value={firstName}
                             />
                             <FieldRow
-                                icon={<WorkIcon fontSize="small" />}
+
                                 label={t("common:common.Occupation", "Occupation")}
                                 value={occupation}
                             />
                             <FieldRow
-                                icon={<EmailIcon fontSize="small" />}
+
                                 label={t("common:common.Email", "Email")}
                                 value={email}
                                 valueColor="primary.main"
@@ -183,17 +160,17 @@ export default function FamilyMemberCard({ data = SAMPLE_DATA }) {
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <FieldRow
-                                icon={<PersonIcon fontSize="small" />}
+
                                 label={t("common:common.Last name", "Last name")}
                                 value={lastName}
                             />
                             <FieldRow
-                                icon={<PhoneIcon fontSize="small" />}
+
                                 label={t("common:common.Phone", "Phone")}
                                 value={phoneNumber}
                             />
                             <FieldRow
-                                icon={<FamilyRestroomIcon fontSize="small" />}
+
                                 label={t("common:common.Relation", "Relation")}
                                 value={familyDropdownLists?.familyRelations?.find(item => item.id === TWFamilyRelationId)?.value || TWFamilyRelationId}
                             />
@@ -218,7 +195,6 @@ export default function FamilyMemberCard({ data = SAMPLE_DATA }) {
                                     mb: 1,
                                 }}
                             >
-                                <NoteIcon sx={{ fontSize: "0.9rem" }} />
                                 Notes
                             </Typography>
                             <Paper
@@ -228,11 +204,19 @@ export default function FamilyMemberCard({ data = SAMPLE_DATA }) {
                                     bgcolor: "action.hover",
                                     borderRadius: 1,
                                     borderColor: "divider",
+                                    maxWidth: "100%",
+                                    overflow: "hidden",
                                 }}
                             >
                                 <Typography
                                     variant="body2"
-                                    sx={{ lineHeight: 1.65, fontSize: "0.82rem" }}
+                                    sx={{
+                                        lineHeight: 1.65,
+                                        fontSize: "0.82rem",
+                                        whiteSpace: "pre-wrap",
+                                        overflowWrap: "anywhere",
+                                        wordBreak: "break-word",
+                                    }}
                                 >
                                     {notes}
                                 </Typography>

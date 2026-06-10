@@ -29,26 +29,27 @@ const PageBreadcrumbs = ({ data }) => {
           arrow
         >
           <Typography
+            key={index}
             variant="h5"
             sx={{
               color: "text.primary",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              maxWidth: {
-                xs: 180,
-                sm: 300,
-                md: 500,
-                lg: 500,
-              },
-            }}
-          >
-            {item.label}
-          </Typography>
-        </Tooltip>
-      );
-    }
-  });
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            maxWidth: {
+              xs: 180, // small screens
+              sm: 300, // medium screens
+              md: 500, // large screens
+              lg: 500, // extra large screens
+            },
+          }}
+          title={item?.label?.length > 30 ? item.label : undefined}
+        >
+          {item.label}
+        </Typography>
+      </Tooltip>
+    )  
+  }})
 
   return (
     <Breadcrumbs

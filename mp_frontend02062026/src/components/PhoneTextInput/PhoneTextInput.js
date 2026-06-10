@@ -28,6 +28,7 @@ export const PhoneTextInput = ({
   ...restProps
 }) => {
   const { t } = useTranslation(["common"]);
+  const phoneNumberLabel = t("common:common.Phone Number");
 
   const { inputValue, handlePhoneValueChange, inputRef, country, setCountry } =
     usePhoneInput({
@@ -53,35 +54,29 @@ export const PhoneTextInput = ({
     }
   }, [country]);
 
+  const requiredPhoneNumberLabel = required
+    ? `${phoneNumberLabel} *`
+    : phoneNumberLabel;
+
+  const attachedPhoneNumberLabel = showAttachedLabel
+    ? requiredPhoneNumberLabel
+    : "";
+
   return (
     <Box sx={{ width: "100%" }}>
       {!showAttachedLabel && (
         <Box sx={{ marginBottom: 1 }}>
           <CustomFieldLabel>
-            {required
-              ? `${t("common:common.Phone Number")}*`
-              : t("common:common.Phone Number")}
+            {required ? `${phoneNumberLabel}*` : phoneNumberLabel}
           </CustomFieldLabel>
         </Box>
       )}
       <TextField
         fullWidth
         variant="outlined"
-        label={
-          showAttachedLabel
-            ? required
-              ? `${t("common:common.Phone Number")} *`
-              : t("common:common.Phone Number")
-            : ""
-        }
+        label={attachedPhoneNumberLabel}
         color="primary"
-        placeholder={
-          showAttachedLabel
-            ? required
-              ? `${t("common:common.Phone Number")} *`
-              : t("common:common.Phone Number")
-            : ""
-        }
+        placeholder={attachedPhoneNumberLabel}
         value={inputValue}
         onChange={handlePhoneValueChange}
         type="tel"
