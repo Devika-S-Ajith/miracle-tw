@@ -27,15 +27,22 @@ const CustomRecipientCondition = ({
   condition,
   error,
   helperText,
+  disabled = false,
 }) => {
   const [isAllSelected, setAllSelected] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
-    if (options?.length - 2 === data?.length) {
-      setAllSelected(true);
-    }
-  }, [options, data]);
+  if (disabled) {
+    setAllSelected(false);
+    return;
+  }
+  if (options?.length - 2 === data?.length) {
+    setAllSelected(true);
+  } else {
+    setAllSelected(false);
+  }
+}, [options, data, disabled]);
 
   return (
     <Box display="flex" alignItems="center" gap={2}>
@@ -83,6 +90,7 @@ const CustomRecipientCondition = ({
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           multiple
+          disabled={disabled}
           id="event-participants"
           options={options}
           clearIcon={false}
@@ -118,29 +126,31 @@ const CustomRecipientCondition = ({
                   // <> {allSelectShowText}</>
                   <>
                     {displayedTags.map((obj) => (
-                      <Chip
-                        color="primary"
-                        key={obj.id}
-                        label={obj.label}
-                        size="medium"
-                        sx={{
-                          backgroundColor: "#1D334B",
-                          borderRadius: "16px",
-                        }}
-                        onDelete={() => {
-                          onValueChange(
-                            data?.filter((option) => obj.id !== option?.id)
-                          );
-                        }}
-                        deleteIcon={
+                    <Chip
+                      color="primary"
+                      key={obj.id}
+                      label={obj.label}
+                      size="medium"
+                      sx={{
+                        backgroundColor: "#1D334B",
+                        borderRadius: "16px",
+                      }}
+                      onDelete={disabled ? undefined : () => {
+                        onValueChange(
+                          data?.filter((option) => obj.id !== option?.id)
+                        );
+                      }}
+                      deleteIcon={
+                        disabled ? undefined : (
                           <CloseIcon
                             style={{
                               fontSize: "17px",
                             }}
                           />
-                        }
-                      ></Chip>
-                    ))}
+                        )
+                      }
+                    ></Chip>
+                  ))}
                     {!isFocused && remainingCount > 0 && (
                       <Chip
                         label={`+${remainingCount}`}
@@ -214,13 +224,14 @@ const CustomRecipientCondition = ({
                 }}
                 error={error}
                 helperText={helperText}
+                disabled={disabled}
                 textFieldProps={{
                   fullWidth: true,
                   borderRadius: "0px",
                   margin: "normal",
                   variant: "outlined",
                 }}
-                label={subLabel}
+                label={disabled ? undefined : subLabel}
                 variant="outlined"
                 InputProps={inputProps}
                 required={true}

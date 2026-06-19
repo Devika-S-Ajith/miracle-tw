@@ -417,7 +417,8 @@ const FamilyDocuments = (props) => {
                               })}
                         </TableCell>
                         <TableCell align="right">
-                          {!assessment.consentId &&
+                          {assessment.description !== "Family consent" &&
+                          !assessment.consentId &&
                           (signedinUserRoleHT === "admin" ||
                             signedinUserRoleHT === "caseworker" ||
                             signedinUserRoleHT === "admin+caseworker") ? (
@@ -433,8 +434,8 @@ const FamilyDocuments = (props) => {
                           ) : (
                             <></>
                           )}
-
-                          {!assessment.consentId && (
+                        {assessment.description !== "Family consent" &&
+                          !assessment.consentId && (
                             <Tooltip
                               title={t("common:common.Download Document")}
                             >

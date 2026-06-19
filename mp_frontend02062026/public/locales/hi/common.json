@@ -652,7 +652,8 @@
     "Level of care (US logs only)": "देखभाल का स्तर (केवल अमेरिकी लॉग्स के लिए)",
     "Placement ID (US logs only)": "प्लेसमेंट आईडी (केवल अमेरिकी लॉग्स के लिए)",
     "# of previous placements (US logs only)": "पिछले प्लेसमेंट की संख्या (केवल अमेरिकी लॉग्स के लिए)",
-    "Remove member": "सदस्य को हटाएं"
+    "Remove member": "सदस्य को हटाएं",
+    "Updated Value": "अद्यतन मूल्य"
   },
   "signin": {
     "Sign in to your account": "अपने अकाउंट में साइन इन करें।",
@@ -1353,7 +1354,7 @@
     "Custom":"कस्टम",
     "Define what user should see this message":"परिभाषित करें कि कौन से उपयोगकर्ता को यह संदेश दिखना चाहिए।",
     "Next Preview":"अगला: पूर्वावलोकन",
-    "Show message where:":"संदेश कहाँ दिखाएं:",
+    "Show message where":"संदेश कहाँ दिखाएं:",
     "Organization location":"संगठन का स्थान",
     "Organization name":"संगठन का नाम",
     "User is viewing from":"उपयोगकर्ता द्वारा देखा जा रहा है",

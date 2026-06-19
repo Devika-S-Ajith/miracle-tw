@@ -659,7 +659,8 @@
     "Placement ID (US logs only)": "प्लेसमेंट आयडी (फक्त यूएस लॉगसाठी)",
     "# of previous placements (US logs only)": "मागील प्लेसमेंटची संख्या (फक्त यूएस लॉगसाठी)",
     "Remove member": "सदस्य काढून टाका",
-    "Licence number": "परवाना क्रमांक (पर्यायी)"
+    "Licence number": "परवाना क्रमांक (पर्यायी)",
+    "Updated Value": "अपडेट केलेली वेल्यू"
   },
   "signin": {
     "Sign in to your account": "तुमच्या खात्यात साइन इन करा.",
@@ -1349,7 +1350,7 @@
     "Custom": "सानुकूल",
     "Define what user should see this message": "कोणत्या वापरकर्त्यांनी हा संदेश पाहावा ते ठरवा.",
     "Next Preview": "पुढील: पूर्वावलोकन",
-    "Show message where:": "संदेश कुठे दाखवायचा:",
+    "Show message where": "संदेश कुठे दाखवायचा:",
     "Organization location": "संस्थेचे स्थान",
     "Organization name": "संस्थेचे नाव",
     "User is viewing from": "वापरकर्ता ज्या प्लॅटफॉर्मवरून पाहतो",

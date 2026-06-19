@@ -684,7 +684,8 @@
     "Placement ID (US logs only)": "Placement ID (US logs only)",
     "# of previous placements (US logs only)": "# of previous placements (US logs only)",
     "Remove member": "Remove member",
-    "Licence number": "License number (optional)"
+    "Licence number": "License number (optional)",
+    "Updated Value": "Updated Value"
   },
    
   "signin": {
@@ -1469,7 +1470,7 @@
     "Custom": "Custom",
     "Define what user should see this message":"Define what user(s) should see this message.",
     "Next Preview": "Next: Preview",
-    "Show message where:":"Show message where:",
+    "Show message where":"Show message where:",
     "Organization location":"Organization’s location",
     "Organization name":"Organization name",
     "User is viewing from":"User is viewing from",

@@ -14,7 +14,6 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import Scrollbar from "../Components/ScrollBar";
 import APIS from "../../../common/hooks/UseApiCalls";
 import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
 import AutoCompleteDropdownToFilter from "../../../components/UserComponents/AutoCompleteDropdownToFilter";
@@ -298,7 +297,6 @@ function ReportsNewlyAdded() {
         isExportDisabled={isExportDisabled}
       /> */}
 
-      <Scrollbar>
         <Grid container width={1}>
           <Grid item xs={12}>
             <Card sx={{ mr: 1, p: 3 }}>
@@ -446,7 +444,6 @@ function ReportsNewlyAdded() {
             </Card>
           </Grid>
         </Grid>
-      </Scrollbar>
     </Box>
   );
 }

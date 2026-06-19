@@ -519,13 +519,17 @@ const ConsolidatedAssessmentProgressReport = ({ pageType, id }) => {
     getTableData({ search, filter: updated, rowCount });
   };
 
-  const clearFiltersHandler = () => {
-    const clearedFilters = {
+const isFilterEmpty = !appliedFiltersChipArray?.assessmentStatus?.length && !appliedFiltersChipArray?.progressReportStatus?.length && !appliedFiltersChipArray?.overdueStatus?.length;
+
+const clearFiltersHandler = () => {
+  const clearedFilters = {
       assessmentStatus: [],
       progressReportStatus: [],
       overdueStatus: [],
     };
     setFilterValues(clearedFilters);
+    setAppliedFiltersChipArray(clearedFilters);
+    getTableData({ filter: clearedFilters });
   };
 
   const tableExtraButtons = (
@@ -568,6 +572,7 @@ const ConsolidatedAssessmentProgressReport = ({ pageType, id }) => {
         applyFilter={handleApplyFilters}
         cancelFilter={cancelFilterHandler}
         clearFilter={clearFiltersHandler}
+        isClearDisabled={isFilterEmpty} 
         tableData={tableData?.data || []}
         loading={loading}
         skeltonRowcount={6}

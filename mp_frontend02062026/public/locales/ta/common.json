@@ -667,7 +667,8 @@
     "Placement ID (US logs only)": "இடமாற்ற அடையாள எண் (அமெரிக்க பதிவுகளுக்கு மட்டும்)",
     "# of previous placements (US logs only)": "முந்தைய இடமாற்றங்களின் எண்ணிக்கை (அமெரிக்க பதிவுகளுக்கு மட்டும்)",
     "Remove member": "உறுப்பினரை நீக்கு",
-    "Licence number": "உரிமம் எண் (விரும்பினால்)"
+    "Licence number": "உரிமம் எண் (விரும்பினால்)",
+    "Updated Value": "புதுப்பிக்கப்பட்ட முதல் முறை"
   },
   "signin": {
     "Sign in to your account": "உங்கள் கணக்கில் உள்நுழையவும்",
@@ -1415,7 +1416,7 @@
     "Custom": "தனிப்பயன்",
     "Define what user should see this message": "எந்த பயனர்(கள்) இந்த செய்தியை காண வேண்டும் என்பதை வரையறுக்கவும்.",
     "Next Preview": "அடுத்து: முன்னோட்டம்",
-    "Show message where:": "செய்தியை எங்கு காண்பிக்க வேண்டும்:",
+    "Show message where": "செய்தியை எங்கு காண்பிக்க வேண்டும்:",
     "Organization location": "அமைப்பின் இடம்",
     "Organization name": "அமைப்பின் பெயர்",
     "User is viewing from": "பயனர் பார்க்கும் தளம்",

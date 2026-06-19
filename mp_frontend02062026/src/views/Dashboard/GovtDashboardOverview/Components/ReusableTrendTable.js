@@ -401,8 +401,9 @@ const ReusableTrendTable = ({
   applyFilter,
   handleChipDelete,
   clearFilter,
-  tableExtraButtons,
+  isClearDisabled = false,
   cancelFilter,
+  tableExtraButtons,
   rowCountOptions
 }) => {
   // Table state
@@ -735,9 +736,13 @@ const resolvedTableExtraButtons = useMemo(() => {
                   <Divider sx={{ mx: -2 }} />
                   <Grid container alignItems="center" spacing={2} >
                     <Grid item xs={6}>
-                      <Button fullWidth variant="outlined" onClick={clearFilter}>
-                        {t("common:infoCard.Clear", "Clear")}
-                      </Button>
+                      <Button fullWidth variant="outlined" disabled={isClearDisabled} onClick={() => {
+                      clearFilter();
+                      setFilterAnchorEl(null);
+                      setOpenFilter(false);
+                    }}>
+                      {t("common:infoCard.Clear", "Clear")}
+                    </Button>
                     </Grid>
                     <Grid item xs={6}>
                       <Button fullWidth variant="contained" onClick={() => { applyFilter({ search: state.searchQuery, rowCount: state.rowCount }); setOpenFilter(false); }} >

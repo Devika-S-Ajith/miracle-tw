@@ -658,7 +658,8 @@
     "Placement ID (US logs only)": "ప్లేస్‌మెంట్ ఐడి (యుఎస్ లాగ్‌లకు మాత్రమే)",
     "# of previous placements (US logs only)": "మునుపటి ప్లేస్‌మెంట్‌ల సంఖ్య (యుఎస్ లాగ్‌లకు మాత్రమే)",
     "Remove member": "సభ్యుడిని తీసివేయండి",
-    "Licence number": "లైసెన్స్ సంఖ్య (ఐచ్ఛికం)"
+    "Licence number": "లైసెన్స్ సంఖ్య (ఐచ్ఛికం)",
+    "Updated Value": "నవీకరించిన విలువ"
   },
   "signin": {
     "Sign in to your account": "మీ ఖాతాకు సైన్ ఇన్ చేయండి.",
@@ -1346,7 +1347,7 @@
     "Custom": "అనుకూలం",
     "Define what user should see this message": "ఏ వినియోగదారు(లు) ఈ సందేశాన్ని చూడాలో నిర్వచించండి.",
     "Next Preview": "తదుపరి: ప్రివ్యూ",
-    "Show message where:": "సందేశాన్ని ఎక్కడ చూపించాలి:",
+    "Show message where": "సందేశాన్ని ఎక్కడ చూపించాలి:",
     "Organization location": "సంస్థ స్థానం",
     "Organization name": "సంస్థ పేరు",
     "User is viewing from": "వినియోగదారు చూస్తున్న ప్లాట్‌ఫారమ్",

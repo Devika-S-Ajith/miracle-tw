@@ -21,7 +21,6 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import Scrollbar from "../../Dashboard/Components/ScrollBar";
 import APIS from "../../../common/hooks/UseApiCalls";
 import { CommonDataContext } from "../../../common/contexts/CommonDataContext";
 import AutoCompleteDropdownToFilter from "../../../components/UserComponents/AutoCompleteDropdownToFilter";
@@ -365,8 +364,6 @@ export default function ReportsFamilyWithRedFlag() {
           handleExport={handleExport}
           isExportDisabled={isExportDisabled}
         />
-
-        <Scrollbar>
           <Grid container width={1}>
             <Grid item xs={12}>
               <Card sx={{ mr: 1, p: 3 }}>
@@ -536,7 +533,6 @@ export default function ReportsFamilyWithRedFlag() {
               </Card>
             </Grid>
           </Grid>
-        </Scrollbar>
       </Box>
       <Dialog
         aria-labelledby="simple-dialog-title"

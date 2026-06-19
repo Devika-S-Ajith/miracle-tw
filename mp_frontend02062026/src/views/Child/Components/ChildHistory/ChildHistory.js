@@ -13,7 +13,6 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import Scrollbar from "../../../Dashboard/Components/ScrollBar";
 import { useState, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import APIS from "../../../../common/hooks/UseApiCalls";
@@ -107,7 +106,6 @@ const ChildHistory = (props) => {
             //m: -1,
           }}
         ></Box>
-        <Scrollbar>
           {loading && (
             <CircularProgress
               sx={{
@@ -133,11 +131,10 @@ const ChildHistory = (props) => {
                     onChange={handleSelectAllCustomers}
                   />
                 </TableCell> */}
-                    <TableCell>{t("common:common.Change ID")}</TableCell>
                     <TableCell>{t("common:common.Field Changed")}</TableCell>
                     <TableCell>{t("common:common.Changed By")}</TableCell>
                     <TableCell>{t("common:common.Old Value")}</TableCell>
-                    <TableCell>{t("common:common.New Value")}</TableCell>
+                    <TableCell>{t("common:common.Updated Value")}</TableCell>
                     <TableCell>{t("common:common.Time Stamp")}</TableCell>
                   </TableRow>
                 </TableHead>
@@ -145,7 +142,6 @@ const ChildHistory = (props) => {
                   {auditList.map((auditItem) => {
                     return (
                       <TableRow hover key={auditItem.id}>
-                        <TableCell>{auditItem.id}</TableCell>
                         <TableCell>{Keywords[auditItem.entity] ?? auditItem.entity}</TableCell>
                         <TableCell>
                           {auditItem.updatedUser
@@ -185,7 +181,6 @@ const ChildHistory = (props) => {
               </Box>
             )}
           </Box>
-        </Scrollbar>
         <Box sx={{ display: "flex" }} flexDirection="row-reverse" p={1} m={1}>
           <Box sx={{ alignContent: "flex-end" }}>
             <Pagination

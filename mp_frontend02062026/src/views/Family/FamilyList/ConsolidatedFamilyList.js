@@ -280,7 +280,6 @@ const ConsolidatedFamilyList = (props) => {
       pageNumber: page || 1,
       rowCount: rowCount || 10, // Default row count if not provided
       TWAccountId: localStorage.getItem("orgId"),
-      caseWorker: "",
       listType: "LARGE",
       filters: {
         familyStatus: filter.caseStatus?.map((item) => item.value) || [],
@@ -452,6 +451,11 @@ const ConsolidatedFamilyList = (props) => {
             }
             multiple
             value={filterValues?.caseworkerId || []}
+             renderOption={(props, option) => (
+              <li {...props} style={{ whiteSpace: "normal", wordBreak: "break-word" }}>
+                {t(`common:infoCard.${option.label}`, option.label)}
+              </li>
+            )}
             isOptionEqualToValue={(option, value) => option.value === value.value}
             onChange={(event, newValue) => {
               setFilterValues((prev) => ({ ...prev, caseworkerId: newValue }));
@@ -461,10 +465,21 @@ const ConsolidatedFamilyList = (props) => {
             renderTags={(value, getTagProps) => (
               <Stack direction="row" gap={1} flexWrap="wrap">
                 {value.map((option, index) => (
-                  <Chip
-                    key={option.value}
+                  <Tooltip key={option.value} title={option.label}>
+        <Chip
+                    // key={option.value}
                     label={option.label}
-                    sx={{ mb: 1, backgroundColor: "#34475D", color: "#fff" }}
+                     sx={{
+            mb: 1,
+            backgroundColor: "#34475D",
+            color: "#fff",
+            maxWidth: 160,
+            "& .MuiChip-label": {
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            },
+          }}
                     deleteIcon={
                       <CloseIcon style={{ color: "#fff", fontSize: "16px" }} />
                     }
@@ -477,6 +492,7 @@ const ConsolidatedFamilyList = (props) => {
                       }))
                     }
                   />
+                  </Tooltip>
                 ))}
               </Stack>
             )}
@@ -505,10 +521,13 @@ const ConsolidatedFamilyList = (props) => {
     getTableData({ search, filter: updated, rowCount });
   };
 
+  const isFilterEmpty = !appliedFiltersChipArray?.caseStatus?.length && !appliedFiltersChipArray?.caseworkerId?.length;
   const clearFiltersHandler = () => {
-    const clearedFilters = {};
-    setFilterValues(clearedFilters);
-  };
+  const clearedFilters = { caseStatus: [], caseworkerId: [] };
+  setFilterValues(clearedFilters);
+  setAppliedFiltersChipArray(clearedFilters);
+  getTableData({ search: query, filter: clearedFilters });
+};
 
   return (
     <>
@@ -545,6 +564,7 @@ const ConsolidatedFamilyList = (props) => {
                 applyFilter={handleApplyFilters}
                 cancelFilter={cancelFilterHandler}
                 clearFilter={clearFiltersHandler}
+                isClearDisabled={isFilterEmpty} 
                 tableExtraButtons={tableExtraButtons}
                 t={t}
                 enablePagination

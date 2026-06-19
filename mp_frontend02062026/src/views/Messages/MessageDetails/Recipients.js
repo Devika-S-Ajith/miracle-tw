@@ -11,7 +11,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useMemo } from "react";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft"
 import { useTranslation } from "react-i18next";
@@ -39,8 +39,77 @@ const Recipients = ({
   setMessageDetailsForEditing,
 }) => {
   const { t } = useTranslation(["common"]);
-  const { locationList, organizationList, roleListFS, roleListHT } =
+  const { locationList, organizationList: orgListFromContext, roleListFS, roleListHT } =
     useContext(CommonDataContext);
+  const userRegionId = localStorage.getItem("userRegion");
+  // derive common country ids from locationList
+  const indiaId = useMemo(
+    () =>
+      locationList?.find((l) => l?.countryName?.toLowerCase()?.includes("india"))?.id ??
+      orgListFromContext?.find((o) => o?.accountName?.toLowerCase()?.includes("india"))?.MPCountryId,
+    [locationList, orgListFromContext]
+  );
+  const usId = useMemo(
+    () =>
+      locationList?.find((l) => /united states|usa|us/i.test(l?.countryName))?.id ??
+      orgListFromContext?.find((o) => /united states|usa|us/i.test(o?.accountName))?.MPCountryId,
+    [locationList, orgListFromContext]
+  );
+  const ugandaId = useMemo(
+    () =>
+      locationList?.find((l) => l?.countryName?.toLowerCase()?.includes("uganda"))?.id ??
+      orgListFromContext?.find((o) => o?.accountName?.toLowerCase()?.includes("uganda"))?.MPCountryId,
+    [locationList, orgListFromContext]
+  );
+
+  const userRegionObj = useMemo(
+    () => locationList?.find((l) => String(l.id) === String(userRegionId)),
+    [locationList, userRegionId]
+  );
+
+  const isIndia = String(userRegionId)?.toLowerCase() === "in" ||
+    userRegionObj?.countryName?.toLowerCase()?.includes("india");
+  const isUS = String(userRegionId)?.toLowerCase() === "us" ||
+    /united states|usa|us/i.test(userRegionObj?.countryName);
+  const isUganda = String(userRegionId)?.toLowerCase() === "ug" ||
+    userRegionObj?.countryName?.toLowerCase()?.includes("uganda");
+
+  const effectiveLocationList = useMemo(() => {
+    if (!locationList) return locationList;
+    // India users: only India
+    if (isIndia) {
+      if (indiaId) return locationList.filter((loc) => String(loc.id) === String(indiaId));
+      return locationList.filter((loc) => String(loc.id) === String(userRegionId));
+    }
+    // US or Uganda users: show both US and Uganda
+    if (isUS || isUganda) {
+      const ids = [usId, ugandaId].filter(Boolean).map((id) => String(id));
+      if (ids.length) return locationList.filter((loc) => ids.includes(String(loc.id)));
+    }
+    // default: show all locations or only user's region when available
+    return userRegionId ? locationList.filter((loc) => String(loc.id) === String(userRegionId)) : locationList;
+  }, [userRegionId, locationList, isIndia, isUS, isUganda, indiaId, usId, ugandaId]);
+
+  // Effective organization list per requirements:
+  // - India: only Indian orgs
+  // - US or Uganda: show both US and Uganda orgs
+  // - Default: organizations filtered by user's region when available
+  const effectiveOrganizationList = useMemo(() => {
+    if (!orgListFromContext) return orgListFromContext;
+    if (isIndia) {
+      if (indiaId) return orgListFromContext.filter((org) => String(org?.MPCountryId) === String(indiaId));
+      return orgListFromContext.filter((org) => org?.MPCountryId && String(org?.MPCountryId) === String(userRegionId));
+    }
+    if (isUS || isUganda) {
+      const ids = [usId, ugandaId].filter(Boolean).map((id) => String(id));
+      if (ids.length) return orgListFromContext.filter((org) => ids.includes(String(org?.MPCountryId)));
+    }
+    return orgListFromContext?.filter((org) =>
+      userRegionId ? String(org?.MPCountryId) === String(userRegionId) : true
+    );
+  }, [userRegionId, orgListFromContext, indiaId, usId, ugandaId, isIndia, isUS, isUganda]);
+  
+  const organizationList = effectiveOrganizationList ?? orgListFromContext;
   const [locations, setLocations] = useState([]);
   const [organizations, setOrganizations] = useState([]);
   const [roles, setRoles] = useState([]);
@@ -77,11 +146,11 @@ const Recipients = ({
                 ?.accountCountry
             )
           ].length
-          ? locationList?.map((obj) => ({
+          ? effectiveLocationList?.map((obj) => ({
               id: obj.id,
               label: obj.countryName,
             }))
-          : locationList
+          : effectiveLocationList
               .filter((loc) =>
                 initialValuesForEditing?.receipientMatchingConditions?.accountCountry[
                   Object.keys(
@@ -94,7 +163,7 @@ const Recipients = ({
                 id: obj.id,
                 label: obj.countryName,
               })) ?? []
-        : locationList?.map((obj) => ({
+        : effectiveLocationList?.map((obj) => ({
             id: obj.id,
             label: obj.countryName,
           })),
@@ -106,7 +175,7 @@ const Recipients = ({
         : "IS"
       : "IS",
     org_name: !initialValuesForEditing?.receipientMatchingConditions
-      ? organizationList
+      ? effectiveOrganizationList
           ?.filter((org) => org?.isActive)
           ?.map((obj) => ({
             id: obj.id,
@@ -120,7 +189,7 @@ const Recipients = ({
             initialValuesForEditing?.receipientMatchingConditions?.account
           )
         ]?.length
-        ? organizationList
+        ? effectiveOrganizationList
             ?.filter((org) =>
               initialValuesForEditing?.receipientMatchingConditions?.account[
                 Object.keys(
@@ -134,7 +203,7 @@ const Recipients = ({
               MPCountryId: obj?.MPCountryId,
               accessType: obj?.accessType,
             })) ?? []
-        : organizationList
+        : effectiveOrganizationList
             ?.filter((org) =>
               Object?.keys(
                 initialValuesForEditing?.receipientMatchingConditions
@@ -175,7 +244,7 @@ const Recipients = ({
               MPCountryId: obj?.MPCountryId,
               accessType: obj?.accessType,
             }))
-      : organizationList
+      : effectiveOrganizationList
           ?.filter((org) => org?.isActive)
           ?.map((obj) => ({
             id: obj.id,
@@ -382,20 +451,19 @@ const Recipients = ({
   } = form;
 
   useEffect(() => {
-    if (locationList?.length)
+    if (effectiveLocationList?.length)
       setLocations([
-        // OrganizationIcon
         { id: -1, label: <Box p>{t("common:system messages.Select all locations")}</Box> },
         { id: -2, label: <Box p>{t("common:system messages.Deselect all locations")}</Box> },
-        ...locationList.map((obj) => ({
+        ...effectiveLocationList.map((obj) => ({
           id: obj.id,
           label: obj.countryName,
         })),
       ]);
-  }, [locationList]);
+  }, [effectiveLocationList]);
 
   useEffect(() => {
-    if (organizationList?.length) {
+    if (effectiveOrganizationList?.length) {
       let list = [
         {
           id: -1,
@@ -408,7 +476,7 @@ const Recipients = ({
               <Box sx={{ display: "flex", flexDirection: "column" }}>
                 <Typography>{t("common:system messages.Select all organizations")}</Typography>
                 <Typography variant="caption">
-                  {organizationList.filter((org) => org?.isActive)?.length}{" "}
+                  {effectiveOrganizationList.filter((org) => org?.isActive)?.length}{" "}
                   Organizations
                 </Typography>
               </Box>
@@ -419,7 +487,7 @@ const Recipients = ({
           id: -2,
           label: <Box p>{t("common:system messages.Deselect all organizations")}</Box>,
         },
-        ...organizationList
+        ...effectiveOrganizationList
           .filter((org) => org?.isActive)
           .map((obj) => ({
             id: obj.id,
@@ -430,7 +498,7 @@ const Recipients = ({
       ];
       setOrganizations(list);
     }
-  }, [organizationList]);
+  }, [effectiveOrganizationList]);
 
   useEffect(() => {
     if (roleListHT?.length && roleListFS?.length)
@@ -1038,7 +1106,7 @@ const Recipients = ({
           <>
             <Divider variant="middle" sx={{ my: 3, mx: 0 }} />
 
-            <SubHeading value={t("common:system messages.Show message where:")} mb />
+            <SubHeading value={t("common:system messages.Show message where")} mb />
             <Box display="flex" flexDirection="column" gap={3}>
               {/* <CustomRecipientCondition
               label={"Organization’s location"}
@@ -1058,6 +1126,7 @@ const Recipients = ({
                 onValueChange={(value) => setFieldValue(`org_location`, value)}
                 data={values?.org_location}
                 condition={values?.org_location_condition}
+                disabled={isIndia}
                 error={touched?.org_location && Boolean(errors?.org_location)}
                 helperText={touched?.org_location && errors?.org_location}
               />

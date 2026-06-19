@@ -113,7 +113,11 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
     }
   };
   useEffect(() => {
-    getTableData();
+    getTableData(
+      {
+      page : 1
+    }
+    );
   }, [fromDate, toDate, logType, payloadId, showForChild, id]);
 
   const [searchParams] = useSearchParams();
@@ -551,7 +555,7 @@ const ConsolidatedLogsList = ({ payloadId, showForChild = false, module }) => {
       defaultSortField={"childName"}
       defaultSortFieldOrder={"asc"}
       boldHeaders={false}
-      rowCountOptions={[10, 20, 30, 50, 100]}
+      rowCountOptions={[2, 10, 20, 30, 50, 100]}
     />
   );
 };

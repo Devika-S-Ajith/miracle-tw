@@ -659,7 +659,8 @@
     "Placement ID (US logs only)": "പ്ലേസ്‌മെന്റ് ഐഡി (യുഎസ് ലോഗുകൾക്ക് മാത്രം)",
     "# of previous placements (US logs only)": "മുൻ പ്ലേസ്‌മെന്റുകളുടെ എണ്ണം (യുഎസ് ലോഗുകൾക്ക് മാത്രം)",
     "Remove member": "അംഗത്തെ നീക്കം ചെയ്യുക",
-    "Licence number": "ലൈസൻസ് നമ്പർ (ഐച്ഛികം)"
+    "Licence number": "ലൈസൻസ് നമ്പർ (ഐച്ഛികം)",
+    "Updated Value": "അപ്ഡേറ്റ് ചെയ്ത മൂല്യം"
   },
   "signin": {
     "Sign in to your account": "താങ്കളുടെ അക്കൗണ്ടിലേക്ക് സൈൻ ഇൻ ചെയ്യുക",
@@ -1349,7 +1350,7 @@
     "Custom": "ഇഷ്ടാനുസരണം",
     "Define what user should see this message": "ഏത് ഉപയോക്താവ്(കൾ) ഈ സന്ദേശം കാണണമെന്ന് നിർവചിക്കുക.",
     "Next Preview": "അടുത്തത്: പ്രിവ്യൂ",
-    "Show message where:": "സന്ദേശം എവിടെ കാണിക്കണം:",
+    "Show message where": "സന്ദേശം എവിടെ കാണിക്കണം:",
     "Organization location": "സ്ഥാപനത്തിന്റെ സ്ഥലം",
     "Organization name": "സ്ഥാപനത്തിന്റെ പേര്",
     "User is viewing from": "ഉപയോക്താവ് കാണുന്ന പ്ലാറ്റ്ഫോം",

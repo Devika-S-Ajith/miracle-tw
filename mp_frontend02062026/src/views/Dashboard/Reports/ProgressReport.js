@@ -19,7 +19,6 @@ import ClearIcon from "@mui/icons-material/Clear";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import Scrollbar from "../Components/ScrollBar";
 import SearchIcon from "../../../assets/icons/Search";
 import APIS from "../../../common/hooks/UseApiCalls";
 import CustomDialogModal from "../../Child/Components/CustomDialogModal";
@@ -431,7 +430,6 @@ function ProgressReport() {
         handleExport={handleExport}
         isExportDisabled={isExportDisabled}
       />
-      <Scrollbar>
         <Grid container width={1}>
           <Grid item xs={12}>
             <Card sx={{ mr: 1, p: 3 }}>
@@ -633,7 +631,6 @@ function ProgressReport() {
           setProgressReportModal={setProgressReportModal}
           progressReportModal={progressReportModal}
         />
-      </Scrollbar>
     </Box>
   );
 }

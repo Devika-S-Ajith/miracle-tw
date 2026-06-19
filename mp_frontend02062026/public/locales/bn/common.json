@@ -654,7 +654,8 @@
     "Placement ID (US logs only)": "প্লেসমেন্ট আইডি (শুধুমাত্র মার্কিন লগের জন্য)",
     "# of previous placements (US logs only)": "পূর্ববর্তী প্লেসমেন্টের সংখ্যা (শুধুমাত্র মার্কিন লগের জন্য)",
     "Remove member": "সদস্য সরান",
-    "Licence number": "লাইসেন্স নম্বর (ঐচ্ছিক)"
+    "Licence number": "লাইসেন্স নম্বর (ঐচ্ছিক)",
+    "Updated Value": "আপডেট করা মান"
   },
   "signin": {
     "Sign in to your account": " আপনার অ্যাকাউন্টে সাইন ইন করুন। ",
@@ -1343,7 +1344,7 @@
     "Custom": "কাস্টম",
     "Define what user should see this message": "কোন ব্যবহারকারী(রা) এই বার্তাটি দেখবে তা নির্ধারণ করুন।",
     "Next Preview": "পরবর্তী: প্রিভিউ",
-    "Show message where:": "কোথায় বার্তা দেখাবেন:",
+    "Show message where": "কোথায় বার্তা দেখাবেন:",
     "Organization location": "সংস্থার অবস্থান",
     "Organization name": "সংস্থার নাম",
     "User is viewing from": "ব্যবহারকারী দেখছেন",

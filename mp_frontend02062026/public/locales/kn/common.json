@@ -656,7 +656,8 @@
     "Placement ID (US logs only)": "ನಿಯೋಜನೆ ಐಡಿ (ಅಮೆರಿಕನ್ ಲಾಗ್‌ಗಳಿಗೆ ಮಾತ್ರ)",
     "# of previous placements (US logs only)": "ಹಿಂದಿನ ನಿಯೋಜನೆಗಳ ಸಂಖ್ಯೆ (ಅಮೆರಿಕನ್ ಲಾಗ್‌ಗಳಿಗೆ ಮಾತ್ರ)",
     "Remove member": "ಸದಸ್ಯರನ್ನು ತೆಗೆದುಹಾಕಿ",
-    "Licence number": "ಲೈಸೆನ್ಸ್ ಸಂಖ್ಯೆ (ಐಚ್ಛಿಕ)"
+    "Licence number": "ಲೈಸೆನ್ಸ್ ಸಂಖ್ಯೆ (ಐಚ್ಛಿಕ)",
+    "Updated Value": "ನವೀಕರಿಸಿದ ಮೌಲ್ಯ"
   },
   "signin": {
     "Sign in to your account": "ನಿಮ್ಮ ಖಾತೆಗೆ ಸೈನ್ ಇನ್ ಮಾಡಿ.",
@@ -1346,7 +1347,7 @@
     "Custom": "ಕಸ್ಟಮ್",
     "Define what user should see this message": "ಯಾವ ಬಳಕೆದಾರ(ರು) ಈ ಸಂದೇಶವನ್ನು ನೋಡಬೇಕು ಎಂಬುದನ್ನು ನಿರ್ಧರಿಸಿ.",
     "Next Preview": "ಮುಂದೆ: ಪೂರ್ವವೀಕ್ಷಣೆ",
-    "Show message where:": "ಸಂದೇಶವನ್ನು ಎಲ್ಲಿ ತೋರಿಸಬೇಕು:",
+    "Show message where": "ಸಂದೇಶವನ್ನು ಎಲ್ಲಿ ತೋರಿಸಬೇಕು:",
     "Organization location": "ಸಂಸ್ಥೆಯ ಸ್ಥಳ",
     "Organization name": "ಸಂಸ್ಥೆಯ ಹೆಸರು",
     "User is viewing from": "ಬಳಕೆದಾರರು ನೋಡುತ್ತಿರುವ ವೇದಿಕೆ",

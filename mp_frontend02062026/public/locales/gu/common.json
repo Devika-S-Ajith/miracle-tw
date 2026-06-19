@@ -659,7 +659,8 @@
     "Placement ID (US logs only)": "પ્લેસમેન્ટ આઈડી (ફક્ત યુએસ લોગ્સ માટે)",
     "# of previous placements (US logs only)": "અગાઉના પ્લેસમેન્ટની સંખ્યા (ફક્ત યુએસ લોગ્સ માટે)",
     "Remove member": "સભ્યને દૂર કરો",
-    "Licence number": "લાઇસન્સ નંબર (વૈકલ્પિક)"
+    "Licence number": "લાઇસન્સ નંબર (વૈકલ્પિક)",
+    "Updated Value": "અપડેટ કરેલ મૂલ્ય"
 
   },
   "signin": {
@@ -1349,7 +1350,7 @@
     "Custom": "કસ્ટમ",
     "Define what user should see this message": "કયા વપરાશકર્તા(ઓ) આ સંદેશ જુએ તે નિર્ધારિત કરો.",
     "Next Preview": "આગળ: પૂર્વાવલોકન",
-    "Show message where:": "સંદેશ ક્યાં બતાવો:",
+    "Show message where": "સંદેશ ક્યાં બતાવો:",
     "Organization location": "સંસ્થાનું સ્થાન",
     "Organization name": "સંસ્થાનું નામ",
     "User is viewing from": "વપરાશકર્તા જે પ્લેટફોર્મ પરથી જોઈ રહ્યો છે",

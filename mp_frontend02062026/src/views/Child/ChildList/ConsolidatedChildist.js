@@ -432,6 +432,11 @@ const ConsolidatedChildList = (props) => {
           getOptionLabel={(option) => option.label}
           multiple
           value={filterValues?.caseWorker || []}
+          renderOption={(props, option) => (
+              <li {...props} style={{ whiteSpace: "normal", wordBreak: "break-word" }}>
+                {t(`common:infoCard.${option.label}`, option.label)}
+              </li>
+            )}
           isOptionEqualToValue={(option, value) => option.value === value.value}
           onChange={(event, newValue) => {
             setFilterValues((prev) => ({
@@ -444,10 +449,21 @@ const ConsolidatedChildList = (props) => {
           renderTags={(value, getTagProps) => (
             <Stack direction="row" gap={1} flexWrap="wrap">
               {value.map((option, index) => (
-                <Chip
-                  key={option.value}
-                  label={option.label}
-                  sx={{ mb: 1, backgroundColor: "#34475D", color: "#fff" }}
+                <Tooltip key={option.value} title={`${t(`common:infoCard.${option.label}`)}`}>
+        <Chip
+                    // key={option.value}
+                    label={option.label}
+                     sx={{
+            mb: 1,
+            backgroundColor: "#34475D",
+            color: "#fff",
+            maxWidth: 160,
+            "& .MuiChip-label": {
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            },
+          }}
                   deleteIcon={
                     <CloseIcon style={{ color: "#fff", fontSize: "16px" }} />
                   }
@@ -460,6 +476,7 @@ const ConsolidatedChildList = (props) => {
                     }))
                   }
                 />
+        </Tooltip>
               ))}
             </Stack>
           )}
@@ -487,10 +504,14 @@ const ConsolidatedChildList = (props) => {
     getTableData({ search, filter: updated, rowCount });
   };
 
-  const clearFiltersHandler = () => {
-    const clearedFilters = {};
-    setFilterValues(clearedFilters);
-  };
+const isFilterEmpty = !appliedFiltersChipArray?.status?.length && !appliedFiltersChipArray?.caseWorker?.length;
+
+const clearFiltersHandler = () => {
+  const clearedFilters = { status: [], caseWorker: [] };
+  setFilterValues(clearedFilters);
+  setAppliedFiltersChipArray(clearedFilters);
+  getTableData({ filter: clearedFilters });
+};
 
   const exportChildren = async ({ query, statusFilter } = {}) => {
     setIsExporting(true);
@@ -583,6 +604,7 @@ const ConsolidatedChildList = (props) => {
                 applyFilter={handleApplyFilters}
                 cancelFilter={cancelFilterHandler}
                 clearFilter={clearFiltersHandler}
+                isClearDisabled={isFilterEmpty}
                 tableExtraButtons={tableExtraButtons}
                 t={t}
                 enablePagination

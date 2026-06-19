@@ -125,12 +125,12 @@ const handleEditMember = (member) => {
             const dob = row.dateOfBirth
               ? new Date(row.dateOfBirth).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
               : null;
-            const parts = [
+           const parts = [
               age !== null ? `${age}` : null,
               dob ? `(${dob})` : null,
               convertUnderscoreToText(row.gender || null),
               row.isPrimaryCaregiver ? caregiverLabel : null,
-            ];
+            ].filter(Boolean);
             subText = parts.join(' | ');
           } else {
             subText = [relation, caregiverLabel].filter(Boolean).join(' | ');
@@ -284,7 +284,7 @@ const handleEditMember = (member) => {
       columns={columnDefinition}
       title={t("common:family.Family members and caregivers", "Family members and caregivers ({{count}})", { count: members?.length || 0 })}
       subheader=""
-      tableData={members || []}
+      tableData={[...(members || [])].sort((a, b) => (b.isPrimaryCaregiver ? 1 : 0) - (a.isPrimaryCaregiver ? 1 : 0))}
       loading={false}
       skeltonRowcount={5}
       apiError={false}

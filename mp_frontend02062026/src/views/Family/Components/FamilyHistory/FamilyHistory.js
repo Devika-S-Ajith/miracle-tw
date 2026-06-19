@@ -14,7 +14,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
-import Scrollbar from "../../../Dashboard/Components/ScrollBar";
+// import Scrollbar from "../../../Dashboard/Components/ScrollBar";
 import { useTranslation } from "react-i18next";
 import APIS from "../../../../common/hooks/UseApiCalls";
 import moment from "moment";
@@ -101,7 +101,7 @@ const FamilyHistory = (props) => {
             flexWrap: "wrap",
           }}
         ></Box>
-        <Scrollbar>
+        
           {loading && (
             <CircularProgress
               sx={{
@@ -119,11 +119,11 @@ const FamilyHistory = (props) => {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>{t("common:common.Change ID")}</TableCell>
+                    {/* <TableCell>{t("common:common.Change ID")}</TableCell> */}
                     <TableCell>{t("common:common.Field Changed")}</TableCell>
                     <TableCell>{t("common:common.Changed By")}</TableCell>
                     <TableCell>{t("common:common.Old Value")}</TableCell>
-                    <TableCell>{t("common:common.New Value")}</TableCell>
+                    <TableCell>{t("common:common.Updated Value")}</TableCell>
                     <TableCell>{t("common:common.Time Stamp")}</TableCell>
                   </TableRow>
                 </TableHead>
@@ -131,7 +131,7 @@ const FamilyHistory = (props) => {
                   {auditList.map((auditItem) => {
                     return (
                       <TableRow hover key={auditItem.id}>
-                        <TableCell>{auditItem.id}</TableCell>
+                        {/* <TableCell>{auditItem.id}</TableCell> */}
                         <TableCell>
                           {Keywords[auditItem.entity] ?? auditItem.entity}
                         </TableCell>
@@ -175,7 +175,7 @@ const FamilyHistory = (props) => {
               </Box>
             )}
           </Box>
-        </Scrollbar>
+        
         <Box sx={{ display: "flex" }} flexDirection="row-reverse" p={1} m={1}>
           <Box sx={{ alignContent: "flex-end" }}>
             <Pagination
